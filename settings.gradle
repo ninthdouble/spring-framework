@@ -2,6 +2,9 @@ pluginManagement {
 	repositories {
 		gradlePluginPortal()
 		maven { url 'https://repo.spring.io/plugins-release' }
+		// 用阿里云加速
+		maven { url 'https://maven.aliyun.com/repository/public' }
+		maven { url 'https://repo.spring.io/plugins-release-local' }
 	}
 }
 
