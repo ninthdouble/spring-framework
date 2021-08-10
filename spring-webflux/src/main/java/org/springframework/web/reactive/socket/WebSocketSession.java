@@ -15,15 +15,14 @@
  */
 package org.springframework.web.reactive.socket;
 
-import java.util.Map;
-import java.util.function.Function;
-
 import org.reactivestreams.Publisher;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Represents a WebSocket session.
@@ -49,12 +48,14 @@ public interface WebSocketSession {
 
 	/**
 	 * Return a {@code DataBuffer} Factory to create message payloads.
+	 *
 	 * @return the buffer factory for the session
 	 */
 	DataBufferFactory bufferFactory();
 
 	/**
 	 * Return the map with attributes associated with the WebSocket session.
+	 *
 	 * @return a Map with the session attributes (never {@code null})
 	 * @since 5.1
 	 */
@@ -82,6 +83,7 @@ public interface WebSocketSession {
 
 	/**
 	 * Whether the underlying connection is open.
+	 *
 	 * @since 5.3.1
 	 */
 	boolean isOpen();
@@ -95,6 +97,7 @@ public interface WebSocketSession {
 
 	/**
 	 * Close the WebSocket session with the given status.
+	 *
 	 * @param status the close status
 	 */
 	Mono<Void> close(CloseStatus status);
@@ -103,6 +106,7 @@ public interface WebSocketSession {
 	 * Provides access to the {@code CloseStatus} with which the session is
 	 * closed either locally or remotely, or completes empty if the session ended
 	 * without a status.
+	 *
 	 * @since 5.3
 	 */
 	Mono<CloseStatus> closeStatus();

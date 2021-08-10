@@ -23,6 +23,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface NoMethodsBean {
+}
+
 /**
  * @author Ramnivas Laddad
  * @author Chris Beams
@@ -52,16 +55,11 @@ public class DeclareParentsDelegateRefTests {
 
 	@Test
 	public void testIntroductionDelegation() {
-		((ICounter)noMethodsBean).increment();
+		((ICounter) noMethodsBean).increment();
 		assertThat(counter.getCount()).as("Delegate's counter should be updated").isEqualTo(1);
 	}
 
 }
-
-
-interface NoMethodsBean {
-}
-
 
 class NoMethodsBeanImpl implements NoMethodsBean {
 }

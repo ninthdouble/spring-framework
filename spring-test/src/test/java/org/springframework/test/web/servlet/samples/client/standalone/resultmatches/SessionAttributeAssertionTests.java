@@ -16,10 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -30,11 +27,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,20 +53,20 @@ public class SessionAttributeAssertionTests {
 		performRequest().andExpect(request().sessionAttribute("locale", Locale.UK));
 
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> performRequest().andExpect(request().sessionAttribute("locale", Locale.US)))
-			.withMessage("Session attribute 'locale' expected:<en_US> but was:<en_GB>");
+				.isThrownBy(() -> performRequest().andExpect(request().sessionAttribute("locale", Locale.US)))
+				.withMessage("Session attribute 'locale' expected:<en_US> but was:<en_GB>");
 	}
 
 	@Test
 	void sessionAttributeMatcher() throws Exception {
 		performRequest()
-			.andExpect(request().sessionAttribute("bogus", is(nullValue())))
-			.andExpect(request().sessionAttribute("locale", is(notNullValue())))
-			.andExpect(request().sessionAttribute("locale", equalTo(Locale.UK)));
+				.andExpect(request().sessionAttribute("bogus", is(nullValue())))
+				.andExpect(request().sessionAttribute("locale", is(notNullValue())))
+				.andExpect(request().sessionAttribute("locale", equalTo(Locale.UK)));
 
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> performRequest().andExpect(request().sessionAttribute("bogus", is(notNullValue()))))
-			.withMessageContaining("null");
+				.isThrownBy(() -> performRequest().andExpect(request().sessionAttribute("bogus", is(notNullValue()))))
+				.withMessageContaining("null");
 	}
 
 	@Test
@@ -78,8 +74,8 @@ public class SessionAttributeAssertionTests {
 		performRequest().andExpect(request().sessionAttributeDoesNotExist("bogus", "enigma"));
 
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> performRequest().andExpect(request().sessionAttributeDoesNotExist("locale")))
-			.withMessage("Session attribute 'locale' exists");
+				.isThrownBy(() -> performRequest().andExpect(request().sessionAttributeDoesNotExist("locale")))
+				.withMessage("Session attribute 'locale' exists");
 	}
 
 	private ResultActions performRequest() {

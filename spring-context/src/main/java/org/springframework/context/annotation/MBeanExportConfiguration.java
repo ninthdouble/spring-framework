@@ -46,8 +46,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Phillip Webb
  * @author Chris Beams
- * @since 3.2
  * @see EnableMBeanExport
+ * @since 3.2
  */
 @Configuration(proxyBeanMethods = false)
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -115,8 +115,7 @@ public class MBeanExportConfiguration implements ImportAware, EnvironmentAware, 
 		if (StringUtils.hasText(server)) {
 			Assert.state(this.beanFactory != null, "No BeanFactory set");
 			exporter.setServer(this.beanFactory.getBean(server, MBeanServer.class));
-		}
-		else {
+		} else {
 			SpecificPlatform specificPlatform = SpecificPlatform.get();
 			if (specificPlatform != null) {
 				MBeanServer mbeanServer = specificPlatform.getMBeanServer();
@@ -146,8 +145,7 @@ public class MBeanExportConfiguration implements ImportAware, EnvironmentAware, 
 			public MBeanServer getMBeanServer() {
 				try {
 					return new JndiLocatorDelegate().lookup("java:comp/env/jmx/runtime", MBeanServer.class);
-				}
-				catch (NamingException ex) {
+				} catch (NamingException ex) {
 					throw new MBeanServerNotFoundException("Failed to retrieve WebLogic MBeanServer from JNDI", ex);
 				}
 			}
@@ -172,9 +170,6 @@ public class MBeanExportConfiguration implements ImportAware, EnvironmentAware, 
 		}
 
 		@Nullable
-		public abstract MBeanServer getMBeanServer();
-
-		@Nullable
 		public static SpecificPlatform get() {
 			ClassLoader classLoader = MBeanExportConfiguration.class.getClassLoader();
 			for (SpecificPlatform environment : values()) {
@@ -184,6 +179,9 @@ public class MBeanExportConfiguration implements ImportAware, EnvironmentAware, 
 			}
 			return null;
 		}
+
+		@Nullable
+		public abstract MBeanServer getMBeanServer();
 	}
 
 }

@@ -16,11 +16,10 @@
 
 package org.springframework.r2dbc.core.binding;
 
-import java.util.LinkedHashMap;
-
 import io.r2dbc.spi.Statement;
-
 import org.springframework.util.Assert;
+
+import java.util.LinkedHashMap;
 
 /**
  * Mutable extension to {@link Bindings} for Value and {@code null} bindings
@@ -36,6 +35,7 @@ public class MutableBindings extends Bindings {
 
 	/**
 	 * Create new {@link MutableBindings}.
+	 *
 	 * @param markers the {@link BindMarkers} to wrap
 	 */
 	public MutableBindings(BindMarkers markers) {
@@ -48,6 +48,7 @@ public class MutableBindings extends Bindings {
 	/**
 	 * Obtain the next {@link BindMarker}.
 	 * Increments {@link BindMarkers} state
+	 *
 	 * @return the next {@link BindMarker}
 	 */
 	public BindMarker nextMarker() {
@@ -57,6 +58,7 @@ public class MutableBindings extends Bindings {
 	/**
 	 * Obtain the next {@link BindMarker} with a name {@code hint}.
 	 * Increments {@link BindMarkers} state.
+	 *
 	 * @param hint name hint
 	 * @return the next {@link BindMarker}
 	 */
@@ -66,8 +68,9 @@ public class MutableBindings extends Bindings {
 
 	/**
 	 * Bind a value to {@link BindMarker}.
+	 *
 	 * @param marker the {@link BindMarker} to bind to
-	 * @param value the value to bind
+	 * @param value  the value to bind
 	 */
 	public MutableBindings bind(BindMarker marker, Object value) {
 		Assert.notNull(marker, "BindMarker must not be null");
@@ -79,6 +82,7 @@ public class MutableBindings extends Bindings {
 	/**
 	 * Bind a value and return the related {@link BindMarker}.
 	 * Increments {@link BindMarkers} state.
+	 *
 	 * @param value the value to bind
 	 */
 	public BindMarker bind(Object value) {
@@ -90,7 +94,8 @@ public class MutableBindings extends Bindings {
 
 	/**
 	 * Bind a {@code NULL} value to {@link BindMarker}.
-	 * @param marker the {@link BindMarker} to bind to
+	 *
+	 * @param marker    the {@link BindMarker} to bind to
 	 * @param valueType the value type
 	 */
 	public MutableBindings bindNull(BindMarker marker, Class<?> valueType) {
@@ -103,6 +108,7 @@ public class MutableBindings extends Bindings {
 	/**
 	 * Bind a {@code NULL} value and return the related {@link BindMarker}.
 	 * Increments {@link BindMarkers} state.
+	 *
 	 * @param valueType the value type
 	 */
 	public BindMarker bindNull(Class<?> valueType) {

@@ -16,15 +16,7 @@
 
 package org.springframework.web.bind.support;
 
-import java.beans.PropertyEditorSupport;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.testfixture.beans.ITestBean;
@@ -35,6 +27,9 @@ import org.springframework.web.multipart.support.StringMultipartFileEditor;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockMultipartFile;
 import org.springframework.web.testfixture.servlet.MockMultipartHttpServletRequest;
+
+import java.beans.PropertyEditorSupport;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -352,7 +347,7 @@ public class WebRequestDataBinderTests {
 	@Test
 	public void testMultipleValuesForParameter() throws Exception {
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		String[] original = new String[] {"Tony", "Rod"};
+		String[] original = new String[]{"Tony", "Rod"};
 		request.addParameter("forname", original);
 
 		ServletRequestParameterPropertyValues pvs = new ServletRequestParameterPropertyValues(request);
@@ -363,6 +358,10 @@ public class WebRequestDataBinderTests {
 		assertThat(Arrays.asList(original)).as("Correct values").isEqualTo(Arrays.asList(values));
 	}
 
+
+	public enum MyEnum {
+		FOO, BAR
+	}
 
 	public static class EnumHolder {
 
@@ -377,17 +376,13 @@ public class WebRequestDataBinderTests {
 		}
 	}
 
-	public enum MyEnum {
-		FOO, BAR
-	}
-
 	static class TestBeanWithConcreteSpouse extends TestBean {
-		public void setConcreteSpouse(TestBean spouse) {
-			setSpouse(spouse);
-		}
-
 		public TestBean getConcreteSpouse() {
 			return (TestBean) getSpouse();
+		}
+
+		public void setConcreteSpouse(TestBean spouse) {
+			setSpouse(spouse);
 		}
 	}
 

@@ -16,14 +16,9 @@
 
 package org.springframework.test.web.servlet.samples.spr;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +36,10 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,8 +50,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * is not reused by MockMvc.
  *
  * @author Sam Brannen
- * @since 4.2
  * @see RequestContextHolderTests
+ * @since 4.2
  */
 public class CustomRequestAttributesRequestContextHolderTests {
 
@@ -64,6 +63,17 @@ public class CustomRequestAttributesRequestContextHolderTests {
 
 	private MockMvc mockMvc;
 
+	private static void assertRequestAttributes() {
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		assertThat(requestAttributes).isInstanceOf(ServletRequestAttributes.class);
+		assertRequestAttributes(((ServletRequestAttributes) requestAttributes).getRequest());
+	}
+
+	private static void assertRequestAttributes(ServletRequest request) {
+		assertThat(request.getAttribute(FROM_CUSTOM_MOCK)).isNull();
+		assertThat(request.getAttribute(FROM_MVC_TEST_DEFAULT)).isEqualTo(FROM_MVC_TEST_DEFAULT);
+		assertThat(request.getAttribute(FROM_MVC_TEST_MOCK)).isEqualTo(FROM_MVC_TEST_MOCK);
+	}
 
 	@BeforeEach
 	public void setUp() {
@@ -81,6 +91,9 @@ public class CustomRequestAttributesRequestContextHolderTests {
 				.alwaysExpect(status().isOk())
 				.build();
 	}
+
+
+	// -------------------------------------------------------------------
 
 	@Test
 	public void singletonController() throws Exception {
@@ -101,9 +114,6 @@ public class CustomRequestAttributesRequestContextHolderTests {
 		this.wac.close();
 	}
 
-
-	// -------------------------------------------------------------------
-
 	@Configuration
 	@EnableWebMvc
 	static class WebConfig implements WebMvcConfigurer {
@@ -121,18 +131,6 @@ public class CustomRequestAttributesRequestContextHolderTests {
 		public void handle() {
 			assertRequestAttributes();
 		}
-	}
-
-	private static void assertRequestAttributes() {
-		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		assertThat(requestAttributes).isInstanceOf(ServletRequestAttributes.class);
-		assertRequestAttributes(((ServletRequestAttributes) requestAttributes).getRequest());
-	}
-
-	private static void assertRequestAttributes(ServletRequest request) {
-		assertThat(request.getAttribute(FROM_CUSTOM_MOCK)).isNull();
-		assertThat(request.getAttribute(FROM_MVC_TEST_DEFAULT)).isEqualTo(FROM_MVC_TEST_DEFAULT);
-		assertThat(request.getAttribute(FROM_MVC_TEST_MOCK)).isEqualTo(FROM_MVC_TEST_MOCK);
 	}
 
 }

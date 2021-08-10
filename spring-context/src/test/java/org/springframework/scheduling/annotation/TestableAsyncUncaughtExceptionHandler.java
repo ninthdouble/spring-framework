@@ -26,16 +26,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * An {@link AsyncUncaughtExceptionHandler} implementation used for testing purposes.
+ *
  * @author Stephane Nicoll
  */
 class TestableAsyncUncaughtExceptionHandler
 		implements AsyncUncaughtExceptionHandler {
 
 	private final CountDownLatch latch = new CountDownLatch(1);
-
-	private UncaughtExceptionDescriptor descriptor;
-
 	private final boolean throwUnexpectedException;
+	private UncaughtExceptionDescriptor descriptor;
 
 	TestableAsyncUncaughtExceptionHandler() {
 		this(false);
@@ -67,8 +66,7 @@ class TestableAsyncUncaughtExceptionHandler
 	public void await(long timeout) {
 		try {
 			this.latch.await(timeout, TimeUnit.MILLISECONDS);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			Thread.currentThread().interrupt();
 		}
 	}

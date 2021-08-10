@@ -23,10 +23,10 @@ import reactor.core.publisher.Mono;
  * {@code CompletableFuture} from the {@code Mono} via {@link Mono#toFuture()}
  * and then adapting it with {@link CompletableToListenableFutureAdapter}.
  *
+ * @param <T> the object type
  * @author Rossen Stoyanchev
  * @author Stephane Maldini
  * @since 5.1
- * @param <T> the object type
  */
 public class MonoToListenableFutureAdapter<T> extends CompletableToListenableFutureAdapter<T> {
 

@@ -16,10 +16,7 @@
 
 package org.springframework.web.servlet.config;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.MethodParameter;
@@ -40,14 +37,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ServletWebArgumentResolverAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.*;
 import org.springframework.web.util.UrlPathHelper;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -172,8 +165,7 @@ public class AnnotationDrivenBeanDefinitionParserTests {
 		List<HttpMessageConverter<?>> converters = (List<HttpMessageConverter<?>>) value;
 		if (hasDefaultRegistrations) {
 			assertThat(converters.size() > 2).as("Default and custom converter expected").isTrue();
-		}
-		else {
+		} else {
 			assertThat(converters.size() == 2).as("Only custom converters expected").isTrue();
 		}
 		assertThat(converters.get(0) instanceof StringHttpMessageConverter).isTrue();
@@ -221,7 +213,7 @@ class TestHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver
 
 	@Override
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+								  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		return null;
 	}
 }
@@ -235,8 +227,8 @@ class TestHandlerMethodReturnValueHandler implements HandlerMethodReturnValueHan
 
 	@Override
 	public void handleReturnValue(Object returnValue,
-			MethodParameter returnType, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest) throws Exception {
+								  MethodParameter returnType, ModelAndViewContainer mavContainer,
+								  NativeWebRequest webRequest) throws Exception {
 	}
 
 }
@@ -245,17 +237,19 @@ class TestMessageCodesResolver implements MessageCodesResolver {
 
 	@Override
 	public String[] resolveMessageCodes(String errorCode, String objectName) {
-		return new String[] { "test.foo.bar" };
+		return new String[]{"test.foo.bar"};
 	}
 
 	@Override
 	@SuppressWarnings("rawtypes")
 	public String[] resolveMessageCodes(String errorCode, String objectName, String field, @Nullable Class fieldType) {
-		return new String[] { "test.foo.bar" };
+		return new String[]{"test.foo.bar"};
 	}
 
 }
 
-class TestPathMatcher extends AntPathMatcher { }
+class TestPathMatcher extends AntPathMatcher {
+}
 
-class TestPathHelper extends UrlPathHelper { }
+class TestPathHelper extends UrlPathHelper {
+}

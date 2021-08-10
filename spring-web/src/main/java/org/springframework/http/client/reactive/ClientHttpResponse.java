@@ -34,6 +34,7 @@ public interface ClientHttpResponse extends ReactiveHttpInputMessage {
 	/**
 	 * Return an id that represents the underlying connection, if available,
 	 * or the request for the purpose of correlating log messages.
+	 *
 	 * @since 5.3.5
 	 */
 	default String getId() {
@@ -42,20 +43,22 @@ public interface ClientHttpResponse extends ReactiveHttpInputMessage {
 
 	/**
 	 * Return the HTTP status code as an {@link HttpStatus} enum value.
+	 *
 	 * @return the HTTP status as an HttpStatus enum value (never {@code null})
 	 * @throws IllegalArgumentException in case of an unknown HTTP status code
-	 * @since #getRawStatusCode()
 	 * @see HttpStatus#valueOf(int)
+	 * @since #getRawStatusCode()
 	 */
 	HttpStatus getStatusCode();
 
 	/**
 	 * Return the HTTP status code (potentially non-standard and not
 	 * resolvable through the {@link HttpStatus} enum) as an integer.
+	 *
 	 * @return the HTTP status as an integer value
-	 * @since 5.0.6
 	 * @see #getStatusCode()
 	 * @see HttpStatus#resolve(int)
+	 * @since 5.0.6
 	 */
 	int getRawStatusCode();
 

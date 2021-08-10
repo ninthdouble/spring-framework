@@ -16,21 +16,9 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.springframework.core.SpringProperties;
-import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.MergedAnnotation;
-import org.springframework.core.annotation.MergedAnnotationCollectors;
-import org.springframework.core.annotation.MergedAnnotationPredicates;
-import org.springframework.core.annotation.MergedAnnotations;
+import org.springframework.core.annotation.*;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
-import org.springframework.core.annotation.RepeatableContainers;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.NestedTestConfiguration.EnclosingConfiguration;
@@ -38,6 +26,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ConcurrentLruCache;
 import org.springframework.util.ObjectUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * {@code TestContextAnnotationUtils} is a collection of utility methods that
@@ -64,19 +58,17 @@ import org.springframework.util.ObjectUtils;
  * example, {@link ContextConfiguration#inheritLocations}.
  *
  * @author Sam Brannen
- * @since 5.3, though originally since 4.0 as {@link org.springframework.test.util.MetaAnnotationUtils}
  * @see AnnotationUtils
  * @see AnnotatedElementUtils
  * @see AnnotationDescriptor
+ * @since 5.3, though originally since 4.0 as {@link org.springframework.test.util.MetaAnnotationUtils}
  */
 public abstract class TestContextAnnotationUtils {
 
-	private static final ConcurrentLruCache<Class<?>, EnclosingConfiguration> cachedEnclosingConfigurationModes =
-			new ConcurrentLruCache<>(32, TestContextAnnotationUtils::lookUpEnclosingConfiguration);
-
 	@Nullable
 	private static volatile EnclosingConfiguration defaultEnclosingConfigurationMode;
-
+	private static final ConcurrentLruCache<Class<?>, EnclosingConfiguration> cachedEnclosingConfigurationModes =
+			new ConcurrentLruCache<>(32, TestContextAnnotationUtils::lookUpEnclosingConfiguration);
 
 	/**
 	 * Determine if an annotation of the specified {@code annotationType} is
@@ -84,11 +76,12 @@ public abstract class TestContextAnnotationUtils {
 	 * search algorithm used in {@link #findMergedAnnotation(Class, Class)}.
 	 * <p>If this method returns {@code true}, then {@code findMergedAnnotation(...)}
 	 * will return a non-null value.
-	 * @param clazz the class to look for annotations on
+	 *
+	 * @param clazz          the class to look for annotations on
 	 * @param annotationType the type of annotation to look for
 	 * @return {@code true} if a matching annotation is present
-	 * @since 5.3.3
 	 * @see #findMergedAnnotation(Class, Class)
+	 * @since 5.3.3
 	 */
 	public static boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotationType) {
 		return (findMergedAnnotation(clazz, annotationType) != null);
@@ -109,7 +102,8 @@ public abstract class TestContextAnnotationUtils {
 	 * <p>{@link org.springframework.core.annotation.AliasFor @AliasFor} semantics
 	 * are fully supported, both within a single annotation and within annotation
 	 * hierarchies.
-	 * @param clazz the class to look for annotations on
+	 *
+	 * @param clazz          the class to look for annotations on
 	 * @param annotationType the type of annotation to look for
 	 * @return the merged, synthesized {@code Annotation}, or {@code null} if not found
 	 * @see AnnotatedElementUtils#findMergedAnnotation(java.lang.reflect.AnnotatedElement, Class)
@@ -123,7 +117,7 @@ public abstract class TestContextAnnotationUtils {
 
 	@Nullable
 	private static <T extends Annotation> T findMergedAnnotation(Class<?> clazz, Class<T> annotationType,
-			Predicate<Class<?>> searchEnclosingClass) {
+																 Predicate<Class<?>> searchEnclosingClass) {
 
 		AnnotationDescriptor<T> descriptor =
 				findAnnotationDescriptor(clazz, annotationType, searchEnclosingClass, new HashSet<>());
@@ -149,7 +143,8 @@ public abstract class TestContextAnnotationUtils {
 	 * <p>{@link org.springframework.core.annotation.AliasFor @AliasFor} semantics
 	 * are fully supported, both within a single annotation and within annotation
 	 * hierarchies.
-	 * @param clazz the class on which to search for annotations (never {@code null})
+	 *
+	 * @param clazz          the class on which to search for annotations (never {@code null})
 	 * @param annotationType the annotation type to find (never {@code null})
 	 * @return the set of all merged repeatable annotations found, or an empty set
 	 * if none were found
@@ -200,7 +195,8 @@ public abstract class TestContextAnnotationUtils {
 	 * process continues by returning to step #1 with the current annotation,
 	 * interface, superclass, or enclosing class as the class to look for
 	 * annotations on.
-	 * @param clazz the class to look for annotations on
+	 *
+	 * @param clazz          the class to look for annotations on
 	 * @param annotationType the type of annotation to look for
 	 * @return the corresponding annotation descriptor if the annotation was found;
 	 * otherwise {@code null}
@@ -212,18 +208,19 @@ public abstract class TestContextAnnotationUtils {
 
 		Assert.notNull(annotationType, "Annotation type must not be null");
 		return findAnnotationDescriptor(clazz, annotationType, TestContextAnnotationUtils::searchEnclosingClass,
-			new HashSet<>());
+				new HashSet<>());
 	}
 
 	/**
 	 * Perform the search algorithm for {@link #findAnnotationDescriptor(Class, Class)},
 	 * avoiding endless recursion by tracking which annotations have already been
 	 * <em>visited</em>.
-	 * @param clazz the class to look for annotations on
-	 * @param annotationType the type of annotation to look for
+	 *
+	 * @param clazz                the class to look for annotations on
+	 * @param annotationType       the type of annotation to look for
 	 * @param searchEnclosingClass a predicate which evaluates to {@code true}
-	 * if a search should be performed on the enclosing class
-	 * @param visited the set of annotations that have already been visited
+	 *                             if a search should be performed on the enclosing class
+	 * @param visited              the set of annotations that have already been visited
 	 * @return the corresponding annotation descriptor if the annotation was found;
 	 * otherwise {@code null}
 	 */
@@ -306,7 +303,8 @@ public abstract class TestContextAnnotationUtils {
 	 * process continues by returning to step #1 with the current annotation,
 	 * interface, superclass, or enclosing class as the class to look for
 	 * annotations on.
-	 * @param clazz the class to look for annotations on
+	 *
+	 * @param clazz           the class to look for annotations on
 	 * @param annotationTypes the types of annotations to look for
 	 * @return the corresponding annotation descriptor if one of the annotations
 	 * was found; otherwise {@code null}
@@ -325,15 +323,16 @@ public abstract class TestContextAnnotationUtils {
 	 * Perform the search algorithm for {@link #findAnnotationDescriptorForTypes(Class, Class...)},
 	 * avoiding endless recursion by tracking which annotations have already been
 	 * <em>visited</em>.
-	 * @param clazz the class to look for annotations on
+	 *
+	 * @param clazz           the class to look for annotations on
 	 * @param annotationTypes the types of annotations to look for
-	 * @param visited the set of annotations that have already been visited
+	 * @param visited         the set of annotations that have already been visited
 	 * @return the corresponding annotation descriptor if one of the annotations
 	 * was found; otherwise {@code null}
 	 */
 	@Nullable
 	private static UntypedAnnotationDescriptor findAnnotationDescriptorForTypes(@Nullable Class<?> clazz,
-			Class<? extends Annotation>[] annotationTypes, Set<Annotation> visited) {
+																				Class<? extends Annotation>[] annotationTypes, Set<Annotation> visited) {
 
 		if (clazz == null || Object.class == clazz) {
 			return null;
@@ -389,6 +388,7 @@ public abstract class TestContextAnnotationUtils {
 	 * Determine if annotations on the enclosing class of the supplied class
 	 * should be searched by annotation search algorithms within the <em>Spring
 	 * TestContext Framework</em>.
+	 *
 	 * @param clazz the class whose enclosing class should potentially be searched
 	 * @return {@code true} if the supplied class is an inner class whose enclosing
 	 * class should be searched
@@ -407,8 +407,9 @@ public abstract class TestContextAnnotationUtils {
 
 	/**
 	 * Get the {@link EnclosingConfiguration} mode for the supplied class.
+	 *
 	 * @param clazz the class for which the enclosing configuration mode should
-	 * be resolved
+	 *              be resolved
 	 * @return the resolved enclosing configuration mode
 	 */
 	private static EnclosingConfiguration getEnclosingConfiguration(Class<?> clazz) {
@@ -544,6 +545,7 @@ public abstract class TestContextAnnotationUtils {
 		 * attempt will be made to find a corresponding annotation in the
 		 * {@linkplain Class#getEnclosingClass() enclosing class} hierarchy of
 		 * the root declaring class if {@linkplain #searchEnclosingClass appropriate}.
+		 *
 		 * @return the next corresponding annotation descriptor if the annotation
 		 * was found; otherwise {@code null}
 		 */
@@ -564,6 +566,7 @@ public abstract class TestContextAnnotationUtils {
 		 * that are present or meta-present on the {@linkplain #getRootDeclaringClass()
 		 * root declaring class} of this descriptor or on any interfaces that the
 		 * root declaring class implements.
+		 *
 		 * @return the set of all merged, synthesized {@code Annotations} found,
 		 * or an empty set if none were found
 		 */
@@ -599,13 +602,13 @@ public abstract class TestContextAnnotationUtils {
 		private final Class<? extends Annotation>[] annotationTypes;
 
 		UntypedAnnotationDescriptor(Class<?> rootDeclaringClass, Annotation annotation,
-				Class<? extends Annotation>[] annotationTypes) {
+									Class<? extends Annotation>[] annotationTypes) {
 
 			this(rootDeclaringClass, rootDeclaringClass, annotation, annotationTypes);
 		}
 
 		UntypedAnnotationDescriptor(Class<?> rootDeclaringClass, Class<?> declaringClass,
-				Annotation annotation, Class<? extends Annotation>[] annotationTypes) {
+									Annotation annotation, Class<? extends Annotation>[] annotationTypes) {
 
 			super(rootDeclaringClass, declaringClass, annotation);
 			this.annotationTypes = annotationTypes;
@@ -621,6 +624,7 @@ public abstract class TestContextAnnotationUtils {
 		 * an attempt will be made to find a corresponding annotation in the
 		 * {@linkplain Class#getEnclosingClass() enclosing class} hierarchy of
 		 * the root declaring class if {@linkplain #searchEnclosingClass appropriate}.
+		 *
 		 * @return the next corresponding annotation descriptor if one of the
 		 * annotations was found; otherwise {@code null}
 		 * @see AnnotationDescriptor#next()

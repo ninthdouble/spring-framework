@@ -16,13 +16,7 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -30,6 +24,11 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.PathPatternsTestUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +40,15 @@ import static org.springframework.web.servlet.function.RequestPredicates.HEAD;
  * @author Arjen Poutsma
  */
 class RouterFunctionBuilderTests {
+
+	private static ServerResponse handle(HandlerFunction<ServerResponse> handlerFunction,
+										 ServerRequest request) {
+		try {
+			return handlerFunction.handle(request);
+		} catch (Exception ex) {
+			throw new AssertionError(ex.getMessage(), ex);
+		}
+	}
 
 	@Test
 	void route() {
@@ -79,16 +87,6 @@ class RouterFunctionBuilderTests {
 				.map(ServerResponse::statusCode);
 
 		assertThat(responseStatus).isEmpty();
-	}
-
-	private static ServerResponse handle(HandlerFunction<ServerResponse> handlerFunction,
-			ServerRequest request) {
-		try {
-			return handlerFunction.handle(request);
-		}
-		catch (Exception ex) {
-			throw new AssertionError(ex.getMessage(), ex);
-		}
 	}
 
 	@Test
@@ -200,7 +198,6 @@ class RouterFunctionBuilderTests {
 		assertThat(responseStatus).contains(HttpStatus.OK);
 
 	}
-
 
 
 	private ServerRequest initRequest(String httpMethod, String requestUri) {

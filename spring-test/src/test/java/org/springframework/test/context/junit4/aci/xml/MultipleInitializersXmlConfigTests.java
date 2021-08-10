@@ -18,7 +18,6 @@ package org.springframework.test.context.junit4.aci.xml;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 3.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(initializers = { FooBarAliasInitializer.class, DevProfileInitializer.class })
+@ContextConfiguration(initializers = {FooBarAliasInitializer.class, DevProfileInitializer.class})
 public class MultipleInitializersXmlConfigTests {
 
 	@Autowired

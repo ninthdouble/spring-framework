@@ -45,6 +45,14 @@ public class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParse
 	private static final String ASYNC_EXECUTION_ASPECT_CLASS_NAME =
 			"org.springframework.scheduling.aspectj.AnnotationAsyncExecutionAspect";
 
+	private static void registerPostProcessor(
+			ParserContext parserContext, BeanDefinitionBuilder builder, String beanName) {
+
+		builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		parserContext.getRegistry().registerBeanDefinition(beanName, builder.getBeanDefinition());
+		BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getBeanDefinition(), beanName);
+		parserContext.registerComponent(new BeanComponentDefinition(holder));
+	}
 
 	@Override
 	@Nullable
@@ -62,14 +70,12 @@ public class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParse
 		if ("aspectj".equals(mode)) {
 			// mode="aspectj"
 			registerAsyncExecutionAspect(element, parserContext);
-		}
-		else {
+		} else {
 			// mode="proxy"
 			if (registry.containsBeanDefinition(TaskManagementConfigUtils.ASYNC_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 				parserContext.getReaderContext().error(
 						"Only one AsyncAnnotationBeanPostProcessor may exist within the context.", source);
-			}
-			else {
+			} else {
 				BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
 						"org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor");
 				builder.getRawBeanDefinition().setSource(source);
@@ -91,8 +97,7 @@ public class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParse
 		if (registry.containsBeanDefinition(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			parserContext.getReaderContext().error(
 					"Only one ScheduledAnnotationBeanPostProcessor may exist within the context.", source);
-		}
-		else {
+		} else {
 			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
 					"org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor");
 			builder.getRawBeanDefinition().setSource(source);
@@ -124,15 +129,6 @@ public class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParse
 			parserContext.registerBeanComponent(new BeanComponentDefinition(builder.getBeanDefinition(),
 					TaskManagementConfigUtils.ASYNC_EXECUTION_ASPECT_BEAN_NAME));
 		}
-	}
-
-	private static void registerPostProcessor(
-			ParserContext parserContext, BeanDefinitionBuilder builder, String beanName) {
-
-		builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-		parserContext.getRegistry().registerBeanDefinition(beanName, builder.getBeanDefinition());
-		BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getBeanDefinition(), beanName);
-		parserContext.registerComponent(new BeanComponentDefinition(holder));
 	}
 
 }

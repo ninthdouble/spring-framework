@@ -16,10 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone;
 
-import java.security.Principal;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
@@ -30,6 +27,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.security.Principal;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,6 +46,9 @@ public class FrameworkExtensionTests {
 					.apply(defaultSetup())
 					.build();
 
+	private static TestMockMvcConfigurer defaultSetup() {
+		return new TestMockMvcConfigurer();
+	}
 
 	@Test
 	public void fooHeader() {
@@ -64,11 +66,6 @@ public class FrameworkExtensionTests {
 				.expectBody(String.class).isEqualTo("Bar");
 	}
 
-	private static TestMockMvcConfigurer defaultSetup() {
-		return new TestMockMvcConfigurer();
-	}
-
-
 	/**
 	 * Test {@code MockMvcConfigurer}.
 	 */
@@ -81,7 +78,7 @@ public class FrameworkExtensionTests {
 
 		@Override
 		public RequestPostProcessor beforeMockMvcCreated(ConfigurableMockMvcBuilder<?> builder,
-				WebApplicationContext context) {
+														 WebApplicationContext context) {
 			return request -> {
 				request.setUserPrincipal(mock(Principal.class));
 				return request;

@@ -60,7 +60,7 @@ class IndexedBindMarkersUnitTests {
 
 	@Test
 	void nextShouldIncrementBindMarker() {
-		String[] prefixes = { "$", "?" };
+		String[] prefixes = {"$", "?"};
 
 		for (String prefix : prefixes) {
 

@@ -16,26 +16,17 @@
 
 package org.springframework.web.server.i18n;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
 
-import static java.util.Locale.CANADA;
-import static java.util.Locale.ENGLISH;
-import static java.util.Locale.GERMAN;
-import static java.util.Locale.GERMANY;
-import static java.util.Locale.JAPAN;
-import static java.util.Locale.JAPANESE;
-import static java.util.Locale.KOREA;
-import static java.util.Locale.UK;
-import static java.util.Locale.US;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Locale;
+
+import static java.util.Locale.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

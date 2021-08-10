@@ -42,8 +42,8 @@ import org.springframework.util.StringUtils;
  * @author Juergen Hoeller
  * @author Phillip Webb
  * @author Sam Brannen
- * @since 3.0
  * @see SimpleDateFormat
+ * @since 3.0
  */
 public class DateFormatter implements Formatter<Date> {
 
@@ -104,6 +104,7 @@ public class DateFormatter implements Formatter<Date> {
 	 * <p>The supplied source object will only be used for descriptive purposes
 	 * by invoking its {@code toString()} method &mdash; for example, when
 	 * generating an exception message to provide further context.
+	 *
 	 * @param source the source of the configuration
 	 * @since 5.3.5
 	 */
@@ -123,9 +124,10 @@ public class DateFormatter implements Formatter<Date> {
 	 * Set additional patterns to use as a fallback in case parsing fails for the
 	 * configured {@linkplain #setPattern pattern}, {@linkplain #setIso ISO format},
 	 * {@linkplain #setStyle style}, or {@linkplain #setStylePattern style pattern}.
+	 *
 	 * @param fallbackPatterns the fallback parsing patterns
-	 * @since 5.3.5
 	 * @see DateTimeFormat#fallbackPatterns()
+	 * @since 5.3.5
 	 */
 	public void setFallbackPatterns(String... fallbackPatterns) {
 		this.fallbackPatterns = fallbackPatterns;
@@ -133,6 +135,7 @@ public class DateFormatter implements Formatter<Date> {
 
 	/**
 	 * Set the ISO format to use to format date values.
+	 *
 	 * @param iso the {@link ISO} format
 	 * @since 3.2
 	 */
@@ -143,6 +146,7 @@ public class DateFormatter implements Formatter<Date> {
 	/**
 	 * Set the {@link DateFormat} style to use to format date values.
 	 * <p>If not specified, DateFormat's default style will be used.
+	 *
 	 * @see DateFormat#DEFAULT
 	 * @see DateFormat#SHORT
 	 * @see DateFormat#MEDIUM
@@ -166,6 +170,7 @@ public class DateFormatter implements Formatter<Date> {
 	 * <li>'-' = Omitted</li>
 	 * </ul>
 	 * This method mimics the styles supported by Joda-Time.
+	 *
 	 * @param stylePattern two characters from the set {"S", "M", "L", "F", "-"}
 	 * @since 3.2
 	 */
@@ -199,8 +204,7 @@ public class DateFormatter implements Formatter<Date> {
 	public Date parse(String text, Locale locale) throws ParseException {
 		try {
 			return getDateFormat(locale).parse(text);
-		}
-		catch (ParseException ex) {
+		} catch (ParseException ex) {
 			if (!ObjectUtils.isEmpty(this.fallbackPatterns)) {
 				for (String pattern : this.fallbackPatterns) {
 					try {
@@ -210,8 +214,7 @@ public class DateFormatter implements Formatter<Date> {
 							dateFormat.setTimeZone(UTC);
 						}
 						return dateFormat.parse(text);
-					}
-					catch (ParseException ignoredException) {
+					} catch (ParseException ignoredException) {
 						// Ignore fallback parsing exceptions since the exception thrown below
 						// will include information from the "source" if available -- for example,
 						// the toString() of a @DateTimeFormat annotation.
@@ -220,8 +223,8 @@ public class DateFormatter implements Formatter<Date> {
 			}
 			if (this.source != null) {
 				ParseException parseException = new ParseException(
-					String.format("Unable to parse date time value \"%s\" using configuration from %s", text, this.source),
-					ex.getErrorOffset());
+						String.format("Unable to parse date time value \"%s\" using configuration from %s", text, this.source),
+						ex.getErrorOffset());
 				parseException.initCause(ex);
 				throw parseException;
 			}
@@ -277,11 +280,16 @@ public class DateFormatter implements Formatter<Date> {
 	private int getStylePatternForChar(int index) {
 		if (this.stylePattern != null && this.stylePattern.length() > index) {
 			switch (this.stylePattern.charAt(index)) {
-				case 'S': return DateFormat.SHORT;
-				case 'M': return DateFormat.MEDIUM;
-				case 'L': return DateFormat.LONG;
-				case 'F': return DateFormat.FULL;
-				case '-': return -1;
+				case 'S':
+					return DateFormat.SHORT;
+				case 'M':
+					return DateFormat.MEDIUM;
+				case 'L':
+					return DateFormat.LONG;
+				case 'F':
+					return DateFormat.FULL;
+				case '-':
+					return -1;
 			}
 		}
 		throw new IllegalStateException("Unsupported style pattern '" + this.stylePattern + "'");

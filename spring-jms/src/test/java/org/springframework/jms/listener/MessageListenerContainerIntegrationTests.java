@@ -16,20 +16,18 @@
 
 package org.springframework.jms.listener;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.junit.jupiter.api.Test;
+import org.springframework.jms.core.JmsTemplate;
+
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jms.core.JmsTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

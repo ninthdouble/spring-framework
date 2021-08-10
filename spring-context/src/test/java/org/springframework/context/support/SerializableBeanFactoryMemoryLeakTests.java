@@ -48,6 +48,12 @@ public class SerializableBeanFactoryMemoryLeakTests {
 		getSerializableFactoryMap().clear();
 	}
 
+	private static Map<?, ?> getSerializableFactoryMap() throws Exception {
+		Field field = DefaultListableBeanFactory.class.getDeclaredField("serializableFactories");
+		field.setAccessible(true);
+		return (Map<?, ?>) field.get(DefaultListableBeanFactory.class);
+	}
+
 	@Test
 	public void genericContext() throws Exception {
 		assertFactoryCountThroughoutLifecycle(new GenericApplicationContext());
@@ -83,30 +89,22 @@ public class SerializableBeanFactoryMemoryLeakTests {
 			ctx.refresh();
 			assertThat(serializableFactoryCount()).isEqualTo(1);
 			ctx.close();
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			// ignore - this is expected on refresh() for failure case tests
-		}
-		finally {
+		} finally {
 			assertThat(serializableFactoryCount()).isEqualTo(0);
 		}
 	}
 
 	private void registerMisconfiguredBeanDefinition(BeanDefinitionRegistry registry) {
 		registry.registerBeanDefinition("misconfigured",
-			rootBeanDefinition(Object.class).addPropertyValue("nonexistent", "bogus")
-				.getBeanDefinition());
+				rootBeanDefinition(Object.class).addPropertyValue("nonexistent", "bogus")
+						.getBeanDefinition());
 	}
 
 	private int serializableFactoryCount() throws Exception {
 		Map<?, ?> map = getSerializableFactoryMap();
 		return map.size();
-	}
-
-	private static Map<?, ?> getSerializableFactoryMap() throws Exception {
-		Field field = DefaultListableBeanFactory.class.getDeclaredField("serializableFactories");
-		field.setAccessible(true);
-		return (Map<?, ?>) field.get(DefaultListableBeanFactory.class);
 	}
 
 }

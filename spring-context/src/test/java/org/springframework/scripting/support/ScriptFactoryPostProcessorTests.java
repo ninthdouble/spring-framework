@@ -77,6 +77,42 @@ public class ScriptFactoryPostProcessorTests {
 			"  }\n" +
 			"}";
 
+	private static StaticScriptSource getScriptSource(GenericApplicationContext ctx) throws Exception {
+		ScriptFactoryPostProcessor processor = (ScriptFactoryPostProcessor) ctx.getBean(PROCESSOR_BEAN_NAME);
+		BeanDefinition bd = processor.scriptBeanFactory.getBeanDefinition("scriptedObject.messenger");
+		return (StaticScriptSource) bd.getConstructorArgumentValues().getIndexedArgumentValue(0, StaticScriptSource.class).getValue();
+	}
+
+	private static BeanDefinition createScriptFactoryPostProcessor(boolean isRefreshable) {
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ScriptFactoryPostProcessor.class);
+		if (isRefreshable) {
+			builder.addPropertyValue("defaultRefreshCheckDelay", new Long(1));
+		}
+		return builder.getBeanDefinition();
+	}
+
+	private static BeanDefinition createScriptedGroovyBean() {
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(GroovyScriptFactory.class);
+		builder.addConstructorArgValue("inline:package org.springframework.scripting;\n" +
+				"class GroovyMessenger implements Messenger {\n" +
+				"  private String message = \"Bingo\"\n" +
+				"  public String getMessage() {\n" +
+				"    return this.message\n" +
+				"  }\n" +
+				"  public void setMessage(String message) {\n" +
+				"    this.message = message\n" +
+				"  }\n" +
+				"}");
+		builder.addPropertyValue("message", MESSAGE_TEXT);
+		return builder.getBeanDefinition();
+	}
+
+	private static void pauseToLetRefreshDelayKickIn(int secondsToPause) {
+		try {
+			Thread.sleep(secondsToPause * 1000);
+		} catch (InterruptedException ignored) {
+		}
+	}
 
 	@Test
 	public void testDoesNothingWhenPostProcessingNonScriptFactoryTypeBeforeInstantiation() throws Exception {
@@ -204,7 +240,7 @@ public class ScriptFactoryPostProcessorTests {
 		Messenger refreshedMessenger = (Messenger) ctx.getBean(MESSENGER_BEAN_NAME);
 		assertThatExceptionOfType(FatalBeanException.class).isThrownBy(() ->
 				refreshedMessenger.getMessage())
-			.matches(ex -> ex.contains(ScriptCompilationException.class));
+				.matches(ex -> ex.contains(ScriptCompilationException.class));
 	}
 
 	@Test
@@ -226,45 +262,6 @@ public class ScriptFactoryPostProcessorTests {
 		Messenger messenger2 = (Messenger) ctx.getBean(BEAN_WITH_DEPENDENCY_NAME);
 		assertThat(messenger2).isNotSameAs(messenger1);
 	}
-
-	private static StaticScriptSource getScriptSource(GenericApplicationContext ctx) throws Exception {
-		ScriptFactoryPostProcessor processor = (ScriptFactoryPostProcessor) ctx.getBean(PROCESSOR_BEAN_NAME);
-		BeanDefinition bd = processor.scriptBeanFactory.getBeanDefinition("scriptedObject.messenger");
-		return (StaticScriptSource) bd.getConstructorArgumentValues().getIndexedArgumentValue(0, StaticScriptSource.class).getValue();
-	}
-
-	private static BeanDefinition createScriptFactoryPostProcessor(boolean isRefreshable) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ScriptFactoryPostProcessor.class);
-		if (isRefreshable) {
-			builder.addPropertyValue("defaultRefreshCheckDelay", new Long(1));
-		}
-		return builder.getBeanDefinition();
-	}
-
-	private static BeanDefinition createScriptedGroovyBean() {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(GroovyScriptFactory.class);
-		builder.addConstructorArgValue("inline:package org.springframework.scripting;\n" +
-				"class GroovyMessenger implements Messenger {\n" +
-				"  private String message = \"Bingo\"\n" +
-				"  public String getMessage() {\n" +
-				"    return this.message\n" +
-				"  }\n" +
-				"  public void setMessage(String message) {\n" +
-				"    this.message = message\n" +
-				"  }\n" +
-				"}");
-		builder.addPropertyValue("message", MESSAGE_TEXT);
-		return builder.getBeanDefinition();
-	}
-
-	private static void pauseToLetRefreshDelayKickIn(int secondsToPause) {
-		try {
-			Thread.sleep(secondsToPause * 1000);
-		}
-		catch (InterruptedException ignored) {
-		}
-	}
-
 
 	public static class DefaultMessengerService {
 

@@ -40,6 +40,13 @@ import static org.springframework.core.testfixture.TestGroup.LONG_RUNNING;
  */
 class ScheduledExecutorFactoryBeanTests {
 
+	private static void pauseToLetTaskStart(int seconds) {
+		try {
+			Thread.sleep(seconds * 1000);
+		} catch (InterruptedException ignored) {
+		}
+	}
+
 	@Test
 	void throwsExceptionIfPoolSizeIsLessThanZero() throws Exception {
 		ScheduledExecutorFactoryBean factory = new ScheduledExecutorFactoryBean();
@@ -214,16 +221,6 @@ class ScheduledExecutorFactoryBeanTests {
 		ScheduledExecutorFactoryBean factory = new ScheduledExecutorFactoryBean();
 		assertThat(factory.getObjectType()).isEqualTo(ScheduledExecutorService.class);
 	}
-
-
-	private static void pauseToLetTaskStart(int seconds) {
-		try {
-			Thread.sleep(seconds * 1000);
-		}
-		catch (InterruptedException ignored) {
-		}
-	}
-
 
 	private static class NoOpScheduledExecutorTask extends ScheduledExecutorTask {
 

@@ -18,7 +18,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -55,6 +54,15 @@ class TestPropertySourceNestedTests {
 	}
 
 
+	@TestPropertySource(properties = {"foo = bar", "enigma: 42"})
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class Config {
+		/* no user beans required for these tests */
+	}
+
 	@Nested
 	@NestedTestConfiguration(INHERIT)
 	class InheritedConfigTests {
@@ -70,6 +78,8 @@ class TestPropertySourceNestedTests {
 			assertThat(env1).isSameAs(env2);
 		}
 	}
+
+	// -------------------------------------------------------------------------
 
 	@Nested
 	@SpringJUnitConfig(Config.class)
@@ -180,17 +190,6 @@ class TestPropertySourceNestedTests {
 				}
 			}
 		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class Config {
-		/* no user beans required for these tests */
-	}
-
-	@TestPropertySource(properties = { "foo = bar", "enigma: 42" })
-	interface TestInterface {
 	}
 
 }

@@ -16,15 +16,14 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.function.Consumer;
-
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Statement;
-
 import org.springframework.lang.Nullable;
 import org.springframework.r2dbc.core.binding.BindMarkersFactory;
 import org.springframework.r2dbc.core.binding.BindMarkersFactoryResolver;
 import org.springframework.util.Assert;
+
+import java.util.function.Consumer;
 
 /**
  * Default implementation of {@link DatabaseClient.Builder}.
@@ -84,8 +83,7 @@ class DefaultDatabaseClientBuilder implements DatabaseClient.Builder {
 		if (bindMarkers == null) {
 			if (this.namedParameters) {
 				bindMarkers = BindMarkersFactoryResolver.resolve(this.connectionFactory);
-			}
-			else {
+			} else {
 				bindMarkers = BindMarkersFactory.anonymous("?");
 			}
 		}

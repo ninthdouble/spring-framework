@@ -17,7 +17,6 @@
 package org.springframework.test.web.servlet.result;
 
 import org.hamcrest.Matcher;
-
 import org.springframework.lang.Nullable;
 import org.springframework.test.web.servlet.ResultMatcher;
 

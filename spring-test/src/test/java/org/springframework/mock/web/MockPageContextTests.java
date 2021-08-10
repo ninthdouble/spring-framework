@@ -16,9 +16,9 @@
 
 package org.springframework.mock.web;
 
-import javax.servlet.jsp.PageContext;
-
 import org.junit.jupiter.api.Test;
+
+import javax.servlet.jsp.PageContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,10 +16,10 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.List;
-
 import org.springframework.r2dbc.core.binding.BindMarkersFactory;
 import org.springframework.util.ConcurrentLruCache;
+
+import java.util.List;
 
 
 /**
@@ -45,7 +45,9 @@ class NamedParameterExpander {
 	 */
 	public static final int DEFAULT_CACHE_LIMIT = 256;
 
-	/** Cache of original SQL String to ParsedSql representation. */
+	/**
+	 * Cache of original SQL String to ParsedSql representation.
+	 */
 	private final ConcurrentLruCache<String, ParsedSql> parsedSqlCache =
 			new ConcurrentLruCache<>(DEFAULT_CACHE_LIMIT, NamedParameterUtils::parseSqlStatement);
 
@@ -53,6 +55,7 @@ class NamedParameterExpander {
 	/**
 	 * Obtain a parsed representation of the given SQL statement.
 	 * <p>The default implementation uses an LRU cache with an upper limit of 256 entries.
+	 *
 	 * @param sql the original SQL statement
 	 * @return a representation of the parsed SQL statement
 	 */
@@ -74,9 +77,10 @@ class NamedParameterExpander {
 	 * placeholders to be used for a select list. Select lists should be limited
 	 * to 100 or fewer elements. A larger number of elements is not guaranteed to be
 	 * supported by the database and is strictly vendor-dependent.
-	 * @param sql sql the original SQL statement
+	 *
+	 * @param sql                sql the original SQL statement
 	 * @param bindMarkersFactory the bind marker factory
-	 * @param paramSource the source for named parameters
+	 * @param paramSource        the source for named parameters
 	 * @return the expanded sql that accepts bind parameters and allows for execution
 	 * without further translation wrapped as {@link PreparedOperation}.
 	 */
@@ -90,6 +94,7 @@ class NamedParameterExpander {
 	/**
 	 * Parse the SQL statement and locate any placeholders or named parameters.
 	 * Named parameters are returned as result of this method invocation.
+	 *
 	 * @return the parameter names
 	 */
 	public List<String> getParameterNames(String sql) {

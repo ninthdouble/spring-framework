@@ -16,10 +16,7 @@
 
 package org.springframework.test.context.transaction.manager;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +35,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.transaction.TransactionAssert.assertThatTransaction;
 
@@ -46,8 +45,8 @@ import static org.springframework.test.transaction.TransactionAssert.assertThatT
  * are supported.
  *
  * @author Sam Brannen
- * @since 4.3
  * @see org.springframework.test.context.jdbc.PrimaryDataSourceTests
+ * @since 4.3
  */
 @SpringJUnitConfig
 @DirtiesContext

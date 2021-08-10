@@ -15,9 +15,9 @@
  */
 package org.springframework.http.server;
 
-import java.net.URI;
-
 import org.springframework.lang.Nullable;
+
+import java.net.URI;
 
 /**
  * Specialization of {@link PathContainer} that sub-divides the path into a
@@ -30,6 +30,28 @@ import org.springframework.lang.Nullable;
  * @since 5.0
  */
 public interface RequestPath extends PathContainer {
+
+	/**
+	 * Parse the URI for a request into a {@code RequestPath}.
+	 *
+	 * @param uri         the URI of the request
+	 * @param contextPath the contextPath portion of the URI path
+	 */
+	static RequestPath parse(URI uri, @Nullable String contextPath) {
+		return parse(uri.getRawPath(), contextPath);
+	}
+
+	/**
+	 * Variant of {@link #parse(URI, String)} with the encoded
+	 * {@link URI#getRawPath() raw path}.
+	 *
+	 * @param rawPath     the path
+	 * @param contextPath the contextPath portion of the URI path
+	 * @since 5.3
+	 */
+	static RequestPath parse(String rawPath, @Nullable String contextPath) {
+		return new DefaultRequestPath(rawPath, contextPath);
+	}
 
 	/**
 	 * Returns the portion of the URL path that represents the application.
@@ -52,30 +74,10 @@ public interface RequestPath extends PathContainer {
 	/**
 	 * Return a new {@code RequestPath} instance with a modified context path.
 	 * The new context path must match 0 or more path segments at the start.
+	 *
 	 * @param contextPath the new context path
 	 * @return a new {@code RequestPath} instance
 	 */
 	RequestPath modifyContextPath(String contextPath);
-
-
-	/**
-	 * Parse the URI for a request into a {@code RequestPath}.
-	 * @param uri the URI of the request
-	 * @param contextPath the contextPath portion of the URI path
-	 */
-	static RequestPath parse(URI uri, @Nullable String contextPath) {
-		return parse(uri.getRawPath(), contextPath);
-	}
-
-	/**
-	 * Variant of {@link #parse(URI, String)} with the encoded
-	 * {@link URI#getRawPath() raw path}.
-	 * @param rawPath the path
-	 * @param contextPath the contextPath portion of the URI path
-	 * @since 5.3
-	 */
-	static RequestPath parse(String rawPath, @Nullable String contextPath) {
-		return new DefaultRequestPath(rawPath, contextPath);
-	}
 
 }

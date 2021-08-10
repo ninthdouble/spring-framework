@@ -16,9 +16,9 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.util.ResourceBundle;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.ResourceBundle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

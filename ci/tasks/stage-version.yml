@@ -1,10 +1,10 @@
 ---
 platform: linux
 inputs:
-- name: git-repo
+  - name: git-repo
 outputs:
-- name: stage-git-repo
-- name: distribution-repository
+  - name: stage-git-repo
+  - name: distribution-repository
 params:
   RELEASE_TYPE:
   CI: true
@@ -12,6 +12,6 @@ params:
   GRADLE_ENTERPRISE_CACHE_PASSWORD:
   GRADLE_ENTERPRISE_URL: https://ge.spring.io
 caches:
-- path: gradle
+  - path: gradle
 run:
   path: git-repo/ci/scripts/stage-version.sh

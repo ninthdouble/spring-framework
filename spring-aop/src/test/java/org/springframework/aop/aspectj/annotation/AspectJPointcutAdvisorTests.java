@@ -17,14 +17,13 @@
 package org.springframework.aop.aspectj.annotation;
 
 import org.junit.jupiter.api.Test;
-import test.aop.PerTargetAspect;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutTests;
 import org.springframework.aop.aspectj.annotation.AbstractAspectJAdvisorFactoryTests.ExceptionThrowingAspect;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.beans.testfixture.beans.TestBean;
+import test.aop.PerTargetAspect;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

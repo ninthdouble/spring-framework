@@ -16,18 +16,9 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -37,11 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.bind.support.WebExchangeDataBinder;
@@ -52,6 +39,14 @@ import org.springframework.web.server.WebSession;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -65,12 +60,10 @@ import static org.mockito.Mockito.mock;
 public class ModelInitializerTests {
 
 	private static final Duration TIMEOUT = Duration.ofMillis(5000);
-
-
-	private ModelInitializer modelInitializer;
-
+	private static final ReflectionUtils.MethodFilter BINDER_METHODS = method ->
+			AnnotationUtils.findAnnotation(method, InitBinder.class) != null;
 	private final ServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/path"));
-
+	private ModelInitializer modelInitializer;
 
 	@BeforeEach
 	public void setup() {
@@ -84,7 +77,6 @@ public class ModelInitializerTests {
 
 		this.modelInitializer = new ModelInitializer(methodResolver, adapterRegistry);
 	}
-
 
 	@Test
 	public void initBinderMethod() {
@@ -178,7 +170,7 @@ public class ModelInitializerTests {
 		HandlerMethod handlerMethod = new HandlerMethod(controller, method);
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				this.modelInitializer.initModel(handlerMethod, context, this.exchange).block(TIMEOUT))
-			.withMessage("Required attribute 'missing-bean' is missing.");
+				.withMessage("Required attribute 'missing-bean' is missing.");
 	}
 
 	@Test
@@ -202,7 +194,6 @@ public class ModelInitializerTests {
 		assertThat(session.getAttributes().size()).isEqualTo(0);
 	}
 
-
 	private InitBinderBindingContext getBindingContext(Object controller) {
 		List<SyncInvocableHandlerMethod> binderMethods =
 				MethodIntrospector.selectMethods(controller.getClass(), BINDER_METHODS)
@@ -213,7 +204,6 @@ public class ModelInitializerTests {
 		WebBindingInitializer bindingInitializer = new ConfigurableWebBindingInitializer();
 		return new InitBinderBindingContext(bindingInitializer, binderMethods);
 	}
-
 
 	@SuppressWarnings("unused")
 	@SessionAttributes({"bean", "missing-bean"})
@@ -263,13 +253,14 @@ public class ModelInitializerTests {
 		}
 
 		@GetMapping
-		public void handleGet() {}
+		public void handleGet() {
+		}
 
 		@PostMapping
-		public void handlePost(@ModelAttribute("missing-bean") TestBean testBean) {}
+		public void handlePost(@ModelAttribute("missing-bean") TestBean testBean) {
+		}
 
 	}
-
 
 	private static class TestBean {
 
@@ -288,9 +279,5 @@ public class ModelInitializerTests {
 			return "TestBean[name=" + this.name + "]";
 		}
 	}
-
-
-	private static final ReflectionUtils.MethodFilter BINDER_METHODS = method ->
-			AnnotationUtils.findAnnotation(method, InitBinder.class) != null;
 
 }

@@ -16,27 +16,9 @@
 
 package org.springframework.beans;
 
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URI;
-import java.net.URL;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.beans.testfixture.beans.DerivedTestBean;
@@ -46,9 +28,16 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceEditor;
 import org.springframework.lang.Nullable;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.*;
+import java.net.URI;
+import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link BeanUtils}.
@@ -74,7 +63,8 @@ class BeanUtilsTests {
 				BeanUtils.instantiateClass(CustomDateEditor.class));
 	}
 
-	@Test  // gh-22531
+	@Test
+		// gh-22531
 	void instantiateClassWithOptionalNullableType() throws NoSuchMethodException {
 		Constructor<BeanWithNullableTypes> ctor = BeanWithNullableTypes.class.getDeclaredConstructor(
 				Integer.class, Boolean.class, String.class);
@@ -84,7 +74,8 @@ class BeanUtilsTests {
 		assertThat(bean.getValue()).isEqualTo("foo");
 	}
 
-	@Test  // gh-22531
+	@Test
+		// gh-22531
 	void instantiateClassWithOptionalPrimitiveType() throws NoSuchMethodException {
 		Constructor<BeanWithPrimitiveTypes> ctor = BeanWithPrimitiveTypes.class.getDeclaredConstructor(int.class, boolean.class, String.class);
 		BeanWithPrimitiveTypes bean = BeanUtils.instantiateClass(ctor, null, null, "foo");
@@ -93,7 +84,8 @@ class BeanUtilsTests {
 		assertThat(bean.getValue()).isEqualTo("foo");
 	}
 
-	@Test  // gh-22531
+	@Test
+		// gh-22531
 	void instantiateClassWithMoreArgsThanParameters() throws NoSuchMethodException {
 		Constructor<BeanWithPrimitiveTypes> ctor = BeanWithPrimitiveTypes.class.getDeclaredConstructor(int.class, boolean.class, String.class);
 		assertThatExceptionOfType(BeanInstantiationException.class).isThrownBy(() ->
@@ -200,17 +192,18 @@ class BeanUtilsTests {
 		assertThat(longListHolder.getList()).isEmpty();
 	}
 
-	@Test  // gh-26531
+	@Test
+		// gh-26531
 	void copyPropertiesIgnoresGenericsIfSourceOrTargetHasUnresolvableGenerics() throws Exception {
 		Order original = new Order("test", Arrays.asList("foo", "bar"));
 
 		// Create a Proxy that loses the generic type information for the getLineItems() method.
 		OrderSummary proxy = proxyOrder(original);
 		assertThat(OrderSummary.class.getDeclaredMethod("getLineItems").toGenericString())
-			.contains("java.util.List<java.lang.String>");
+				.contains("java.util.List<java.lang.String>");
 		assertThat(proxy.getClass().getDeclaredMethod("getLineItems").toGenericString())
-			.contains("java.util.List")
-			.doesNotContain("<java.lang.String>");
+				.contains("java.util.List")
+				.doesNotContain("<java.lang.String>");
 
 		// Ensure that our custom Proxy works as expected.
 		assertThat(proxy.getId()).isEqualTo("test");
@@ -352,33 +345,33 @@ class BeanUtilsTests {
 
 	@ParameterizedTest
 	@ValueSource(classes = {
-		boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class,
-		Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
-		DayOfWeek.class, String.class, LocalDateTime.class, Date.class, URI.class, URL.class, Locale.class, Class.class
+			boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class,
+			Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
+			DayOfWeek.class, String.class, LocalDateTime.class, Date.class, URI.class, URL.class, Locale.class, Class.class
 	})
 	void isSimpleValueType(Class<?> type) {
 		assertThat(BeanUtils.isSimpleValueType(type)).as("Type [" + type.getName() + "] should be a simple value type").isTrue();
 	}
 
 	@ParameterizedTest
-	@ValueSource(classes = { int[].class, Object.class, List.class, void.class, Void.class })
+	@ValueSource(classes = {int[].class, Object.class, List.class, void.class, Void.class})
 	void isNotSimpleValueType(Class<?> type) {
 		assertThat(BeanUtils.isSimpleValueType(type)).as("Type [" + type.getName() + "] should not be a simple value type").isFalse();
 	}
 
 	@ParameterizedTest
 	@ValueSource(classes = {
-		boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class,
-		Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
-		DayOfWeek.class, String.class, LocalDateTime.class, Date.class, URI.class, URL.class, Locale.class, Class.class,
-		boolean[].class, Boolean[].class, LocalDateTime[].class, Date[].class
+			boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class,
+			Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
+			DayOfWeek.class, String.class, LocalDateTime.class, Date.class, URI.class, URL.class, Locale.class, Class.class,
+			boolean[].class, Boolean[].class, LocalDateTime[].class, Date[].class
 	})
 	void isSimpleProperty(Class<?> type) {
 		assertThat(BeanUtils.isSimpleProperty(type)).as("Type [" + type.getName() + "] should be a simple property").isTrue();
 	}
 
 	@ParameterizedTest
-	@ValueSource(classes = { Object.class, List.class, void.class, Void.class })
+	@ValueSource(classes = {Object.class, List.class, void.class, Void.class})
 	void isNotSimpleProperty(Class<?> type) {
 		assertThat(BeanUtils.isSimpleProperty(type)).as("Type [" + type.getName() + "] should not be a simple property").isFalse();
 	}
@@ -387,6 +380,28 @@ class BeanUtilsTests {
 		assertThat(BeanUtils.resolveSignature(signature, MethodSignatureBean.class)).isEqualTo(desiredMethod);
 	}
 
+	private OrderSummary proxyOrder(Order order) {
+		return (OrderSummary) Proxy.newProxyInstance(getClass().getClassLoader(),
+				new Class<?>[]{OrderSummary.class}, new OrderInvocationHandler(order));
+	}
+
+	private interface MapEntry<K, V> {
+
+		K getKey();
+
+		void setKey(V value);
+
+		V getValue();
+
+		void setValue(V value);
+	}
+
+	private interface OrderSummary {
+
+		String getId();
+
+		List<String> getLineItems();
+	}
 
 	@SuppressWarnings("unused")
 	private static class IntegerListHolder1 {
@@ -430,7 +445,6 @@ class BeanUtilsTests {
 		}
 	}
 
-
 	@SuppressWarnings("unused")
 	private static class NameAndSpecialProperty {
 
@@ -438,23 +452,22 @@ class BeanUtilsTests {
 
 		private int specialProperty;
 
-		public void setName(String name) {
-			this.name = name;
-		}
-
 		public String getName() {
 			return this.name;
 		}
 
-		public void setSpecialProperty(int specialProperty) {
-			this.specialProperty = specialProperty;
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public int getSpecialProperty() {
 			return specialProperty;
 		}
-	}
 
+		public void setSpecialProperty(int specialProperty) {
+			this.specialProperty = specialProperty;
+		}
+	}
 
 	@SuppressWarnings("unused")
 	private static class InvalidProperty {
@@ -467,39 +480,38 @@ class BeanUtilsTests {
 
 		private boolean flag2;
 
-		public void setName(String name) {
-			this.name = name;
-		}
-
 		public String getName() {
 			return this.name;
 		}
 
-		public void setValue(int value) {
-			this.value = Integer.toString(value);
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public String getValue() {
 			return this.value;
 		}
 
-		public void setFlag1(boolean flag1) {
-			this.flag1 = flag1;
+		public void setValue(int value) {
+			this.value = Integer.toString(value);
 		}
 
 		public Boolean getFlag1() {
 			return this.flag1;
 		}
 
-		public void setFlag2(Boolean flag2) {
-			this.flag2 = flag2;
+		public void setFlag1(boolean flag1) {
+			this.flag1 = flag1;
 		}
 
 		public boolean getFlag2() {
 			return this.flag2;
 		}
-	}
 
+		public void setFlag2(Boolean flag2) {
+			this.flag2 = flag2;
+		}
+	}
 
 	@SuppressWarnings("unused")
 	private static class ContainerBean {
@@ -515,7 +527,6 @@ class BeanUtilsTests {
 		}
 	}
 
-
 	@SuppressWarnings("unused")
 	private static class ContainedBean {
 
@@ -529,7 +540,6 @@ class BeanUtilsTests {
 			this.name = name;
 		}
 	}
-
 
 	@SuppressWarnings("unused")
 	private static class MethodSignatureBean {
@@ -555,19 +565,6 @@ class BeanUtilsTests {
 		public void doSomethingWithAMultiDimensionalArray(String[][] strings) {
 		}
 	}
-
-
-	private interface MapEntry<K, V> {
-
-		K getKey();
-
-		void setKey(V value);
-
-		V getValue();
-
-		void setValue(V value);
-	}
-
 
 	private static class Bean implements MapEntry<String, String> {
 
@@ -697,20 +694,6 @@ class BeanUtilsTests {
 		}
 	}
 
-	private interface OrderSummary {
-
-		String getId();
-
-		List<String> getLineItems();
-	}
-
-
-	private OrderSummary proxyOrder(Order order) {
-		return (OrderSummary) Proxy.newProxyInstance(getClass().getClassLoader(),
-			new Class<?>[] { OrderSummary.class }, new OrderInvocationHandler(order));
-	}
-
-
 	private static class OrderInvocationHandler implements InvocationHandler {
 
 		private final Order order;
@@ -726,8 +709,7 @@ class BeanUtilsTests {
 				// Ignore args since OrderSummary doesn't declare any methods with arguments,
 				// and we're not supporting equals(Object), etc.
 				return Order.class.getDeclaredMethod(method.getName()).invoke(this.order);
-			}
-			catch (InvocationTargetException ex) {
+			} catch (InvocationTargetException ex) {
 				throw ex.getTargetException();
 			}
 		}

@@ -16,28 +16,8 @@
 
 package org.springframework.core.annotation;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.Resource;
-import javax.annotation.meta.When;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.annotation.AnnotationUtilsTests.ExtendsBaseClassWithGenericAnnotatedMethod;
 import org.springframework.core.annotation.AnnotationUtilsTests.ImplementsInterfaceWithGenericAnnotatedMethod;
 import org.springframework.core.annotation.AnnotationUtilsTests.WebController;
@@ -48,22 +28,25 @@ import org.springframework.lang.NonNullApi;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MultiValueMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.Resource;
+import javax.annotation.meta.When;
+import java.lang.annotation.*;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.springframework.core.annotation.AnnotatedElementUtils.findAllMergedAnnotations;
-import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
-import static org.springframework.core.annotation.AnnotatedElementUtils.getAllAnnotationAttributes;
-import static org.springframework.core.annotation.AnnotatedElementUtils.getAllMergedAnnotations;
-import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotation;
-import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
-import static org.springframework.core.annotation.AnnotatedElementUtils.getMetaAnnotationTypes;
-import static org.springframework.core.annotation.AnnotatedElementUtils.hasAnnotation;
-import static org.springframework.core.annotation.AnnotatedElementUtils.hasMetaAnnotationTypes;
-import static org.springframework.core.annotation.AnnotatedElementUtils.isAnnotated;
+import static org.springframework.core.annotation.AnnotatedElementUtils.*;
 import static org.springframework.core.annotation.AnnotationUtilsTests.asArray;
 
 /**
@@ -72,10 +55,10 @@ import static org.springframework.core.annotation.AnnotationUtilsTests.asArray;
  * @author Sam Brannen
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller
- * @since 4.0.3
  * @see AnnotationUtilsTests
  * @see MultipleComposedAnnotationsOnSingleAnnotatedElementTests
  * @see ComposedRepeatableAnnotationsTests
+ * @since 4.0.3
  */
 class AnnotatedElementUtilsTests {
 
@@ -225,7 +208,7 @@ class AnnotatedElementUtilsTests {
 
 	@Test
 	void getAllAnnotationAttributesFavorsInheritedComposedAnnotationsOverMoreLocallyDeclaredComposedAnnotations() {
-		MultiValueMap<String, Object> attributes = getAllAnnotationAttributes( SubSubClassWithInheritedComposedAnnotation.class, TX_NAME);
+		MultiValueMap<String, Object> attributes = getAllAnnotationAttributes(SubSubClassWithInheritedComposedAnnotation.class, TX_NAME);
 		assertThat(attributes).as("Annotation attributes map for @Transactional on SubSubClassWithInheritedComposedAnnotation").isNotNull();
 		assertThat(attributes.get("qualifier")).isEqualTo(asList("composed1"));
 	}
@@ -612,6 +595,7 @@ class AnnotatedElementUtilsTests {
 	/**
 	 * Bridge/bridged method setup code copied from
 	 * {@link org.springframework.core.BridgeMethodResolverTests#withGenericParameter()}.
+	 *
 	 * @since 4.2
 	 */
 	@Test
@@ -624,8 +608,7 @@ class AnnotatedElementUtilsTests {
 			if ("getFor".equals(method.getName()) && !method.getParameterTypes()[0].equals(Integer.class)) {
 				if (method.getReturnType().equals(Object.class)) {
 					bridgeMethod = method;
-				}
-				else {
+				} else {
 					bridgedMethod = method;
 				}
 			}
@@ -688,8 +671,8 @@ class AnnotatedElementUtilsTests {
 	}
 
 	/**
-	 * @since 5.2.1
 	 * @see <a href="https://github.com/spring-projects/spring-framework/issues/23767">#23767</a>
+	 * @since 5.2.1
 	 */
 	@Test
 	void findMergedAnnotationAttributesOnMethodWithComposedMetaTransactionalAnnotation() throws Exception {
@@ -702,8 +685,8 @@ class AnnotatedElementUtilsTests {
 	}
 
 	/**
-	 * @since 5.2.1
 	 * @see <a href="https://github.com/spring-projects/spring-framework/issues/23767">#23767</a>
+	 * @since 5.2.1
 	 */
 	@Test
 	void findMergedAnnotationOnMethodWithComposedMetaTransactionalAnnotation() throws Exception {
@@ -716,8 +699,8 @@ class AnnotatedElementUtilsTests {
 	}
 
 	/**
-	 * @since 5.2.1
 	 * @see <a href="https://github.com/spring-projects/spring-framework/issues/23767">#23767</a>
+	 * @since 5.2.1
 	 */
 	@Test
 	void findMergedAnnotationAttributesOnClassWithComposedMetaTransactionalAnnotation() throws Exception {
@@ -730,8 +713,8 @@ class AnnotatedElementUtilsTests {
 	}
 
 	/**
-	 * @since 5.2.1
 	 * @see <a href="https://github.com/spring-projects/spring-framework/issues/23767">#23767</a>
+	 * @since 5.2.1
 	 */
 	@Test
 	void findMergedAnnotationOnClassWithComposedMetaTransactionalAnnotation() throws Exception {
@@ -810,7 +793,7 @@ class AnnotatedElementUtilsTests {
 		assertThat(contextConfig.locations()).as("locations for " + element).isEqualTo(EMPTY);
 		// 'value' in @SpringAppConfig should not override 'value' in @ContextConfig
 		assertThat(contextConfig.value()).as("value for " + element).isEqualTo(EMPTY);
-		assertThat(contextConfig.classes()).as("classes for " + element).isEqualTo(new Class<?>[] {Number.class});
+		assertThat(contextConfig.classes()).as("classes for " + element).isEqualTo(new Class<?>[]{Number.class});
 	}
 
 	@Test
@@ -870,21 +853,24 @@ class AnnotatedElementUtilsTests {
 		assertThat(allMergedAnnotations.size()).isEqualTo(1);
 	}
 
-	@Test  // SPR-16060
+	@Test
+		// SPR-16060
 	void findMethodAnnotationFromGenericInterface() throws Exception {
 		Method method = ImplementsInterfaceWithGenericAnnotatedMethod.class.getMethod("foo", String.class);
 		Order order = findMergedAnnotation(method, Order.class);
 		assertThat(order).isNotNull();
 	}
 
-	@Test  // SPR-17146
+	@Test
+		// SPR-17146
 	void findMethodAnnotationFromGenericSuperclass() throws Exception {
 		Method method = ExtendsBaseClassWithGenericAnnotatedMethod.class.getMethod("foo", String.class);
 		Order order = findMergedAnnotation(method, Order.class);
 		assertThat(order).isNotNull();
 	}
 
-	@Test // gh-22655
+	@Test
+		// gh-22655
 	void forAnnotationsCreatesCopyOfArrayOnEachCall() {
 		AnnotatedElement element = AnnotatedElementUtils.forAnnotations(ForAnnotationsClass.class.getDeclaredAnnotations());
 		// Trigger the NPE as originally reported in the bug
@@ -894,7 +880,8 @@ class AnnotatedElementUtilsTests {
 		assertThat(element.getDeclaredAnnotations()).isNotSameAs(element.getDeclaredAnnotations());
 	}
 
-	@Test // gh-22703
+	@Test
+		// gh-22703
 	void getMergedAnnotationOnThreeDeepMetaWithValue() {
 		ValueAttribute annotation = AnnotatedElementUtils.getMergedAnnotation(
 				ValueAttributeMetaMetaClass.class, ValueAttribute.class);
@@ -903,6 +890,10 @@ class AnnotatedElementUtilsTests {
 
 
 	// -------------------------------------------------------------------------
+
+	@ComposedMyAliasedTransactional
+	void composedTransactionalMethod() {
+	}
 
 	@MetaCycle3
 	@Retention(RetentionPolicy.RUNTIME)
@@ -920,10 +911,6 @@ class AnnotatedElementUtilsTests {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	@interface MetaCycle3 {
-	}
-
-	@MetaCycle3
-	static class MetaCycleAnnotatedClass {
 	}
 
 	// -------------------------------------------------------------------------
@@ -1188,7 +1175,7 @@ class AnnotatedElementUtilsTests {
 	 * requires a value for the aliased 'locations', this does not result in
 	 * an error since 'locations' effectively <em>shadows</em> the 'value'
 	 * attribute (which cannot be set via the composed annotation anyway).
-	 *
+	 * <p>
 	 * If 'value' were not shadowed, such a declaration would not make sense.
 	 */
 	@ContextConfig(value = "duplicateDeclaration")
@@ -1272,6 +1259,73 @@ class AnnotatedElementUtilsTests {
 
 	// -------------------------------------------------------------------------
 
+	@Transactional
+	static interface InterfaceWithInheritedAnnotation {
+
+		@Order
+		void handleFromInterface();
+	}
+
+	public interface GenericParameter<T> {
+
+		T getFor(Class<T> cls);
+	}
+
+	@Transactional
+	public interface InheritedAnnotationInterface {
+	}
+
+	public interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
+	}
+
+	public interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
+	}
+
+	@Order
+	public interface NonInheritedAnnotationInterface {
+	}
+
+	public interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
+	}
+
+	public interface SubSubNonInheritedAnnotationInterface extends SubNonInheritedAnnotationInterface {
+	}
+
+	interface TransactionalService {
+
+		@Transactional
+		@Nullable
+		Object doIt();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ValueAttribute {
+
+		String[] value();
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@ValueAttribute("FromValueAttributeMeta")
+	@interface ValueAttributeMeta {
+
+		@AliasFor("alias")
+		String[] value() default {};
+
+		@AliasFor("value")
+		String[] alias() default {};
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@ValueAttributeMeta("FromValueAttributeMetaMeta")
+	@interface ValueAttributeMetaMeta {
+	}
+
+	@MetaCycle3
+	static class MetaCycleAnnotatedClass {
+	}
+
 	static class NonAnnotatedClass {
 	}
 
@@ -1288,10 +1342,6 @@ class AnnotatedElementUtilsTests {
 
 	@AliasedTransactionalComponent
 	static class AliasedTransactionalComponentClass {
-	}
-
-	@ComposedMyAliasedTransactional
-	void composedTransactionalMethod() {
 	}
 
 	@ComposedMyAliasedTransactional
@@ -1337,13 +1387,6 @@ class AnnotatedElementUtilsTests {
 	static class TxFromMultipleComposedAnnotations {
 	}
 
-	@Transactional
-	static interface InterfaceWithInheritedAnnotation {
-
-		@Order
-		void handleFromInterface();
-	}
-
 	static abstract class AbstractClassWithInheritedAnnotation<T> implements InterfaceWithInheritedAnnotation {
 
 		@Transactional
@@ -1369,11 +1412,6 @@ class AnnotatedElementUtilsTests {
 		}
 	}
 
-	public interface GenericParameter<T> {
-
-		T getFor(Class<T> cls);
-	}
-
 	@SuppressWarnings("unused")
 	private static class StringGenericParameter implements GenericParameter<String> {
 
@@ -1386,26 +1424,6 @@ class AnnotatedElementUtilsTests {
 		public String getFor(Integer integer) {
 			return "foo";
 		}
-	}
-
-	@Transactional
-	public interface InheritedAnnotationInterface {
-	}
-
-	public interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
-	}
-
-	public interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
-	}
-
-	@Order
-	public interface NonInheritedAnnotationInterface {
-	}
-
-	public interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
-	}
-
-	public interface SubSubNonInheritedAnnotationInterface extends SubNonInheritedAnnotationInterface {
 	}
 
 	@ConventionBasedComposedContextConfig(locations = "explicitDeclaration")
@@ -1501,11 +1519,8 @@ class AnnotatedElementUtilsTests {
 	static class ResourceHolder {
 	}
 
-	interface TransactionalService {
-
-		@Transactional
-		@Nullable
-		Object doIt();
+	@ValueAttributeMetaMeta
+	static class ValueAttributeMetaMetaClass {
 	}
 
 	class TransactionalServiceImpl implements TransactionalService {
@@ -1520,34 +1535,6 @@ class AnnotatedElementUtilsTests {
 	@Deprecated
 	@ComponentScan
 	class ForAnnotationsClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ValueAttribute {
-
-		String[] value();
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@ValueAttribute("FromValueAttributeMeta")
-	@interface ValueAttributeMeta {
-
-		@AliasFor("alias")
-		String[] value() default {};
-
-		@AliasFor("value")
-		String[] alias() default {};
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@ValueAttributeMeta("FromValueAttributeMetaMeta")
-	@interface ValueAttributeMetaMeta {
-	}
-
-	@ValueAttributeMetaMeta
-	static class ValueAttributeMetaMetaClass {
 	}
 
 }

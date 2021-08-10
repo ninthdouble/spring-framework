@@ -16,13 +16,12 @@
 
 package org.springframework.aop.support;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

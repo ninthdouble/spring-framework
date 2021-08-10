@@ -16,23 +16,8 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.jstl.core.Config;
-import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -51,6 +36,19 @@ import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockRequestDispatcher;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -101,8 +99,8 @@ public class ViewResolverTests {
 	@Test
 	public void urlBasedViewResolverOverridesCustomRequestContextAttributeWithNonNullValue() throws Exception {
 		assertThat(new TestView().getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated directly")
-			.isEqualTo("testRequestContext");
+				.as("requestContextAttribute when instantiated directly")
+				.isEqualTo("testRequestContext");
 
 		UrlBasedViewResolver vr = new UrlBasedViewResolver();
 		vr.setViewClass(TestView.class);
@@ -113,15 +111,15 @@ public class ViewResolverTests {
 		View view = vr.resolveViewName("example", Locale.getDefault());
 		assertThat(view).isInstanceOf(TestView.class);
 		assertThat(((TestView) view).getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
-			.isEqualTo("viewResolverRequestContext");
+				.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
+				.isEqualTo("viewResolverRequestContext");
 	}
 
 	@Test
 	public void urlBasedViewResolverDoesNotOverrideCustomRequestContextAttributeWithNull() throws Exception {
 		assertThat(new TestView().getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated directly")
-			.isEqualTo("testRequestContext");
+				.as("requestContextAttribute when instantiated directly")
+				.isEqualTo("testRequestContext");
 
 		UrlBasedViewResolver vr = new UrlBasedViewResolver();
 		vr.setViewClass(TestView.class);
@@ -131,8 +129,8 @@ public class ViewResolverTests {
 		View view = vr.resolveViewName("example", Locale.getDefault());
 		assertThat(view).isInstanceOf(TestView.class);
 		assertThat(((TestView) view).getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
-			.isEqualTo("testRequestContext");
+				.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
+				.isEqualTo("testRequestContext");
 	}
 
 	@Test
@@ -306,7 +304,7 @@ public class ViewResolverTests {
 		Map<String, Object> map = new HashMap<>();
 		map.put("key2", 2);
 		vr.setAttributesMap(map);
-		vr.setExposedContextBeanNames(new String[] {"myBean2"});
+		vr.setExposedContextBeanNames(new String[]{"myBean2"});
 		vr.setApplicationContext(this.wac);
 
 		HttpServletRequest request = new MockHttpServletRequest(this.sc) {

@@ -16,28 +16,8 @@
 
 package org.springframework.jdbc.core;
 
-import java.sql.BatchUpdateException;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -52,17 +32,16 @@ import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
 
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Mock object based tests for JdbcTemplate.
@@ -144,7 +123,7 @@ public class JdbcTemplateTests {
 		Dispatcher d = new Dispatcher(idParam, sql);
 		assertThatExceptionOfType(UncategorizedSQLException.class).isThrownBy(() ->
 				this.template.update(d))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.preparedStatement).setInt(1, idParam);
 		verify(this.preparedStatement).close();
 		verify(this.connection, atLeastOnce()).close();
@@ -170,7 +149,7 @@ public class JdbcTemplateTests {
 	public void testStringsWithPreparedStatementSetter() throws Exception {
 		final Integer argument = 99;
 		doTestStrings(null, null, null, argument, (template, sql, rch) ->
-			template.query(sql, ps -> ps.setObject(1, argument), rch));
+				template.query(sql, ps -> ps.setObject(1, argument), rch));
 	}
 
 	@Test
@@ -185,21 +164,23 @@ public class JdbcTemplateTests {
 	public void testStringsWithPreparedStatementArgs() throws Exception {
 		final Integer argument = 99;
 		doTestStrings(null, null, null, argument,
-				(template, sql, rch) -> template.query(sql, new Object[] {argument}, rch));
+				(template, sql, rch) -> template.query(sql, new Object[]{argument}, rch));
 	}
 
 	private void doTestStrings(Integer fetchSize, Integer maxRows, Integer queryTimeout,
-			Object argument, JdbcTemplateCallback jdbcTemplateCallback) throws Exception {
+							   Object argument, JdbcTemplateCallback jdbcTemplateCallback) throws Exception {
 
 		String sql = "SELECT FORENAME FROM CUSTMR";
 		String[] results = {"rod", "gary", " portia"};
 
 		class StringHandler implements RowCallbackHandler {
 			private List<String> list = new ArrayList<>();
+
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				this.list.add(rs.getString(1));
 			}
+
 			public String[] getStrings() {
 				return StringUtils.toStringArray(this.list);
 			}
@@ -330,9 +311,8 @@ public class JdbcTemplateTests {
 					this.template.query(sql, (RowCallbackHandler) rs -> {
 						throw runtimeException;
 					}))
-				.withMessage(runtimeException.getMessage());
-		}
-		finally {
+					.withMessage(runtimeException.getMessage());
+		} finally {
 			verify(this.resultSet).close();
 			verify(this.preparedStatement).close();
 			verify(this.connection).close();
@@ -384,7 +364,7 @@ public class JdbcTemplateTests {
 
 		assertThatExceptionOfType(DataAccessException.class).isThrownBy(() ->
 				this.template.update(sql))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.statement).close();
 		verify(this.connection, atLeastOnce()).close();
 	}
@@ -409,7 +389,7 @@ public class JdbcTemplateTests {
 		final String[] sql = {"UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = 1",
 				"UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = 2"};
 
-		given(this.statement.executeBatch()).willReturn(new int[] {1, 1});
+		given(this.statement.executeBatch()).willReturn(new int[]{1, 1});
 		mockDatabaseMetaData(true);
 		given(this.connection.createStatement()).willReturn(this.statement);
 
@@ -428,15 +408,14 @@ public class JdbcTemplateTests {
 	public void testBatchUpdateWithBatchFailure() throws Exception {
 		final String[] sql = {"A", "B", "C", "D"};
 		given(this.statement.executeBatch()).willThrow(
-				new BatchUpdateException(new int[] {1, Statement.EXECUTE_FAILED, 1, Statement.EXECUTE_FAILED}));
+				new BatchUpdateException(new int[]{1, Statement.EXECUTE_FAILED, 1, Statement.EXECUTE_FAILED}));
 		mockDatabaseMetaData(true);
 		given(this.connection.createStatement()).willReturn(this.statement);
 
 		JdbcTemplate template = new JdbcTemplate(this.dataSource, false);
 		try {
 			template.batchUpdate(sql);
-		}
-		catch (UncategorizedSQLException ex) {
+		} catch (UncategorizedSQLException ex) {
 			assertThat(ex.getSql()).isEqualTo("B; D");
 		}
 	}
@@ -485,8 +464,8 @@ public class JdbcTemplateTests {
 	@Test
 	public void testBatchUpdateWithPreparedStatement() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
-		final int[] rowsAffected = new int[] {1, 2};
+		final int[] ids = new int[]{100, 200};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected);
 		mockDatabaseMetaData(true);
@@ -496,6 +475,7 @@ public class JdbcTemplateTests {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				ps.setInt(1, ids[i]);
 			}
+
 			@Override
 			public int getBatchSize() {
 				return ids.length;
@@ -519,8 +499,8 @@ public class JdbcTemplateTests {
 	@Test
 	public void testInterruptibleBatchUpdate() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
-		final int[] rowsAffected = new int[] {1, 2};
+		final int[] ids = new int[]{100, 200};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected);
 		mockDatabaseMetaData(true);
@@ -533,10 +513,12 @@ public class JdbcTemplateTests {
 							ps.setInt(1, ids[i]);
 						}
 					}
+
 					@Override
 					public int getBatchSize() {
 						return 1000;
 					}
+
 					@Override
 					public boolean isBatchExhausted(int i) {
 						return (i >= ids.length);
@@ -560,8 +542,8 @@ public class JdbcTemplateTests {
 	@Test
 	public void testInterruptibleBatchUpdateWithBaseClass() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
-		final int[] rowsAffected = new int[] {1, 2};
+		final int[] ids = new int[]{100, 200};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected);
 		mockDatabaseMetaData(true);
@@ -573,8 +555,7 @@ public class JdbcTemplateTests {
 						if (i < ids.length) {
 							ps.setInt(1, ids[i]);
 							return true;
-						}
-						else {
+						} else {
 							return false;
 						}
 					}
@@ -597,8 +578,8 @@ public class JdbcTemplateTests {
 	@Test
 	public void testInterruptibleBatchUpdateWithBaseClassAndNoBatchSupport() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
-		final int[] rowsAffected = new int[] {1, 2};
+		final int[] ids = new int[]{100, 200};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeUpdate()).willReturn(rowsAffected[0], rowsAffected[1]);
 		mockDatabaseMetaData(false);
@@ -610,8 +591,7 @@ public class JdbcTemplateTests {
 						if (i < ids.length) {
 							ps.setInt(1, ids[i]);
 							return true;
-						}
-						else {
+						} else {
 							return false;
 						}
 					}
@@ -634,8 +614,8 @@ public class JdbcTemplateTests {
 	@Test
 	public void testBatchUpdateWithPreparedStatementAndNoBatchSupport() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
-		final int[] rowsAffected = new int[] {1, 2};
+		final int[] ids = new int[]{100, 200};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeUpdate()).willReturn(rowsAffected[0], rowsAffected[1]);
 
@@ -644,6 +624,7 @@ public class JdbcTemplateTests {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				ps.setInt(1, ids[i]);
 			}
+
 			@Override
 			public int getBatchSize() {
 				return ids.length;
@@ -665,7 +646,7 @@ public class JdbcTemplateTests {
 	@Test
 	public void testBatchUpdateFails() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
-		final int[] ids = new int[] {100, 200};
+		final int[] ids = new int[]{100, 200};
 		SQLException sqlException = new SQLException();
 
 		given(this.preparedStatement.executeBatch()).willThrow(sqlException);
@@ -676,6 +657,7 @@ public class JdbcTemplateTests {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				ps.setInt(1, ids[i]);
 			}
+
 			@Override
 			public int getBatchSize() {
 				return ids.length;
@@ -685,9 +667,8 @@ public class JdbcTemplateTests {
 		try {
 			assertThatExceptionOfType(DataAccessException.class).isThrownBy(() ->
 					this.template.batchUpdate(sql, setter))
-				.withCause(sqlException);
-		}
-		finally {
+					.withCause(sqlException);
+		} finally {
 			verify(this.preparedStatement, times(2)).addBatch();
 			verify(this.preparedStatement).setInt(1, ids[0]);
 			verify(this.preparedStatement).setInt(1, ids[1]);
@@ -709,9 +690,9 @@ public class JdbcTemplateTests {
 	public void testBatchUpdateWithListOfObjectArrays() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
 		final List<Object[]> ids = new ArrayList<>(2);
-		ids.add(new Object[] {100});
-		ids.add(new Object[] {200});
-		final int[] rowsAffected = new int[] {1, 2};
+		ids.add(new Object[]{100});
+		ids.add(new Object[]{200});
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected);
 		mockDatabaseMetaData(true);
@@ -733,10 +714,10 @@ public class JdbcTemplateTests {
 	public void testBatchUpdateWithListOfObjectArraysPlusTypeInfo() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
 		final List<Object[]> ids = new ArrayList<>(2);
-		ids.add(new Object[] {100});
-		ids.add(new Object[] {200});
-		final int[] sqlTypes = new int[] {Types.NUMERIC};
-		final int[] rowsAffected = new int[] {1, 2};
+		ids.add(new Object[]{100});
+		ids.add(new Object[]{200});
+		final int[] sqlTypes = new int[]{Types.NUMERIC};
+		final int[] rowsAffected = new int[]{1, 2};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected);
 		mockDatabaseMetaData(true);
@@ -757,8 +738,8 @@ public class JdbcTemplateTests {
 	public void testBatchUpdateWithCollectionOfObjects() throws Exception {
 		final String sql = "UPDATE NOSUCHTABLE SET DATE_DISPATCHED = SYSDATE WHERE ID = ?";
 		final List<Integer> ids = Arrays.asList(100, 200, 300);
-		final int[] rowsAffected1 = new int[] {1, 2};
-		final int[] rowsAffected2 = new int[] {3};
+		final int[] rowsAffected1 = new int[]{1, 2};
+		final int[] rowsAffected2 = new int[]{3};
 
 		given(this.preparedStatement.executeBatch()).willReturn(rowsAffected1, rowsAffected2);
 		mockDatabaseMetaData(true);
@@ -790,7 +771,7 @@ public class JdbcTemplateTests {
 
 		assertThatExceptionOfType(CannotGetJdbcConnectionException.class).isThrownBy(() ->
 				template.query("SELECT ID, FORENAME FROM CUSTMR WHERE ID < 3", rcch))
-			.withCause(sqlException);
+				.withCause(sqlException);
 	}
 
 	@Test
@@ -805,7 +786,7 @@ public class JdbcTemplateTests {
 
 		assertThatExceptionOfType(CannotGetJdbcConnectionException.class).isThrownBy(() ->
 				this.template.query("SELECT ID, FORENAME FROM CUSTMR WHERE ID < 3", rcch))
-			.withCause(sqlException);
+				.withCause(sqlException);
 	}
 
 	@Test
@@ -838,15 +819,14 @@ public class JdbcTemplateTests {
 		if (beanProperty) {
 			// This will get a connection.
 			this.template.setExceptionTranslator(new SQLErrorCodeSQLExceptionTranslator(this.dataSource));
-		}
-		else {
+		} else {
 			// This will cause creation of default SQL translator.
 			this.template.afterPropertiesSet();
 		}
 		RowCountCallbackHandler rcch = new RowCountCallbackHandler();
 		assertThatExceptionOfType(CannotGetJdbcConnectionException.class).isThrownBy(() ->
 				this.template.query("SELECT ID, FORENAME FROM CUSTMR WHERE ID < 3", rcch))
-			.withCause(sqlException);
+				.withCause(sqlException);
 	}
 
 	@Test
@@ -875,7 +855,7 @@ public class JdbcTemplateTests {
 		PreparedStatementSetter pss = ps -> ps.setString(1, name);
 		assertThatExceptionOfType(DataAccessException.class).isThrownBy(() ->
 				new JdbcTemplate(this.dataSource).update(sql, pss))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.preparedStatement).setString(1, name);
 		verify(this.preparedStatement).close();
 		verify(this.connection, atLeastOnce()).close();
@@ -913,7 +893,7 @@ public class JdbcTemplateTests {
 		ResultSetExtractor<Byte> extractor = rs -> rs.getByte(1);
 		assertThatExceptionOfType(SQLWarningException.class).isThrownBy(() ->
 				t.query(sql, extractor))
-			.withCause(warnings);
+				.withCause(warnings);
 		verify(this.resultSet).close();
 		verify(this.preparedStatement).close();
 		verify(this.connection).close();
@@ -952,7 +932,7 @@ public class JdbcTemplateTests {
 				this.template.query(sql, (RowCallbackHandler) rs -> {
 					throw sqlException;
 				}))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.resultSet).close();
 		verify(this.preparedStatement).close();
 		verify(this.connection, atLeastOnce()).close();
@@ -975,7 +955,7 @@ public class JdbcTemplateTests {
 				template.query(sql, (RowCallbackHandler) rs -> {
 					throw sqlException;
 				}))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.resultSet).close();
 		verify(this.preparedStatement).close();
 		verify(this.connection).close();
@@ -1005,7 +985,7 @@ public class JdbcTemplateTests {
 				template.query(sql, (RowCallbackHandler) rs -> {
 					throw sqlException;
 				}))
-			.withCause(sqlException);
+				.withCause(sqlException);
 		verify(this.resultSet).close();
 		verify(this.preparedStatement).close();
 		verify(this.connection).close();

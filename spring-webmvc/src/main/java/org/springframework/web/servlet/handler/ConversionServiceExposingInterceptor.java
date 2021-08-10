@@ -16,15 +16,14 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.io.IOException;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.util.Assert;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.core.convert.ConversionService;
-import org.springframework.util.Assert;
-import org.springframework.web.servlet.HandlerInterceptor;
+import java.io.IOException;
 
 /**
  * Interceptor that places the configured {@link ConversionService} in request scope
@@ -44,6 +43,7 @@ public class ConversionServiceExposingInterceptor implements HandlerInterceptor 
 
 	/**
 	 * Creates a new {@link ConversionServiceExposingInterceptor}.
+	 *
 	 * @param conversionService the conversion service to export to request scope when this interceptor is invoked
 	 */
 	public ConversionServiceExposingInterceptor(ConversionService conversionService) {

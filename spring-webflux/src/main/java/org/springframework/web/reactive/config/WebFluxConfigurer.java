@@ -39,15 +39,16 @@ import org.springframework.web.reactive.socket.server.WebSocketService;
  *
  * @author Brian Clozel
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see WebFluxConfigurationSupport
  * @see DelegatingWebFluxConfiguration
+ * @since 5.0
  */
 public interface WebFluxConfigurer {
 
 	/**
 	 * Configure how the content type requested for the response is resolved
 	 * when handling requests with annotated controllers.
+	 *
 	 * @param builder for configuring the resolvers to use
 	 */
 	default void configureContentTypeResolver(RequestedContentTypeResolverBuilder builder) {
@@ -62,6 +63,7 @@ public interface WebFluxConfigurer {
 	 * In such cases "global" CORS configuration declared here is
 	 * {@link org.springframework.web.cors.CorsConfiguration#combine(CorsConfiguration) combined}
 	 * with local CORS configuration defined on a controller method.
+	 *
 	 * @see CorsRegistry
 	 * @see CorsConfiguration#combine(CorsConfiguration)
 	 */
@@ -73,6 +75,7 @@ public interface WebFluxConfigurer {
 	 * <p>The configured path matching options will be used for mapping to
 	 * annotated controllers and also
 	 * {@link #addResourceHandlers(ResourceHandlerRegistry) static resources}.
+	 *
 	 * @param configurer the {@link PathMatchConfigurer} instance
 	 */
 	default void configurePathMatching(PathMatchConfigurer configurer) {
@@ -80,6 +83,7 @@ public interface WebFluxConfigurer {
 
 	/**
 	 * Add resource handlers for serving static resources.
+	 *
 	 * @see ResourceHandlerRegistry
 	 */
 	default void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -87,6 +91,7 @@ public interface WebFluxConfigurer {
 
 	/**
 	 * Configure resolvers for custom {@code @RequestMapping} method arguments.
+	 *
 	 * @param configurer to configurer to use
 	 */
 	default void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
@@ -99,6 +104,7 @@ public interface WebFluxConfigurer {
 	 * <p>By default, all built-in readers and writers are configured as long as
 	 * the corresponding 3rd party libraries such Jackson JSON, JAXB2, and others
 	 * are present on the classpath.
+	 *
 	 * @param configurer the configurer to customize readers and writers
 	 */
 	default void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
@@ -138,6 +144,7 @@ public interface WebFluxConfigurer {
 	 * {@link org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter}
 	 * with. This can be used to configure server-specific properties through the
 	 * {@link org.springframework.web.reactive.socket.server.RequestUpgradeStrategy}.
+	 *
 	 * @since 5.3
 	 */
 	@Nullable

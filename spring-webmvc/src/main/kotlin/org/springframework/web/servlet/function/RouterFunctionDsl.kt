@@ -59,7 +59,7 @@ fun router(routes: (RouterFunctionDsl.() -> Unit)) = RouterFunctionDsl(routes).b
  * @author Sebastien Deleuze
  * @since 5.2
  */
-class RouterFunctionDsl internal constructor (private val init: (RouterFunctionDsl.() -> Unit)) {
+class RouterFunctionDsl internal constructor(private val init: (RouterFunctionDsl.() -> Unit)) {
 
 	@PublishedApi
 	internal val builder = RouterFunctions.route()
@@ -696,7 +696,7 @@ class RouterFunctionDsl internal constructor (private val init: (RouterFunctionD
 	 * @since 5.2
 	 */
 	inline fun <reified E : Throwable> onError(noinline responseProvider: (Throwable, ServerRequest) -> ServerResponse) {
-		builder.onError({it is E}, responseProvider)
+		builder.onError({ it is E }, responseProvider)
 	}
 
 	/**
@@ -779,5 +779,5 @@ class RouterFunctionDsl internal constructor (private val init: (RouterFunctionD
 /**
  * Equivalent to [RouterFunction.and].
  */
-operator fun <T: ServerResponse> RouterFunction<T>.plus(other: RouterFunction<T>) =
+operator fun <T : ServerResponse> RouterFunction<T>.plus(other: RouterFunction<T>) =
 		this.and(other)

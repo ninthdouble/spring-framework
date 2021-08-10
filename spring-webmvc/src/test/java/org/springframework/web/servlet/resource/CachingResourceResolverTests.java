@@ -16,21 +16,20 @@
 
 package org.springframework.web.servlet.resource;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.resource.GzipSupport.GzippedFiles;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +48,9 @@ public class CachingResourceResolverTests {
 
 	private List<Resource> locations;
 
+	private static String resourceKey(String key) {
+		return CachingResourceResolver.RESOLVED_RESOURCE_CACHE_KEY_PREFIX + key;
+	}
 
 	@BeforeEach
 	public void setup() {
@@ -63,7 +65,6 @@ public class CachingResourceResolverTests {
 		this.locations = new ArrayList<>();
 		this.locations.add(new ClassPathResource("test/", getClass()));
 	}
-
 
 	@Test
 	public void resolveResourceInternal() {
@@ -127,7 +128,7 @@ public class CachingResourceResolverTests {
 		// 2. Resolve with Accept-Encoding
 
 		request = new MockHttpServletRequest("GET", file);
-		request.addHeader("Accept-Encoding",  "gzip ; a=b  , deflate ,  br  ; c=d ");
+		request.addHeader("Accept-Encoding", "gzip ; a=b  , deflate ,  br  ; c=d ");
 		expected = this.chain.resolveResource(request, file, this.locations);
 
 		cacheKey = resourceKey(file + "+encoding=br,gzip");
@@ -168,10 +169,6 @@ public class CachingResourceResolverTests {
 		request = new MockHttpServletRequest("GET", "bar.css");
 		request.addHeader("Accept-Encoding", "gzip");
 		assertThat(this.chain.resolveResource(request, "bar.css", this.locations)).isSameAs(gzipped);
-	}
-
-	private static String resourceKey(String key) {
-		return CachingResourceResolver.RESOLVED_RESOURCE_CACHE_KEY_PREFIX + key;
 	}
 
 }

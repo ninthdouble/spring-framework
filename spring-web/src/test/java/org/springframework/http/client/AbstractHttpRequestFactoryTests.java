@@ -16,15 +16,9 @@
 
 package org.springframework.http.client;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Locale;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
@@ -33,9 +27,12 @@ import org.springframework.http.StreamingHttpOutputMessage;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Arjen Poutsma
@@ -92,8 +89,7 @@ abstract class AbstractHttpRequestFactoryTests extends AbstractMockWebServerTest
 		if (request instanceof StreamingHttpOutputMessage) {
 			StreamingHttpOutputMessage streamingRequest = (StreamingHttpOutputMessage) request;
 			streamingRequest.setBody(outputStream -> StreamUtils.copy(body, outputStream));
-		}
-		else {
+		} else {
 			StreamUtils.copy(body, request.getBody());
 		}
 
@@ -118,8 +114,7 @@ abstract class AbstractHttpRequestFactoryTests extends AbstractMockWebServerTest
 				outputStream.flush();
 				outputStream.close();
 			});
-		}
-		else {
+		} else {
 			StreamUtils.copy(body, request.getBody());
 		}
 
@@ -135,11 +130,11 @@ abstract class AbstractHttpRequestFactoryTests extends AbstractMockWebServerTest
 		request.getHeaders().add("MyHeader", "value");
 		byte[] body = "Hello World".getBytes(StandardCharsets.UTF_8);
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() -> {
-				FileCopyUtils.copy(body, request.getBody());
-				try (ClientHttpResponse response = request.execute()) {
-					assertThat(response).isNotNull();
-					request.getHeaders().add("MyHeader", "value");
-				}
+			FileCopyUtils.copy(body, request.getBody());
+			try (ClientHttpResponse response = request.execute()) {
+				assertThat(response).isNotNull();
+				request.getHeaders().add("MyHeader", "value");
+			}
 		});
 	}
 
@@ -159,8 +154,7 @@ abstract class AbstractHttpRequestFactoryTests extends AbstractMockWebServerTest
 			// requires a body
 			try {
 				request.getBody().write(32);
-			}
-			catch (UnsupportedOperationException ex) {
+			} catch (UnsupportedOperationException ex) {
 				// probably a streaming request - let's simply ignore it
 			}
 		}

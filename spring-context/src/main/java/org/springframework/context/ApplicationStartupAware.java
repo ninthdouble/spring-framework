@@ -24,8 +24,8 @@ import org.springframework.core.metrics.ApplicationStartup;
  * of the {@link ApplicationStartup} that it runs with.
  *
  * @author Brian Clozel
- * @since 5.3
  * @see ApplicationContextAware
+ * @since 5.3
  */
 public interface ApplicationStartupAware extends Aware {
 
@@ -34,6 +34,7 @@ public interface ApplicationStartupAware extends Aware {
 	 * <p>Invoked after population of normal bean properties but before an init
 	 * callback like InitializingBean's afterPropertiesSet or a custom init-method.
 	 * Invoked before ApplicationContextAware's setApplicationContext.
+	 *
 	 * @param applicationStartup application startup to be used by this object
 	 */
 	void setApplicationStartup(ApplicationStartup applicationStartup);

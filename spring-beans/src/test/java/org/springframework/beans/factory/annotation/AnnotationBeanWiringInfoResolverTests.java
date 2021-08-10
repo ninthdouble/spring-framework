@@ -17,7 +17,6 @@
 package org.springframework.beans.factory.annotation;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.wiring.BeanWiringInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;

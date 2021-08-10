@@ -16,16 +16,10 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.codec.ByteBufferEncoder;
 import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.http.codec.EncoderHttpMessageWriter;
@@ -40,6 +34,11 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolverBuilder;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.web.testfixture.method.ResolvableMethod.on;
@@ -120,12 +119,13 @@ public class ResponseBodyResultHandlerTests {
 	}
 
 
-
 	@RestController
 	@SuppressWarnings("unused")
 	private static class TestRestController {
 
-		public Mono<Void> handleToMonoVoid() { return null;}
+		public Mono<Void> handleToMonoVoid() {
+			return null;
+		}
 
 		public String handleToString() {
 			return null;

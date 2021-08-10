@@ -16,15 +16,14 @@
 
 package org.springframework.web.jsf;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.beans.factory.support.StaticListableBeanFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

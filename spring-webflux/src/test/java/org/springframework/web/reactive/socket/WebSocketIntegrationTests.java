@@ -71,8 +71,7 @@ class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests {
 			Mono.fromRunnable(this::testEcho)
 					.retryWhen(Retry.max(3).filter(ex -> ex instanceof IllegalStateException))
 					.block();
-		}
-		else {
+		} else {
 			testEcho();
 		}
 	}
@@ -153,7 +152,8 @@ class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests {
 		this.client.execute(getUrl("/close"),
 				session -> {
 					logger.debug("Starting..");
-					session.closeStatus().subscribe(statusRef::set, statusRef::set, () -> {});
+					session.closeStatus().subscribe(statusRef::set, statusRef::set, () -> {
+					});
 					return session.receive()
 							.doOnNext(s -> logger.debug("inbound " + s))
 							.then()

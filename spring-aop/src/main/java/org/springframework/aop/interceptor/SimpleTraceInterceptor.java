@@ -18,7 +18,6 @@ package org.springframework.aop.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
-
 import org.springframework.util.Assert;
 
 /**
@@ -31,8 +30,8 @@ import org.springframework.util.Assert;
  *
  * @author Dmitriy Kopylenko
  * @author Juergen Hoeller
- * @since 1.2
  * @see CustomizableTraceInterceptor
+ * @since 1.2
  */
 @SuppressWarnings("serial")
 public class SimpleTraceInterceptor extends AbstractTraceInterceptor {
@@ -46,6 +45,7 @@ public class SimpleTraceInterceptor extends AbstractTraceInterceptor {
 	/**
 	 * Create a new SimpleTraceInterceptor with dynamic or static logger,
 	 * according to the given flag.
+	 *
 	 * @param useDynamicLogger whether to use a dynamic logger or a static logger
 	 * @see #setUseDynamicLogger
 	 */
@@ -62,8 +62,7 @@ public class SimpleTraceInterceptor extends AbstractTraceInterceptor {
 			Object rval = invocation.proceed();
 			writeToLog(logger, "Exiting " + invocationDescription);
 			return rval;
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			writeToLog(logger, "Exception thrown in " + invocationDescription, ex);
 			throw ex;
 		}
@@ -71,6 +70,7 @@ public class SimpleTraceInterceptor extends AbstractTraceInterceptor {
 
 	/**
 	 * Return a description for the given method invocation.
+	 *
 	 * @param invocation the invocation to describe
 	 * @return the description
 	 */

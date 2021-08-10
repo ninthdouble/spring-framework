@@ -16,10 +16,7 @@
 
 package org.springframework.test.context.web.socket;
 
-import javax.websocket.server.ServerContainer;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +24,8 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+
+import javax.websocket.server.ServerContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

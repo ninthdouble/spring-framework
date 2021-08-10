@@ -16,27 +16,12 @@
 
 package org.springframework.jms.config;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.parsing.ComponentDefinition;
-import org.springframework.beans.factory.parsing.CompositeComponentDefinition;
-import org.springframework.beans.factory.parsing.EmptyReaderEventListener;
-import org.springframework.beans.factory.parsing.PassThroughSourceExtractor;
-import org.springframework.beans.factory.parsing.ReaderEventListener;
+import org.springframework.beans.factory.parsing.*;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.context.Phased;
@@ -48,6 +33,15 @@ import org.springframework.jms.listener.endpoint.JmsMessageEndpointManager;
 import org.springframework.util.ErrorHandler;
 import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -103,8 +97,7 @@ public class JmsNamespaceHandlerTests {
 		for (DefaultMessageListenerContainer container : containers.values()) {
 			if (container.getConnectionFactory().equals(defaultConnectionFactory)) {
 				defaultConnectionFactoryCount++;
-			}
-			else if (container.getConnectionFactory().equals(explicitConnectionFactory)) {
+			} else if (container.getConnectionFactory().equals(explicitConnectionFactory)) {
 				explicitConnectionFactoryCount++;
 			}
 		}
@@ -339,7 +332,7 @@ public class JmsNamespaceHandlerTests {
 	private long getRecoveryInterval(String containerBeanName) {
 		BackOff backOff = getBackOff(containerBeanName);
 		assertThat(backOff.getClass()).isEqualTo(FixedBackOff.class);
-		return ((FixedBackOff)backOff).getInterval();
+		return ((FixedBackOff) backOff).getInterval();
 	}
 
 	private int getPhase(String containerBeanName) {
@@ -397,8 +390,7 @@ public class JmsNamespaceHandlerTests {
 							return true;
 						}
 					}
-				}
-				else {
+				} else {
 					if (cd.getName().equals(name)) {
 						return true;
 					}

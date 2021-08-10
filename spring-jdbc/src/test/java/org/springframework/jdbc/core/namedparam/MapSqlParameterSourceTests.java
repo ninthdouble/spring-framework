@@ -16,12 +16,11 @@
 
 package org.springframework.jdbc.core.namedparam;
 
-import java.sql.Types;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.jdbc.support.JdbcUtils;
+
+import java.sql.Types;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

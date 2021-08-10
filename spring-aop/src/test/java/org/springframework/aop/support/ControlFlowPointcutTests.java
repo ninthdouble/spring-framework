@@ -17,7 +17,6 @@
 package org.springframework.aop.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.testfixture.interceptor.NopInterceptor;
@@ -103,18 +102,20 @@ public class ControlFlowPointcutTests {
 	@Test
 	public void testToString() {
 		assertThat(new ControlFlowPointcut(One.class).toString())
-			.isEqualTo(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = null");
+				.isEqualTo(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = null");
 		assertThat(new ControlFlowPointcut(One.class, "getAge").toString())
-			.isEqualTo(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = getAge");
+				.isEqualTo(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = getAge");
 	}
 
 	public class One {
 		int getAge(ITestBean proxied) {
 			return proxied.getAge();
 		}
+
 		int nomatch(ITestBean proxied) {
 			return proxied.getAge();
 		}
+
 		void set(ITestBean proxied) {
 			proxied.setAge(5);
 		}

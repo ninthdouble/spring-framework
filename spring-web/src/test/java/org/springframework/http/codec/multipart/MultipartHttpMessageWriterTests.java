@@ -16,18 +16,7 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.StringDecoder;
 import org.springframework.core.io.ClassPathResource;
@@ -44,6 +33,16 @@ import org.springframework.http.codec.ClientCodecConfigurer;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -62,6 +61,27 @@ public class MultipartHttpMessageWriterTests extends AbstractLeakCheckingTests {
 
 	private final MockServerHttpResponse response = new MockServerHttpResponse(this.bufferFactory);
 
+	static MultiValueMap<String, Part> parse(MockServerHttpResponse response, Map<String, Object> hints) {
+		MediaType contentType = response.getHeaders().getContentType();
+		assertThat(contentType.getParameter("boundary")).as("No boundary found").isNotNull();
+
+		// see if Synchronoss NIO Multipart can read what we wrote
+		SynchronossPartHttpMessageReader synchronossReader = new SynchronossPartHttpMessageReader();
+		MultipartHttpMessageReader reader = new MultipartHttpMessageReader(synchronossReader);
+
+		MockServerHttpRequest request = MockServerHttpRequest.post("/")
+				.contentType(MediaType.parseMediaType(contentType.toString()))
+				.body(response.getBody());
+
+		ResolvableType elementType = ResolvableType.forClassWithGenerics(
+				MultiValueMap.class, String.class, Part.class);
+
+		MultiValueMap<String, Part> result = reader.readMono(elementType, request, hints)
+				.block(Duration.ofSeconds(5));
+
+		assertThat(result).isNotNull();
+		return result;
+	}
 
 	@Test
 	public void canWrite() {
@@ -210,8 +230,8 @@ public class MultipartHttpMessageWriterTests extends AbstractLeakCheckingTests {
 	@SuppressWarnings("ConstantConditions")
 	private String decodeToString(Part part) {
 		return StringDecoder.textPlainOnly().decodeToMono(part.content(),
-					ResolvableType.forClass(String.class), MediaType.TEXT_PLAIN,
-					Collections.emptyMap()).block(Duration.ZERO);
+				ResolvableType.forClass(String.class), MediaType.TEXT_PLAIN,
+				Collections.emptyMap()).block(Duration.ZERO);
 	}
 
 	@Test  // SPR-16402
@@ -292,29 +312,6 @@ public class MultipartHttpMessageWriterTests extends AbstractLeakCheckingTests {
 		assertThat(((FilePart) part).filename()).isEqualTo("buffers.jpg");
 		assertThat(part.headers().getContentLength()).isEqualTo(logo.getFile().length());
 	}
-
-	static MultiValueMap<String, Part> parse(MockServerHttpResponse response, Map<String, Object> hints) {
-		MediaType contentType = response.getHeaders().getContentType();
-		assertThat(contentType.getParameter("boundary")).as("No boundary found").isNotNull();
-
-		// see if Synchronoss NIO Multipart can read what we wrote
-		SynchronossPartHttpMessageReader synchronossReader = new SynchronossPartHttpMessageReader();
-		MultipartHttpMessageReader reader = new MultipartHttpMessageReader(synchronossReader);
-
-		MockServerHttpRequest request = MockServerHttpRequest.post("/")
-				.contentType(MediaType.parseMediaType(contentType.toString()))
-				.body(response.getBody());
-
-		ResolvableType elementType = ResolvableType.forClassWithGenerics(
-				MultiValueMap.class, String.class, Part.class);
-
-		MultiValueMap<String, Part> result = reader.readMono(elementType, request, hints)
-				.block(Duration.ofSeconds(5));
-
-		assertThat(result).isNotNull();
-		return result;
-	}
-
 
 	@SuppressWarnings("unused")
 	private static class Foo {

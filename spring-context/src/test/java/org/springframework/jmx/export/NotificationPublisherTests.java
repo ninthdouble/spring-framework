@@ -122,6 +122,11 @@ public class NotificationPublisherTests extends AbstractMBeanServerTests {
 		assertThat(listener.count).as("Notification not sent").isEqualTo(1);
 	}
 
+	public interface MyMBean {
+
+		void sendNotification();
+	}
+
 	private static class CountingNotificationListener implements NotificationListener {
 
 		private int count;
@@ -149,13 +154,13 @@ public class NotificationPublisherTests extends AbstractMBeanServerTests {
 
 		private NotificationPublisher notificationPublisher;
 
+		public NotificationPublisher getNotificationPublisher() {
+			return notificationPublisher;
+		}
+
 		@Override
 		public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
 			this.notificationPublisher = notificationPublisher;
-		}
-
-		public NotificationPublisher getNotificationPublisher() {
-			return notificationPublisher;
 		}
 
 		public void sendNotification() {
@@ -213,11 +218,6 @@ public class NotificationPublisherTests extends AbstractMBeanServerTests {
 		public void sendNotification() {
 			sendNotification(new Notification("test", this, 1));
 		}
-	}
-
-	public interface MyMBean {
-
-		void sendNotification();
 	}
 
 }

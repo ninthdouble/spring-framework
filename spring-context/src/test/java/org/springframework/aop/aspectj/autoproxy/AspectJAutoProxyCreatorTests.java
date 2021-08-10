@@ -55,6 +55,17 @@ import org.springframework.util.StopWatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Retention(RetentionPolicy.RUNTIME)
+@interface Marker {
+}
+
+interface IMarkerTestBean extends ITestBean {
+
+	@Marker
+	@Override
+	int getAge();
+}
+
 /**
  * Integration tests for AspectJ auto-proxying. Includes mixing with Spring AOP Advisors
  * to demonstrate that existing autoproxying contract is honoured.
@@ -422,16 +433,15 @@ class IncreaseReturnValue {
 @Aspect
 class MultiplyReturnValue {
 
-	private int multiple = 2;
-
 	public int invocations;
-
-	public void setMultiple(int multiple) {
-		this.multiple = multiple;
-	}
+	private int multiple = 2;
 
 	public int getMultiple() {
 		return this.multiple;
+	}
+
+	public void setMultiple(int multiple) {
+		this.multiple = multiple;
 	}
 
 	@Around("execution(int *.getAge())")
@@ -442,23 +452,18 @@ class MultiplyReturnValue {
 	}
 }
 
-@Retention(RetentionPolicy.RUNTIME)
-@interface Marker {
-}
-
 @Aspect
 class MultiplyReturnValueForMarker {
 
-	private int multiple = 2;
-
 	public int invocations;
-
-	public void setMultiple(int multiple) {
-		this.multiple = multiple;
-	}
+	private int multiple = 2;
 
 	public int getMultiple() {
 		return this.multiple;
+	}
+
+	public void setMultiple(int multiple) {
+		this.multiple = multiple;
 	}
 
 	@Around("@annotation(org.springframework.aop.aspectj.autoproxy.Marker)")
@@ -467,13 +472,6 @@ class MultiplyReturnValueForMarker {
 		int result = (Integer) pjp.proceed();
 		return result * this.multiple;
 	}
-}
-
-interface IMarkerTestBean extends ITestBean {
-
-	@Marker
-	@Override
-	int getAge();
 }
 
 class MarkerTestBean extends TestBean implements IMarkerTestBean {
@@ -512,13 +510,11 @@ class RetryAspect {
 				try {
 					o = jp.proceed();
 					this.commitCalls++;
-				}
-				catch (RetryableException re) {
+				} catch (RetryableException re) {
 					this.rollbackCalls++;
 					throw re;
 				}
-			}
-			catch (RetryableException re) {
+			} catch (RetryableException re) {
 				retry = true;
 			}
 		}

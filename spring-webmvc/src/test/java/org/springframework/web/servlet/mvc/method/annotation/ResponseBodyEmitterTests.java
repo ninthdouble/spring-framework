@@ -16,25 +16,19 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.http.MediaType;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link ResponseBodyEmitter}.
@@ -45,11 +39,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @ExtendWith(MockitoExtension.class)
 public class ResponseBodyEmitterTests {
 
+	private final ResponseBodyEmitter emitter = new ResponseBodyEmitter();
 	@Mock
 	private ResponseBodyEmitter.Handler handler;
-
-	private final ResponseBodyEmitter emitter = new ResponseBodyEmitter();
-
 
 	@Test
 	public void sendBeforeHandlerInitialized() throws Exception {
@@ -154,7 +146,7 @@ public class ResponseBodyEmitterTests {
 	}
 
 	@Test
-	public void onTimeoutBeforeHandlerInitialized() throws Exception  {
+	public void onTimeoutBeforeHandlerInitialized() throws Exception {
 		Runnable runnable = mock(Runnable.class);
 		this.emitter.onTimeout(runnable);
 		this.emitter.initialize(this.handler);
@@ -169,7 +161,7 @@ public class ResponseBodyEmitterTests {
 	}
 
 	@Test
-	public void onTimeoutAfterHandlerInitialized() throws Exception  {
+	public void onTimeoutAfterHandlerInitialized() throws Exception {
 		this.emitter.initialize(this.handler);
 
 		ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);
@@ -185,7 +177,7 @@ public class ResponseBodyEmitterTests {
 	}
 
 	@Test
-	public void onCompletionBeforeHandlerInitialized() throws Exception  {
+	public void onCompletionBeforeHandlerInitialized() throws Exception {
 		Runnable runnable = mock(Runnable.class);
 		this.emitter.onCompletion(runnable);
 		this.emitter.initialize(this.handler);
@@ -200,7 +192,7 @@ public class ResponseBodyEmitterTests {
 	}
 
 	@Test
-	public void onCompletionAfterHandlerInitialized() throws Exception  {
+	public void onCompletionAfterHandlerInitialized() throws Exception {
 		this.emitter.initialize(this.handler);
 
 		ArgumentCaptor<Runnable> captor = ArgumentCaptor.forClass(Runnable.class);

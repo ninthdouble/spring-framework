@@ -15,17 +15,16 @@
  */
 package org.springframework.test.web.reactive.server;
 
-import java.net.URI;
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.mock.http.client.reactive.MockClientHttpRequest;
 import org.springframework.mock.http.client.reactive.MockClientHttpResponse;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,6 +32,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for {@link CookieAssertions}
+ *
  * @author Rossen Stoyanchev
  */
 public class CookieAssertionTests {

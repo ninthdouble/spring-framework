@@ -16,14 +16,12 @@
 
 package org.springframework.core.env;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link SimpleCommandLineArgsParser}.

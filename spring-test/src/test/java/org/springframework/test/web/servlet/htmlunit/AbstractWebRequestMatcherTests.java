@@ -16,10 +16,10 @@
 
 package org.springframework.test.web.servlet.htmlunit;
 
+import com.gargoylesoftware.htmlunit.WebRequest;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import com.gargoylesoftware.htmlunit.WebRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

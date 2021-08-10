@@ -17,7 +17,6 @@
 package org.springframework.test.context.configuration;
 
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.testfixture.beans.Pet;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,9 +32,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * &#064;ContextConfiguration}.
  *
  * @author Sam Brannen
- * @since 3.0
  * @see PropertiesBasedSpringJUnit4ClassRunnerAppCtxTests
  * @see ContextConfigurationWithPropertiesExtendingPropertiesAndInheritedLoaderTests
+ * @since 3.0
  */
 @SuppressWarnings("deprecation")
 @ContextConfiguration(loader = org.springframework.test.context.support.GenericPropertiesContextLoader.class)

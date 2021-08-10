@@ -16,23 +16,27 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Method;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.aspectj.AspectJAdviceParameterNameDiscoverer;
 import org.springframework.beans.testfixture.beans.ITestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Method;
+
+import static org.assertj.core.api.Assertions.*;
+
+/**
+ * Represents Spring's Transactional annotation without actually introducing the dependency
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@interface Transactional {
+}
 
 /**
  * @author Adrian Colyer
@@ -97,14 +101,6 @@ public class ArgumentBindingTests {
 
 }
 
-/**
- * Represents Spring's Transactional annotation without actually introducing the dependency
- */
-@Retention(RetentionPolicy.RUNTIME)
-@interface Transactional {
-}
-
-
 @Aspect
 class PointcutWithAnnotationArgument {
 
@@ -121,7 +117,8 @@ class PointcutWithAnnotationArgument {
 class NamedPointcutWithArgs {
 
 	@Pointcut("execution(* *(..)) && args(s,..)")
-	public void pointcutWithArgs(String s) {}
+	public void pointcutWithArgs(String s) {
+	}
 
 	@Around("pointcutWithArgs(aString)")
 	public Object doAround(ProceedingJoinPoint pjp, String aString) throws Throwable {

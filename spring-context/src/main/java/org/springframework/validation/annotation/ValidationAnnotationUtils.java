@@ -37,6 +37,7 @@ public abstract class ValidationAnnotationUtils {
 	 * <p>This implementation checks for {@code @javax.validation.Valid},
 	 * Spring's {@link org.springframework.validation.annotation.Validated},
 	 * and custom annotations whose name starts with "Valid".
+	 *
 	 * @param ann the annotation (potentially a validation annotation)
 	 * @return the validation hints to apply (possibly an empty array),
 	 * or {@code null} if this annotation does not trigger any validation

@@ -16,32 +16,20 @@
 
 package org.springframework.orm.jpa.vendor;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.dialect.*;
+import org.hibernate.resource.jdbc.spi.PhysicalConnectionHandlingMode;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.dialect.DB2Dialect;
-import org.hibernate.dialect.DerbyTenSevenDialect;
-import org.hibernate.dialect.H2Dialect;
-import org.hibernate.dialect.HANAColumnStoreDialect;
-import org.hibernate.dialect.HSQLDialect;
-import org.hibernate.dialect.Informix10Dialect;
-import org.hibernate.dialect.MySQL57Dialect;
-import org.hibernate.dialect.Oracle12cDialect;
-import org.hibernate.dialect.PostgreSQL95Dialect;
-import org.hibernate.dialect.SQLServer2012Dialect;
-import org.hibernate.dialect.SybaseDialect;
-import org.hibernate.resource.jdbc.spi.PhysicalConnectionHandlingMode;
-
-import org.springframework.lang.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * {@link org.springframework.orm.jpa.JpaVendorAdapter} implementation for Hibernate
@@ -66,8 +54,8 @@ import org.springframework.lang.Nullable;
  *
  * @author Juergen Hoeller
  * @author Rod Johnson
- * @since 2.0
  * @see HibernateJpaDialect
+ * @since 2.0
  */
 public class HibernateJpaVendorAdapter extends AbstractJpaVendorAdapter {
 
@@ -105,10 +93,11 @@ public class HibernateJpaVendorAdapter extends AbstractJpaVendorAdapter {
 	 * Alternatively, set Hibernate's "hibernate.connection.handling_mode"
 	 * property to "DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION" or even
 	 * "DELAYED_ACQUISITION_AND_RELEASE_AFTER_STATEMENT" in such a scenario.
-	 * @since 4.3.1
+	 *
 	 * @see PersistenceUnitInfo#getTransactionType()
 	 * @see #getJpaPropertyMap(PersistenceUnitInfo)
 	 * @see HibernateJpaDialect#beginTransaction
+	 * @since 4.3.1
 	 */
 	public void setPrepareConnection(boolean prepareConnection) {
 		this.jpaDialect.setPrepareConnection(prepareConnection);
@@ -141,8 +130,7 @@ public class HibernateJpaVendorAdapter extends AbstractJpaVendorAdapter {
 
 		if (getDatabasePlatform() != null) {
 			jpaProperties.put(AvailableSettings.DIALECT, getDatabasePlatform());
-		}
-		else {
+		} else {
 			Class<?> databaseDialectClass = determineDatabaseDialectClass(getDatabase());
 			if (databaseDialectClass != null) {
 				jpaProperties.put(AvailableSettings.DIALECT, databaseDialectClass.getName());
@@ -166,24 +154,37 @@ public class HibernateJpaVendorAdapter extends AbstractJpaVendorAdapter {
 
 	/**
 	 * Determine the Hibernate database dialect class for the given target database.
+	 *
 	 * @param database the target database
 	 * @return the Hibernate database dialect class, or {@code null} if none found
 	 */
 	@Nullable
 	protected Class<?> determineDatabaseDialectClass(Database database) {
 		switch (database) {
-			case DB2: return DB2Dialect.class;
-			case DERBY: return DerbyTenSevenDialect.class;
-			case H2: return H2Dialect.class;
-			case HANA: return HANAColumnStoreDialect.class;
-			case HSQL: return HSQLDialect.class;
-			case INFORMIX: return Informix10Dialect.class;
-			case MYSQL: return MySQL57Dialect.class;
-			case ORACLE: return Oracle12cDialect.class;
-			case POSTGRESQL: return PostgreSQL95Dialect.class;
-			case SQL_SERVER: return SQLServer2012Dialect.class;
-			case SYBASE: return SybaseDialect.class;
-			default: return null;
+			case DB2:
+				return DB2Dialect.class;
+			case DERBY:
+				return DerbyTenSevenDialect.class;
+			case H2:
+				return H2Dialect.class;
+			case HANA:
+				return HANAColumnStoreDialect.class;
+			case HSQL:
+				return HSQLDialect.class;
+			case INFORMIX:
+				return Informix10Dialect.class;
+			case MYSQL:
+				return MySQL57Dialect.class;
+			case ORACLE:
+				return Oracle12cDialect.class;
+			case POSTGRESQL:
+				return PostgreSQL95Dialect.class;
+			case SQL_SERVER:
+				return SQLServer2012Dialect.class;
+			case SYBASE:
+				return SybaseDialect.class;
+			default:
+				return null;
 		}
 	}
 

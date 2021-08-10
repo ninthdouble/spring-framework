@@ -16,45 +16,10 @@
 
 package org.springframework.http.codec.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.springframework.core.SpringProperties;
-import org.springframework.core.codec.AbstractDataBufferDecoder;
-import org.springframework.core.codec.ByteArrayDecoder;
-import org.springframework.core.codec.ByteArrayEncoder;
-import org.springframework.core.codec.ByteBufferDecoder;
-import org.springframework.core.codec.ByteBufferEncoder;
-import org.springframework.core.codec.CharSequenceEncoder;
-import org.springframework.core.codec.DataBufferDecoder;
-import org.springframework.core.codec.DataBufferEncoder;
-import org.springframework.core.codec.Decoder;
-import org.springframework.core.codec.Encoder;
-import org.springframework.core.codec.NettyByteBufDecoder;
-import org.springframework.core.codec.NettyByteBufEncoder;
-import org.springframework.core.codec.ResourceDecoder;
-import org.springframework.core.codec.StringDecoder;
-import org.springframework.http.codec.CodecConfigurer;
-import org.springframework.http.codec.DecoderHttpMessageReader;
-import org.springframework.http.codec.EncoderHttpMessageWriter;
-import org.springframework.http.codec.FormHttpMessageReader;
-import org.springframework.http.codec.FormHttpMessageWriter;
-import org.springframework.http.codec.HttpMessageReader;
-import org.springframework.http.codec.HttpMessageWriter;
-import org.springframework.http.codec.ResourceHttpMessageReader;
-import org.springframework.http.codec.ResourceHttpMessageWriter;
-import org.springframework.http.codec.ServerSentEventHttpMessageReader;
-import org.springframework.http.codec.ServerSentEventHttpMessageWriter;
-import org.springframework.http.codec.json.AbstractJackson2Decoder;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
-import org.springframework.http.codec.json.Jackson2SmileDecoder;
-import org.springframework.http.codec.json.Jackson2SmileEncoder;
-import org.springframework.http.codec.json.KotlinSerializationJsonDecoder;
-import org.springframework.http.codec.json.KotlinSerializationJsonEncoder;
+import org.springframework.core.codec.*;
+import org.springframework.http.codec.*;
+import org.springframework.http.codec.json.*;
 import org.springframework.http.codec.multipart.DefaultPartHttpMessageReader;
 import org.springframework.http.codec.multipart.MultipartHttpMessageReader;
 import org.springframework.http.codec.multipart.MultipartHttpMessageWriter;
@@ -68,6 +33,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
 /**
  * Default implementation of {@link CodecConfigurer.DefaultCodecs} that serves
  * as a base for client and server specific variants.
@@ -77,31 +48,24 @@ import org.springframework.util.ObjectUtils;
  */
 class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigurer.DefaultCodecConfig {
 
+	static final boolean jackson2Present;
+	static final boolean synchronossMultipartPresent;
+	static final boolean nettyByteBufPresent;
+	static final boolean kotlinSerializationJsonPresent;
 	/**
 	 * Boolean flag controlled by a {@code spring.xml.ignore} system property that instructs Spring to
 	 * ignore XML, i.e. to not initialize the XML-related infrastructure.
 	 * <p>The default is "false".
 	 */
 	private static final boolean shouldIgnoreXml = SpringProperties.getFlag("spring.xml.ignore");
-
-	static final boolean jackson2Present;
-
 	private static final boolean jackson2SmilePresent;
-
 	private static final boolean jaxb2Present;
-
 	private static final boolean protobufPresent;
-
-	static final boolean synchronossMultipartPresent;
-
-	static final boolean nettyByteBufPresent;
-
-	static final boolean kotlinSerializationJsonPresent;
 
 	static {
 		ClassLoader classLoader = BaseCodecConfigurer.class.getClassLoader();
 		jackson2Present = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader) &&
-						ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
+				ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
 		jackson2SmilePresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.smile.SmileFactory", classLoader);
 		jaxb2Present = ClassUtils.isPresent("javax.xml.bind.Binder", classLoader);
 		protobufPresent = ClassUtils.isPresent("com.google.protobuf.Message", classLoader);
@@ -110,81 +74,45 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 		kotlinSerializationJsonPresent = ClassUtils.isPresent("kotlinx.serialization.json.Json", classLoader);
 	}
 
-
+	private final List<HttpMessageReader<?>> typedReaders = new ArrayList<>();
+	private final List<HttpMessageReader<?>> objectReaders = new ArrayList<>();
+	private final List<HttpMessageWriter<?>> typedWriters = new ArrayList<>();
+	private final List<HttpMessageWriter<?>> objectWriters = new ArrayList<>();
 	@Nullable
 	private Decoder<?> jackson2JsonDecoder;
-
 	@Nullable
 	private Encoder<?> jackson2JsonEncoder;
-
 	@Nullable
 	private Encoder<?> jackson2SmileEncoder;
-
 	@Nullable
 	private Decoder<?> jackson2SmileDecoder;
-
 	@Nullable
 	private Decoder<?> protobufDecoder;
-
 	@Nullable
 	private Encoder<?> protobufEncoder;
-
 	@Nullable
 	private Decoder<?> jaxb2Decoder;
-
 	@Nullable
 	private Encoder<?> jaxb2Encoder;
-
 	@Nullable
 	private Decoder<?> kotlinSerializationJsonDecoder;
-
 	@Nullable
 	private Encoder<?> kotlinSerializationJsonEncoder;
 
-	@Nullable
-	private Consumer<Object> codecConsumer;
-
-	@Nullable
-	private Integer maxInMemorySize;
-
-	@Nullable
-	private Boolean enableLoggingRequestDetails;
-
-	private boolean registerDefaults = true;
-
 
 	// The default reader and writer instances to use
-
-	private final List<HttpMessageReader<?>> typedReaders = new ArrayList<>();
-
-	private final List<HttpMessageReader<?>> objectReaders = new ArrayList<>();
-
-	private final List<HttpMessageWriter<?>> typedWriters = new ArrayList<>();
-
-	private final List<HttpMessageWriter<?>> objectWriters = new ArrayList<>();
+	@Nullable
+	private Consumer<Object> codecConsumer;
+	@Nullable
+	private Integer maxInMemorySize;
+	@Nullable
+	private Boolean enableLoggingRequestDetails;
+	private boolean registerDefaults = true;
 
 
 	BaseDefaultCodecs() {
 		initReaders();
 		initWriters();
-	}
-
-	/**
-	 * Reset and initialize typed readers and object readers.
-	 * @since 5.3.3
-	 */
-	protected void initReaders() {
-		initTypedReaders();
-		initObjectReaders();
-	}
-
-	/**
-	 * Reset and initialize typed writers and object writers.
-	 * @since 5.3.3
-	 */
-	protected void initWriters() {
-		initTypedWriters();
-		initObjectWriters();
 	}
 
 	/**
@@ -209,6 +137,26 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 		this.objectReaders.addAll(other.objectReaders);
 		this.typedWriters.addAll(other.typedWriters);
 		this.objectWriters.addAll(other.objectWriters);
+	}
+
+	/**
+	 * Reset and initialize typed readers and object readers.
+	 *
+	 * @since 5.3.3
+	 */
+	protected void initReaders() {
+		initTypedReaders();
+		initObjectReaders();
+	}
+
+	/**
+	 * Reset and initialize typed writers and object writers.
+	 *
+	 * @since 5.3.3
+	 */
+	protected void initWriters() {
+		initTypedWriters();
+		initObjectWriters();
 	}
 
 	@Override
@@ -331,6 +279,7 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 
 	/**
 	 * Reset and initialize typed readers.
+	 *
 	 * @since 5.3.3
 	 */
 	protected void initTypedReaders() {
@@ -358,6 +307,7 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 
 	/**
 	 * Initialize a codec and add it to the List.
+	 *
 	 * @since 5.1.13
 	 */
 	protected <T> void addCodec(List<T> codecs, T codec) {
@@ -374,8 +324,7 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 	private void initCodec(@Nullable Object codec) {
 		if (codec instanceof DecoderHttpMessageReader) {
 			codec = ((DecoderHttpMessageReader) codec).getDecoder();
-		}
-		else if (codec instanceof EncoderHttpMessageWriter) {
+		} else if (codec instanceof EncoderHttpMessageWriter) {
 			codec = ((EncoderHttpMessageWriter<?>) codec).getEncoder();
 		}
 
@@ -455,14 +404,11 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 		// Recurse for nested codecs
 		if (codec instanceof MultipartHttpMessageReader) {
 			initCodec(((MultipartHttpMessageReader) codec).getPartReader());
-		}
-		else if (codec instanceof MultipartHttpMessageWriter) {
+		} else if (codec instanceof MultipartHttpMessageWriter) {
 			initCodec(((MultipartHttpMessageWriter) codec).getFormWriter());
-		}
-		else if (codec instanceof ServerSentEventHttpMessageReader) {
+		} else if (codec instanceof ServerSentEventHttpMessageReader) {
 			initCodec(((ServerSentEventHttpMessageReader) codec).getDecoder());
-		}
-		else if (codec instanceof ServerSentEventHttpMessageWriter) {
+		} else if (codec instanceof ServerSentEventHttpMessageWriter) {
 			initCodec(((ServerSentEventHttpMessageWriter) codec).getEncoder());
 		}
 	}
@@ -482,6 +428,7 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 
 	/**
 	 * Reset and initialize object readers.
+	 *
 	 * @since 5.3.3
 	 */
 	protected void initObjectReaders() {
@@ -529,13 +476,14 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 	/**
 	 * Return all writers that support specific types.
 	 */
-	@SuppressWarnings({"rawtypes" })
+	@SuppressWarnings({"rawtypes"})
 	final List<HttpMessageWriter<?>> getTypedWriters() {
 		return this.typedWriters;
 	}
 
 	/**
 	 * Reset and initialize typed writers.
+	 *
 	 * @since 5.3.3
 	 */
 	protected void initTypedWriters() {
@@ -585,6 +533,7 @@ class BaseDefaultCodecs implements CodecConfigurer.DefaultCodecs, CodecConfigure
 
 	/**
 	 * Reset and initialize object writers.
+	 *
 	 * @since 5.3.3
 	 */
 	protected void initObjectWriters() {

@@ -16,10 +16,10 @@
 
 package org.springframework.jdbc.datasource;
 
+import org.junit.jupiter.api.Test;
+
 import java.sql.Connection;
 import java.util.Properties;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -140,7 +140,7 @@ public class DriverManagerDataSourceTests {
 		DriverManagerDataSource ds = new DriverManagerDataSource();
 		assertThatIllegalStateException().isThrownBy(() ->
 				ds.setDriverClassName(bogusClassName))
-			.withCauseInstanceOf(ClassNotFoundException.class);
+				.withCauseInstanceOf(ClassNotFoundException.class);
 	}
 
 }

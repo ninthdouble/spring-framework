@@ -16,12 +16,8 @@
 
 package org.springframework.core.type.classreading;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.asm.ClassReader;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -29,6 +25,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AbstractAnnotationMetadataTests;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -58,8 +57,7 @@ class AnnotationMetadataReadingVisitorTests extends AbstractAnnotationMetadataTe
 				classReader.accept(metadata, ClassReader.SKIP_DEBUG);
 				return metadata;
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
 		}
 	}
@@ -86,7 +84,7 @@ class AnnotationMetadataReadingVisitorTests extends AbstractAnnotationMetadataTe
 	@Test
 	public void getAnnotationsReturnsDirectAnnotations() {
 		assertThatExceptionOfType(UnsupportedOperationException.class)
-			.isThrownBy(super::getAnnotationsReturnsDirectAnnotations);
+				.isThrownBy(super::getAnnotationsReturnsDirectAnnotations);
 	}
 
 }

@@ -16,25 +16,17 @@
 
 package org.springframework.core.convert.support;
 
+import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
+import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.util.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.infra.Blackhole;
-
-import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Benchmarks for {@link GenericConversionService}.
@@ -59,19 +51,6 @@ public class GenericConversionServiceBenchmark {
 		bh.consume(target);
 	}
 
-	@State(Scope.Benchmark)
-	public static class ListBenchmarkState extends BenchmarkState {
-
-		List<String> source;
-
-		@Setup(Level.Trial)
-		public void setup() throws Exception {
-			this.source = IntStream.rangeClosed(1, collectionSize).mapToObj(String::valueOf).collect(Collectors.toList());
-			List<Integer> target = new ArrayList<>();
-			this.targetTypeDesc = TypeDescriptor.forObject(target);
-		}
-	}
-
 	@Benchmark
 	public void convertMapOfStringToListOfIntegerWithConversionService(MapBenchmarkState state, Blackhole bh) {
 		TypeDescriptor sourceTypeDesc = TypeDescriptor.forObject(state.source);
@@ -85,6 +64,18 @@ public class GenericConversionServiceBenchmark {
 		bh.consume(target);
 	}
 
+	@State(Scope.Benchmark)
+	public static class ListBenchmarkState extends BenchmarkState {
+
+		List<String> source;
+
+		@Setup(Level.Trial)
+		public void setup() throws Exception {
+			this.source = IntStream.rangeClosed(1, collectionSize).mapToObj(String::valueOf).collect(Collectors.toList());
+			List<Integer> target = new ArrayList<>();
+			this.targetTypeDesc = TypeDescriptor.forObject(target);
+		}
+	}
 
 	@State(Scope.Benchmark)
 	public static class MapBenchmarkState extends BenchmarkState {

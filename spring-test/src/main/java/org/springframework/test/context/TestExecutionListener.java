@@ -64,10 +64,10 @@ package org.springframework.test.context;
  *
  * @author Sam Brannen
  * @author Juergen Hoeller
- * @since 2.5
  * @see TestExecutionListeners @TestExecutionListeners
  * @see TestContextManager
  * @see org.springframework.test.context.support.AbstractTestExecutionListener
+ * @since 2.5
  */
 public interface TestExecutionListener {
 
@@ -78,6 +78,7 @@ public interface TestExecutionListener {
 	 * <em>before class</em> lifecycle callbacks.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context for the test; never {@code null}
 	 * @throws Exception allows any exception to propagate
 	 * @since 3.0
@@ -92,6 +93,7 @@ public interface TestExecutionListener {
 	 * instance but prior to any framework-specific lifecycle callbacks.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context for the test; never {@code null}
 	 * @throws Exception allows any exception to propagate
 	 */
@@ -111,8 +113,9 @@ public interface TestExecutionListener {
 	 * this method due to backward compatibility concerns.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context in which the test method will be
-	 * executed; never {@code null}
+	 *                    executed; never {@code null}
 	 * @throws Exception allows any exception to propagate
 	 * @see #afterTestMethod
 	 * @see #beforeTestExecution
@@ -130,13 +133,14 @@ public interface TestExecutionListener {
 	 * <em>before</em> lifecycle callbacks.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context in which the test method will be
-	 * executed; never {@code null}
+	 *                    executed; never {@code null}
 	 * @throws Exception allows any exception to propagate
-	 * @since 5.0
 	 * @see #beforeTestMethod
 	 * @see #afterTestMethod
 	 * @see #afterTestExecution
+	 * @since 5.0
 	 */
 	default void beforeTestExecution(TestContext testContext) throws Exception {
 	}
@@ -150,13 +154,14 @@ public interface TestExecutionListener {
 	 * <em>after</em> lifecycle callbacks.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context in which the test method will be
-	 * executed; never {@code null}
+	 *                    executed; never {@code null}
 	 * @throws Exception allows any exception to propagate
-	 * @since 5.0
 	 * @see #beforeTestMethod
 	 * @see #afterTestMethod
 	 * @see #beforeTestExecution
+	 * @since 5.0
 	 */
 	default void afterTestExecution(TestContext testContext) throws Exception {
 	}
@@ -174,8 +179,9 @@ public interface TestExecutionListener {
 	 * this method due to backward compatibility concerns.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context in which the test method was
-	 * executed; never {@code null}
+	 *                    executed; never {@code null}
 	 * @throws Exception allows any exception to propagate
 	 * @see #beforeTestMethod
 	 * @see #beforeTestExecution
@@ -191,6 +197,7 @@ public interface TestExecutionListener {
 	 * <em>after class</em> lifecycle callbacks.
 	 * <p>The default implementation is <em>empty</em>. Can be overridden by
 	 * concrete classes as necessary.
+	 *
 	 * @param testContext the test context for the test; never {@code null}
 	 * @throws Exception allows any exception to propagate
 	 * @since 3.0

@@ -16,14 +16,14 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Dummy request context used for FreeMarker macro tests.
@@ -31,8 +31,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Darren Davison
  * @author Juergen Hoeller
  * @author Issam El-atif
- * @since 5.2
  * @see org.springframework.web.reactive.result.view.RequestContext
+ * @since 5.2
  */
 public class DummyMacroRequestContext {
 
@@ -86,15 +86,15 @@ public class DummyMacroRequestContext {
 		return (msg != null ? msg + args : defaultMsg);
 	}
 
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
-	}
-
 	/**
 	 * @see org.springframework.web.reactive.result.view.RequestContext#getContextPath()
 	 */
 	public String getContextPath() {
 		return this.contextPath;
+	}
+
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class DummyMacroRequestContext {
 	/**
 	 * @see org.springframework.web.reactive.result.view.RequestContext#getContextUrl(String, Map)
 	 */
-	public String getContextUrl(String relativeUrl, Map<String,String> params) {
+	public String getContextUrl(String relativeUrl, Map<String, String> params) {
 		UriComponents uric = UriComponentsBuilder.fromUriString(relativeUrl).buildAndExpand(params);
 		return getContextPath() + uric.toUri().toASCIIString();
 	}

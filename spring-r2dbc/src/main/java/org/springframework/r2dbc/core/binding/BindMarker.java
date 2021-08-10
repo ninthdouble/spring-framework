@@ -24,10 +24,10 @@ import io.r2dbc.spi.Statement;
  * {@link #getPlaceholder() placeholder} that is used in the actual query.
  *
  * @author Mark Paluch
- * @since 5.3
  * @see Statement#bind
  * @see BindMarkers
  * @see BindMarkersFactory
+ * @since 5.3
  */
 public interface BindMarker {
 
@@ -38,17 +38,19 @@ public interface BindMarker {
 
 	/**
 	 * Bind the given {@code value} to the {@link Statement} using the underlying binding strategy.
+	 *
 	 * @param bindTarget the target to bind the value to
-	 * @param value the actual value (must not be {@code null};
-	 * use {@link #bindNull(BindTarget, Class)} for {@code null} values)
+	 * @param value      the actual value (must not be {@code null};
+	 *                   use {@link #bindNull(BindTarget, Class)} for {@code null} values)
 	 * @see Statement#bind
 	 */
 	void bind(BindTarget bindTarget, Object value);
 
 	/**
 	 * Bind a {@code null} value to the {@link Statement} using the underlying binding strategy.
+	 *
 	 * @param bindTarget the target to bind the value to
-	 * @param valueType the value type (must not be {@code null})
+	 * @param valueType  the value type (must not be {@code null})
 	 * @see Statement#bindNull
 	 */
 	void bindNull(BindTarget bindTarget, Class<?> valueType);

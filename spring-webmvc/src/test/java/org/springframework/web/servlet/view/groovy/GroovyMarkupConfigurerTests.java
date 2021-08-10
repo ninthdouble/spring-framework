@@ -16,18 +16,17 @@
 
 package org.springframework.web.servlet.view.groovy;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Locale;
-
 import groovy.text.TemplateEngine;
 import groovy.text.markup.MarkupTemplateEngine;
 import groovy.text.markup.TemplateConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.StaticApplicationContext;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
@@ -41,11 +40,8 @@ import static org.assertj.core.api.Assertions.assertThatIOException;
 public class GroovyMarkupConfigurerTests {
 
 	private static final String RESOURCE_LOADER_PATH = "classpath:org/springframework/web/servlet/view/groovy/";
-
-	private StaticApplicationContext applicationContext;
-
 	private static final String TEMPLATE_PREFIX = "org/springframework/web/servlet/view/groovy/";
-
+	private StaticApplicationContext applicationContext;
 	private GroovyMarkupConfigurer configurer;
 
 
@@ -122,13 +118,6 @@ public class GroovyMarkupConfigurerTests {
 				.endsWith("org/springframework/web/servlet/view/");
 	}
 
-	private class TestTemplateEngine extends MarkupTemplateEngine {
-
-		public TestTemplateEngine() {
-			super(new TemplateConfiguration());
-		}
-	}
-
 	@Test
 	public void resolveSampleTemplate() throws Exception {
 		URL url = this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "test.tpl");
@@ -163,7 +152,14 @@ public class GroovyMarkupConfigurerTests {
 	public void failMissingTemplate() throws Exception {
 		LocaleContextHolder.setLocale(Locale.US);
 		assertThatIOException().isThrownBy(() ->
-			this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "missing.tpl"));
+				this.configurer.resolveTemplate(getClass().getClassLoader(), TEMPLATE_PREFIX + "missing.tpl"));
+	}
+
+	private class TestTemplateEngine extends MarkupTemplateEngine {
+
+		public TestTemplateEngine() {
+			super(new TemplateConfiguration());
+		}
 	}
 
 }

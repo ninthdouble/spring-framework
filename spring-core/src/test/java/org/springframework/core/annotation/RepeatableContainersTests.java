@@ -16,16 +16,14 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link RepeatableContainers}.
@@ -97,37 +95,37 @@ class RepeatableContainersTests {
 	void ofExplicitWhenHasNoValueThrowsException() {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				RepeatableContainers.of(ExplicitRepeatable.class, InvalidNoValue.class))
-			.withMessageContaining("Invalid declaration of container type ["
-									+ InvalidNoValue.class.getName()
-									+ "] for repeatable annotation ["
-									+ ExplicitRepeatable.class.getName() + "]");
+				.withMessageContaining("Invalid declaration of container type ["
+						+ InvalidNoValue.class.getName()
+						+ "] for repeatable annotation ["
+						+ ExplicitRepeatable.class.getName() + "]");
 	}
 
 	@Test
 	void ofExplicitWhenValueIsNotArrayThrowsException() {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				RepeatableContainers.of(ExplicitRepeatable.class, InvalidNotArray.class))
-			.withMessage("Container type ["
-								+ InvalidNotArray.class.getName()
-								+ "] must declare a 'value' attribute for an array of type ["
-								+ ExplicitRepeatable.class.getName() + "]");
+				.withMessage("Container type ["
+						+ InvalidNotArray.class.getName()
+						+ "] must declare a 'value' attribute for an array of type ["
+						+ ExplicitRepeatable.class.getName() + "]");
 	}
 
 	@Test
 	void ofExplicitWhenValueIsArrayOfWrongTypeThrowsException() {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				RepeatableContainers.of(ExplicitRepeatable.class, InvalidWrongArrayType.class))
-			.withMessage("Container type ["
-								+ InvalidWrongArrayType.class.getName()
-								+ "] must declare a 'value' attribute for an array of type ["
-								+ ExplicitRepeatable.class.getName() + "]");
+				.withMessage("Container type ["
+						+ InvalidWrongArrayType.class.getName()
+						+ "] must declare a 'value' attribute for an array of type ["
+						+ ExplicitRepeatable.class.getName() + "]");
 	}
 
 	@Test
 	void ofExplicitWhenAnnotationIsNullThrowsException() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				RepeatableContainers.of(null, null))
-			.withMessage("Repeatable must not be null");
+				.withMessage("Repeatable must not be null");
 	}
 
 	@Test
@@ -142,7 +140,7 @@ class RepeatableContainersTests {
 	void ofExplicitWhenContainerIsNullAndNotRepeatableThrowsException() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				RepeatableContainers.of(ExplicitRepeatable.class, null))
-			.withMessage("Annotation type must be a repeatable annotation: " +
+				.withMessage("Annotation type must be a repeatable annotation: " +
 						"failed to resolve container type for " +
 						ExplicitRepeatable.class.getName());
 	}
@@ -153,10 +151,10 @@ class RepeatableContainersTests {
 				ExplicitContainer.class, ExplicitRepeatable.class);
 		assertThat(findRepeatedAnnotationValues(repeatableContainers,
 				WithStandardRepeatables.class, StandardContainer.class)).containsExactly(
-						"a", "b");
+				"a", "b");
 		assertThat(findRepeatedAnnotationValues(repeatableContainers,
 				WithExplicitRepeatables.class, ExplicitContainer.class)).containsExactly(
-						"a", "b");
+				"a", "b");
 	}
 
 	@Test
@@ -182,7 +180,7 @@ class RepeatableContainersTests {
 	}
 
 	private Object[] findRepeatedAnnotationValues(RepeatableContainers containers,
-			Class<?> element, Class<? extends Annotation> annotationType) {
+												  Class<?> element, Class<? extends Annotation> annotationType) {
 		Annotation[] annotations = containers.findRepeatedAnnotations(
 				element.getAnnotation(annotationType));
 		return extractValues(annotations);
@@ -199,8 +197,7 @@ class RepeatableContainersTests {
 						annotations[i]);
 			}
 			return result;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
@@ -276,7 +273,7 @@ class RepeatableContainersTests {
 
 	}
 
-	@ExplicitContainer({ @ExplicitRepeatable("a"), @ExplicitRepeatable("b") })
+	@ExplicitContainer({@ExplicitRepeatable("a"), @ExplicitRepeatable("b")})
 	static class WithExplicitRepeatables {
 
 	}

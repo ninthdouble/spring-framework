@@ -16,13 +16,8 @@
 
 package org.springframework.web.servlet.resource;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -31,6 +26,10 @@ import org.springframework.web.testfixture.servlet.MockFilterChain;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -112,8 +111,8 @@ public class ResourceUrlProviderJavaConfigTests {
 		@Override
 		public void addResourceHandlers(ResourceHandlerRegistry registry) {
 			registry.addResourceHandler("/resources/**")
-				.addResourceLocations("classpath:org/springframework/web/servlet/resource/test/")
-				.resourceChain(true).addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+					.addResourceLocations("classpath:org/springframework/web/servlet/resource/test/")
+					.resourceChain(true).addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
 		}
 	}
 

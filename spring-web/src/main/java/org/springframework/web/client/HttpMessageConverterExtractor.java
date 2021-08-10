@@ -16,13 +16,8 @@
 
 package org.springframework.web.client;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
@@ -33,15 +28,19 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+
 /**
  * Response extractor that uses the given {@linkplain HttpMessageConverter entity converters}
  * to convert the response into a type {@code T}.
  *
+ * @param <T> the data type
  * @author Arjen Poutsma
  * @author Sam Brannen
- * @since 3.0
- * @param <T> the data type
  * @see RestTemplate
+ * @since 3.0
  */
 public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 
@@ -82,6 +81,14 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 		this.logger = logger;
 	}
 
+	private static byte[] getResponseBody(ClientHttpResponse response) {
+		try {
+			return FileCopyUtils.copyToByteArray(response.getBody());
+		} catch (IOException ex) {
+			// ignore
+		}
+		return new byte[0];
+	}
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes", "resource"})
@@ -115,8 +122,7 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 					}
 				}
 			}
-		}
-		catch (IOException | HttpMessageNotReadableException ex) {
+		} catch (IOException | HttpMessageNotReadableException ex) {
 			throw new RestClientException("Error while extracting response for type [" +
 					this.responseType + "] and content type [" + contentType + "]", ex);
 		}
@@ -129,6 +135,7 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 	/**
 	 * Determine the Content-Type of the response based on the "Content-Type"
 	 * header or otherwise default to {@link MediaType#APPLICATION_OCTET_STREAM}.
+	 *
 	 * @param response the response
 	 * @return the MediaType, or "application/octet-stream"
 	 */
@@ -141,15 +148,5 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 			contentType = MediaType.APPLICATION_OCTET_STREAM;
 		}
 		return contentType;
-	}
-
-	private static byte[] getResponseBody(ClientHttpResponse response) {
-		try {
-			return FileCopyUtils.copyToByteArray(response.getBody());
-		}
-		catch (IOException ex) {
-			// ignore
-		}
-		return new byte[0];
 	}
 }

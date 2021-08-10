@@ -16,7 +16,6 @@
 package org.springframework.test.web.servlet.samples.client.standalone;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.Person;
@@ -51,7 +50,7 @@ public class RequestParameterTests {
 	@Controller
 	private class PersonController {
 
-		@RequestMapping(value="/search")
+		@RequestMapping(value = "/search")
 		@ResponseBody
 		public Person get(@RequestParam String name) {
 			Person person = new Person(name);

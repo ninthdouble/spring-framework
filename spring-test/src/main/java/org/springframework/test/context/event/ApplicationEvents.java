@@ -16,9 +16,9 @@
 
 package org.springframework.test.context.event;
 
-import java.util.stream.Stream;
-
 import org.springframework.context.ApplicationEvent;
+
+import java.util.stream.Stream;
 
 /**
  * {@code ApplicationEvents} encapsulates all {@linkplain ApplicationEvent
@@ -43,15 +43,16 @@ import org.springframework.context.ApplicationEvent;
  *
  * @author Sam Brannen
  * @author Oliver Drotbohm
- * @since 5.3.3
  * @see RecordApplicationEvents
  * @see ApplicationEventsTestExecutionListener
  * @see org.springframework.context.ApplicationEvent
+ * @since 5.3.3
  */
 public interface ApplicationEvents {
 
 	/**
 	 * Stream all application events that were fired during test execution.
+	 *
 	 * @return a stream of all application events
 	 * @see #stream(Class)
 	 * @see #clear()
@@ -61,7 +62,8 @@ public interface ApplicationEvents {
 	/**
 	 * Stream all application events or event payloads of the given type that
 	 * were fired during test execution.
-	 * @param <T> the event type
+	 *
+	 * @param <T>  the event type
 	 * @param type the type of events or payloads to stream; never {@code null}
 	 * @return a stream of all application events or event payloads of the
 	 * specified type
@@ -74,6 +76,7 @@ public interface ApplicationEvents {
 	 * Clear all application events recorded by this {@code ApplicationEvents} instance.
 	 * <p>Subsequent calls to {@link #stream()} or {@link #stream(Class)} will
 	 * only include events recorded since this method was invoked.
+	 *
 	 * @see #stream()
 	 * @see #stream(Class)
 	 */

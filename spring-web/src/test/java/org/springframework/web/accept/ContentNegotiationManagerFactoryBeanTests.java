@@ -16,16 +16,8 @@
 
 package org.springframework.web.accept;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -33,6 +25,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -166,7 +160,8 @@ class ContentNegotiationManagerFactoryBeanTests {
 				.isEqualTo(Collections.singletonList(MediaType.APPLICATION_JSON));
 	}
 
-	@Test // SPR-10170
+	@Test
+		// SPR-10170
 	void favorParameterWithUnknownMediaType() {
 		this.factoryBean.setFavorParameter(true);
 		this.factoryBean.afterPropertiesSet();
@@ -250,7 +245,8 @@ class ContentNegotiationManagerFactoryBeanTests {
 		assertThat(manager.resolveMediaTypes(this.webRequest).get(0)).isEqualTo(MediaType.APPLICATION_JSON);
 	}
 
-	@Test // SPR-15367
+	@Test
+		// SPR-15367
 	void setDefaultContentTypes() throws Exception {
 		List<MediaType> mediaTypes = Arrays.asList(MediaType.APPLICATION_JSON, MediaType.ALL);
 		this.factoryBean.setDefaultContentTypes(mediaTypes);
@@ -263,7 +259,8 @@ class ContentNegotiationManagerFactoryBeanTests {
 		assertThat(manager.resolveMediaTypes(this.webRequest)).isEqualTo(mediaTypes);
 	}
 
-	@Test  // SPR-12286
+	@Test
+		// SPR-12286
 	void setDefaultContentTypeWithStrategy() throws Exception {
 		this.factoryBean.setDefaultContentTypeStrategy(new FixedContentNegotiationStrategy(MediaType.APPLICATION_JSON));
 		this.factoryBean.afterPropertiesSet();

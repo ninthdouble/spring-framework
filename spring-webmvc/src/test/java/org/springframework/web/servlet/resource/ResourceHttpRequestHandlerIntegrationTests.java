@@ -16,17 +16,9 @@
 
 package org.springframework.web.servlet.resource;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletException;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -42,6 +34,12 @@ import org.springframework.web.testfixture.servlet.MockServletConfig;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -151,8 +149,7 @@ public class ResourceHttpRequestHandlerIntegrationTests {
 			try {
 				UrlResource urlLocation = new UrlResource(path);
 				registry.addResourceHandler(pattern).addResourceLocations(urlLocation);
-			}
-			catch (MalformedURLException ex) {
+			} catch (MalformedURLException ex) {
 				throw new IllegalStateException(ex);
 			}
 		}
@@ -160,8 +157,7 @@ public class ResourceHttpRequestHandlerIntegrationTests {
 		private String getPath(ClassPathResource resource) {
 			try {
 				return resource.getFile().getCanonicalPath().replace('\\', '/').replace("classes/java", "resources") + "/";
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new IllegalStateException(ex);
 			}
 		}

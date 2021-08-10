@@ -16,12 +16,7 @@
 
 package org.springframework.web.reactive.result;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.HandlerMapping;
@@ -31,14 +26,12 @@ import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
-import static org.springframework.http.MediaType.IMAGE_GIF;
-import static org.springframework.http.MediaType.IMAGE_JPEG;
-import static org.springframework.http.MediaType.IMAGE_PNG;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.*;
 
 /**
  * Unit tests for {@link HandlerResultHandlerSupport}.
@@ -71,7 +64,8 @@ public class HandlerResultHandlerTests {
 		assertThat(actual).isEqualTo(IMAGE_GIF);
 	}
 
-	@Test  // SPR-9160
+	@Test
+		// SPR-9160
 	void sortsByQuality() {
 		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/path")
 				.header("Accept", "text/plain; q=0.5, application/json"));
@@ -92,7 +86,8 @@ public class HandlerResultHandlerTests {
 		assertThat(actual).isEqualTo(text8859);
 	}
 
-	@Test // SPR-12894
+	@Test
+		// SPR-12894
 	void noConcreteMediaType() {
 		List<MediaType> producible = Collections.singletonList(ALL);
 		MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/path"));

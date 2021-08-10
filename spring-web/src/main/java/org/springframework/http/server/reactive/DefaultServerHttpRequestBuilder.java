@@ -16,14 +16,6 @@
 
 package org.springframework.http.server.reactive;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.function.Consumer;
-
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +24,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 /**
  * Package-private default implementation of {@link ServerHttpRequest.Builder}.
@@ -43,27 +42,19 @@ import org.springframework.util.StringUtils;
  */
 class DefaultServerHttpRequestBuilder implements ServerHttpRequest.Builder {
 
+	private final ServerHttpRequest originalRequest;
 	private URI uri;
-
 	private HttpHeaders headers;
-
 	private String httpMethodValue;
-
 	@Nullable
 	private String uriPath;
-
 	@Nullable
 	private String contextPath;
-
 	@Nullable
 	private SslInfo sslInfo;
-
 	@Nullable
 	private InetSocketAddress remoteAddress;
-
 	private Flux<DataBuffer> body;
-
-	private final ServerHttpRequest originalRequest;
 
 
 	public DefaultServerHttpRequestBuilder(ServerHttpRequest original) {
@@ -167,8 +158,7 @@ class DefaultServerHttpRequestBuilder implements ServerHttpRequest.Builder {
 		}
 		try {
 			return new URI(uriBuilder.toString());
-		}
-		catch (URISyntaxException ex) {
+		} catch (URISyntaxException ex) {
 			throw new IllegalStateException("Invalid URI path: \"" + this.uriPath + "\"", ex);
 		}
 	}
@@ -180,18 +170,15 @@ class DefaultServerHttpRequestBuilder implements ServerHttpRequest.Builder {
 
 		@Nullable
 		private final SslInfo sslInfo;
-
+		private final Flux<DataBuffer> body;
+		private final ServerHttpRequest originalRequest;
 		@Nullable
 		private InetSocketAddress remoteAddress;
 
-		private final Flux<DataBuffer> body;
-
-		private final ServerHttpRequest originalRequest;
-
 
 		public MutatedServerHttpRequest(URI uri, @Nullable String contextPath,
-				String methodValue, @Nullable SslInfo sslInfo, @Nullable InetSocketAddress remoteAddress,
-				HttpHeaders headers, Flux<DataBuffer> body, ServerHttpRequest originalRequest) {
+										String methodValue, @Nullable SslInfo sslInfo, @Nullable InetSocketAddress remoteAddress,
+										HttpHeaders headers, Flux<DataBuffer> body, ServerHttpRequest originalRequest) {
 
 			super(uri, contextPath, headers);
 			this.methodValue = methodValue;

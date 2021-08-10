@@ -30,9 +30,9 @@ import java.util.function.Consumer;
  * {@code ApplicationContext}, events will be filtered accordingly, with the
  * listener getting invoked for matching event objects only.
  *
+ * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  * @see org.springframework.context.ApplicationEvent
  * @see org.springframework.context.event.ApplicationEventMulticaster
  * @see org.springframework.context.event.SmartApplicationListener
@@ -43,22 +43,23 @@ import java.util.function.Consumer;
 public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
 
 	/**
-	 * Handle an application event.
-	 * @param event the event to respond to
-	 */
-	void onApplicationEvent(E event);
-
-
-	/**
 	 * Create a new {@code ApplicationListener} for the given payload consumer.
+	 *
 	 * @param consumer the event payload consumer
-	 * @param <T> the type of the event payload
+	 * @param <T>      the type of the event payload
 	 * @return a corresponding {@code ApplicationListener} instance
-	 * @since 5.3
 	 * @see PayloadApplicationEvent
+	 * @since 5.3
 	 */
 	static <T> ApplicationListener<PayloadApplicationEvent<T>> forPayload(Consumer<T> consumer) {
 		return event -> consumer.accept(event.getPayload());
 	}
+
+	/**
+	 * Handle an application event.
+	 *
+	 * @param event the event to respond to
+	 */
+	void onApplicationEvent(E event);
 
 }

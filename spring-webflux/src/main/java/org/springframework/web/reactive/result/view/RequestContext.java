@@ -16,12 +16,6 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
@@ -38,6 +32,8 @@ import org.springframework.web.bind.EscapedErrors;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.*;
 
 /**
  * Context holder for request-specific state, like the {@link MessageSource} to
@@ -80,7 +76,7 @@ public class RequestContext {
 	}
 
 	public RequestContext(ServerWebExchange exchange, Map<String, Object> model, MessageSource messageSource,
-			@Nullable RequestDataValueProcessor dataValueProcessor) {
+						  @Nullable RequestDataValueProcessor dataValueProcessor) {
 
 		Assert.notNull(exchange, "ServerWebExchange is required");
 		Assert.notNull(model, "Model is required");
@@ -114,6 +110,7 @@ public class RequestContext {
 
 	/**
 	 * Return the model Map that this RequestContext encapsulates, if any.
+	 *
 	 * @return the populated model Map, or {@code null} if none available
 	 */
 	@Nullable
@@ -151,15 +148,6 @@ public class RequestContext {
 	}
 
 	/**
-	 * (De)activate default HTML escaping for messages and errors, for the scope
-	 * of this RequestContext.
-	 * <p>TODO: currently no application-wide setting ...
-	 */
-	public void setDefaultHtmlEscape(boolean defaultHtmlEscape) {
-		this.defaultHtmlEscape = defaultHtmlEscape;
-	}
-
-	/**
 	 * Is default HTML escaping active? Falls back to {@code false} in case of
 	 * no explicit default given.
 	 */
@@ -170,11 +158,21 @@ public class RequestContext {
 	/**
 	 * Return the default HTML escape setting, differentiating between no default
 	 * specified and an explicit value.
+	 *
 	 * @return whether default HTML escaping is enabled (null = no explicit default)
 	 */
 	@Nullable
 	public Boolean getDefaultHtmlEscape() {
 		return this.defaultHtmlEscape;
+	}
+
+	/**
+	 * (De)activate default HTML escaping for messages and errors, for the scope
+	 * of this RequestContext.
+	 * <p>TODO: currently no application-wide setting ...
+	 */
+	public void setDefaultHtmlEscape(boolean defaultHtmlEscape) {
+		this.defaultHtmlEscape = defaultHtmlEscape;
 	}
 
 	/**
@@ -197,6 +195,7 @@ public class RequestContext {
 
 	/**
 	 * Return a context-aware URl for the given relative URL.
+	 *
 	 * @param relativeUrl the relative URL part
 	 * @return a URL that points back to the current web application with an
 	 * absolute path also URL-encoded accordingly
@@ -211,8 +210,9 @@ public class RequestContext {
 	 * named keys with braces {@code {}}. For example, send in a relative URL
 	 * {@code foo/{bar}?spam={spam}} and a parameter map {@code {bar=baz,spam=nuts}}
 	 * and the result will be {@code [contextpath]/foo/baz?spam=nuts}.
+	 *
 	 * @param relativeUrl the relative URL part
-	 * @param params a map of parameters to insert as placeholders in the url
+	 * @param params      a map of parameters to insert as placeholders in the url
 	 * @return a URL that points back to the current web application with an
 	 * absolute path also URL-encoded accordingly
 	 */
@@ -241,7 +241,8 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
-	 * @param code the code of the message
+	 *
+	 * @param code           the code of the message
 	 * @param defaultMessage the String to return if the lookup fails
 	 * @return the message
 	 */
@@ -251,8 +252,9 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
-	 * @param code the code of the message
-	 * @param args arguments for the message, or {@code null} if none
+	 *
+	 * @param code           the code of the message
+	 * @param args           arguments for the message, or {@code null} if none
 	 * @param defaultMessage the String to return if the lookup fails
 	 * @return the message
 	 */
@@ -262,8 +264,9 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
-	 * @param code the code of the message
-	 * @param args arguments for the message as a List, or {@code null} if none
+	 *
+	 * @param code           the code of the message
+	 * @param args           arguments for the message as a List, or {@code null} if none
 	 * @param defaultMessage the String to return if the lookup fails
 	 * @return the message
 	 */
@@ -273,10 +276,11 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code.
-	 * @param code the code of the message
-	 * @param args arguments for the message, or {@code null} if none
+	 *
+	 * @param code           the code of the message
+	 * @param args           arguments for the message, or {@code null} if none
 	 * @param defaultMessage the String to return if the lookup fails
-	 * @param htmlEscape if the message should be HTML-escaped
+	 * @param htmlEscape     if the message should be HTML-escaped
 	 * @return the message
 	 */
 	public String getMessage(String code, @Nullable Object[] args, String defaultMessage, boolean htmlEscape) {
@@ -289,6 +293,7 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
+	 *
 	 * @param code the code of the message
 	 * @return the message
 	 * @throws org.springframework.context.NoSuchMessageException if not found
@@ -299,6 +304,7 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
+	 *
 	 * @param code the code of the message
 	 * @param args arguments for the message, or {@code null} if none
 	 * @return the message
@@ -310,6 +316,7 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code, using the "defaultHtmlEscape" setting.
+	 *
 	 * @param code the code of the message
 	 * @param args arguments for the message as a List, or {@code null} if none
 	 * @return the message
@@ -321,8 +328,9 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the message for the given code.
-	 * @param code the code of the message
-	 * @param args arguments for the message, or {@code null} if none
+	 *
+	 * @param code       the code of the message
+	 * @param args       arguments for the message, or {@code null} if none
 	 * @param htmlEscape if the message should be HTML-escaped
 	 * @return the message
 	 * @throws org.springframework.context.NoSuchMessageException if not found
@@ -334,6 +342,7 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the given MessageSourceResolvable (e.g. an ObjectError instance), using the "defaultHtmlEscape" setting.
+	 *
 	 * @param resolvable the MessageSourceResolvable
 	 * @return the message
 	 * @throws org.springframework.context.NoSuchMessageException if not found
@@ -344,6 +353,7 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the given MessageSourceResolvable (e.g. an ObjectError instance).
+	 *
 	 * @param resolvable the MessageSourceResolvable
 	 * @param htmlEscape if the message should be HTML-escaped
 	 * @return the message
@@ -357,6 +367,7 @@ public class RequestContext {
 	/**
 	 * Retrieve the Errors instance for the given bind object, using the
 	 * "defaultHtmlEscape" setting.
+	 *
 	 * @param name the name of the bind object
 	 * @return the Errors instance, or {@code null} if not found
 	 */
@@ -367,7 +378,8 @@ public class RequestContext {
 
 	/**
 	 * Retrieve the Errors instance for the given bind object.
-	 * @param name the name of the bind object
+	 *
+	 * @param name       the name of the bind object
 	 * @param htmlEscape create an Errors instance with automatic HTML escaping?
 	 * @return the Errors instance, or {@code null} if not found
 	 */
@@ -391,8 +403,7 @@ public class RequestContext {
 
 		if (htmlEscape && !(errors instanceof EscapedErrors)) {
 			errors = new EscapedErrors(errors);
-		}
-		else if (!htmlEscape && errors instanceof EscapedErrors) {
+		} else if (!htmlEscape && errors instanceof EscapedErrors) {
 			errors = ((EscapedErrors) errors).getSource();
 		}
 
@@ -403,6 +414,7 @@ public class RequestContext {
 	/**
 	 * Retrieve the model object for the given model name, either from the model
 	 * or from the request attributes.
+	 *
 	 * @param modelName the name of the model object
 	 * @return the model object
 	 */
@@ -419,8 +431,9 @@ public class RequestContext {
 	/**
 	 * Create a BindStatus for the given bind object using the
 	 * "defaultHtmlEscape" setting.
+	 *
 	 * @param path the bean and property path for which values and errors will
-	 * be resolved (e.g. "person.age")
+	 *             be resolved (e.g. "person.age")
 	 * @return the new BindStatus instance
 	 * @throws IllegalStateException if no corresponding Errors object found
 	 */
@@ -431,8 +444,9 @@ public class RequestContext {
 	/**
 	 * Create a BindStatus for the given bind object, using the
 	 * "defaultHtmlEscape" setting.
-	 * @param path the bean and property path for which values and errors will
-	 * be resolved (e.g. "person.age")
+	 *
+	 * @param path       the bean and property path for which values and errors will
+	 *                   be resolved (e.g. "person.age")
 	 * @param htmlEscape create a BindStatus with automatic HTML escaping?
 	 * @return the new BindStatus instance
 	 * @throws IllegalStateException if no corresponding Errors object found

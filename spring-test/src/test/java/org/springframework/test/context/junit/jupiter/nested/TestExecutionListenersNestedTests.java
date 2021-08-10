@@ -16,13 +16,9 @@
 
 package org.springframework.test.context.junit.jupiter.nested;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.NestedTestConfiguration;
 import org.springframework.test.context.TestContext;
@@ -31,6 +27,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit.jupiter.nested.TestExecutionListenersNestedTests.FooTestExecutionListener;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.NestedTestConfiguration.EnclosingConfiguration.INHERIT;
@@ -67,6 +66,59 @@ class TestExecutionListenersNestedTests {
 		assertThat(listeners).containsExactly(FOO);
 	}
 
+
+	@TestExecutionListeners(QuxTestExecutionListener.class)
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class Config {
+		/* no user beans required for these tests */
+	}
+
+	private static abstract class BaseTestExecutionListener extends AbstractTestExecutionListener {
+
+		protected abstract String name();
+
+		@Override
+		public final void beforeTestClass(TestContext testContext) {
+			listeners.add(name());
+		}
+	}
+
+	// -------------------------------------------------------------------------
+
+	static class FooTestExecutionListener extends BaseTestExecutionListener {
+
+		@Override
+		protected String name() {
+			return FOO;
+		}
+	}
+
+	static class BarTestExecutionListener extends BaseTestExecutionListener {
+
+		@Override
+		protected String name() {
+			return BAR;
+		}
+	}
+
+	static class BazTestExecutionListener extends BaseTestExecutionListener {
+
+		@Override
+		protected String name() {
+			return BAZ;
+		}
+	}
+
+	static class QuxTestExecutionListener extends BaseTestExecutionListener {
+
+		@Override
+		protected String name() {
+			return QUX;
+		}
+	}
 
 	@Nested
 	@NestedTestConfiguration(INHERIT)
@@ -135,59 +187,6 @@ class TestExecutionListenersNestedTests {
 			}
 		}
 
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class Config {
-		/* no user beans required for these tests */
-	}
-
-	private static abstract class BaseTestExecutionListener extends AbstractTestExecutionListener {
-
-		protected abstract String name();
-
-		@Override
-		public final void beforeTestClass(TestContext testContext) {
-			listeners.add(name());
-		}
-	}
-
-	static class FooTestExecutionListener extends BaseTestExecutionListener {
-
-		@Override
-		protected String name() {
-			return FOO;
-		}
-	}
-
-	static class BarTestExecutionListener extends BaseTestExecutionListener {
-
-		@Override
-		protected String name() {
-			return BAR;
-		}
-	}
-
-	static class BazTestExecutionListener extends BaseTestExecutionListener {
-
-		@Override
-		protected String name() {
-			return BAZ;
-		}
-	}
-
-	static class QuxTestExecutionListener extends BaseTestExecutionListener {
-
-		@Override
-		protected String name() {
-			return QUX;
-		}
-	}
-
-	@TestExecutionListeners(QuxTestExecutionListener.class)
-	interface TestInterface {
 	}
 
 }

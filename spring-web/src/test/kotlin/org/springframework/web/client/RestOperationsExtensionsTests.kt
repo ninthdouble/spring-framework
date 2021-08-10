@@ -22,7 +22,10 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
+import org.springframework.http.RequestEntity
+import org.springframework.http.ResponseEntity
 import org.springframework.util.ReflectionUtils
 import java.net.URI
 import kotlin.reflect.full.createType
@@ -204,7 +207,7 @@ class RestOperationsExtensionsTests {
 	@Test
 	fun `postForEntity with reified type parameters`() {
 		val url = "https://spring.io"
-		every  { template.postForEntity(url, null, Foo::class.java) } returns entity
+		every { template.postForEntity(url, null, Foo::class.java) } returns entity
 		assertThat(template.postForEntity<Foo>(url)).isEqualTo(entity)
 		verify { template.postForEntity(url, null, Foo::class.java) }
 	}
@@ -274,7 +277,7 @@ class RestOperationsExtensionsTests {
 		ReflectionUtils.doWithMethods(RestOperations::class.java) { method ->
 			arrayOf(ParameterizedTypeReference::class, Class::class).forEach { kClass ->
 				if (method.parameterTypes.contains(kClass.java)) {
-					val parameters = mutableListOf<Class<*>>(RestOperations::class.java).apply { addAll(method.parameterTypes.filter { it !=  kClass.java }) }
+					val parameters = mutableListOf<Class<*>>(RestOperations::class.java).apply { addAll(method.parameterTypes.filter { it != kClass.java }) }
 					val f = extensions.getDeclaredMethod(method.name, *parameters.toTypedArray()).kotlinFunction!!
 					assertThat(f.typeParameters.size).isEqualTo(1)
 					assertThat(f.typeParameters[0].upperBounds).isEqualTo(listOf(Any::class.createType(nullable = true)))

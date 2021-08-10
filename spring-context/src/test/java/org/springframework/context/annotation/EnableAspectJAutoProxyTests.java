@@ -106,17 +106,19 @@ public class EnableAspectJAutoProxyTests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Loggable {
+	}
+
 	@ComponentScan("example.scannable")
 	@EnableAspectJAutoProxy
 	static class ConfigWithJdkProxy {
 	}
 
-
 	@ComponentScan("example.scannable")
 	@EnableAspectJAutoProxy(proxyTargetClass = true)
 	static class ConfigWithCglibProxy {
 	}
-
 
 	@ComponentScan("example.scannable")
 	@EnableAspectJAutoProxy(exposeProxy = true)
@@ -130,6 +132,7 @@ public class EnableAspectJAutoProxyTests {
 					assertThat(AopContext.currentProxy()).isNotNull();
 					return super.foo(id);
 				}
+
 				@Override
 				protected FooDao fooDao() {
 					return context.getBean(FooDao.class);
@@ -137,12 +140,6 @@ public class EnableAspectJAutoProxyTests {
 			};
 		}
 	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Loggable {
-	}
-
 
 	@Loggable
 	public static class SampleDto {

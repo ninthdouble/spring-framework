@@ -16,13 +16,12 @@
 
 package org.springframework.beans.propertyeditors;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ClassUtils;
+
 import java.beans.PropertyEditor;
 import java.io.File;
 import java.nio.file.Path;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.ClassUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -90,8 +89,7 @@ public class PathEditorTests {
 			assertThat(value instanceof Path).isTrue();
 			Path path = (Path) value;
 			assertThat(!path.toFile().exists()).isTrue();
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			if (File.separatorChar == '\\') {  // on Windows, otherwise silently ignore
 				throw ex;
 			}

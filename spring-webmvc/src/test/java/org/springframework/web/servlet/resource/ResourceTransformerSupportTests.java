@@ -15,18 +15,16 @@
  */
 package org.springframework.web.servlet.resource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,12 +36,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ResourceTransformerSupportTests {
 
-	private ResourceTransformerChain transformerChain;
-
-	private TestResourceTransformerSupport transformer;
-
 	private final MockHttpServletRequest request = new MockHttpServletRequest("GET", "/");
-
+	private ResourceTransformerChain transformerChain;
+	private TestResourceTransformerSupport transformer;
 
 	@BeforeEach
 	public void setUp() {

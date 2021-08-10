@@ -16,35 +16,27 @@
 
 package org.springframework.orm.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.transaction.InvalidIsolationLevelException;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.support.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.RollbackException;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.transaction.InvalidIsolationLevelException;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Costin Leau
@@ -144,8 +136,7 @@ public class JpaTransactionManagerTests {
 				}
 			});
 			assertThat(result).isSameAs(l);
-		}
-		catch (TransactionSystemException tse) {
+		} catch (TransactionSystemException tse) {
 			// expected
 			boolean condition = tse.getCause() instanceof RollbackException;
 			assertThat(condition).isTrue();
@@ -174,14 +165,14 @@ public class JpaTransactionManagerTests {
 		assertThat(condition2).isTrue();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
-			tt.execute(new TransactionCallback() {
-				@Override
-				public Object doInTransaction(TransactionStatus status) {
-					assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
-					EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
-					throw new RuntimeException("some exception");
-				}
-			})).withMessage("some exception");
+				tt.execute(new TransactionCallback() {
+					@Override
+					public Object doInTransaction(TransactionStatus status) {
+						assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
+						EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
+						throw new RuntimeException("some exception");
+					}
+				})).withMessage("some exception");
 
 		boolean condition1 = !TransactionSynchronizationManager.hasResource(factory);
 		assertThat(condition1).isTrue();
@@ -205,14 +196,14 @@ public class JpaTransactionManagerTests {
 		assertThat(condition2).isTrue();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
-			tt.execute(new TransactionCallback() {
-				@Override
-				public Object doInTransaction(TransactionStatus status) {
-					assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
-					EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
-					throw new RuntimeException("some exception");
-				}
-			}));
+				tt.execute(new TransactionCallback() {
+					@Override
+					public Object doInTransaction(TransactionStatus status) {
+						assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
+						EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
+						throw new RuntimeException("some exception");
+					}
+				}));
 
 		boolean condition1 = !TransactionSynchronizationManager.hasResource(factory);
 		assertThat(condition1).isTrue();
@@ -308,19 +299,19 @@ public class JpaTransactionManagerTests {
 		assertThat(condition2).isTrue();
 
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
-			tt.execute(new TransactionCallback() {
-				@Override
-				public Object doInTransaction(TransactionStatus status) {
-					assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
-					return tt.execute(new TransactionCallback() {
-						@Override
-						public Object doInTransaction(TransactionStatus status) {
-							EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
-							throw new RuntimeException("some exception");
-						}
-					});
-				}
-			}));
+				tt.execute(new TransactionCallback() {
+					@Override
+					public Object doInTransaction(TransactionStatus status) {
+						assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
+						return tt.execute(new TransactionCallback() {
+							@Override
+							public Object doInTransaction(TransactionStatus status) {
+								EntityManagerFactoryUtils.getTransactionalEntityManager(factory);
+								throw new RuntimeException("some exception");
+							}
+						});
+					}
+				}));
 
 		boolean condition1 = !TransactionSynchronizationManager.hasResource(factory);
 		assertThat(condition1).isTrue();
@@ -363,7 +354,7 @@ public class JpaTransactionManagerTests {
 						});
 					}
 				}))
-			.withCauseInstanceOf(RollbackException.class);
+				.withCauseInstanceOf(RollbackException.class);
 
 		boolean condition1 = !TransactionSynchronizationManager.hasResource(factory);
 		assertThat(condition1).isTrue();
@@ -449,8 +440,7 @@ public class JpaTransactionManagerTests {
 				}
 			});
 			assertThat(result).isSameAs(l);
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(factory);
 		}
 
@@ -701,8 +691,7 @@ public class JpaTransactionManagerTests {
 			assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
 			boolean condition = !TransactionSynchronizationManager.isSynchronizationActive();
 			assertThat(condition).isTrue();
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(factory);
 		}
 
@@ -736,8 +725,7 @@ public class JpaTransactionManagerTests {
 			assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
 			boolean condition = !TransactionSynchronizationManager.isSynchronizationActive();
 			assertThat(condition).isTrue();
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(factory);
 		}
 
@@ -776,8 +764,7 @@ public class JpaTransactionManagerTests {
 			assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
 			boolean condition = !TransactionSynchronizationManager.isSynchronizationActive();
 			assertThat(condition).isTrue();
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(factory);
 		}
 
@@ -811,8 +798,7 @@ public class JpaTransactionManagerTests {
 			assertThat(TransactionSynchronizationManager.hasResource(factory)).isTrue();
 			boolean condition = !TransactionSynchronizationManager.isSynchronizationActive();
 			assertThat(condition).isTrue();
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(factory);
 		}
 
@@ -827,11 +813,11 @@ public class JpaTransactionManagerTests {
 		given(manager.isOpen()).willReturn(true);
 
 		assertThatExceptionOfType(InvalidIsolationLevelException.class).isThrownBy(() ->
-			tt.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus status) {
-				}
-			}));
+				tt.execute(new TransactionCallbackWithoutResult() {
+					@Override
+					protected void doInTransactionWithoutResult(TransactionStatus status) {
+					}
+				}));
 
 		verify(manager).close();
 	}

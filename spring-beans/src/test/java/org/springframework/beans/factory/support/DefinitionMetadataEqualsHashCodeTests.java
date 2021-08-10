@@ -17,7 +17,6 @@
 package org.springframework.beans.factory.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.testfixture.beans.TestBean;
@@ -49,8 +48,8 @@ public class DefinitionMetadataEqualsHashCodeTests {
 	}
 
 	/**
-	 * @since 3.2.8
 	 * @see <a href="https://jira.spring.io/browse/SPR-11420">SPR-11420</a>
+	 * @since 3.2.8
 	 */
 	@Test
 	public void rootBeanDefinitionAndMethodOverridesWithDifferentOverloadedValues() {
@@ -104,7 +103,7 @@ public class DefinitionMetadataEqualsHashCodeTests {
 		definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
 		// definition.getConstructorArgumentValues().addGenericArgumentValue("foo");
 		definition.setDependencyCheck(AbstractBeanDefinition.DEPENDENCY_CHECK_OBJECTS);
-		definition.setDependsOn(new String[] { "foo", "bar" });
+		definition.setDependsOn(new String[]{"foo", "bar"});
 		definition.setDestroyMethodName("destroy");
 		definition.setEnforceDestroyMethod(false);
 		definition.setEnforceInitMethod(true);

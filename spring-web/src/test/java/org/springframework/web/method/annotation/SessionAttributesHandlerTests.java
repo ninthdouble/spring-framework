@@ -17,10 +17,7 @@
 package org.springframework.web.method.annotation;
 
 
-import java.util.HashSet;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -30,11 +27,14 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
+import java.util.HashSet;
+
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test fixture with {@link SessionAttributesHandler}.
+ *
  * @author Rossen Stoyanchev
  */
 public class SessionAttributesHandlerTests {
@@ -42,7 +42,7 @@ public class SessionAttributesHandlerTests {
 	private final SessionAttributeStore sessionAttributeStore = new DefaultSessionAttributeStore();
 
 	private final SessionAttributesHandler sessionAttributesHandler = new SessionAttributesHandler(
-		SessionAttributeHandler.class, sessionAttributeStore);
+			SessionAttributeHandler.class, sessionAttributeStore);
 
 	private final NativeWebRequest request = new ServletWebRequest(new MockHttpServletRequest());
 
@@ -105,7 +105,7 @@ public class SessionAttributesHandlerTests {
 	}
 
 
-	@SessionAttributes(names = { "attr1", "attr2" }, types = { TestBean.class })
+	@SessionAttributes(names = {"attr1", "attr2"}, types = {TestBean.class})
 	private static class SessionAttributeHandler {
 	}
 

@@ -16,18 +16,11 @@
 
 package org.springframework.jms.support.destination;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.Topic;
-import javax.jms.TopicSession;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jms.StubQueue;
 import org.springframework.jms.StubTopic;
+
+import javax.jms.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -40,6 +33,12 @@ public class DynamicDestinationResolverTests {
 
 	private static final String DESTINATION_NAME = "foo";
 
+	private static void testResolveDestination(Session session, Destination expectedDestination, boolean isPubSub) throws JMSException {
+		DynamicDestinationResolver resolver = new DynamicDestinationResolver();
+		Destination destination = resolver.resolveDestinationName(session, DESTINATION_NAME, isPubSub);
+		assertThat(destination).isNotNull();
+		assertThat(destination).isSameAs(expectedDestination);
+	}
 
 	@Test
 	public void resolveWithPubSubTopicSession() throws Exception {
@@ -71,13 +70,6 @@ public class DynamicDestinationResolverTests {
 		Session session = mock(Session.class);
 		given(session.createQueue(DESTINATION_NAME)).willReturn(expectedDestination);
 		testResolveDestination(session, expectedDestination, false);
-	}
-
-	private static void testResolveDestination(Session session, Destination expectedDestination, boolean isPubSub) throws JMSException {
-		DynamicDestinationResolver resolver = new DynamicDestinationResolver();
-		Destination destination = resolver.resolveDestinationName(session, DESTINATION_NAME, isPubSub);
-		assertThat(destination).isNotNull();
-		assertThat(destination).isSameAs(expectedDestination);
 	}
 
 }

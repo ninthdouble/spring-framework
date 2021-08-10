@@ -20,7 +20,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -29,14 +28,14 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * inlined SQL {@link Sql#statements statements}.
  *
  * @author Sam Brannen
- * @since 4.2
  * @see TransactionalSqlScriptsTests
+ * @since 4.2
  */
 @SpringJUnitConfig(EmptyDatabaseConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Sql(
-	scripts    = "schema.sql",
-	statements = "INSERT INTO user VALUES('Dilbert')"
+		scripts = "schema.sql",
+		statements = "INSERT INTO user VALUES('Dilbert')"
 )
 @DirtiesContext
 class TransactionalInlinedStatementsSqlScriptsTests extends AbstractTransactionalTests {

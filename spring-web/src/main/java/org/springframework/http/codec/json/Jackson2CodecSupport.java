@@ -16,23 +16,11 @@
 
 package org.springframework.http.codec.json;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
-
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
@@ -47,6 +35,11 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeType;
 import org.springframework.util.ObjectUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.function.Consumer;
+
 /**
  * Base class providing support methods for Jackson 2.9 encoding and decoding.
  *
@@ -59,6 +52,7 @@ public abstract class Jackson2CodecSupport {
 	/**
 	 * The key for the hint to specify a "JSON View" for encoding or decoding
 	 * with the value expected to be a {@link Class}.
+	 *
 	 * @see <a href="https://www.baeldung.com/jackson-json-view-annotation">Jackson JSON Views</a>
 	 */
 	public static final String JSON_VIEW_HINT = Jackson2CodecSupport.class.getName() + ".jsonView";
@@ -83,13 +77,10 @@ public abstract class Jackson2CodecSupport {
 
 
 	protected final Log logger = HttpLogging.forLogName(getClass());
-
+	private final List<MimeType> mimeTypes;
 	private ObjectMapper defaultObjectMapper;
-
 	@Nullable
 	private Map<Class<?>, Map<MimeType, ObjectMapper>> objectMapperRegistrations;
-
-	private final List<MimeType> mimeTypes;
 
 
 	/**
@@ -102,22 +93,22 @@ public abstract class Jackson2CodecSupport {
 				Collections.unmodifiableList(Arrays.asList(mimeTypes)) : DEFAULT_MIME_TYPES;
 	}
 
+	/**
+	 * Return the {@link #setObjectMapper configured} default ObjectMapper.
+	 */
+	public ObjectMapper getObjectMapper() {
+		return this.defaultObjectMapper;
+	}
 
 	/**
 	 * Configure the default ObjectMapper instance to use.
+	 *
 	 * @param objectMapper the ObjectMapper instance
 	 * @since 5.3.4
 	 */
 	public void setObjectMapper(ObjectMapper objectMapper) {
 		Assert.notNull(objectMapper, "ObjectMapper must not be null");
 		this.defaultObjectMapper = objectMapper;
-	}
-
-	/**
-	 * Return the {@link #setObjectMapper configured} default ObjectMapper.
-	 */
-	public ObjectMapper getObjectMapper() {
-		return this.defaultObjectMapper;
 	}
 
 	/**
@@ -131,9 +122,10 @@ public abstract class Jackson2CodecSupport {
 	 * important for the mappings configured here to
 	 * {@link MediaType#includes(MediaType) include} every MediaType that must
 	 * be supported for the given class.
-	 * @param clazz the type of Object to register ObjectMapper instances for
+	 *
+	 * @param clazz     the type of Object to register ObjectMapper instances for
 	 * @param registrar a consumer to populate or otherwise update the
-	 * MediaType-to-ObjectMapper associations for the given Class
+	 *                  MediaType-to-ObjectMapper associations for the given Class
 	 * @since 5.3.4
 	 */
 	public void registerObjectMappersForType(Class<?> clazz, Consumer<Map<MimeType, ObjectMapper>> registrar) {
@@ -147,6 +139,7 @@ public abstract class Jackson2CodecSupport {
 
 	/**
 	 * Return ObjectMapper registrations for the given class, if any.
+	 *
 	 * @param clazz the class to look up for registrations for
 	 * @return a map with registered MediaType-to-ObjectMapper registrations,
 	 * or empty if in case of no registrations for the given class.
@@ -200,9 +193,10 @@ public abstract class Jackson2CodecSupport {
 	/**
 	 * Determine whether to log the given exception coming from a
 	 * {@link ObjectMapper#canDeserialize} / {@link ObjectMapper#canSerialize} check.
-	 * @param type the class that Jackson tested for (de-)serializability
+	 *
+	 * @param type  the class that Jackson tested for (de-)serializability
 	 * @param cause the Jackson-thrown exception to evaluate
-	 * (typically a {@link JsonMappingException})
+	 *              (typically a {@link JsonMappingException})
 	 * @since 5.3.1
 	 */
 	protected void logWarningIfNecessary(Type type, @Nullable Throwable cause) {
@@ -254,6 +248,7 @@ public abstract class Jackson2CodecSupport {
 	 * Select an ObjectMapper to use, either the main ObjectMapper or another
 	 * if the handling for the given Class has been customized through
 	 * {@link #registerObjectMappersForType(Class, Consumer)}.
+	 *
 	 * @since 5.3.4
 	 */
 	@Nullable

@@ -16,20 +16,6 @@
 
 package org.springframework.web.reactive.resource;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +23,14 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Resolver that delegates to the chain, and if a resource is found, it then
@@ -72,6 +66,12 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 		this.extensions.put("br", ".br");
 	}
 
+	/**
+	 * Return a read-only list with the supported content codings.
+	 */
+	public List<String> getContentCodings() {
+		return Collections.unmodifiableList(this.contentCodings);
+	}
 
 	/**
 	 * Configure the supported content codings in order of preference. The first
@@ -84,31 +84,13 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 	 * customizations to the same list in {@link CachingResourceResolver} to
 	 * ensure encoded variants of a resource are cached under separate keys.
 	 * <p>By default this property is set to {@literal ["br", "gzip"]}.
+	 *
 	 * @param codings one or more supported content codings
 	 */
 	public void setContentCodings(List<String> codings) {
 		Assert.notEmpty(codings, "At least one content coding expected");
 		this.contentCodings.clear();
 		this.contentCodings.addAll(codings);
-	}
-
-	/**
-	 * Return a read-only list with the supported content codings.
-	 */
-	public List<String> getContentCodings() {
-		return Collections.unmodifiableList(this.contentCodings);
-	}
-
-	/**
-	 * Configure mappings from content codings to file extensions. A dot "."
-	 * will be prepended in front of the extension value if not present.
-	 * <p>By default this is configured with {@literal ["br" -> ".br"]} and
-	 * {@literal ["gzip" -> ".gz"]}.
-	 * @param extensions the extensions to use.
-	 * @see #registerExtension(String, String)
-	 */
-	public void setExtensions(Map<String, String> extensions) {
-		extensions.forEach(this::registerExtension);
 	}
 
 	/**
@@ -119,8 +101,22 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 	}
 
 	/**
+	 * Configure mappings from content codings to file extensions. A dot "."
+	 * will be prepended in front of the extension value if not present.
+	 * <p>By default this is configured with {@literal ["br" -> ".br"]} and
+	 * {@literal ["gzip" -> ".gz"]}.
+	 *
+	 * @param extensions the extensions to use.
+	 * @see #registerExtension(String, String)
+	 */
+	public void setExtensions(Map<String, String> extensions) {
+		extensions.forEach(this::registerExtension);
+	}
+
+	/**
 	 * Java config friendly alternative to {@link #setExtensions(Map)}.
-	 * @param coding the content coding
+	 *
+	 * @param coding    the content coding
 	 * @param extension the associated file extension
 	 */
 	public void registerExtension(String coding, String extension) {
@@ -130,7 +126,7 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 
 	@Override
 	protected Mono<Resource> resolveResourceInternal(@Nullable ServerWebExchange exchange,
-			String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
+													 String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
 
 		return chain.resolveResource(exchange, requestPath, locations).map(resource -> {
 
@@ -151,8 +147,7 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 						if (encoded.exists()) {
 							return encoded;
 						}
-					}
-					catch (IOException ex) {
+					} catch (IOException ex) {
 						logger.trace(exchange.getLogPrefix() +
 								"No " + coding + " resource for [" + resource.getFilename() + "]", ex);
 					}
@@ -180,7 +175,7 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 
 	@Override
 	protected Mono<String> resolveUrlPathInternal(String resourceUrlPath,
-			List<? extends Resource> locations, ResourceResolverChain chain) {
+												  List<? extends Resource> locations, ResourceResolverChain chain) {
 
 		return chain.resolveUrlPath(resourceUrlPath, locations);
 	}
@@ -274,8 +269,7 @@ public class EncodedResourceResolver extends AbstractResourceResolver {
 			HttpHeaders headers;
 			if (this.original instanceof HttpResource) {
 				headers = ((HttpResource) this.original).getResponseHeaders();
-			}
-			else {
+			} else {
 				headers = new HttpHeaders();
 			}
 			headers.add(HttpHeaders.CONTENT_ENCODING, this.coding);

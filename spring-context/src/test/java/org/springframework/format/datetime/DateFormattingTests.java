@@ -131,25 +131,25 @@ public class DateFormattingTests {
 		FieldError fieldError = bindingResult.getFieldError(propertyName);
 		TypeMismatchException exception = fieldError.unwrap(TypeMismatchException.class);
 		assertThat(exception)
-			.hasMessageContaining("for property 'styleDate'")
-			.hasCauseInstanceOf(ConversionFailedException.class).getCause()
+				.hasMessageContaining("for property 'styleDate'")
+				.hasCauseInstanceOf(ConversionFailedException.class).getCause()
 				.hasMessageContaining("for value '99/01/01'")
 				.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
-					.hasMessageContaining("Parse attempt failed for value [99/01/01]")
-					.hasCauseInstanceOf(ParseException.class).getCause()
-						// Unable to parse date time value "99/01/01" using configuration from
-						// @org.springframework.format.annotation.DateTimeFormat(pattern=, style=S-, iso=NONE, fallbackPatterns=[])
-						// We do not check "fallbackPatterns=[]", since the array representation in the toString()
-						// implementation for annotations changed from [] to {} in Java 9. In addition, strings
-						// are enclosed in double quotes beginning with Java 9. Thus, we cannot check directly
-						// for the presence of "style=S-".
-						.hasMessageContainingAll(
-							"Unable to parse date time value \"99/01/01\" using configuration from",
-							"@org.springframework.format.annotation.DateTimeFormat",
-							"style=", "S-", "iso=NONE")
-						.hasCauseInstanceOf(ParseException.class).getCause()
-							.hasMessageStartingWith("Unparseable date: \"99/01/01\"")
-							.hasNoCause();
+				.hasMessageContaining("Parse attempt failed for value [99/01/01]")
+				.hasCauseInstanceOf(ParseException.class).getCause()
+				// Unable to parse date time value "99/01/01" using configuration from
+				// @org.springframework.format.annotation.DateTimeFormat(pattern=, style=S-, iso=NONE, fallbackPatterns=[])
+				// We do not check "fallbackPatterns=[]", since the array representation in the toString()
+				// implementation for annotations changed from [] to {} in Java 9. In addition, strings
+				// are enclosed in double quotes beginning with Java 9. Thus, we cannot check directly
+				// for the presence of "style=S-".
+				.hasMessageContainingAll(
+						"Unable to parse date time value \"99/01/01\" using configuration from",
+						"@org.springframework.format.annotation.DateTimeFormat",
+						"style=", "S-", "iso=NONE")
+				.hasCauseInstanceOf(ParseException.class).getCause()
+				.hasMessageStartingWith("Unparseable date: \"99/01/01\"")
+				.hasNoCause();
 	}
 
 	@Test
@@ -275,7 +275,8 @@ public class DateFormattingTests {
 		assertThat(date).isEqualTo(new Date(string));
 	}
 
-	@Test  // SPR-10105
+	@Test
+		// SPR-10105
 	void stringToDateWithGlobalFormat() {
 		DateFormatterRegistrar registrar = new DateFormatterRegistrar();
 		DateFormatter dateFormatter = new DateFormatter();
@@ -288,128 +289,32 @@ public class DateFormattingTests {
 		assertThat(date).isNotNull();
 	}
 
-
-	@Nested
-	class FallbackPatternTests {
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void styleCalendar(String propertyValue) {
-			String propertyName = "styleCalendarWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void styleDate(String propertyValue) {
-			String propertyName = "styleDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void patternDate(String propertyValue) {
-			String propertyName = "patternDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void isoDate(String propertyValue) {
-			String propertyName = "isoDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
-		}
-
-		@Test
-		void patternDateWithUnsupportedPattern() {
-			String propertyValue = "210302";
-			String propertyName = "patternDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(1);
-			FieldError fieldError = bindingResult.getFieldError(propertyName);
-			assertThat(fieldError.unwrap(TypeMismatchException.class))
-				.hasMessageContaining("for property 'patternDateWithFallbackPatterns'")
-				.hasCauseInstanceOf(ConversionFailedException.class).getCause()
-					.hasMessageContaining("for value '210302'")
-					.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
-						.hasMessageContaining("Parse attempt failed for value [210302]")
-						.hasCauseInstanceOf(ParseException.class).getCause()
-							// Unable to parse date time value "210302" using configuration from
-							// @org.springframework.format.annotation.DateTimeFormat(
-							// pattern=yyyy-MM-dd, style=SS, iso=NONE, fallbackPatterns=[M/d/yy, yyyyMMdd, yyyy.MM.dd])
-							.hasMessageContainingAll(
-								"Unable to parse date time value \"210302\" using configuration from",
-								"@org.springframework.format.annotation.DateTimeFormat",
-								"yyyy-MM-dd", "M/d/yy", "yyyyMMdd", "yyyy.MM.dd")
-							.hasCauseInstanceOf(ParseException.class).getCause()
-								.hasMessageStartingWith("Unparseable date: \"210302\"")
-								.hasNoCause();
-		}
-	}
-
-
 	@SuppressWarnings("unused")
 	private static class SimpleDateBean {
 
+		private final List<SimpleDateBean> children = new ArrayList<>();
 		private Long millis;
-
 		private Long styleMillis;
-
 		@DateTimeFormat(style = "S-")
 		private Calendar styleCalendar;
-
-		@DateTimeFormat(style = "S-", fallbackPatterns = { "yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(style = "S-", fallbackPatterns = {"yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd"})
 		private Calendar styleCalendarWithFallbackPatterns;
-
 		@DateTimeFormat(style = "S-")
 		private Date styleDate;
-
-		@DateTimeFormat(style = "S-", fallbackPatterns = { "yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(style = "S-", fallbackPatterns = {"yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd"})
 		private Date styleDateWithFallbackPatterns;
-
 		@DateTimeFormat(pattern = "M/d/yy h:mm")
 		private Date patternDate;
-
-		@DateTimeFormat(pattern = "yyyy-MM-dd", fallbackPatterns = { "M/d/yy", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(pattern = "yyyy-MM-dd", fallbackPatterns = {"M/d/yy", "yyyyMMdd", "yyyy.MM.dd"})
 		private Date patternDateWithFallbackPatterns;
-
 		@DateTimeFormat(iso = ISO.DATE)
 		private Date isoDate;
-
-		@DateTimeFormat(iso = ISO.DATE, fallbackPatterns = { "M/d/yy", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(iso = ISO.DATE, fallbackPatterns = {"M/d/yy", "yyyyMMdd", "yyyy.MM.dd"})
 		private Date isoDateWithFallbackPatterns;
-
 		@DateTimeFormat(iso = ISO.TIME)
 		private Date isoTime;
-
 		@DateTimeFormat(iso = ISO.DATE_TIME)
 		private Date isoDateTime;
-
-		private final List<SimpleDateBean> children = new ArrayList<>();
-
 
 		public Long getMillis() {
 			return this.millis;
@@ -419,12 +324,12 @@ public class DateFormattingTests {
 			this.millis = millis;
 		}
 
-		@DateTimeFormat(style="S-")
+		@DateTimeFormat(style = "S-")
 		public Long getStyleMillis() {
 			return this.styleMillis;
 		}
 
-		public void setStyleMillis(@DateTimeFormat(style="S-") Long styleMillis) {
+		public void setStyleMillis(@DateTimeFormat(style = "S-") Long styleMillis) {
 			this.styleMillis = styleMillis;
 		}
 
@@ -510,6 +415,87 @@ public class DateFormattingTests {
 
 		public List<SimpleDateBean> getChildren() {
 			return this.children;
+		}
+	}
+
+	@Nested
+	class FallbackPatternTests {
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void styleCalendar(String propertyValue) {
+			String propertyName = "styleCalendarWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void styleDate(String propertyValue) {
+			String propertyName = "styleDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void patternDate(String propertyValue) {
+			String propertyName = "patternDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void isoDate(String propertyValue) {
+			String propertyName = "isoDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
+		}
+
+		@Test
+		void patternDateWithUnsupportedPattern() {
+			String propertyValue = "210302";
+			String propertyName = "patternDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(1);
+			FieldError fieldError = bindingResult.getFieldError(propertyName);
+			assertThat(fieldError.unwrap(TypeMismatchException.class))
+					.hasMessageContaining("for property 'patternDateWithFallbackPatterns'")
+					.hasCauseInstanceOf(ConversionFailedException.class).getCause()
+					.hasMessageContaining("for value '210302'")
+					.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
+					.hasMessageContaining("Parse attempt failed for value [210302]")
+					.hasCauseInstanceOf(ParseException.class).getCause()
+					// Unable to parse date time value "210302" using configuration from
+					// @org.springframework.format.annotation.DateTimeFormat(
+					// pattern=yyyy-MM-dd, style=SS, iso=NONE, fallbackPatterns=[M/d/yy, yyyyMMdd, yyyy.MM.dd])
+					.hasMessageContainingAll(
+							"Unable to parse date time value \"210302\" using configuration from",
+							"@org.springframework.format.annotation.DateTimeFormat",
+							"yyyy-MM-dd", "M/d/yy", "yyyyMMdd", "yyyy.MM.dd")
+					.hasCauseInstanceOf(ParseException.class).getCause()
+					.hasMessageStartingWith("Unparseable date: \"210302\"")
+					.hasNoCause();
 		}
 	}
 

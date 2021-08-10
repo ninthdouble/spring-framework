@@ -16,26 +16,14 @@
 
 package org.springframework.jdbc.core.namedparam;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.core.RowMapper;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -177,11 +165,11 @@ public class NamedParameterQueryTests {
 		params.addValue("id", 3);
 		Object o = template.queryForObject("SELECT AGE FROM CUSTMR WHERE ID = :id",
 				params, new RowMapper<Object>() {
-			@Override
-			public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-				return rs.getInt(1);
-			}
-		});
+					@Override
+					public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+						return rs.getInt(1);
+					}
+				});
 
 		boolean condition = o instanceof Integer;
 		assertThat(condition).as("Correct result type").isTrue();
@@ -249,8 +237,8 @@ public class NamedParameterQueryTests {
 
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		List<Object[]> l1 = new ArrayList<>();
-		l1.add(new Object[] {3, "Rod"});
-		l1.add(new Object[] {4, "Juergen"});
+		l1.add(new Object[]{3, "Rod"});
+		l1.add(new Object[]{4, "Juergen"});
 		params.addValue("multiExpressionList", l1);
 		Object o = template.queryForObject(
 				"SELECT AGE FROM CUSTMR WHERE (ID, NAME) IN (:multiExpressionList)",

@@ -16,18 +16,17 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Map;
-import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
-import org.yaml.snakeyaml.scanner.ScannerException;
-
 import org.springframework.beans.factory.config.YamlProcessor.MatchStatus;
 import org.springframework.beans.factory.config.YamlProcessor.ResolutionMethod;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.DuplicateKeyException;
+import org.yaml.snakeyaml.scanner.ScannerException;
+
+import java.util.Map;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -54,8 +53,8 @@ class YamlPropertiesFactoryBeanTests {
 		YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
 		factory.setResources(new ByteArrayResource("foo: bar\ncd\nspam:\n  foo: baz".getBytes()));
 		assertThatExceptionOfType(ScannerException.class)
-			.isThrownBy(factory::getObject)
-			.withMessageContaining("line 3, column 1");
+				.isThrownBy(factory::getObject)
+				.withMessageContaining("line 3, column 1");
 	}
 
 	@Test
@@ -134,11 +133,11 @@ class YamlPropertiesFactoryBeanTests {
 		factory.setResources(new ByteArrayResource(
 				"one: two\n---\nfoo: bar\nspam: baz\n---\nfoo: bag\nspam: bad".getBytes()));
 		factory.setDocumentMatchers(properties -> {
-				if (!properties.containsKey("foo")) {
-					return MatchStatus.ABSTAIN;
-				}
-				return ("bag".equals(properties.getProperty("foo")) ?
-						MatchStatus.FOUND : MatchStatus.NOT_FOUND);
+			if (!properties.containsKey("foo")) {
+				return MatchStatus.ABSTAIN;
+			}
+			return ("bag".equals(properties.getProperty("foo")) ?
+					MatchStatus.FOUND : MatchStatus.NOT_FOUND);
 		});
 		Properties properties = factory.getObject();
 		assertThat(properties.getProperty("foo")).isEqualTo("bag");

@@ -16,14 +16,13 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition.ConsumeMediaTypeExpression;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -178,7 +177,7 @@ public class ConsumesRequestConditionTests {
 
 	@Test
 	public void parseConsumesAndHeaders() {
-		String[] consumes = new String[] {"text/plain"};
+		String[] consumes = new String[]{"text/plain"};
 		String[] headers = new String[]{"foo=bar", "content-type=application/xml,application/pdf"};
 		ConsumesRequestCondition condition = new ConsumesRequestCondition(consumes, headers);
 
@@ -204,7 +203,7 @@ public class ConsumesRequestConditionTests {
 	private void assertConditions(ConsumesRequestCondition condition, String... expected) {
 		Collection<ConsumeMediaTypeExpression> expressions = condition.getContent();
 		assertThat(expressions.stream().map(expr -> expr.getMediaType().toString()))
-			.containsExactlyInAnyOrder(expected);
+				.containsExactlyInAnyOrder(expected);
 	}
 
 }

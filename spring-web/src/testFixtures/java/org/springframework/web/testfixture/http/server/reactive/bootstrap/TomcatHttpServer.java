@@ -16,15 +16,14 @@
 
 package org.springframework.web.testfixture.http.server.reactive.bootstrap;
 
-import java.io.File;
-
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
-
 import org.springframework.http.server.reactive.ServletHttpHandlerAdapter;
 import org.springframework.http.server.reactive.TomcatHttpHandlerAdapter;
 import org.springframework.util.Assert;
+
+import java.io.File;
 
 /**
  * @author Rossen Stoyanchev
@@ -45,6 +44,7 @@ public class TomcatHttpServer extends AbstractHttpServer {
 	/**
 	 * Create a new Tomcat HTTP server using the {@code java.io.tmpdir} JVM
 	 * system property as the {@code baseDir}.
+	 *
 	 * @since 5.2
 	 */
 	public TomcatHttpServer() {

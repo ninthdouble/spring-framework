@@ -16,13 +16,12 @@
 
 package org.springframework.jdbc.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -54,8 +53,8 @@ class KeyHolderTests {
 		kh.getKeyList().add(singletonMap("key", "ABC"));
 
 		assertThatExceptionOfType(DataRetrievalFailureException.class)
-			.isThrownBy(() -> kh.getKey())
-			.withMessage("The generated key type is not supported. Unable to cast [java.lang.String] to [java.lang.Number].");
+				.isThrownBy(() -> kh.getKey())
+				.withMessage("The generated key type is not supported. Unable to cast [java.lang.String] to [java.lang.Number].");
 	}
 
 	@Test
@@ -63,8 +62,8 @@ class KeyHolderTests {
 		kh.getKeyList().add(emptyMap());
 
 		assertThatExceptionOfType(DataRetrievalFailureException.class)
-			.isThrownBy(() -> kh.getKey())
-			.withMessageStartingWith("Unable to retrieve the generated key.");
+				.isThrownBy(() -> kh.getKey())
+				.withMessageStartingWith("Unable to retrieve the generated key.");
 	}
 
 	@Test
@@ -78,8 +77,8 @@ class KeyHolderTests {
 
 		assertThat(kh.getKeys()).as("two keys should be in the map").hasSize(2);
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
-			.isThrownBy(() -> kh.getKey())
-			.withMessageStartingWith("The getKey method should only be used when a single key is returned.");
+				.isThrownBy(() -> kh.getKey())
+				.withMessageStartingWith("The getKey method should only be used when a single key is returned.");
 	}
 
 	@Test
@@ -94,8 +93,8 @@ class KeyHolderTests {
 		kh.getKeyList().add(singletonMap("key", "ABC"));
 
 		assertThatExceptionOfType(DataRetrievalFailureException.class)
-			.isThrownBy(() -> kh.getKeyAs(Integer.class))
-			.withMessage("The generated key type is not supported. Unable to cast [java.lang.String] to [java.lang.Integer].");
+				.isThrownBy(() -> kh.getKeyAs(Integer.class))
+				.withMessage("The generated key type is not supported. Unable to cast [java.lang.String] to [java.lang.Integer].");
 	}
 
 	@Test
@@ -103,8 +102,8 @@ class KeyHolderTests {
 		kh.getKeyList().add(singletonMap("key", null));
 
 		assertThatExceptionOfType(DataRetrievalFailureException.class)
-			.isThrownBy(() -> kh.getKeyAs(Integer.class))
-			.withMessage("The generated key type is not supported. Unable to cast [null] to [java.lang.Integer].");
+				.isThrownBy(() -> kh.getKeyAs(Integer.class))
+				.withMessage("The generated key type is not supported. Unable to cast [null] to [java.lang.Integer].");
 	}
 
 	@Test
@@ -118,8 +117,8 @@ class KeyHolderTests {
 
 		assertThat(kh.getKeyList()).as("two rows should be in the list").hasSize(2);
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class)
-			.isThrownBy(() -> kh.getKeys())
-			.withMessageStartingWith("The getKeys method should only be used when keys for a single row are returned.");
+				.isThrownBy(() -> kh.getKeys())
+				.withMessageStartingWith("The getKeys method should only be used when keys for a single row are returned.");
 	}
 
 }

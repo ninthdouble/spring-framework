@@ -16,13 +16,13 @@
 
 package org.springframework.web.servlet.function;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpMethod;
 
 /**
  * Implementation of {@link RouterFunctions.Visitor} that creates a formatted
@@ -92,8 +92,7 @@ class ToStringVisitor implements RouterFunctions.Visitor, RequestPredicates.Visi
 	public void method(Set<HttpMethod> methods) {
 		if (methods.size() == 1) {
 			this.builder.append(methods.iterator().next());
-		}
-		else {
+		} else {
 			this.builder.append(methods);
 		}
 	}

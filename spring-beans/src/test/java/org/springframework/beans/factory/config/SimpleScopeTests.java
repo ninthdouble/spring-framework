@@ -16,16 +16,15 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.beans.testfixture.beans.TestBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifiedResource;
@@ -47,10 +46,13 @@ public class SimpleScopeTests {
 		beanFactory = new DefaultListableBeanFactory();
 		Scope scope = new NoOpScope() {
 			private int index;
-			private List<TestBean> objects = new ArrayList<>(); {
+			private List<TestBean> objects = new ArrayList<>();
+
+			{
 				objects.add(new TestBean());
 				objects.add(new TestBean());
 			}
+
 			@Override
 			public Object get(String name, ObjectFactory<?> objectFactory) {
 				if (index >= objects.size()) {

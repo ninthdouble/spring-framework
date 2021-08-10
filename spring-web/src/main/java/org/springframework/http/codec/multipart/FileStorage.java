@@ -16,15 +16,15 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.function.Supplier;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Supplier;
 
 /**
  * Represents a directory used to store parts larger than
@@ -42,12 +42,6 @@ abstract class FileStorage {
 	}
 
 	/**
-	 * Get the mono of the directory to store files in.
-	 */
-	public abstract Mono<Path> directory();
-
-
-	/**
 	 * Create a new {@code FileStorage} from a user-specified path. Creates the
 	 * path if it does not exist.
 	 */
@@ -60,12 +54,17 @@ abstract class FileStorage {
 
 	/**
 	 * Create a new {@code FileStorage} based on a temporary directory.
+	 *
 	 * @param scheduler the scheduler to use for blocking operations
 	 */
 	public static FileStorage tempDirectory(Supplier<Scheduler> scheduler) {
 		return new TempFileStorage(scheduler);
 	}
 
+	/**
+	 * Get the mono of the directory to store files in.
+	 */
+	public abstract Mono<Path> directory();
 
 	private static final class PathFileStorage extends FileStorage {
 
@@ -95,6 +94,16 @@ abstract class FileStorage {
 			this.scheduler = scheduler;
 		}
 
+		private static Mono<Path> tempDirectory() {
+			return Mono.fromCallable(() -> {
+				Path directory = Files.createTempDirectory(IDENTIFIER);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Created temporary storage directory: " + directory);
+				}
+				return directory;
+			}).cache();
+		}
+
 		@Override
 		public Mono<Path> directory() {
 			return this.directory
@@ -108,20 +117,9 @@ abstract class FileStorage {
 				Mono<Path> newDirectory = tempDirectory();
 				this.directory = newDirectory;
 				return newDirectory;
-			}
-			else {
+			} else {
 				return Mono.just(directory);
 			}
-		}
-
-		private static Mono<Path> tempDirectory() {
-			return Mono.fromCallable(() -> {
-				Path directory = Files.createTempDirectory(IDENTIFIER);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Created temporary storage directory: " + directory);
-				}
-				return directory;
-			}).cache();
 		}
 	}
 

@@ -16,17 +16,11 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.lang.Nullable;
+
+import java.lang.annotation.*;
 
 /**
  * {@code @NestedTestConfiguration} is a type-level annotation that is used to
@@ -86,9 +80,9 @@ import org.springframework.lang.Nullable;
  * </ul>
  *
  * @author Sam Brannen
- * @since 5.3
  * @see EnclosingConfiguration#INHERIT
  * @see EnclosingConfiguration#OVERRIDE
+ * @since 5.3
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -110,6 +104,7 @@ public @interface NestedTestConfiguration {
 	 * <p>May alternatively be configured via the
 	 * {@link org.springframework.core.SpringProperties SpringProperties}
 	 * mechanism.
+	 *
 	 * @see #value
 	 */
 	String ENCLOSING_CONFIGURATION_PROPERTY_NAME = "spring.test.enclosing.configuration";
@@ -117,6 +112,7 @@ public @interface NestedTestConfiguration {
 
 	/**
 	 * Configures the {@link EnclosingConfiguration} mode.
+	 *
 	 * @see EnclosingConfiguration#INHERIT
 	 * @see EnclosingConfiguration#OVERRIDE
 	 */
@@ -126,6 +122,7 @@ public @interface NestedTestConfiguration {
 	/**
 	 * Enumeration of <em>modes</em> that dictate how test configuration from
 	 * enclosing classes is processed for inner test classes.
+	 *
 	 * @see #INHERIT
 	 * @see #OVERRIDE
 	 */
@@ -149,6 +146,7 @@ public @interface NestedTestConfiguration {
 		/**
 		 * Get the {@code EnclosingConfiguration} enum constant with the supplied
 		 * name, ignoring case.
+		 *
 		 * @param name the name of the enum constant to retrieve
 		 * @return the corresponding enum constant or {@code null} if not found
 		 * @see EnclosingConfiguration#valueOf(String)
@@ -160,13 +158,12 @@ public @interface NestedTestConfiguration {
 			}
 			try {
 				return EnclosingConfiguration.valueOf(name.trim().toUpperCase());
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				Log logger = LogFactory.getLog(EnclosingConfiguration.class);
 				if (logger.isDebugEnabled()) {
 					logger.debug(String.format(
-						"Failed to parse enclosing configuration mode from '%s': %s",
-						name, ex.getMessage()));
+							"Failed to parse enclosing configuration mode from '%s': %s",
+							name, ex.getMessage()));
 				}
 				return null;
 			}

@@ -18,11 +18,10 @@ package org.springframework.r2dbc.connection.init;
 
 import io.r2dbc.spi.ConnectionFactory;
 import org.junit.jupiter.api.Test;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.r2dbc.core.DatabaseClient;
+import reactor.test.StepVerifier;
 
 /**
  * Abstract test support for {@link DatabasePopulator}.
@@ -116,7 +115,7 @@ abstract class AbstractDatabasePopulatorTests {
 	}
 
 	void assertUsersDatabaseCreated(ConnectionFactory connectionFactory,
-			String... lastNames) {
+									String... lastNames) {
 
 		DatabaseClient client = DatabaseClient.create(connectionFactory);
 

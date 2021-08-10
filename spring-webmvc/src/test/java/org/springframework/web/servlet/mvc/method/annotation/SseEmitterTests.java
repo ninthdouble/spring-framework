@@ -15,16 +15,15 @@
  */
 package org.springframework.web.servlet.mvc.method.annotation;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event;
@@ -32,6 +31,7 @@ import static org.springframework.web.servlet.mvc.method.annotation.SseEmitter.e
 
 /**
  * Unit tests for {@link org.springframework.web.servlet.mvc.method.annotation.SseEmitter}.
+ *
  * @author Rossen Stoyanchev
  */
 public class SseEmitterTests {

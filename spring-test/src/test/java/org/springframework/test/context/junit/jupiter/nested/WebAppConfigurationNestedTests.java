@@ -18,7 +18,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.NestedTestConfiguration;
@@ -39,9 +38,9 @@ import static org.springframework.test.context.NestedTestConfiguration.Enclosing
  * {@link SpringExtension} in a JUnit Jupiter environment.
  *
  * @author Sam Brannen
- * @since 5.0
  * @see ConstructorInjectionNestedTests
  * @see org.springframework.test.context.junit4.nested.NestedTestsWithSpringRulesTests
+ * @since 5.0
  */
 @SpringJUnitWebConfig(Config.class)
 @NestedTestConfiguration(OVERRIDE) // since INHERIT is now the global default
@@ -53,6 +52,14 @@ class WebAppConfigurationNestedTests {
 	}
 
 
+	@WebAppConfiguration
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class Config {
+	}
+
 	@Nested
 	@SpringJUnitConfig(Config.class)
 	class ConfigOverriddenByDefaultTests {
@@ -62,6 +69,8 @@ class WebAppConfigurationNestedTests {
 			assertThat(context).isNotInstanceOf(WebApplicationContext.class);
 		}
 	}
+
+	// -------------------------------------------------------------------------
 
 	@Nested
 	@SpringJUnitWebConfig(Config.class)
@@ -123,16 +132,6 @@ class WebAppConfigurationNestedTests {
 				}
 			}
 		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class Config {
-	}
-
-	@WebAppConfiguration
-	interface TestInterface {
 	}
 
 }

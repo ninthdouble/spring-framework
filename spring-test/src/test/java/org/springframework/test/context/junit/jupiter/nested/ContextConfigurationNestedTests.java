@@ -18,7 +18,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -39,9 +38,9 @@ import static org.springframework.test.context.NestedTestConfiguration.Enclosing
  * {@link SpringExtension} in a JUnit Jupiter environment.
  *
  * @author Sam Brannen
- * @since 5.0
  * @see ConstructorInjectionNestedTests
  * @see org.springframework.test.context.junit4.nested.NestedTestsWithSpringRulesTests
+ * @since 5.0
  */
 @SpringJUnitConfig(TopLevelConfig.class)
 @NestedTestConfiguration(OVERRIDE) // since INHERIT is now the global default
@@ -60,6 +59,39 @@ class ContextConfigurationNestedTests {
 		assertThat(foo).isEqualTo(FOO);
 	}
 
+
+	@ContextConfiguration(classes = TestInterfaceConfig.class)
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class TopLevelConfig {
+
+		@Bean
+		String foo() {
+			return FOO;
+		}
+	}
+
+	// -------------------------------------------------------------------------
+
+	@Configuration
+	static class NestedConfig {
+
+		@Bean
+		String bar() {
+			return BAR;
+		}
+	}
+
+	@Configuration
+	static class TestInterfaceConfig {
+
+		@Bean
+		String baz() {
+			return BAZ;
+		}
+	}
 
 	@Nested
 	@SpringJUnitConfig(NestedConfig.class)
@@ -175,39 +207,6 @@ class ContextConfigurationNestedTests {
 				}
 			}
 		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class TopLevelConfig {
-
-		@Bean
-		String foo() {
-			return FOO;
-		}
-	}
-
-	@Configuration
-	static class NestedConfig {
-
-		@Bean
-		String bar() {
-			return BAR;
-		}
-	}
-
-	@Configuration
-	static class TestInterfaceConfig {
-
-		@Bean
-		String baz() {
-			return BAZ;
-		}
-	}
-
-	@ContextConfiguration(classes = TestInterfaceConfig.class)
-	interface TestInterface {
 	}
 
 }

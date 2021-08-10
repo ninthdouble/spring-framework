@@ -16,17 +16,15 @@
 
 package org.springframework.web.context;
 
-import java.util.EventListener;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletException;
+import java.util.EventListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,15 +67,6 @@ public class ContextLoaderInitializerTests {
 		assertThat(condition).isTrue();
 	}
 
-	private class MyMockServletContext extends MockServletContext {
-
-		@Override
-		public <T extends EventListener> void addListener(T listener) {
-			eventListener = listener;
-		}
-
-	}
-
 	private static class MyContextLoaderInitializer
 			extends AbstractContextLoaderInitializer {
 
@@ -90,6 +79,15 @@ public class ContextLoaderInitializerTests {
 	}
 
 	private static class MyBean {
+
+	}
+
+	private class MyMockServletContext extends MockServletContext {
+
+		@Override
+		public <T extends EventListener> void addListener(T listener) {
+			eventListener = listener;
+		}
 
 	}
 }

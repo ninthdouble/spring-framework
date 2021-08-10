@@ -17,7 +17,6 @@
 package org.springframework.web.cors.reactive;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;

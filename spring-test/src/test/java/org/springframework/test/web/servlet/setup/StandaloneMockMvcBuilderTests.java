@@ -16,18 +16,9 @@
 
 package org.springframework.test.web.servlet.setup;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.impl.UnknownSerializer;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.converter.json.SpringHandlerInstantiator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -38,6 +29,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -51,7 +49,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 class StandaloneMockMvcBuilderTests {
 
-	@Test  // SPR-10825
+	@Test
+		// SPR-10825
 	void placeHoldersInRequestMapping() throws Exception {
 		TestStandaloneMockMvcBuilder builder = new TestStandaloneMockMvcBuilder(new PlaceholderController());
 		builder.addPlaceholderValue("sys.login.ajax", "/foo");
@@ -85,11 +84,12 @@ class StandaloneMockMvcBuilderTests {
 		assertThat(chain).isNull();
 	}
 
-	@Test  // SPR-12553
+	@Test
+		// SPR-12553
 	void applicationContextAttribute() {
 		TestStandaloneMockMvcBuilder builder = new TestStandaloneMockMvcBuilder(new PlaceholderController());
 		builder.addPlaceholderValue("sys.login.ajax", "/foo");
-		WebApplicationContext  wac = builder.initWebAppContext();
+		WebApplicationContext wac = builder.initWebAppContext();
 		assertThat(WebApplicationContextUtils.getRequiredWebApplicationContext(wac.getServletContext())).isEqualTo(wac);
 	}
 
@@ -136,7 +136,8 @@ class StandaloneMockMvcBuilderTests {
 	private static class PlaceholderController {
 
 		@RequestMapping(value = "${sys.login.ajax}")
-		private void handleWithPlaceholders() { }
+		private void handleWithPlaceholders() {
+		}
 	}
 
 
@@ -159,12 +160,12 @@ class StandaloneMockMvcBuilderTests {
 	@Controller
 	private static class PersonController {
 
-		@RequestMapping(value="/persons")
+		@RequestMapping(value = "/persons")
 		public String persons() {
 			return null;
 		}
 
-		@RequestMapping(value="/forward")
+		@RequestMapping(value = "/forward")
 		public String forward() {
 			return "forward:/persons";
 		}
@@ -175,7 +176,7 @@ class StandaloneMockMvcBuilderTests {
 
 		@Override
 		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-				FilterChain filterChain) throws ServletException, IOException {
+										FilterChain filterChain) throws ServletException, IOException {
 
 			filterChain.doFilter(request, response);
 		}

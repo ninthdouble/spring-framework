@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,8 +29,8 @@ import static org.mockito.BDDMockito.given;
  * Unit tests for {@link JdbcTestUtils}.
  *
  * @author Phillip Webb
- * @since 2.5.4
  * @see JdbcTestUtilsIntegrationTests
+ * @since 2.5.4
  */
 @ExtendWith(MockitoExtension.class)
 class JdbcTestUtilsTests {

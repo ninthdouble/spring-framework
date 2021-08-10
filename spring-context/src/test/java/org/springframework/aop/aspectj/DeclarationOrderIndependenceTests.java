@@ -27,6 +27,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface TopsyTurvyTarget {
+
+	void doSomething();
+
+	int getX();
+}
+
 /**
  * @author Adrian Colyer
  * @author Chris Beams
@@ -84,7 +91,9 @@ public class DeclarationOrderIndependenceTests {
 	}
 
 
-	/** public visibility is required */
+	/**
+	 * public visibility is required
+	 */
 	public static class BeanNameAwareMixin implements BeanNameAware {
 
 		@SuppressWarnings("unused")
@@ -97,21 +106,16 @@ public class DeclarationOrderIndependenceTests {
 
 	}
 
-	/** public visibility is required */
+	/**
+	 * public visibility is required
+	 */
 	@SuppressWarnings("serial")
 	public static class SerializableMixin implements Serializable {
 	}
 
 }
 
-
 class TopsyTurvyAspect {
-
-	interface Collaborator {
-		void beforeAdviceFired();
-		void afterReturningAdviceFired();
-		void aroundAdviceFired();
-	}
 
 	private Collaborator collaborator;
 
@@ -132,16 +136,15 @@ class TopsyTurvyAspect {
 		this.collaborator.aroundAdviceFired();
 		return ret;
 	}
+
+	interface Collaborator {
+		void beforeAdviceFired();
+
+		void afterReturningAdviceFired();
+
+		void aroundAdviceFired();
+	}
 }
-
-
-interface TopsyTurvyTarget {
-
-	void doSomething();
-
-	int getX();
-}
-
 
 class TopsyTurvyTargetImpl implements TopsyTurvyTarget {
 

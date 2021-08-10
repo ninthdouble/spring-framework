@@ -19,7 +19,6 @@ package org.springframework.aop.target;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -41,7 +40,9 @@ import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifie
  */
 public class HotSwappableTargetSourceTests {
 
-	/** Initial count value set in bean factory XML */
+	/**
+	 * Initial count value set in bean factory XML
+	 */
 	private static final int INITIAL_COUNT = 10;
 
 	private DefaultListableBeanFactory beanFactory;
@@ -111,7 +112,7 @@ public class HotSwappableTargetSourceTests {
 		HotSwappableTargetSource swapper = (HotSwappableTargetSource) beanFactory.getBean("swapper");
 		assertThatIllegalArgumentException().as("Shouldn't be able to swap to invalid value").isThrownBy(() ->
 				swapper.swap(null))
-			.withMessageContaining("null");
+				.withMessageContaining("null");
 		// It shouldn't be corrupted, it should still work
 		testBasicFunctionality();
 	}

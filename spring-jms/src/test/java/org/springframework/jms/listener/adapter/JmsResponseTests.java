@@ -16,13 +16,12 @@
 
 package org.springframework.jms.listener.adapter;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.jms.support.destination.DestinationResolver;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jms.support.destination.DestinationResolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

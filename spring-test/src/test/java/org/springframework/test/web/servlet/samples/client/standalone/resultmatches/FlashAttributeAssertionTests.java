@@ -16,10 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -28,11 +25,10 @@ import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.net.URL;
+
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,8 +50,8 @@ public class FlashAttributeAssertionTests {
 	@Test
 	void attributeCountWithWrongCount() {
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> performRequest().andExpect(flash().attributeCount(1)))
-			.withMessage("FlashMap size expected:<1> but was:<3>");
+				.isThrownBy(() -> performRequest().andExpect(flash().attributeCount(1)))
+				.withMessage("FlashMap size expected:<1> but was:<3>");
 	}
 
 	@Test

@@ -346,6 +346,13 @@ public class ConfigurationClassProcessingTests {
 	}
 
 
+	public interface POBPP extends BeanPostProcessor {
+	}
+
+
+	interface PrototypeInterface {
+	}
+
 	@Configuration
 	static class ConfigWithBeanWithCustomName {
 
@@ -356,7 +363,6 @@ public class ConfigurationClassProcessingTests {
 			return testBean;
 		}
 	}
-
 
 	@Configuration
 	static class ConfigWithBeanWithCustomNameConfiguredViaValueAttribute {
@@ -369,7 +375,6 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithBeanWithAliases {
 
@@ -381,7 +386,6 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithBeanWithAliasesConfiguredViaValueAttribute {
 
@@ -392,7 +396,6 @@ public class ConfigurationClassProcessingTests {
 			return testBean;
 		}
 	}
-
 
 	@Configuration
 	static class ConfigWithBeanWithProviderImplementation implements Provider<TestBean> {
@@ -406,7 +409,6 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithSetWithProviderImplementation implements Provider<Set<String>> {
 
@@ -419,71 +421,75 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithFinalBean {
 
-		public final @Bean TestBean testBean() {
+		public final @Bean
+		TestBean testBean() {
 			return new TestBean();
 		}
 	}
 
-
 	@Configuration
 	static class SimplestPossibleConfig {
 
-		public @Bean String stringBean() {
+		public @Bean
+		String stringBean() {
 			return "foo";
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithNonSpecificReturnTypes {
 
-		public @Bean Object stringBean() {
+		public @Bean
+		Object stringBean() {
 			return "foo";
 		}
 
-		public @Bean FactoryBean<?> factoryBean() {
+		public @Bean
+		FactoryBean<?> factoryBean() {
 			ListFactoryBean fb = new ListFactoryBean();
 			fb.setSourceList(Arrays.asList("element1", "element2"));
 			return fb;
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithPrototypeBean {
 
-		public @Bean TestBean foo() {
+		public @Bean
+		TestBean foo() {
 			TestBean foo = new SpousyTestBean("foo");
 			foo.setSpouse(bar());
 			return foo;
 		}
 
-		public @Bean TestBean bar() {
+		public @Bean
+		TestBean bar() {
 			TestBean bar = new SpousyTestBean("bar");
 			bar.setSpouse(baz());
 			return bar;
 		}
 
-		@Bean @Scope("prototype")
+		@Bean
+		@Scope("prototype")
 		public TestBean baz() {
 			return new TestBean("baz");
 		}
 
-		@Bean @Scope("prototype")
+		@Bean
+		@Scope("prototype")
 		public TestBean adaptive1(InjectionPoint ip) {
 			return new TestBean(ip.getMember().getName());
 		}
 
-		@Bean @Scope("prototype")
+		@Bean
+		@Scope("prototype")
 		public TestBean adaptive2(DependencyDescriptor dd) {
 			return new TestBean(dd.getMember().getName());
 		}
 	}
-
 
 	@Configuration
 	static class ConfigWithNullReference extends ConfigWithPrototypeBean {
@@ -494,21 +500,21 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Scope("prototype")
 	static class AdaptiveInjectionPoints {
 
-		@Autowired @Qualifier("adaptive1")
+		@Autowired
+		@Qualifier("adaptive1")
 		public TestBean adaptiveInjectionPoint1;
 
 		public TestBean adaptiveInjectionPoint2;
 
-		@Autowired @Qualifier("adaptive2")
+		@Autowired
+		@Qualifier("adaptive2")
 		public void setAdaptiveInjectionPoint2(TestBean adaptiveInjectionPoint2) {
 			this.adaptiveInjectionPoint2 = adaptiveInjectionPoint2;
 		}
 	}
-
 
 	@Scope("prototype")
 	static class AdaptiveResourceInjectionPoints {
@@ -523,7 +529,6 @@ public class ConfigurationClassProcessingTests {
 			this.adaptiveInjectionPoint2 = adaptiveInjectionPoint2;
 		}
 	}
-
 
 	static class ConfigWithPostProcessor extends ConfigWithPrototypeBean {
 
@@ -576,11 +581,6 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
-	public interface POBPP extends BeanPostProcessor {
-	}
-
-
 	private static class SpousyTestBean extends TestBean implements ApplicationListener<ContextRefreshedEvent> {
 
 		public boolean refreshed = false;
@@ -599,7 +599,6 @@ public class ConfigurationClassProcessingTests {
 			this.refreshed = true;
 		}
 	}
-
 
 	@Configuration
 	static class ConfigWithFunctionalRegistration {
@@ -620,7 +619,6 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	@Configuration
 	static class ConfigWithApplicationListener {
 
@@ -631,7 +629,6 @@ public class ConfigurationClassProcessingTests {
 			return (event -> this.closed = true);
 		}
 	}
-
 
 	@Configuration
 	public static class OverloadedBeanMismatch {
@@ -649,11 +646,7 @@ public class ConfigurationClassProcessingTests {
 		}
 	}
 
-
 	static class PrototypeDependency {
-	}
-
-	interface PrototypeInterface {
 	}
 
 	static class PrototypeOne extends AbstractPrototype {
@@ -676,9 +669,10 @@ public class ConfigurationClassProcessingTests {
 
 		@Bean
 		@Scope(value = "prototype")
-		public PrototypeInterface getDemoBean( int i) {
-			switch ( i) {
-				case 1: return new PrototypeOne();
+		public PrototypeInterface getDemoBean(int i) {
+			switch (i) {
+				case 1:
+					return new PrototypeOne();
 				case 2:
 				default:
 					return new PrototypeTwo();

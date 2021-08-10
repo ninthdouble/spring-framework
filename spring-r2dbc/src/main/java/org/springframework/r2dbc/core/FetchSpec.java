@@ -19,11 +19,11 @@ package org.springframework.r2dbc.core;
 /**
  * Union type for fetching results.
  *
- * @author Mark Paluch
- * @since 5.3
  * @param <T> the row result type
+ * @author Mark Paluch
  * @see RowsFetchSpec
  * @see UpdatedRowsFetchSpec
+ * @since 5.3
  */
 public interface FetchSpec<T> extends RowsFetchSpec<T>, UpdatedRowsFetchSpec {
 

@@ -16,13 +16,13 @@
 
 package org.springframework.context.testfixture.cache;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,6 +35,7 @@ public class CacheTestUtils {
 
 	/**
 	 * Create a {@link SimpleCacheManager} with the specified cache(s).
+	 *
 	 * @param cacheNames the names of the caches to create
 	 */
 	public static CacheManager createSimpleCacheManager(String... cacheNames) {

@@ -16,14 +16,10 @@
 
 package org.springframework.test.context.junit.jupiter;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestReporter;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +31,9 @@ import org.springframework.test.context.junit.SpringJUnitJupiterTestSuite;
 import org.springframework.test.context.junit.jupiter.comics.Cat;
 import org.springframework.test.context.junit.jupiter.comics.Dog;
 import org.springframework.test.context.junit.jupiter.comics.Person;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,10 +47,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Platform, simply run {@link SpringJUnitJupiterTestSuite} as a JUnit 4 test.
  *
  * @author Sam Brannen
- * @since 5.1
  * @see SpringExtensionTests
  * @see SpringExtension
  * @see RegisterExtension
+ * @since 5.1
  */
 @ContextConfiguration(classes = TestConfig.class)
 @TestPropertySource(properties = "enigma = 42")
@@ -181,7 +180,7 @@ class RegisterExtensionSpringExtensionTests {
 	@Test
 	void valueParameterFromSpelExpression(@Value("#{@dilbert.name}") String name) {
 		assertThat(name).as(
-			"Dilbert's name should have been injected via SpEL expression in @Value by Spring").isNotNull();
+				"Dilbert's name should have been injected via SpEL expression in @Value by Spring").isNotNull();
 		assertThat(name).as("name from SpEL expression").isEqualTo("Dilbert");
 	}
 
@@ -193,7 +192,7 @@ class RegisterExtensionSpringExtensionTests {
 
 	@Test
 	void junitAndSpringMethodInjectionCombined(@Autowired Cat kittyCat, TestInfo testInfo, ApplicationContext context,
-			TestReporter testReporter) {
+											   TestReporter testReporter) {
 
 		assertThat(testInfo).as("TestInfo should have been injected by JUnit").isNotNull();
 		assertThat(testReporter).as("TestReporter should have been injected by JUnit").isNotNull();

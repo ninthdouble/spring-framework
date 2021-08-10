@@ -16,13 +16,7 @@
 
 package org.springframework.web.servlet.mvc.annotation;
 
-import java.io.IOException;
-import java.io.Writer;
-
-import javax.servlet.ServletException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.interceptor.SimpleTraceInterceptor;
@@ -38,6 +32,10 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockServletConfig;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.Writer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -113,15 +113,15 @@ public class ThisAndTargetSelectionOnlyPointcutsAtAspectJTests {
 		public void doIt();
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface TestAnnotation {
+
+	}
+
 	public static class TestImpl implements TestInterface {
 		@Override
 		public void doIt() {
 		}
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface TestAnnotation {
-
 	}
 
 	@TestAnnotation

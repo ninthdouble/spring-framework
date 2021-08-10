@@ -19,7 +19,6 @@ package org.springframework.test.context.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -32,9 +31,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.context.web.ServletTestExecutionListener.POPULATED_REQUEST_CONTEXT_HOLDER_ATTRIBUTE;
 import static org.springframework.test.context.web.ServletTestExecutionListener.RESET_REQUEST_CONTEXT_HOLDER_ATTRIBUTE;
 
@@ -72,7 +69,7 @@ class ServletTestExecutionListenerTests {
 
 	@Test
 	void standardApplicationContext() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(getClass());
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(getClass());
 		given(testContext.getApplicationContext()).willReturn(mock(ApplicationContext.class));
 
 		listener.beforeTestClass(testContext);
@@ -90,7 +87,7 @@ class ServletTestExecutionListenerTests {
 
 	@Test
 	void legacyWebTestCaseWithoutExistingRequestAttributes() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(LegacyWebTestCase.class);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(LegacyWebTestCase.class);
 
 		RequestContextHolder.resetRequestAttributes();
 		assertRequestAttributesDoNotExist();
@@ -113,7 +110,7 @@ class ServletTestExecutionListenerTests {
 
 	@Test
 	void legacyWebTestCaseWithPresetRequestAttributes() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(LegacyWebTestCase.class);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(LegacyWebTestCase.class);
 
 		listener.beforeTestClass(testContext);
 		assertSetUpOutsideOfStelAttributeExists();
@@ -135,7 +132,7 @@ class ServletTestExecutionListenerTests {
 
 	@Test
 	void atWebAppConfigTestCaseWithoutExistingRequestAttributes() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(AtWebAppConfigWebTestCase.class);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(AtWebAppConfigWebTestCase.class);
 
 		RequestContextHolder.resetRequestAttributes();
 		listener.beforeTestClass(testContext);
@@ -146,7 +143,7 @@ class ServletTestExecutionListenerTests {
 
 	@Test
 	void atWebAppConfigTestCaseWithPresetRequestAttributes() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(AtWebAppConfigWebTestCase.class);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(AtWebAppConfigWebTestCase.class);
 
 		listener.beforeTestClass(testContext);
 		assertRequestAttributesExist();
@@ -159,7 +156,7 @@ class ServletTestExecutionListenerTests {
 	 */
 	@Test
 	void activateListenerWithoutExistingRequestAttributes() throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(NoAtWebAppConfigWebTestCase.class);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(NoAtWebAppConfigWebTestCase.class);
 		given(testContext.getAttribute(ServletTestExecutionListener.ACTIVATE_LISTENER)).willReturn(true);
 
 		RequestContextHolder.resetRequestAttributes();
@@ -183,14 +180,14 @@ class ServletTestExecutionListenerTests {
 	private void assertSetUpOutsideOfStelAttributeExists() {
 		RequestAttributes requestAttributes = assertRequestAttributesExist();
 		Object setUpOutsideOfStel = requestAttributes.getAttribute(SET_UP_OUTSIDE_OF_STEL,
-			RequestAttributes.SCOPE_REQUEST);
+				RequestAttributes.SCOPE_REQUEST);
 		assertThat(setUpOutsideOfStel).as(SET_UP_OUTSIDE_OF_STEL + " should exist as a request attribute").isNotNull();
 	}
 
 	private void assertSetUpOutsideOfStelAttributeDoesNotExist() {
 		RequestAttributes requestAttributes = assertRequestAttributesExist();
 		Object setUpOutsideOfStel = requestAttributes.getAttribute(SET_UP_OUTSIDE_OF_STEL,
-			RequestAttributes.SCOPE_REQUEST);
+				RequestAttributes.SCOPE_REQUEST);
 		assertThat(setUpOutsideOfStel).as(SET_UP_OUTSIDE_OF_STEL + " should NOT exist as a request attribute").isNull();
 	}
 

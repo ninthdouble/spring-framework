@@ -31,6 +31,7 @@ public class ConnectionFactoryLookupFailureException extends NonTransientDataAcc
 
 	/**
 	 * Create a new {@code ConnectionFactoryLookupFailureException}.
+	 *
 	 * @param msg the detail message
 	 */
 	public ConnectionFactoryLookupFailureException(String msg) {
@@ -39,7 +40,8 @@ public class ConnectionFactoryLookupFailureException extends NonTransientDataAcc
 
 	/**
 	 * Create a new {@code ConnectionFactoryLookupFailureException}.
-	 * @param msg the detail message
+	 *
+	 * @param msg   the detail message
 	 * @param cause the root cause
 	 */
 	public ConnectionFactoryLookupFailureException(String msg, Throwable cause) {

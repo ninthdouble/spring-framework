@@ -71,11 +71,15 @@ public class Spr12636Tests {
 		assertThat(bean.userServices.get(1)).isSameAs(serviceTwo);
 	}
 
+	interface UserService {
+
+		void doIt();
+	}
+
 	@Configuration
 	@EnableAsync
 	static class AsyncConfig {
 	}
-
 
 	@Component
 	static class UserServiceCollector {
@@ -86,11 +90,6 @@ public class Spr12636Tests {
 		UserServiceCollector(List<UserService> userServices) {
 			this.userServices = userServices;
 		}
-	}
-
-	interface UserService {
-
-		void doIt();
 	}
 
 	@Component("serviceOne")

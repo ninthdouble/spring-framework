@@ -16,18 +16,17 @@
 
 package org.springframework.aop.aspectj;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.testfixture.beans.TestBean;
+import test.annotation.EmptySpringAnnotation;
+import test.annotation.transaction.Tx;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import test.annotation.EmptySpringAnnotation;
-import test.annotation.transaction.Tx;
-
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.testfixture.beans.TestBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,10 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TigerAspectJExpressionPointcutTests {
 
-	private Method getAge;
-
 	private final Map<String, Method> methodsOnHasGeneric = new HashMap<>();
-
+	private Method getAge;
 
 	@BeforeEach
 	public void setup() throws NoSuchMethodException {
@@ -248,18 +245,26 @@ public class TigerAspectJExpressionPointcutTests {
 	}
 
 
+	interface IBeanA {
+
+		@Tx
+		int getAge();
+	}
+
 	public static class HasGeneric {
 
 		public void setFriends(List<TestBean> friends) {
 		}
+
 		public void setEnemies(List<TestBean> enemies) {
 		}
+
 		public void setPartners(List<?> partners) {
 		}
+
 		public void setPhoneNumbers(List<String> numbers) {
 		}
 	}
-
 
 	public static class ProcessesSpringAnnotatedParameters {
 
@@ -270,17 +275,16 @@ public class TigerAspectJExpressionPointcutTests {
 		}
 	}
 
-
 	@Tx
 	public static class HasTransactionalAnnotation {
 
 		public void foo() {
 		}
+
 		public Object bar(String foo) {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 
 	@EmptySpringAnnotation
 	public static class SpringAnnotated {
@@ -288,14 +292,6 @@ public class TigerAspectJExpressionPointcutTests {
 		public void foo() {
 		}
 	}
-
-
-	interface IBeanA {
-
-		@Tx
-		int getAge();
-	}
-
 
 	static class BeanA implements IBeanA {
 

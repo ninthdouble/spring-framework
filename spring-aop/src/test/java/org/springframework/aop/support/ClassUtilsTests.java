@@ -16,7 +16,6 @@
 package org.springframework.aop.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.util.ClassUtils;

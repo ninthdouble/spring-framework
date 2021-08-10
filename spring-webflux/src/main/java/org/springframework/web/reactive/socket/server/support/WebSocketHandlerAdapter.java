@@ -15,8 +15,6 @@
  */
 package org.springframework.web.reactive.socket.server.support;
 
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.Ordered;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.HandlerAdapter;
@@ -24,6 +22,7 @@ import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.WebSocketService;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 /**
  * {@code HandlerAdapter} that allows
@@ -67,24 +66,25 @@ public class WebSocketHandlerAdapter implements HandlerAdapter, Ordered {
 		this.webSocketService = webSocketService;
 	}
 
-
-	/**
-	 * Set the order value for this adapter.
-	 * <p>By default this is set to 2.
-	 * @param order the value to set to
-	 * @since 5.3
-	 */
-	public void setOrder(int order) {
-		this.order = order;
-	}
-
 	/**
 	 * Return the {@link #setOrder(int) configured} order for this instance.
+	 *
 	 * @since 5.3
 	 */
 	@Override
 	public int getOrder() {
 		return this.order;
+	}
+
+	/**
+	 * Set the order value for this adapter.
+	 * <p>By default this is set to 2.
+	 *
+	 * @param order the value to set to
+	 * @since 5.3
+	 */
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	/**

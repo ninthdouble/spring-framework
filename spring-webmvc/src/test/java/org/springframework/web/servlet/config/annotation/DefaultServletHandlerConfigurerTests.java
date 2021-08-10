@@ -16,17 +16,16 @@
 
 package org.springframework.web.servlet.config.annotation;
 
-import javax.servlet.RequestDispatcher;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockRequestDispatcher;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.RequestDispatcher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

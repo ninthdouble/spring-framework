@@ -16,17 +16,16 @@
 
 package org.springframework.jms.annotation;
 
-import javax.jms.JMSException;
-import javax.jms.MessageListener;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jms.config.JmsListenerEndpointRegistrar;
 import org.springframework.jms.config.SimpleJmsListenerEndpoint;
 import org.springframework.jms.listener.adapter.ListenerExecutionFailedException;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
+
+import javax.jms.JMSException;
+import javax.jms.MessageListener;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -92,7 +91,7 @@ class AnnotationDrivenNamespaceTests extends AbstractJmsAnnotationDrivenTests {
 
 		assertThatExceptionOfType(ListenerExecutionFailedException.class).isThrownBy(() ->
 				testJmsHandlerMethodFactoryConfiguration(context))
-			.withCauseInstanceOf(MethodArgumentNotValidException.class);
+				.withCauseInstanceOf(MethodArgumentNotValidException.class);
 	}
 
 	@Override

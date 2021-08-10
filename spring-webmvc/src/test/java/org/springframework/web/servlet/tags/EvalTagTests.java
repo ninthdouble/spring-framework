@@ -16,16 +16,8 @@
 
 package org.springframework.web.servlet.tags;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.jsp.tagext.Tag;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.format.annotation.NumberFormat;
@@ -35,6 +27,12 @@ import org.springframework.format.support.FormattingConversionServiceFactoryBean
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockPageContext;
+
+import javax.servlet.jsp.tagext.Tag;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -154,7 +152,7 @@ public class EvalTagTests extends AbstractTagTests {
 		Map<String, Object> map = new HashMap<>();
 		map.put("key.foo", "value.foo");
 		GenericApplicationContext wac = (GenericApplicationContext)
-		context.getRequest().getAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+				context.getRequest().getAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 		wac.getEnvironment().getPropertySources().addFirst(new MapPropertySource("mapSource", map));
 		wac.getDefaultListableBeanFactory().registerSingleton("bean2", context.getRequest().getAttribute("bean"));
 		tag.setExpression("@environment['key.foo']");
@@ -176,14 +174,13 @@ public class EvalTagTests extends AbstractTagTests {
 	}
 
 
-
 	public static class Bean {
 
 		public String method() {
 			return "foo";
 		}
 
-		@NumberFormat(style=Style.PERCENT)
+		@NumberFormat(style = Style.PERCENT)
 		public BigDecimal getFormattable() {
 			return new BigDecimal(".25");
 		}

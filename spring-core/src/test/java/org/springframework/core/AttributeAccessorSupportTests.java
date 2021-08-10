@@ -16,11 +16,11 @@
 
 package org.springframework.core;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

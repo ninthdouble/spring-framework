@@ -16,15 +16,7 @@
 
 package org.springframework.web.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -33,6 +25,12 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.testfixture.servlet.MockFilterChain;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +48,7 @@ public class WebUtilsTests {
 		params.put("myKey1", "myValue1");
 		params.put("myKey2_myValue2", "xxx");
 		params.put("myKey3_myValue3.x", "xxx");
-		params.put("myKey4_myValue4.y", new String[] {"yyy"});
+		params.put("myKey4_myValue4.y", new String[]{"yyy"});
 
 		assertThat(WebUtils.findParameterValue(params, "myKey0")).isNull();
 		assertThat(WebUtils.findParameterValue(params, "myKey1")).isEqualTo("myValue1");
@@ -202,7 +200,7 @@ public class WebUtilsTests {
 	}
 
 	private void testWithXForwardedHeaders(String serverName, int port, String forwardedProto,
-			String forwardedHost, int forwardedPort, String originHeader) throws Exception {
+										   String forwardedHost, int forwardedPort, String originHeader) throws Exception {
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServerName(serverName);
@@ -227,7 +225,7 @@ public class WebUtilsTests {
 	}
 
 	private void testWithForwardedHeader(String serverName, int port, String forwardedHeader,
-			String originHeader) throws Exception {
+										 String originHeader) throws Exception {
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setServerName(serverName);

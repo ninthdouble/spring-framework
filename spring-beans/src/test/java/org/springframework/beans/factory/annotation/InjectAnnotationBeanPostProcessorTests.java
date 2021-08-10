@@ -16,21 +16,9 @@
 
 package org.springframework.beans.factory.annotation;
 
-import java.io.Serializable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -45,6 +33,16 @@ import org.springframework.beans.testfixture.beans.IndexedTestBean;
 import org.springframework.beans.testfixture.beans.NestedTestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.io.Serializable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -84,8 +82,7 @@ public class InjectAnnotationBeanPostProcessorTests {
 		bf.registerBeanDefinition("testBean", new GenericBeanDefinition());
 		try {
 			bf.getBean("testBean");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			boolean condition = ex.getRootCause() instanceof IllegalStateException;
 			assertThat(condition).isTrue();
 		}
@@ -626,20 +623,16 @@ public class InjectAnnotationBeanPostProcessorTests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Nullable {
+	}
+
 	public static class ResourceInjectionBean {
 
 		@Inject
 		private TestBean testBean;
 
 		private TestBean testBean2;
-
-		@Inject
-		public void setTestBean2(TestBean testBean2) {
-			if (this.testBean2 != null) {
-				throw new IllegalStateException("Already called");
-			}
-			this.testBean2 = testBean2;
-		}
 
 		public TestBean getTestBean() {
 			return this.testBean;
@@ -648,8 +641,15 @@ public class InjectAnnotationBeanPostProcessorTests {
 		public TestBean getTestBean2() {
 			return this.testBean2;
 		}
-	}
 
+		@Inject
+		public void setTestBean2(TestBean testBean2) {
+			if (this.testBean2 != null) {
+				throw new IllegalStateException("Already called");
+			}
+			this.testBean2 = testBean2;
+		}
+	}
 
 	public static class ExtendedResourceInjectionBean<T> extends ResourceInjectionBean {
 
@@ -701,23 +701,17 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class TypedExtendedResourceInjectionBean extends ExtendedResourceInjectionBean<NestedTestBean> {
 	}
-
 
 	public static class OptionalResourceInjectionBean extends ResourceInjectionBean {
 
 		@Inject
-		protected ITestBean testBean3;
-
-		private IndexedTestBean indexedTestBean;
-
-		private NestedTestBean[] nestedTestBeans;
-
-		@Inject
 		public NestedTestBean[] nestedTestBeansField;
-
+		@Inject
+		protected ITestBean testBean3;
+		private IndexedTestBean indexedTestBean;
+		private NestedTestBean[] nestedTestBeans;
 		private ITestBean testBean4;
 
 		@Override
@@ -750,21 +744,15 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class OptionalCollectionResourceInjectionBean extends ResourceInjectionBean {
 
-		@Inject
-		protected ITestBean testBean3;
-
-		private IndexedTestBean indexedTestBean;
-
-		private List<NestedTestBean> nestedTestBeans;
-
 		public List<NestedTestBean> nestedTestBeansSetter;
-
 		@Inject
 		public List<NestedTestBean> nestedTestBeansField;
-
+		@Inject
+		protected ITestBean testBean3;
+		private IndexedTestBean indexedTestBean;
+		private List<NestedTestBean> nestedTestBeans;
 		private ITestBean testBean4;
 
 		@Override
@@ -778,11 +766,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			this.testBean4 = testBean4;
 			this.indexedTestBean = indexedTestBean;
 			this.nestedTestBeans = nestedTestBeans;
-		}
-
-		@Inject
-		public void setNestedTestBeans(List<NestedTestBean> nestedTestBeans) {
-			this.nestedTestBeansSetter = nestedTestBeans;
 		}
 
 		public ITestBean getTestBean3() {
@@ -800,8 +783,12 @@ public class InjectAnnotationBeanPostProcessorTests {
 		public List<NestedTestBean> getNestedTestBeans() {
 			return this.nestedTestBeans;
 		}
-	}
 
+		@Inject
+		public void setNestedTestBeans(List<NestedTestBean> nestedTestBeans) {
+			this.nestedTestBeansSetter = nestedTestBeans;
+		}
+	}
 
 	public static class ConstructorResourceInjectionBean extends ResourceInjectionBean {
 
@@ -825,7 +812,7 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 		@Inject
 		public ConstructorResourceInjectionBean(ITestBean testBean4, NestedTestBean nestedTestBean,
-				ConfigurableListableBeanFactory beanFactory) {
+												ConfigurableListableBeanFactory beanFactory) {
 			this.testBean4 = testBean4;
 			this.nestedTestBean = nestedTestBean;
 			this.beanFactory = beanFactory;
@@ -861,7 +848,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.beanFactory;
 		}
 	}
-
 
 	public static class ConstructorsResourceInjectionBean {
 
@@ -905,7 +891,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ConstructorsCollectionResourceInjectionBean {
 
 		protected ITestBean testBean3;
@@ -932,7 +917,7 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 
 		public ConstructorsCollectionResourceInjectionBean(ITestBean testBean3, ITestBean testBean4,
-				NestedTestBean nestedTestBean) {
+														   NestedTestBean nestedTestBean) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -949,7 +934,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class MapConstructorInjectionBean {
 
 		private Map<String, TestBean> testBeanMap;
@@ -964,7 +948,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class MapFieldInjectionBean {
 
 		@Inject
@@ -974,7 +957,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.testBeanMap;
 		}
 	}
-
 
 	public static class MapMethodInjectionBean {
 
@@ -997,7 +979,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryFieldInjectionBean implements Serializable {
 
@@ -1008,7 +989,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.testBeanFactory.get();
 		}
 	}
-
 
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryMethodInjectionBean implements Serializable {
@@ -1025,7 +1005,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ObjectFactoryQualifierFieldInjectionBean {
 
 		@Inject
@@ -1036,7 +1015,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return (TestBean) this.testBeanFactory.get();
 		}
 	}
-
 
 	public static class ObjectFactoryQualifierMethodInjectionBean {
 
@@ -1053,7 +1031,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryListFieldInjectionBean implements Serializable {
 
@@ -1068,7 +1045,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.testBeanFactory.get().get(0);
 		}
 	}
-
 
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryListMethodInjectionBean implements Serializable {
@@ -1085,7 +1061,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryMapFieldInjectionBean implements Serializable {
 
@@ -1100,7 +1075,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.testBeanFactory.get().values().iterator().next();
 		}
 	}
-
 
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryMapMethodInjectionBean implements Serializable {
@@ -1117,7 +1091,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	/**
 	 * Bean with a dependency on a {@link org.springframework.beans.factory.FactoryBean}.
 	 */
@@ -1130,7 +1103,6 @@ public class InjectAnnotationBeanPostProcessorTests {
 			return this.factoryBean;
 		}
 	}
-
 
 	public static class StringFactoryBean implements FactoryBean<String> {
 
@@ -1150,14 +1122,10 @@ public class InjectAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface Nullable {}
-
-
 	public static class NullableFieldInjectionBean {
 
-		@Inject @Nullable
+		@Inject
+		@Nullable
 		private TestBean testBean;
 
 		public TestBean getTestBean() {
@@ -1170,13 +1138,13 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 		private TestBean testBean;
 
+		public TestBean getTestBean() {
+			return this.testBean;
+		}
+
 		@Inject
 		public void setTestBean(@Nullable TestBean testBean) {
 			this.testBean = testBean;
-		}
-
-		public TestBean getTestBean() {
-			return this.testBean;
 		}
 	}
 
@@ -1196,13 +1164,13 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 		private Optional<TestBean> testBean;
 
+		public Optional<TestBean> getTestBean() {
+			return this.testBean;
+		}
+
 		@Inject
 		public void setTestBean(Optional<TestBean> testBean) {
 			this.testBean = testBean;
-		}
-
-		public Optional<TestBean> getTestBean() {
-			return this.testBean;
 		}
 	}
 
@@ -1222,13 +1190,13 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 		private Optional<List<TestBean>> testBean;
 
+		public Optional<List<TestBean>> getTestBean() {
+			return this.testBean;
+		}
+
 		@Inject
 		public void setTestBean(Optional<List<TestBean>> testBean) {
 			this.testBean = testBean;
-		}
-
-		public Optional<List<TestBean>> getTestBean() {
-			return this.testBean;
 		}
 	}
 
@@ -1248,13 +1216,13 @@ public class InjectAnnotationBeanPostProcessorTests {
 
 		private Provider<Optional<TestBean>> testBean;
 
+		public Optional<TestBean> getTestBean() {
+			return this.testBean.get();
+		}
+
 		@Inject
 		public void setTestBean(Provider<Optional<TestBean>> testBean) {
 			this.testBean = testBean;
-		}
-
-		public Optional<TestBean> getTestBean() {
-			return this.testBean.get();
 		}
 	}
 

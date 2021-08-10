@@ -16,11 +16,10 @@
 
 package org.springframework.jdbc.datasource.embedded;
 
-import java.sql.Connection;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
+
+import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

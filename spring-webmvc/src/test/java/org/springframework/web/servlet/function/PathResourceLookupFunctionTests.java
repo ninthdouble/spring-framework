@@ -16,16 +16,15 @@
 
 package org.springframework.web.servlet.function;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.handler.PathPatternsTestUtils;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.web.servlet.handler.PathPatternsTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -82,8 +81,7 @@ class PathResourceLookupFunctionTests {
 				lookupFunction.andThen((Optional<Resource> optionalResource) -> {
 					if (optionalResource.isPresent()) {
 						return optionalResource;
-					}
-					else {
+					} else {
 						return Optional.of(defaultResource);
 					}
 				});

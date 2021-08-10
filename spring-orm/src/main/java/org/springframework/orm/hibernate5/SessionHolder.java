@@ -19,7 +19,6 @@ package org.springframework.orm.hibernate5;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
 import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.EntityManagerHolder;
 
@@ -32,9 +31,9 @@ import org.springframework.orm.jpa.EntityManagerHolder;
  * <p>Note: This is an SPI class, not intended to be used by applications.
  *
  * @author Juergen Hoeller
- * @since 4.2
  * @see HibernateTransactionManager
  * @see SessionFactoryUtils
+ * @since 4.2
  */
 public class SessionHolder extends EntityManagerHolder {
 
@@ -54,18 +53,14 @@ public class SessionHolder extends EntityManagerHolder {
 		return (Session) getEntityManager();
 	}
 
-	public void setTransaction(@Nullable Transaction transaction) {
-		this.transaction = transaction;
-		setTransactionActive(transaction != null);
-	}
-
 	@Nullable
 	public Transaction getTransaction() {
 		return this.transaction;
 	}
 
-	public void setPreviousFlushMode(@Nullable FlushMode previousFlushMode) {
-		this.previousFlushMode = previousFlushMode;
+	public void setTransaction(@Nullable Transaction transaction) {
+		this.transaction = transaction;
+		setTransactionActive(transaction != null);
 	}
 
 	@Nullable
@@ -73,6 +68,9 @@ public class SessionHolder extends EntityManagerHolder {
 		return this.previousFlushMode;
 	}
 
+	public void setPreviousFlushMode(@Nullable FlushMode previousFlushMode) {
+		this.previousFlushMode = previousFlushMode;
+	}
 
 	@Override
 	public void clear() {

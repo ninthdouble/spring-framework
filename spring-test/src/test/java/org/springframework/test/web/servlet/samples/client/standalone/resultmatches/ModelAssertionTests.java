@@ -16,10 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import javax.validation.Valid;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.Person;
@@ -34,13 +31,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
+import javax.validation.Valid;
+
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,27 +54,27 @@ public class ModelAssertionTests {
 	@Test
 	void attributeEqualTo() throws Exception {
 		performRequest(HttpMethod.GET, "/")
-			.andExpect(model().attribute("integer", 3))
-			.andExpect(model().attribute("string", "a string value"))
-			.andExpect(model().attribute("integer", equalTo(3))) // Hamcrest...
-			.andExpect(model().attribute("string", equalTo("a string value")))
-			.andExpect(model().attribute("globalAttrName", equalTo("Global Attribute Value")));
+				.andExpect(model().attribute("integer", 3))
+				.andExpect(model().attribute("string", "a string value"))
+				.andExpect(model().attribute("integer", equalTo(3))) // Hamcrest...
+				.andExpect(model().attribute("string", equalTo("a string value")))
+				.andExpect(model().attribute("globalAttrName", equalTo("Global Attribute Value")));
 	}
 
 	@Test
 	void attributeExists() throws Exception {
 		performRequest(HttpMethod.GET, "/")
-			.andExpect(model().attributeExists("integer", "string", "person"))
-			.andExpect(model().attribute("integer", notNullValue()))  // Hamcrest...
-			.andExpect(model().attribute("INTEGER", nullValue()));
+				.andExpect(model().attributeExists("integer", "string", "person"))
+				.andExpect(model().attribute("integer", notNullValue()))  // Hamcrest...
+				.andExpect(model().attribute("INTEGER", nullValue()));
 	}
 
 	@Test
 	void attributeHamcrestMatchers() throws Exception {
 		performRequest(HttpMethod.GET, "/")
-			.andExpect(model().attribute("integer", equalTo(3)))
-			.andExpect(model().attribute("string", allOf(startsWith("a string"), endsWith("value"))))
-			.andExpect(model().attribute("person", hasProperty("name", equalTo("a name"))));
+				.andExpect(model().attribute("integer", equalTo(3)))
+				.andExpect(model().attribute("string", allOf(startsWith("a string"), endsWith("value"))))
+				.andExpect(model().attribute("person", hasProperty("name", equalTo("a name"))));
 	}
 
 	@Test

@@ -18,7 +18,6 @@ package org.springframework.dao.support;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -39,8 +38,8 @@ import org.springframework.util.ReflectionUtils;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @since 2.0
  * @see PersistenceExceptionTranslator
+ * @since 2.0
  */
 public class PersistenceExceptionTranslationInterceptor
 		implements MethodInterceptor, BeanFactoryAware, InitializingBean {
@@ -57,6 +56,7 @@ public class PersistenceExceptionTranslationInterceptor
 	/**
 	 * Create a new PersistenceExceptionTranslationInterceptor.
 	 * Needs to be configured with a PersistenceExceptionTranslator afterwards.
+	 *
 	 * @see #setPersistenceExceptionTranslator
 	 */
 	public PersistenceExceptionTranslationInterceptor() {
@@ -65,6 +65,7 @@ public class PersistenceExceptionTranslationInterceptor
 	/**
 	 * Create a new PersistenceExceptionTranslationInterceptor
 	 * for the given PersistenceExceptionTranslator.
+	 *
 	 * @param pet the PersistenceExceptionTranslator to use
 	 */
 	public PersistenceExceptionTranslationInterceptor(PersistenceExceptionTranslator pet) {
@@ -75,8 +76,9 @@ public class PersistenceExceptionTranslationInterceptor
 	/**
 	 * Create a new PersistenceExceptionTranslationInterceptor, autodetecting
 	 * PersistenceExceptionTranslators in the given BeanFactory.
+	 *
 	 * @param beanFactory the ListableBeanFactory to obtaining all
-	 * PersistenceExceptionTranslators from
+	 *                    PersistenceExceptionTranslators from
 	 */
 	public PersistenceExceptionTranslationInterceptor(ListableBeanFactory beanFactory) {
 		Assert.notNull(beanFactory, "ListableBeanFactory must not be null");
@@ -88,6 +90,7 @@ public class PersistenceExceptionTranslationInterceptor
 	 * Specify the PersistenceExceptionTranslator to use.
 	 * <p>Default is to autodetect all PersistenceExceptionTranslators
 	 * in the containing BeanFactory, using them in a chain.
+	 *
 	 * @see #detectPersistenceExceptionTranslators
 	 */
 	public void setPersistenceExceptionTranslator(PersistenceExceptionTranslator pet) {
@@ -135,13 +138,11 @@ public class PersistenceExceptionTranslationInterceptor
 	public Object invoke(MethodInvocation mi) throws Throwable {
 		try {
 			return mi.proceed();
-		}
-		catch (RuntimeException ex) {
+		} catch (RuntimeException ex) {
 			// Let it throw raw if the type of the exception is on the throws clause of the method.
 			if (!this.alwaysTranslate && ReflectionUtils.declaresException(mi.getMethod(), ex.getClass())) {
 				throw ex;
-			}
-			else {
+			} else {
 				PersistenceExceptionTranslator translator = this.persistenceExceptionTranslator;
 				if (translator == null) {
 					Assert.state(this.beanFactory != null,
@@ -156,6 +157,7 @@ public class PersistenceExceptionTranslationInterceptor
 
 	/**
 	 * Detect all PersistenceExceptionTranslators in the given BeanFactory.
+	 *
 	 * @param bf the ListableBeanFactory to obtain PersistenceExceptionTranslators from
 	 * @return a chained PersistenceExceptionTranslator, combining all
 	 * PersistenceExceptionTranslators found in the given bean factory

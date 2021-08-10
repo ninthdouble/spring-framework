@@ -16,32 +16,19 @@
 
 package org.springframework.mock.web;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import javax.servlet.http.Cookie;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link MockHttpServletRequest}.
@@ -107,7 +94,7 @@ class MockHttpServletRequestTests {
 	void getContentAsStringWithoutSettingCharacterEncoding() throws IOException {
 		assertThatIllegalStateException().isThrownBy(
 				request::getContentAsString)
-			.withMessageContaining("Cannot get content as a String for a null character encoding");
+				.withMessageContaining("Cannot get content as a String for a null character encoding");
 	}
 
 	@Test
@@ -127,34 +114,38 @@ class MockHttpServletRequestTests {
 		assertThat(request.getContentAsByteArray()).isNull();
 	}
 
-	@Test  // SPR-16505
+	@Test
+		// SPR-16505
 	void getReaderTwice() throws IOException {
 		byte[] bytes = "body".getBytes(Charset.defaultCharset());
 		request.setContent(bytes);
 		assertThat(request.getReader()).isSameAs(request.getReader());
 	}
 
-	@Test  // SPR-16505
+	@Test
+		// SPR-16505
 	void getInputStreamTwice() throws IOException {
 		byte[] bytes = "body".getBytes(Charset.defaultCharset());
 		request.setContent(bytes);
 		assertThat(request.getInputStream()).isSameAs(request.getInputStream());
 	}
 
-	@Test  // SPR-16499
+	@Test
+		// SPR-16499
 	void getReaderAfterGettingInputStream() throws IOException {
 		request.getInputStream();
 		assertThatIllegalStateException().isThrownBy(
 				request::getReader)
-			.withMessageContaining("Cannot call getReader() after getInputStream() has already been called for the current request");
+				.withMessageContaining("Cannot call getReader() after getInputStream() has already been called for the current request");
 	}
 
-	@Test  // SPR-16499
+	@Test
+		// SPR-16499
 	void getInputStreamAfterGettingReader() throws IOException {
 		request.getReader();
 		assertThatIllegalStateException().isThrownBy(
 				request::getInputStream)
-			.withMessageContaining("Cannot call getInputStream() after getReader() has already been called for the current request");
+				.withMessageContaining("Cannot call getInputStream() after getReader() has already been called for the current request");
 	}
 
 	@Test
@@ -193,7 +184,8 @@ class MockHttpServletRequestTests {
 		assertThat(request.getCharacterEncoding()).isEqualTo("UTF-8");
 	}
 
-	@Test  // SPR-12677
+	@Test
+		// SPR-12677
 	void setContentTypeHeaderWithMoreComplexCharsetSyntax() {
 		String contentType = "test/plain;charset=\"utf-8\";foo=\"charset=bar\";foocharset=bar;foo=bar";
 		request.addHeader(HttpHeaders.CONTENT_TYPE, contentType);
@@ -234,7 +226,7 @@ class MockHttpServletRequestTests {
 		request.setParameter("key2", "value2");
 		Map<String, Object> params = new HashMap<>(2);
 		params.put("key1", "newValue1");
-		params.put("key3", new String[] { "value3A", "value3B" });
+		params.put("key3", new String[]{"value3A", "value3B"});
 		request.setParameters(params);
 		String[] values1 = request.getParameterValues("key1");
 		assertThat(values1.length).isEqualTo(1);
@@ -252,7 +244,7 @@ class MockHttpServletRequestTests {
 		request.setParameter("key2", "value2");
 		Map<String, Object> params = new HashMap<>(2);
 		params.put("key1", "newValue1");
-		params.put("key3", new String[] { "value3A", "value3B" });
+		params.put("key3", new String[]{"value3A", "value3B"});
 		request.addParameters(params);
 		String[] values1 = request.getParameterValues("key1");
 		assertThat(values1.length).isEqualTo(2);
@@ -270,7 +262,7 @@ class MockHttpServletRequestTests {
 		request.setParameter("key1", "value1");
 		Map<String, Object> params = new HashMap<>(2);
 		params.put("key2", "value2");
-		params.put("key3", new String[] { "value3A", "value3B" });
+		params.put("key3", new String[]{"value3A", "value3B"});
 		request.addParameters(params);
 		assertThat(request.getParameterMap().size()).isEqualTo(3);
 		request.removeAllParameters();
@@ -316,8 +308,7 @@ class MockHttpServletRequestTests {
 			MockHttpServletRequest request = new MockHttpServletRequest();
 			assertThat(newDefaultLocale.equals(request.getLocale())).isFalse();
 			assertThat(request.getLocale()).isEqualTo(Locale.ENGLISH);
-		}
-		finally {
+		} finally {
 			Locale.setDefault(originalDefaultLocale);
 		}
 	}
@@ -395,8 +386,8 @@ class MockHttpServletRequestTests {
 	void getServerNameWithInvalidIpv6AddressViaHostHeader() {
 		request.addHeader(HOST, "[::ffff:abcd:abcd"); // missing closing bracket
 		assertThatIllegalStateException()
-			.isThrownBy(request::getServerName)
-			.withMessageStartingWith("Invalid Host header: ");
+				.isThrownBy(request::getServerName)
+				.withMessageStartingWith("Invalid Host header: ");
 	}
 
 	@Test
@@ -427,16 +418,16 @@ class MockHttpServletRequestTests {
 	void getServerPortWithInvalidIpv6AddressViaHostHeader() {
 		request.addHeader(HOST, "[::ffff:abcd:abcd:8080"); // missing closing bracket
 		assertThatIllegalStateException()
-			.isThrownBy(request::getServerPort)
-			.withMessageStartingWith("Invalid Host header: ");
+				.isThrownBy(request::getServerPort)
+				.withMessageStartingWith("Invalid Host header: ");
 	}
 
 	@Test
 	void getServerPortWithIpv6AddressAndInvalidPortViaHostHeader() {
 		request.addHeader(HOST, "[::ffff:abcd:abcd]:bogus"); // "bogus" is not a port number
 		assertThatExceptionOfType(NumberFormatException.class)
-			.isThrownBy(request::getServerPort)
-			.withMessageContaining("bogus");
+				.isThrownBy(request::getServerPort)
+				.withMessageContaining("bogus");
 	}
 
 	@Test
@@ -487,7 +478,8 @@ class MockHttpServletRequestTests {
 		assertThat(requestURL.toString()).isEqualTo("http://localhost");
 	}
 
-	@Test  // SPR-16138
+	@Test
+		// SPR-16138
 	void getRequestURLWithHostHeader() {
 		String testServer = "test.server";
 		request.addHeader(HOST, testServer);
@@ -495,7 +487,8 @@ class MockHttpServletRequestTests {
 		assertThat(requestURL.toString()).isEqualTo(("http://" + testServer));
 	}
 
-	@Test  // SPR-16138
+	@Test
+		// SPR-16138
 	void getRequestURLWithHostHeaderAndPort() {
 		String testServer = "test.server:9999";
 		request.addHeader(HOST, testServer);
@@ -522,8 +515,8 @@ class MockHttpServletRequestTests {
 	void getRequestURLWithInvalidIpv6AddressViaHostHeader() {
 		request.addHeader(HOST, "[::ffff:abcd:abcd"); // missing closing bracket
 		assertThatIllegalStateException()
-			.isThrownBy(request::getRequestURL)
-			.withMessageStartingWith("Invalid Host header: ");
+				.isThrownBy(request::getRequestURL)
+				.withMessageStartingWith("Invalid Host header: ");
 	}
 
 	@Test

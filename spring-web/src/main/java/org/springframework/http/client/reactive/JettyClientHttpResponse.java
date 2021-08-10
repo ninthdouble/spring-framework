@@ -16,35 +16,30 @@
 
 package org.springframework.http.client.reactive;
 
+import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.reactive.client.ReactiveResponse;
+import org.reactivestreams.Publisher;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.lang.Nullable;
+import org.springframework.util.*;
+import reactor.core.publisher.Flux;
+
 import java.lang.reflect.Method;
 import java.net.HttpCookie;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.reactive.client.ReactiveResponse;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ReflectionUtils;
-
 /**
  * {@link ClientHttpResponse} implementation for the Jetty ReactiveStreams HTTP client.
  *
  * @author Sebastien Deleuze
- * @since 5.1
  * @see <a href="https://github.com/jetty-project/jetty-reactive-httpclient">
- *     Jetty ReactiveStreams HttpClient</a>
+ * Jetty ReactiveStreams HttpClient</a>
+ * @since 5.1
  */
 class JettyClientHttpResponse implements ClientHttpResponse {
 
@@ -54,23 +49,18 @@ class JettyClientHttpResponse implements ClientHttpResponse {
 
 	private static final boolean jetty10Present;
 
-
-	private final ReactiveResponse reactiveResponse;
-
-	private final Flux<DataBuffer> content;
-
-	private final HttpHeaders headers;
-
-
 	static {
 		try {
 			Class<?> httpFieldsClass = classLoader.loadClass("org.eclipse.jetty.http.HttpFields");
 			jetty10Present = httpFieldsClass.isInterface();
-		}
-		catch (ClassNotFoundException ex) {
+		} catch (ClassNotFoundException ex) {
 			throw new IllegalStateException("No compatible Jetty version found", ex);
 		}
 	}
+
+	private final ReactiveResponse reactiveResponse;
+	private final Flux<DataBuffer> content;
+	private final HttpHeaders headers;
 
 
 	public JettyClientHttpResponse(ReactiveResponse reactiveResponse, Publisher<DataBuffer> content) {
@@ -84,6 +74,11 @@ class JettyClientHttpResponse implements ClientHttpResponse {
 		this.headers = HttpHeaders.readOnlyHttpHeaders(headers);
 	}
 
+	@Nullable
+	private static String parseSameSite(String headerValue) {
+		Matcher matcher = SAMESITE_PATTERN.matcher(headerValue);
+		return (matcher.matches() ? matcher.group(1) : null);
+	}
 
 	@Override
 	public HttpStatus getStatusCode() {
@@ -115,13 +110,6 @@ class JettyClientHttpResponse implements ClientHttpResponse {
 		return CollectionUtils.unmodifiableMultiValueMap(result);
 	}
 
-	@Nullable
-	private static String parseSameSite(String headerValue) {
-		Matcher matcher = SAMESITE_PATTERN.matcher(headerValue);
-		return (matcher.matches() ? matcher.group(1) : null);
-	}
-
-
 	@Override
 	public Flux<DataBuffer> getBody() {
 		return this.content;
@@ -147,8 +135,7 @@ class JettyClientHttpResponse implements ClientHttpResponse {
 				Class<?> type = classLoader.loadClass("org.eclipse.jetty.http.HttpField");
 				getNameMethod = type.getMethod("getName");
 				getValueMethod = type.getMethod("getValue");
-			}
-			catch (ClassNotFoundException | NoSuchMethodException ex) {
+			} catch (ClassNotFoundException | NoSuchMethodException ex) {
 				throw new IllegalStateException("No compatible Jetty version found", ex);
 			}
 		}

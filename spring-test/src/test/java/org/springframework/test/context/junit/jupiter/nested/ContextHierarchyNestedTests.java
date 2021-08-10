@@ -19,7 +19,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -66,6 +65,67 @@ class ContextHierarchyNestedTests {
 		assertThat(this.context.getParent()).as("parent ApplicationContext").isNull();
 
 		assertThat(foo).isEqualTo(FOO);
+	}
+
+	@ContextConfiguration(classes = TestInterfaceConfig.class)
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class ParentConfig {
+
+		@Bean
+		String foo() {
+			return FOO;
+		}
+	}
+
+	// -------------------------------------------------------------------------
+
+	@Configuration
+	static class Child1Config {
+
+		@Bean
+		String foo() {
+			return QUX + 1;
+		}
+
+		@Bean
+		String bar() {
+			return BAZ + 1;
+		}
+	}
+
+	@Configuration
+	static class Child2Config {
+
+		@Bean
+		String foo() {
+			return QUX + 2;
+		}
+
+		@Bean
+		String bar() {
+			return BAZ + 2;
+		}
+	}
+
+	@Configuration
+	static class NestedConfig {
+
+		@Bean
+		String bar() {
+			return BAR;
+		}
+	}
+
+	@Configuration
+	static class TestInterfaceConfig {
+
+		@Bean
+		String foo() {
+			return "test interface";
+		}
 	}
 
 	@Nested
@@ -120,8 +180,8 @@ class ContextHierarchyNestedTests {
 		@Nested
 		@NestedTestConfiguration(OVERRIDE)
 		@ContextHierarchy({
-			@ContextConfiguration(classes = ParentConfig.class),
-			@ContextConfiguration(classes = Child2Config.class)
+				@ContextConfiguration(classes = ParentConfig.class),
+				@ContextConfiguration(classes = Child2Config.class)
 		})
 		class DoubleNestedTestCaseWithOverriddenConfigTests {
 
@@ -170,67 +230,6 @@ class ContextHierarchyNestedTests {
 				}
 			}
 		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class ParentConfig {
-
-		@Bean
-		String foo() {
-			return FOO;
-		}
-	}
-
-	@Configuration
-	static class Child1Config {
-
-		@Bean
-		String foo() {
-			return QUX + 1;
-		}
-
-		@Bean
-		String bar() {
-			return BAZ + 1;
-		}
-	}
-
-	@Configuration
-	static class Child2Config {
-
-		@Bean
-		String foo() {
-			return QUX + 2;
-		}
-
-		@Bean
-		String bar() {
-			return BAZ + 2;
-		}
-	}
-
-	@Configuration
-	static class NestedConfig {
-
-		@Bean
-		String bar() {
-			return BAR;
-		}
-	}
-
-	@Configuration
-	static class TestInterfaceConfig {
-
-		@Bean
-		String foo() {
-			return "test interface";
-		}
-	}
-
-	@ContextConfiguration(classes = TestInterfaceConfig.class)
-	interface TestInterface {
 	}
 
 }

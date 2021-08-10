@@ -226,8 +226,8 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				invokeListener(method, event))
-			.withMessageContaining("Test exception")
-			.withNoCause();
+				.withMessageContaining("Test exception")
+				.withNoCause();
 	}
 
 	@Test
@@ -238,7 +238,7 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 
 		assertThatExceptionOfType(UndeclaredThrowableException.class).isThrownBy(() ->
 				invokeListener(method, event))
-			.withCauseInstanceOf(IOException.class);
+				.withCauseInstanceOf(IOException.class);
 	}
 
 	@Test
@@ -255,7 +255,7 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 				new StaticApplicationListenerMethodAdapter(method, bean);
 		assertThatIllegalStateException().isThrownBy(() ->
 				listener.onApplicationEvent(createGenericTestEvent("test")))
-			.withMessageContaining("handleIt2");
+				.withMessageContaining("handleIt2");
 	}
 
 	@Test
@@ -346,6 +346,11 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 	}
 
 
+	interface SimpleService {
+
+		void handleIt(ApplicationEvent event);
+	}
+
 	private static class StaticApplicationListenerMethodAdapter extends ApplicationListenerMethodAdapter {
 
 		private final Object targetBean;
@@ -360,7 +365,6 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 			return this.targetBean;
 		}
 	}
-
 
 	private static class SampleEvents {
 
@@ -432,13 +436,6 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 		}
 	}
 
-
-	interface SimpleService {
-
-		void handleIt(ApplicationEvent event);
-	}
-
-
 	private static class EntityWrapper<T> implements ResolvableTypeProvider {
 
 		private final T entity;
@@ -478,7 +475,7 @@ public class ApplicationListenerMethodAdapterTests extends AbstractApplicationEv
 	}
 
 
-	@SuppressWarnings({ "serial" })
+	@SuppressWarnings({"serial"})
 	static class PayloadStringTestEvent extends PayloadTestEvent<Long, String> {
 
 		public PayloadStringTestEvent(Object source, String payload, Long something) {

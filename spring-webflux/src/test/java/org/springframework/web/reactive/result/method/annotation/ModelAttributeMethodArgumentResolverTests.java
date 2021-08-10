@@ -16,19 +16,9 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.Map;
-import java.util.function.Function;
-
-import javax.validation.constraints.NotEmpty;
-
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.http.MediaType;
@@ -43,6 +33,14 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import javax.validation.constraints.NotEmpty;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.Map;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -184,7 +182,7 @@ class ModelAttributeMethodArgumentResolverTests {
 	}
 
 	private void createButDoNotBindToPojo(String modelKey, MethodParameter methodParameter,
-			Function<Object, NonBindingPojo> valueExtractor) throws Exception {
+										  Function<Object, NonBindingPojo> valueExtractor) throws Exception {
 
 		Object value = createResolver()
 				.resolveArgument(methodParameter, this.bindContext, postForm("name=Enigma"))
@@ -357,7 +355,7 @@ class ModelAttributeMethodArgumentResolverTests {
 	}
 
 	private void testValidationError(MethodParameter param, Function<Mono<?>, Mono<?>> valueMonoExtractor,
-			String formData, String field, String rejectedValue) throws URISyntaxException {
+									 String formData, String field, String rejectedValue) throws URISyntaxException {
 
 		Mono<?> mono = createResolver().resolveArgument(param, this.bindContext, postForm(formData));
 		mono = valueMonoExtractor.apply(mono);

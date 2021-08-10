@@ -34,14 +34,14 @@ import org.springframework.util.StringUtils;
  * {@link #next(Temporal)}.
  *
  * @author Arjen Poutsma
- * @since 5.3
  * @see CronTrigger
+ * @since 5.3
  */
 public final class CronExpression {
 
 	static final int MAX_ATTEMPTS = 366;
 
-	private static final String[] MACROS = new String[] {
+	private static final String[] MACROS = new String[]{
 			"@yearly", "0 0 0 1 1 *",
 			"@annually", "0 0 0 1 1 *",
 			"@monthly", "0 0 0 1 * *",
@@ -175,7 +175,7 @@ public final class CronExpression {
 	 * @param expression the expression string to parse
 	 * @return the parsed {@code CronExpression} object
 	 * @throws IllegalArgumentException in the expression does not conform to
-	 * the cron format
+	 *                                  the cron format
 	 */
 	public static CronExpression parse(String expression) {
 		Assert.hasLength(expression, "Expression string must not be empty");
@@ -196,8 +196,7 @@ public final class CronExpression {
 			CronField daysOfWeek = CronField.parseDaysOfWeek(fields[5]);
 
 			return new CronExpression(seconds, minutes, hours, daysOfMonth, months, daysOfWeek, expression);
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			String msg = ex.getMessage() + " in cron expression \"" + expression + "\"";
 			throw new IllegalArgumentException(msg, ex);
 		}
@@ -205,6 +204,7 @@ public final class CronExpression {
 
 	/**
 	 * Determine whether the given string represents a valid cron expression.
+	 *
 	 * @param expression the expression to evaluate
 	 * @return {@code true} if the given expression is a valid cron expression
 	 * @since 5.3.8
@@ -216,8 +216,7 @@ public final class CronExpression {
 		try {
 			parse(expression);
 			return true;
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			return false;
 		}
 	}
@@ -236,8 +235,9 @@ public final class CronExpression {
 
 	/**
 	 * Calculate the next {@link Temporal} that matches this expression.
+	 *
 	 * @param temporal the seed value
-	 * @param <T> the type of temporal
+	 * @param <T>      the type of temporal
 	 * @return the next temporal that matches this expression, or {@code null}
 	 * if no such temporal can be found
 	 */
@@ -284,14 +284,14 @@ public final class CronExpression {
 		if (o instanceof CronExpression) {
 			CronExpression other = (CronExpression) o;
 			return Arrays.equals(this.fields, other.fields);
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
 
 	/**
 	 * Return the expression string used to create this {@code CronExpression}.
+	 *
 	 * @return the expression string
 	 */
 	@Override

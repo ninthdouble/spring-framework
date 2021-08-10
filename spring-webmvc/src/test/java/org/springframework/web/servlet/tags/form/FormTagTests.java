@@ -16,15 +16,13 @@
 
 package org.springframework.web.servlet.tags.form;
 
-import java.util.Collections;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.servlet.support.RequestDataValueProcessor;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.web.servlet.support.RequestDataValueProcessor;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -48,6 +46,13 @@ public class FormTagTests extends AbstractHtmlElementTagTests {
 
 	private MockHttpServletRequest request;
 
+	private static void assertFormTagOpened(String output) {
+		assertThat(output.startsWith("<form ")).isTrue();
+	}
+
+	private static void assertFormTagClosed(String output) {
+		assertThat(output.endsWith("</form>")).isTrue();
+	}
 
 	@Override
 	@SuppressWarnings("serial")
@@ -225,7 +230,7 @@ public class FormTagTests extends AbstractHtmlElementTagTests {
 		request.setQueryString(xssQueryString);
 		tag.doStartTag();
 		assertThat(getOutput()).isEqualTo(("<form id=\"command\" action=\"/my/form?foo=bar&amp;stuff=&quot;&gt;&lt;" +
-						"script&gt;alert(&#39;XSS!&#39;)&lt;/script&gt;\" method=\"post\">"));
+				"script&gt;alert(&#39;XSS!&#39;)&lt;/script&gt;\" method=\"post\">"));
 	}
 
 	@Test
@@ -370,15 +375,6 @@ public class FormTagTests extends AbstractHtmlElementTagTests {
 		int inputStart = output.indexOf("<", 1);
 		int inputEnd = output.lastIndexOf(">", output.length() - 2);
 		return output.substring(inputStart, inputEnd + 1);
-	}
-
-
-	private static void assertFormTagOpened(String output) {
-		assertThat(output.startsWith("<form ")).isTrue();
-	}
-
-	private static void assertFormTagClosed(String output) {
-		assertThat(output.endsWith("</form>")).isTrue();
 	}
 
 }

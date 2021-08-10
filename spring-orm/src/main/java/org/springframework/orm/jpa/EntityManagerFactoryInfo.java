@@ -16,15 +16,14 @@
 
 package org.springframework.orm.jpa;
 
-import java.util.Map;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
-
-import org.springframework.lang.Nullable;
+import java.util.Map;
 
 /**
  * Metadata interface for a Spring-managed JPA {@link EntityManagerFactory}.
@@ -41,6 +40,7 @@ public interface EntityManagerFactoryInfo {
 	/**
 	 * Return the underlying PersistenceProvider that the underlying
 	 * EntityManagerFactory was created with.
+	 *
 	 * @return the PersistenceProvider used to create this EntityManagerFactory,
 	 * or {@code null} if the standard JPA provider autodetection process
 	 * was used to configure the EntityManagerFactory
@@ -51,6 +51,7 @@ public interface EntityManagerFactoryInfo {
 	/**
 	 * Return the PersistenceUnitInfo used to create this
 	 * EntityManagerFactory, if the in-container API was used.
+	 *
 	 * @return the PersistenceUnitInfo used to create this EntityManagerFactory,
 	 * or {@code null} if the in-container contract was not used to
 	 * configure the EntityManagerFactory
@@ -64,6 +65,7 @@ public interface EntityManagerFactoryInfo {
 	 * <p>If {@code getPersistenceUnitInfo()} returns non-null, the result of
 	 * {@code getPersistenceUnitName()} must be equal to the value returned by
 	 * {@code PersistenceUnitInfo.getPersistenceUnitName()}.
+	 *
 	 * @see #getPersistenceUnitInfo()
 	 * @see javax.persistence.spi.PersistenceUnitInfo#getPersistenceUnitName()
 	 */
@@ -73,6 +75,7 @@ public interface EntityManagerFactoryInfo {
 	/**
 	 * Return the JDBC DataSource that this EntityManagerFactory
 	 * obtains its JDBC Connections from.
+	 *
 	 * @return the JDBC DataSource, or {@code null} if not known
 	 */
 	@Nullable
@@ -103,6 +106,7 @@ public interface EntityManagerFactoryInfo {
 
 	/**
 	 * Return the raw underlying EntityManagerFactory.
+	 *
 	 * @return the unadorned EntityManagerFactory (never {@code null})
 	 */
 	EntityManagerFactory getNativeEntityManagerFactory();
@@ -114,9 +118,10 @@ public interface EntityManagerFactoryInfo {
 	 * {@link #getNativeEntityManagerFactory() native EntityManagerFactory},
 	 * taking {@link JpaVendorAdapter#postProcessEntityManager(EntityManager)}
 	 * into account.
-	 * @since 5.3
+	 *
 	 * @see #getNativeEntityManagerFactory()
 	 * @see EntityManagerFactory#createEntityManager()
+	 * @since 5.3
 	 */
 	EntityManager createNativeEntityManager(@Nullable Map<?, ?> properties);
 

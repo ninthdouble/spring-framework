@@ -16,22 +16,20 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.ServletRequest;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.security.Principal;
-
-import javax.servlet.ServletRequest;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,7 +76,8 @@ class PrincipalMethodArgumentResolverTests {
 		assertThat(result).as("Invalid result").isNull();
 	}
 
-	@Test // gh-25780
+	@Test
+		// gh-25780
 	void annotatedPrincipal() throws Exception {
 		Principal principal = () -> "Foo";
 		servletRequest.setUserPrincipal(principal);
@@ -90,13 +89,16 @@ class PrincipalMethodArgumentResolverTests {
 
 
 	@SuppressWarnings("unused")
-	public void supportedParams(ServletRequest p0, Principal p1) {}
-
-	@Target({ ElementType.PARAMETER })
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface AuthenticationPrincipal {}
+	public void supportedParams(ServletRequest p0, Principal p1) {
+	}
 
 	@SuppressWarnings("unused")
-	public void supportedParamsWithAnnotatedPrincipal(@AuthenticationPrincipal Principal p) {}
+	public void supportedParamsWithAnnotatedPrincipal(@AuthenticationPrincipal Principal p) {
+	}
+
+	@Target({ElementType.PARAMETER})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface AuthenticationPrincipal {
+	}
 
 }

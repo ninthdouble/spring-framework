@@ -16,15 +16,7 @@
 
 package org.springframework.test.util;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -34,6 +26,8 @@ import org.springframework.test.util.MetaAnnotationUtils.AnnotationDescriptor;
 import org.springframework.test.util.MetaAnnotationUtils.UntypedAnnotationDescriptor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.annotation.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.util.MetaAnnotationUtils.findAnnotationDescriptor;
 import static org.springframework.test.util.MetaAnnotationUtils.findAnnotationDescriptorForTypes;
@@ -42,8 +36,8 @@ import static org.springframework.test.util.MetaAnnotationUtils.findAnnotationDe
  * Unit tests for {@link MetaAnnotationUtils}.
  *
  * @author Sam Brannen
- * @since 4.0
  * @see OverriddenMetaAnnotationAttributesTests
+ * @since 4.0
  */
 @SuppressWarnings("deprecation")
 class MetaAnnotationUtilsTests {
@@ -61,7 +55,7 @@ class MetaAnnotationUtilsTests {
 	}
 
 	private void assertAtComponentOnComposedAnnotation(Class<?> startClass, Class<?> rootDeclaringClass,
-			Class<?> declaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
+													   Class<?> declaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
 
 		AnnotationDescriptor<Component> descriptor = findAnnotationDescriptor(startClass, Component.class);
 		assertThat(descriptor).as("AnnotationDescriptor should not be null").isNotNull();
@@ -81,7 +75,7 @@ class MetaAnnotationUtilsTests {
 	}
 
 	private void assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(Class<?> startClass,
-			Class<?> rootDeclaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
+																				Class<?> rootDeclaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
 
 		assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(
 				startClass, rootDeclaringClass, composedAnnotationType, name, composedAnnotationType);
@@ -89,8 +83,8 @@ class MetaAnnotationUtilsTests {
 
 	@SuppressWarnings("unchecked")
 	private void assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(Class<?> startClass,
-			Class<?> rootDeclaringClass, Class<?> declaringClass, String name,
-			Class<? extends Annotation> composedAnnotationType) {
+																				Class<?> rootDeclaringClass, Class<?> declaringClass, String name,
+																				Class<? extends Annotation> composedAnnotationType) {
 
 		Class<Component> annotationType = Component.class;
 		UntypedAnnotationDescriptor descriptor = findAnnotationDescriptorForTypes(
@@ -216,7 +210,7 @@ class MetaAnnotationUtilsTests {
 		assertThat(descriptor.getComposedAnnotation()).as("composedAnnotation should not be null").isNotNull();
 		assertThat(descriptor.getComposedAnnotationType()).as("composedAnnotationType").isEqualTo(MetaConfig.class);
 
-		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).as("configured classes").isEqualTo(new Class<?>[] {String.class});
+		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).as("configured classes").isEqualTo(new Class<?>[]{String.class});
 	}
 
 	@Test
@@ -370,8 +364,8 @@ class MetaAnnotationUtilsTests {
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(startClass);
 		assertThat(descriptor.getAnnotationType()).isEqualTo(annotationType);
-		assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEqualTo(new Class<?>[] {});
-		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).isEqualTo(new Class<?>[] {MetaConfig.DevConfig.class, MetaConfig.ProductionConfig.class});
+		assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEqualTo(new Class<?>[]{});
+		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).isEqualTo(new Class<?>[]{MetaConfig.DevConfig.class, MetaConfig.ProductionConfig.class});
 		assertThat(descriptor.getComposedAnnotation()).isNotNull();
 		assertThat(descriptor.getComposedAnnotationType()).isEqualTo(MetaConfig.class);
 	}
@@ -388,8 +382,8 @@ class MetaAnnotationUtilsTests {
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(startClass);
 		assertThat(descriptor.getAnnotationType()).isEqualTo(annotationType);
-		assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEqualTo(new Class<?>[] {});
-		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).isEqualTo(new Class<?>[] {MetaAnnotationUtilsTests.class});
+		assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEqualTo(new Class<?>[]{});
+		assertThat(descriptor.getAnnotationAttributes().getClassArray("classes")).isEqualTo(new Class<?>[]{MetaAnnotationUtilsTests.class});
 		assertThat(descriptor.getComposedAnnotation()).isNotNull();
 		assertThat(descriptor.getComposedAnnotationType()).isEqualTo(MetaConfig.class);
 	}
@@ -532,64 +526,20 @@ class MetaAnnotationUtilsTests {
 	@Documented
 	static @interface MetaConfig {
 
+		Class<?>[] classes() default {DevConfig.class, ProductionConfig.class};
+
 		static class DevConfig {
 		}
 
 		static class ProductionConfig {
 		}
-
-
-		Class<?>[] classes() default { DevConfig.class, ProductionConfig.class };
 	}
 
 	// -------------------------------------------------------------------------
-
-	@Meta1
-	static class HasMetaComponentAnnotation {
-	}
-
-	@Meta1
-	@Component(value = "local")
-	@Meta2
-	static class HasLocalAndMetaComponentAnnotation {
-	}
 
 	@Meta1
 	static interface InterfaceWithMetaAnnotation {
 	}
-
-	static class ClassWithMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
-	}
-
-	@Meta2
-	static class ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
-	}
-
-	static class SubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface extends
-			ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface {
-	}
-
-	@MetaMeta
-	static class MetaMetaAnnotatedClass {
-	}
-
-	@MetaMetaMeta
-	static class MetaMetaMetaAnnotatedClass {
-	}
-
-	@MetaCycle3
-	static class MetaCycleAnnotatedClass {
-	}
-
-	@MetaConfig
-	class MetaConfigWithDefaultAttributesTestCase {
-	}
-
-	@MetaConfig(classes = MetaAnnotationUtilsTests.class)
-	class MetaConfigWithOverriddenAttributesTestCase {
-	}
-
-	// -------------------------------------------------------------------------
 
 	@Transactional
 	static interface InheritedAnnotationInterface {
@@ -608,10 +558,45 @@ class MetaAnnotationUtilsTests {
 	static interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
 	}
 
-	static class NonAnnotatedClass {
+	static interface NonAnnotatedInterface {
 	}
 
-	static interface NonAnnotatedInterface {
+	@Meta1
+	static class HasMetaComponentAnnotation {
+	}
+
+	@Meta1
+	@Component(value = "local")
+	@Meta2
+	static class HasLocalAndMetaComponentAnnotation {
+	}
+
+	static class ClassWithMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
+	}
+
+	@Meta2
+	static class ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
+	}
+
+	// -------------------------------------------------------------------------
+
+	static class SubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface extends
+			ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface {
+	}
+
+	@MetaMeta
+	static class MetaMetaAnnotatedClass {
+	}
+
+	@MetaMetaMeta
+	static class MetaMetaMetaAnnotatedClass {
+	}
+
+	@MetaCycle3
+	static class MetaCycleAnnotatedClass {
+	}
+
+	static class NonAnnotatedClass {
 	}
 
 	@Transactional
@@ -634,6 +619,14 @@ class MetaAnnotationUtilsTests {
 
 	@MetaConfig(classes = String.class)
 	static class MetaAnnotatedAndSuperAnnotatedContextConfigClass extends AnnotatedContextConfigClass {
+	}
+
+	@MetaConfig
+	class MetaConfigWithDefaultAttributesTestCase {
+	}
+
+	@MetaConfig(classes = MetaAnnotationUtilsTests.class)
+	class MetaConfigWithOverriddenAttributesTestCase {
 	}
 
 }

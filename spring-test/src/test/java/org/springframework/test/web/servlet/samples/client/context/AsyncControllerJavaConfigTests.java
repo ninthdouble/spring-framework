@@ -16,15 +16,10 @@
 
 package org.springframework.test.web.servlet.samples.client.context;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +37,10 @@ import org.springframework.web.context.request.async.CallableProcessingIntercept
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static org.mockito.ArgumentMatchers.any;
 

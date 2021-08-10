@@ -16,13 +16,13 @@
 
 package org.springframework.jca.cci.object;
 
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.Record;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import javax.resource.cci.ConnectionFactory;
+import javax.resource.cci.InteractionSpec;
+import javax.resource.cci.Record;
 
 /**
  * EIS operation object that accepts a passed-in CCI input Record
@@ -45,6 +45,7 @@ public class SimpleRecordOperation extends EisOperation {
 	/**
 	 * Convenient constructor with ConnectionFactory and specifications
 	 * (connection and interaction).
+	 *
 	 * @param connectionFactory the ConnectionFactory to use to obtain connections
 	 */
 	public SimpleRecordOperation(ConnectionFactory connectionFactory, InteractionSpec interactionSpec) {
@@ -57,6 +58,7 @@ public class SimpleRecordOperation extends EisOperation {
 	 * Execute the CCI interaction encapsulated by this operation object.
 	 * <p>This method will call CCI's {@code Interaction.execute} variant
 	 * that returns an output Record.
+	 *
 	 * @param inputRecord the input record
 	 * @return the output record
 	 * @throws DataAccessException if there is any problem
@@ -73,7 +75,8 @@ public class SimpleRecordOperation extends EisOperation {
 	 * Execute the CCI interaction encapsulated by this operation object.
 	 * <p>This method will call CCI's {@code Interaction.execute} variant
 	 * with a passed-in output Record.
-	 * @param inputRecord the input record
+	 *
+	 * @param inputRecord  the input record
 	 * @param outputRecord the output record
 	 * @throws DataAccessException if there is any problem
 	 * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record, Record)

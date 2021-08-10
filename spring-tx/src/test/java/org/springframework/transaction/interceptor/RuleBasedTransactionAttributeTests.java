@@ -16,15 +16,14 @@
 
 package org.springframework.transaction.interceptor;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.transaction.TransactionDefinition;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.transaction.TransactionDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -165,10 +164,12 @@ public class RuleBasedTransactionAttributeTests {
 
 
 	@SuppressWarnings("serial")
-	private static class MyBusinessException extends Exception {}
+	private static class MyBusinessException extends Exception {
+	}
 
 
 	@SuppressWarnings("serial")
-	private static final class MyBusinessWarningException extends MyBusinessException {}
+	private static final class MyBusinessWarningException extends MyBusinessException {
+	}
 
 }

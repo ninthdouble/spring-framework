@@ -16,19 +16,14 @@
 
 package org.springframework.web.method;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * A {@code Predicate} to match request handling component types if
@@ -61,20 +56,74 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 	 * Private constructor. See static factory methods.
 	 */
 	private HandlerTypePredicate(Set<String> basePackages, List<Class<?>> assignableTypes,
-			List<Class<? extends Annotation>> annotations) {
+								 List<Class<? extends Annotation>> annotations) {
 
 		this.basePackages = Collections.unmodifiableSet(basePackages);
 		this.assignableTypes = Collections.unmodifiableList(assignableTypes);
 		this.annotations = Collections.unmodifiableList(annotations);
 	}
 
+	/**
+	 * {@code Predicate} that applies to any handlers.
+	 */
+	public static HandlerTypePredicate forAnyHandlerType() {
+		return new HandlerTypePredicate(
+				Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
+	}
+
+	/**
+	 * Match handlers declared under a base package, e.g. "org.example".
+	 *
+	 * @param packages one or more base package names
+	 */
+	public static HandlerTypePredicate forBasePackage(String... packages) {
+		return new Builder().basePackage(packages).build();
+	}
+
+
+	// Static factory methods
+
+	/**
+	 * Type-safe alternative to {@link #forBasePackage(String...)} to specify a
+	 * base package through a class.
+	 *
+	 * @param packageClasses one or more base package classes
+	 */
+	public static HandlerTypePredicate forBasePackageClass(Class<?>... packageClasses) {
+		return new Builder().basePackageClass(packageClasses).build();
+	}
+
+	/**
+	 * Match handlers that are assignable to a given type.
+	 *
+	 * @param types one or more handler super types
+	 */
+	public static HandlerTypePredicate forAssignableType(Class<?>... types) {
+		return new Builder().assignableType(types).build();
+	}
+
+	/**
+	 * Match handlers annotated with a specific annotation.
+	 *
+	 * @param annotations one or more annotations to check for
+	 */
+	@SafeVarargs
+	public static HandlerTypePredicate forAnnotation(Class<? extends Annotation>... annotations) {
+		return new Builder().annotation(annotations).build();
+	}
+
+	/**
+	 * Return a builder for a {@code HandlerTypePredicate}.
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	@Override
 	public boolean test(@Nullable Class<?> controllerType) {
 		if (!hasSelectors()) {
 			return true;
-		}
-		else if (controllerType != null) {
+		} else if (controllerType != null) {
 			for (String basePackage : this.basePackages) {
 				if (controllerType.getName().startsWith(basePackage)) {
 					return true;
@@ -98,59 +147,6 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 		return (!this.basePackages.isEmpty() || !this.assignableTypes.isEmpty() || !this.annotations.isEmpty());
 	}
 
-
-	// Static factory methods
-
-	/**
-	 * {@code Predicate} that applies to any handlers.
-	 */
-	public static HandlerTypePredicate forAnyHandlerType() {
-		return new HandlerTypePredicate(
-				Collections.emptySet(), Collections.emptyList(), Collections.emptyList());
-	}
-
-	/**
-	 * Match handlers declared under a base package, e.g. "org.example".
-	 * @param packages one or more base package names
-	 */
-	public static HandlerTypePredicate forBasePackage(String... packages) {
-		return new Builder().basePackage(packages).build();
-	}
-
-	/**
-	 * Type-safe alternative to {@link #forBasePackage(String...)} to specify a
-	 * base package through a class.
-	 * @param packageClasses one or more base package classes
-	 */
-	public static HandlerTypePredicate forBasePackageClass(Class<?>... packageClasses) {
-		return new Builder().basePackageClass(packageClasses).build();
-	}
-
-	/**
-	 * Match handlers that are assignable to a given type.
-	 * @param types one or more handler super types
-	 */
-	public static HandlerTypePredicate forAssignableType(Class<?>... types) {
-		return new Builder().assignableType(types).build();
-	}
-
-	/**
-	 * Match handlers annotated with a specific annotation.
-	 * @param annotations one or more annotations to check for
-	 */
-	@SafeVarargs
-	public static HandlerTypePredicate forAnnotation(Class<? extends Annotation>... annotations) {
-		return new Builder().annotation(annotations).build();
-	}
-
-	/**
-	 * Return a builder for a {@code HandlerTypePredicate}.
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-
 	/**
 	 * A {@link HandlerTypePredicate} builder.
 	 */
@@ -164,6 +160,7 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 
 		/**
 		 * Match handlers declared under a base package, e.g. "org.example".
+		 *
 		 * @param packages one or more base package classes
 		 */
 		public Builder basePackage(String... packages) {
@@ -174,6 +171,7 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 		/**
 		 * Type-safe alternative to {@link #forBasePackage(String...)} to specify a
 		 * base package through a class.
+		 *
 		 * @param packageClasses one or more base package names
 		 */
 		public Builder basePackageClass(Class<?>... packageClasses) {
@@ -187,6 +185,7 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 
 		/**
 		 * Match handlers that are assignable to a given type.
+		 *
 		 * @param types one or more handler super types
 		 */
 		public Builder assignableType(Class<?>... types) {
@@ -196,6 +195,7 @@ public final class HandlerTypePredicate implements Predicate<Class<?>> {
 
 		/**
 		 * Match types that are annotated with one of the given annotations.
+		 *
 		 * @param annotations one or more annotations to check for
 		 */
 		@SuppressWarnings("unchecked")

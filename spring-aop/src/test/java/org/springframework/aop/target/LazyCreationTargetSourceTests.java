@@ -17,7 +17,6 @@
 package org.springframework.aop.target;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.ProxyFactory;
 
@@ -37,6 +36,7 @@ public class LazyCreationTargetSourceTests {
 			protected Object createObject() {
 				return new InitCountingBean();
 			}
+
 			@Override
 			public Class<?> getTargetClass() {
 				return InitCountingBean.class;

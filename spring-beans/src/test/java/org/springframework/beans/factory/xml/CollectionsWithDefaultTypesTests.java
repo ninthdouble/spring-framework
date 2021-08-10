@@ -16,14 +16,13 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.io.ClassPathResource;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,7 +69,7 @@ public class CollectionsWithDefaultTypesTests {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void assertMap(Map<?,?> map) {
+	private void assertMap(Map<?, ?> map) {
 		for (Map.Entry entry : map.entrySet()) {
 			assertThat(entry.getKey().getClass()).as("Key type is incorrect").isEqualTo(Integer.class);
 			assertThat(entry.getValue().getClass()).as("Value type is incorrect").isEqualTo(Boolean.class);

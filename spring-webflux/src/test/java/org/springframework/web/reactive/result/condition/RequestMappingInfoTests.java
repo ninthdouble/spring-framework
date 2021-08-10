@@ -16,14 +16,8 @@
 
 package org.springframework.web.reactive.result.condition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +28,11 @@ import org.springframework.web.testfixture.server.MockServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 import org.springframework.web.util.pattern.PatternParseException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,7 +85,7 @@ public class RequestMappingInfoTests {
 	public void throwWhenInvalidPattern() {
 		assertThatExceptionOfType(PatternParseException.class).isThrownBy(() ->
 				paths("/{foo").build())
-			.withMessageContaining("Expected close capture character after variable name }");
+				.withMessageContaining("Expected close capture character after variable name }");
 	}
 
 	@Test

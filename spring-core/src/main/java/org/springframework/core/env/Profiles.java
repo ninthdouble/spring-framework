@@ -33,15 +33,6 @@ import java.util.function.Predicate;
 public interface Profiles {
 
 	/**
-	 * Test if this {@code Profiles} instance <em>matches</em> against the given
-	 * active profiles predicate.
-	 * @param activeProfiles a predicate that tests whether a given profile is
-	 * currently active
-	 */
-	boolean matches(Predicate<String> activeProfiles);
-
-
-	/**
 	 * Create a new {@link Profiles} instance that checks for matches against
 	 * the given <em>profile strings</em>.
 	 * <p>The returned instance will {@linkplain Profiles#matches(Predicate) match}
@@ -64,11 +55,21 @@ public interface Profiles {
 	 * by this method are considered equivalent to each other (in terms of
 	 * {@code equals()} and {@code hashCode()} semantics) if they are created
 	 * with identical <em>profile strings</em>.
+	 *
 	 * @param profiles the <em>profile strings</em> to include
 	 * @return a new {@link Profiles} instance
 	 */
 	static Profiles of(String... profiles) {
 		return ProfilesParser.parse(profiles);
 	}
+
+	/**
+	 * Test if this {@code Profiles} instance <em>matches</em> against the given
+	 * active profiles predicate.
+	 *
+	 * @param activeProfiles a predicate that tests whether a given profile is
+	 *                       currently active
+	 */
+	boolean matches(Predicate<String> activeProfiles);
 
 }

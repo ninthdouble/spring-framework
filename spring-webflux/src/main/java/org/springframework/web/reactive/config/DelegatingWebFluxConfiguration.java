@@ -16,8 +16,6 @@
 
 package org.springframework.web.reactive.config;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -28,6 +26,8 @@ import org.springframework.validation.Validator;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolverBuilder;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 import org.springframework.web.reactive.socket.server.WebSocketService;
+
+import java.util.List;
 
 /**
  * A subclass of {@code WebFluxConfigurationSupport} that detects and delegates

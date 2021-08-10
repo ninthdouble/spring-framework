@@ -16,35 +16,33 @@
 
 package org.springframework.transaction.event;
 
-import java.lang.reflect.Method;
-
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.EventListenerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+
+import java.lang.reflect.Method;
 
 /**
  * {@link EventListenerFactory} implementation that handles {@link TransactionalEventListener}
  * annotated methods.
  *
  * @author Stephane Nicoll
- * @since 4.2
  * @see TransactionalApplicationListenerMethodAdapter
+ * @since 4.2
  */
 public class TransactionalEventListenerFactory implements EventListenerFactory, Ordered {
 
 	private int order = 50;
-
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
 
 	@Override
 	public int getOrder() {
 		return this.order;
 	}
 
+	public void setOrder(int order) {
+		this.order = order;
+	}
 
 	@Override
 	public boolean supportsMethod(Method method) {

@@ -17,7 +17,6 @@
 package org.springframework.aop.scope;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -33,11 +32,15 @@ public class DefaultScopedObjectTests {
 
 	private static final String GOOD_BEAN_NAME = "foo";
 
+	private static void testBadTargetBeanName(final String badTargetBeanName) {
+		ConfigurableBeanFactory factory = mock(ConfigurableBeanFactory.class);
+		new DefaultScopedObject(factory, badTargetBeanName);
+	}
 
 	@Test
 	public void testCtorWithNullBeanFactory() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
-			new DefaultScopedObject(null, GOOD_BEAN_NAME));
+				new DefaultScopedObject(null, GOOD_BEAN_NAME));
 	}
 
 	@Test
@@ -56,11 +59,6 @@ public class DefaultScopedObjectTests {
 	public void testCtorWithJustWhitespacedTargetBeanName() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				testBadTargetBeanName("   "));
-	}
-
-	private static void testBadTargetBeanName(final String badTargetBeanName) {
-		ConfigurableBeanFactory factory = mock(ConfigurableBeanFactory.class);
-		new DefaultScopedObject(factory, badTargetBeanName);
 	}
 
 }

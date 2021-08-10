@@ -18,7 +18,6 @@ package org.springframework.web.servlet.mvc;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.DispatcherServlet;

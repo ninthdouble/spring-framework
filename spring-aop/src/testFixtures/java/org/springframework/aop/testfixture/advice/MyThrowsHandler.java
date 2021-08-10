@@ -16,11 +16,11 @@
 
 package org.springframework.aop.testfixture.advice;
 
+import org.springframework.aop.ThrowsAdvice;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-
-import org.springframework.aop.ThrowsAdvice;
 
 @SuppressWarnings("serial")
 public class MyThrowsHandler extends MethodCounter implements ThrowsAdvice {
@@ -34,7 +34,9 @@ public class MyThrowsHandler extends MethodCounter implements ThrowsAdvice {
 		count("remoteException");
 	}
 
-	/** Not valid, wrong number of arguments */
+	/**
+	 * Not valid, wrong number of arguments
+	 */
 	public void afterThrowing(Method m, Exception ex) throws Throwable {
 		throw new UnsupportedOperationException("Shouldn't be called");
 	}

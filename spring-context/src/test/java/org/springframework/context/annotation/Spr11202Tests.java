@@ -51,20 +51,24 @@ public class Spr11202Tests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Target(ElementType.TYPE)
+	protected @interface Bar {
+	}
+
 	@Configuration
 	@Import(Selector.class)
 	protected static class Wrapper {
 	}
 
-
 	protected static class Selector implements ImportSelector {
 
 		@Override
 		public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-			return new String[] {Config.class.getName()};
+			return new String[]{Config.class.getName()};
 		}
 	}
-
 
 	@Configuration
 	protected static class Config {
@@ -88,7 +92,6 @@ public class Spr11202Tests {
 		}
 	}
 
-
 	protected static class NoBarCondition implements Condition {
 
 		@Override
@@ -99,14 +102,6 @@ public class Spr11202Tests {
 			return true;
 		}
 	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Documented
-	@Target(ElementType.TYPE)
-	protected @interface Bar {
-	}
-
 
 	protected static class FooFactoryBean implements FactoryBean<Foo>, InitializingBean {
 

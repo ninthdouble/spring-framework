@@ -16,14 +16,11 @@
 
 package org.springframework.test.context.junit4.orm;
 
-import javax.persistence.PersistenceException;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
@@ -31,6 +28,8 @@ import org.springframework.test.context.junit4.orm.domain.DriversLicense;
 import org.springframework.test.context.junit4.orm.domain.Person;
 import org.springframework.test.context.junit4.orm.service.PersonService;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.PersistenceException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -119,8 +118,7 @@ public class HibernateSessionFlushingTests extends AbstractTransactionalJUnit4Sp
 			// Manual flush is required to avoid false positive in test
 			try {
 				sessionFactory.getCurrentSession().flush();
-			}
-			catch (PersistenceException ex) {
+			} catch (PersistenceException ex) {
 				// Wrapped in Hibernate 5.2, with the constraint violation as cause
 				throw ex.getCause();
 			}

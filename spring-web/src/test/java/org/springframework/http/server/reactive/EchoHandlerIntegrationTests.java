@@ -16,16 +16,15 @@
 
 package org.springframework.http.server.reactive;
 
-import java.net.URI;
-import java.util.Random;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.AbstractHttpHandlerIntegrationTests;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

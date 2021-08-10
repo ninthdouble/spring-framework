@@ -17,7 +17,6 @@
 package org.springframework.test.context.web;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -31,21 +30,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * JUnit-based integration tests for {@link ServletTestExecutionListener}.
  *
  * @author Sam Brannen
- * @since 3.2.9
  * @see org.springframework.test.context.testng.web.ServletTestExecutionListenerTestNGIntegrationTests
+ * @since 3.2.9
  */
 @SpringJUnitWebConfig
 class ServletTestExecutionListenerJUnitIntegrationTests {
 
-	@Configuration
-	static class Config {
-		/* no beans required for this test */
-	}
-
-
 	@Autowired
 	private MockHttpServletRequest servletRequest;
-
 
 	/**
 	 * Verifies bug fix for <a href="https://jira.spring.io/browse/SPR-11626">SPR-11626</a>.
@@ -69,6 +61,11 @@ class ServletTestExecutionListenerJUnitIntegrationTests {
 
 	private void assertInjectedServletRequestEqualsRequestInRequestContextHolder() {
 		assertThat(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()).as("Injected ServletRequest must be stored in the RequestContextHolder").isEqualTo(servletRequest);
+	}
+
+	@Configuration
+	static class Config {
+		/* no beans required for this test */
 	}
 
 }

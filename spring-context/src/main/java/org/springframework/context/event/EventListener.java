@@ -82,9 +82,9 @@ import org.springframework.core.annotation.AliasFor;
  *
  * @author Stephane Nicoll
  * @author Sam Brannen
- * @since 4.2
  * @see EventListenerMethodProcessor
  * @see org.springframework.transaction.event.TransactionalEventListener
+ * @since 4.2
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -133,9 +133,10 @@ public @interface EventListener {
 	/**
 	 * An optional identifier for the listener, defaulting to the fully-qualified
 	 * signature of the declaring method (e.g. "mypackage.MyClass.myMethod()").
-	 * @since 5.3.5
+	 *
 	 * @see SmartApplicationListener#getListenerId()
 	 * @see ApplicationEventMulticaster#removeApplicationListeners(Predicate)
+	 * @since 5.3.5
 	 */
 	String id() default "";
 

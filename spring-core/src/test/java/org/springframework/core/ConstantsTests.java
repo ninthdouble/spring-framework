@@ -16,14 +16,12 @@
 
 package org.springframework.core;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rod Johnson
@@ -121,8 +119,7 @@ class ConstantsTests {
 			assertThat(values.size()).isEqualTo(2);
 			assertThat(values.contains(Integer.valueOf(1))).isTrue();
 			assertThat(values.contains(Integer.valueOf(2))).isTrue();
-		}
-		finally {
+		} finally {
 			Locale.setDefault(oldLocale);
 		}
 	}
@@ -247,10 +244,12 @@ class ConstantsTests {
 		public static final int NO_PROPERTY = 3;
 		public static final int YES_PROPERTY = 4;
 
-		/** ignore these */
+		/**
+		 * ignore these
+		 */
 		protected static final int P = -1;
-		protected boolean f;
 		static final Object o = new Object();
+		protected boolean f;
 	}
 
 }

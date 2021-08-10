@@ -16,14 +16,6 @@
 
 package org.springframework.core.type.classreading;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.SpringAsmInfo;
 import org.springframework.asm.Type;
@@ -32,13 +24,21 @@ import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
 /**
  * {@link AnnotationVisitor} that can be used to construct a
  * {@link MergedAnnotation}.
  *
+ * @param <A> the annotation type
  * @author Phillip Webb
  * @since 5.2
- * @param <A> the annotation type
  */
 class MergedAnnotationReadingVisitor<A extends Annotation> extends AnnotationVisitor {
 
@@ -56,7 +56,7 @@ class MergedAnnotationReadingVisitor<A extends Annotation> extends AnnotationVis
 
 
 	public MergedAnnotationReadingVisitor(@Nullable ClassLoader classLoader, @Nullable Object source,
-			Class<A> annotationType, Consumer<MergedAnnotation<A>> consumer) {
+										  Class<A> annotationType, Consumer<MergedAnnotation<A>> consumer) {
 
 		super(SpringAsmInfo.ASM_VERSION);
 		this.classLoader = classLoader;
@@ -65,6 +65,28 @@ class MergedAnnotationReadingVisitor<A extends Annotation> extends AnnotationVis
 		this.consumer = consumer;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Nullable
+	static <A extends Annotation> AnnotationVisitor get(@Nullable ClassLoader classLoader,
+														@Nullable Object source, String descriptor, boolean visible,
+														Consumer<MergedAnnotation<A>> consumer) {
+
+		if (!visible) {
+			return null;
+		}
+
+		String typeName = Type.getType(descriptor).getClassName();
+		if (AnnotationFilter.PLAIN.matches(typeName)) {
+			return null;
+		}
+
+		try {
+			Class<A> annotationType = (Class<A>) ClassUtils.forName(typeName, classLoader);
+			return new MergedAnnotationReadingVisitor<>(classLoader, source, annotationType, consumer);
+		} catch (ClassNotFoundException | LinkageError ex) {
+			return null;
+		}
+	}
 
 	@Override
 	public void visit(String name, Object value) {
@@ -116,31 +138,6 @@ class MergedAnnotationReadingVisitor<A extends Annotation> extends AnnotationVis
 		Class<T> type = (Class<T>) ClassUtils.resolveClassName(className, this.classLoader);
 		return new MergedAnnotationReadingVisitor<>(this.classLoader, this.source, type, consumer);
 	}
-
-	@SuppressWarnings("unchecked")
-	@Nullable
-	static <A extends Annotation> AnnotationVisitor get(@Nullable ClassLoader classLoader,
-			@Nullable Object source, String descriptor, boolean visible,
-			Consumer<MergedAnnotation<A>> consumer) {
-
-		if (!visible) {
-			return null;
-		}
-
-		String typeName = Type.getType(descriptor).getClassName();
-		if (AnnotationFilter.PLAIN.matches(typeName)) {
-			return null;
-		}
-
-		try {
-			Class<A> annotationType = (Class<A>) ClassUtils.forName(typeName, classLoader);
-			return new MergedAnnotationReadingVisitor<>(classLoader, source, annotationType, consumer);
-		}
-		catch (ClassNotFoundException | LinkageError ex) {
-			return null;
-		}
-	}
-
 
 	/**
 	 * {@link AnnotationVisitor} to deal with array attributes.

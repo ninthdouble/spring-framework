@@ -16,17 +16,14 @@
 
 package org.springframework.util.xml;
 
+import org.junit.jupiter.api.Test;
+
+import javax.xml.XMLConstants;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.xml.XMLConstants;
-
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Arjen Poutsma

@@ -16,13 +16,9 @@
 
 package org.springframework.web.context.request;
 
-import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
@@ -34,6 +30,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpSession;
+
+import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -192,8 +191,7 @@ public class SessionScopeTests {
 
 		if (beanNameReset) {
 			assertThat(bean.getBeanName()).isNull();
-		}
-		else {
+		} else {
 			assertThat(bean.getBeanName()).isNotNull();
 		}
 	}

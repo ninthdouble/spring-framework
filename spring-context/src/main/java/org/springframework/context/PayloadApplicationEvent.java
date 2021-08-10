@@ -25,12 +25,12 @@ import org.springframework.util.Assert;
 /**
  * An {@link ApplicationEvent} that carries an arbitrary payload.
  *
+ * @param <T> the payload type of the event
  * @author Stephane Nicoll
  * @author Juergen Hoeller
- * @since 4.2
- * @param <T> the payload type of the event
  * @see ApplicationEventPublisher#publishEvent(Object)
  * @see ApplicationListener#forPayload(Consumer)
+ * @since 4.2
  */
 @SuppressWarnings("serial")
 public class PayloadApplicationEvent<T> extends ApplicationEvent implements ResolvableTypeProvider {
@@ -40,7 +40,8 @@ public class PayloadApplicationEvent<T> extends ApplicationEvent implements Reso
 
 	/**
 	 * Create a new PayloadApplicationEvent.
-	 * @param source the object on which the event initially occurred (never {@code null})
+	 *
+	 * @param source  the object on which the event initially occurred (never {@code null})
 	 * @param payload the payload object (never {@code null})
 	 */
 	public PayloadApplicationEvent(Object source, T payload) {

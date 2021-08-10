@@ -16,12 +16,12 @@
 
 package org.springframework.core.metrics.jfr;
 
+import org.springframework.core.metrics.ApplicationStartup;
+import org.springframework.core.metrics.StartupStep;
+
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.springframework.core.metrics.ApplicationStartup;
-import org.springframework.core.metrics.StartupStep;
 
 /**
  * {@link ApplicationStartup} implementation for the Java Flight Recorder.

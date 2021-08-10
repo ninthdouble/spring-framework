@@ -16,15 +16,12 @@
 
 package org.springframework.core.env;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.testfixture.env.MockPropertySource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import java.util.Iterator;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Chris Beams
@@ -105,7 +102,7 @@ class MutablePropertySourcesTests {
 		String bogusPS = "bogus";
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				sources.addAfter(bogusPS, new MockPropertySource("h")))
-			.withMessageContaining("does not exist");
+				.withMessageContaining("does not exist");
 
 		sources.addFirst(new MockPropertySource("a"));
 		assertThat(sources.size()).isEqualTo(7);
@@ -123,15 +120,15 @@ class MutablePropertySourcesTests {
 
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				sources.replace(bogusPS, new MockPropertySource("bogus-replaced")))
-			.withMessageContaining("does not exist");
+				.withMessageContaining("does not exist");
 
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				sources.addBefore("b", new MockPropertySource("b")))
-			.withMessageContaining("cannot be added relative to itself");
+				.withMessageContaining("cannot be added relative to itself");
 
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				sources.addAfter("b", new MockPropertySource("b")))
-			.withMessageContaining("cannot be added relative to itself");
+				.withMessageContaining("cannot be added relative to itself");
 	}
 
 	@Test

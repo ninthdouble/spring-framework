@@ -16,25 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Maybe;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.*;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -50,13 +33,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,7 +62,8 @@ import static org.springframework.http.MediaType.APPLICATION_XML;
 public class RequestMappingMessageConversionIntegrationTests extends AbstractRequestMappingIntegrationTests {
 
 	private static final ParameterizedTypeReference<List<Person>> PERSON_LIST =
-			new ParameterizedTypeReference<List<Person>>() {};
+			new ParameterizedTypeReference<List<Person>>() {
+			};
 
 	private static final MediaType JSON = MediaType.APPLICATION_JSON;
 
@@ -471,13 +462,20 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 	}
 
 
+	private interface Controller23791<E> {
+
+		@PostMapping("/23791")
+		default Mono<String> test(@RequestBody Mono<E> body) {
+			return body.map(value -> value.getClass().getSimpleName());
+		}
+	}
+
 	@Configuration
 	@EnableWebFlux
 	@ComponentScan(resourcePattern = "**/RequestMappingMessageConversionIntegrationTests$*.class")
 	@SuppressWarnings({"unused", "WeakerAccess"})
 	static class WebConfig {
 	}
-
 
 	@RestController
 	@RequestMapping("/raw-response")
@@ -511,7 +509,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 			return Flowable.just(ByteBuffer.wrap("Hello!".getBytes()));
 		}
 	}
-
 
 	@RestController
 	@RequestMapping("/person-response")
@@ -581,7 +578,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 		}
 	}
 
-
 	@RestController
 	@SuppressWarnings("unused")
 	private static class ResourceController {
@@ -591,7 +587,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 			return new ClassPathResource("/org/springframework/web/reactive/spring.png");
 		}
 	}
-
 
 	@RestController
 	@RequestMapping("/person-transform")
@@ -644,7 +639,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 		}
 	}
 
-
 	@RestController
 	@RequestMapping("/person-create")
 	@SuppressWarnings("unused")
@@ -682,7 +676,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 			return flowable.toList().doOnSuccess(persons::addAll).ignoreElement();
 		}
 	}
-
 
 	@XmlRootElement
 	@SuppressWarnings("unused")
@@ -730,7 +723,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 		}
 	}
 
-
 	@XmlRootElement
 	@SuppressWarnings({"WeakerAccess", "unused"})
 	private static class People {
@@ -749,15 +741,6 @@ public class RequestMappingMessageConversionIntegrationTests extends AbstractReq
 			return this.persons;
 		}
 
-	}
-
-
-	private interface Controller23791<E> {
-
-		@PostMapping("/23791")
-		default Mono<String> test(@RequestBody Mono<E> body) {
-			return body.map(value -> value.getClass().getSimpleName());
-		}
 	}
 
 	@RestController

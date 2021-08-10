@@ -16,16 +16,7 @@
 
 package org.springframework.jca.cci;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.Interaction;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.LocalTransaction;
-import javax.resource.cci.Record;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.jca.cci.connection.CciLocalTransactionManager;
 import org.springframework.jca.cci.core.CciTemplate;
@@ -34,6 +25,9 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.resource.ResourceException;
+import javax.resource.cci.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -120,8 +114,7 @@ public class CciLocalTransactionTests {
 					throw new DataRetrievalFailureException("error");
 				}
 			});
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 		}
 
 		verify(localTransaction).begin();

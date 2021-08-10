@@ -18,14 +18,8 @@ package org.springframework.test.context.junit.jupiter.event;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.BeforeTestExecutionEvent;
-import org.springframework.test.context.event.BeforeTestMethodEvent;
-import org.springframework.test.context.event.PrepareTestInstanceEvent;
-import org.springframework.test.context.event.RecordApplicationEvents;
-import org.springframework.test.context.event.TestContextEvent;
+import org.springframework.test.context.event.*;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;

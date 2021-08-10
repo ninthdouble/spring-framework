@@ -16,16 +16,14 @@
 
 package org.springframework.web.context.request.async;
 
-import java.util.function.Consumer;
-
-import javax.servlet.AsyncEvent;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockAsyncContext;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.AsyncEvent;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -34,6 +32,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * A test fixture with a {@link StandardServletAsyncWebRequest}.
+ *
  * @author Rossen Stoyanchev
  */
 public class StandardServletAsyncWebRequestTests {
@@ -51,7 +50,7 @@ public class StandardServletAsyncWebRequestTests {
 		this.request.setAsyncSupported(true);
 		this.response = new MockHttpServletResponse();
 		this.asyncRequest = new StandardServletAsyncWebRequest(this.request, this.response);
-		this.asyncRequest.setTimeout(44*1000L);
+		this.asyncRequest.setTimeout(44 * 1000L);
 	}
 
 
@@ -78,7 +77,7 @@ public class StandardServletAsyncWebRequestTests {
 		this.asyncRequest.startAsync();
 		this.asyncRequest.startAsync();
 		this.asyncRequest.startAsync();
-		this.asyncRequest.startAsync();	// idempotent
+		this.asyncRequest.startAsync();    // idempotent
 
 		MockAsyncContext context = (MockAsyncContext) this.request.getAsyncContext();
 		assertThat(context).isNotNull();
@@ -90,7 +89,7 @@ public class StandardServletAsyncWebRequestTests {
 		this.request.setAsyncSupported(false);
 		assertThatIllegalStateException().isThrownBy(
 				this.asyncRequest::startAsync)
-			.withMessageContaining("Async support must be enabled");
+				.withMessageContaining("Async support must be enabled");
 	}
 
 	@Test
@@ -98,7 +97,7 @@ public class StandardServletAsyncWebRequestTests {
 		this.asyncRequest.onComplete(new AsyncEvent(new MockAsyncContext(this.request, this.response)));
 		assertThatIllegalStateException().isThrownBy(
 				this.asyncRequest::startAsync)
-			.withMessage("Async processing has already completed");
+				.withMessage("Async processing has already completed");
 	}
 
 	@Test

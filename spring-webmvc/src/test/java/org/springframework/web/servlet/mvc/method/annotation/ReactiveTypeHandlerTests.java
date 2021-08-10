@@ -16,24 +16,10 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleEmitter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
@@ -52,6 +38,15 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.ResolvableType.forClass;
@@ -59,6 +54,7 @@ import static org.springframework.web.testfixture.method.ResolvableMethod.on;
 
 /**
  * Unit tests for {@link ReactiveTypeHandler}.
+ *
  * @author Rossen Stoyanchev
  */
 public class ReactiveTypeHandlerTests {
@@ -305,7 +301,7 @@ public class ReactiveTypeHandlerTests {
 
 
 	private void testDeferredResultSubscriber(Object returnValue, Class<?> asyncType,
-			ResolvableType elementType, Runnable produceTask, Object expected) throws Exception {
+											  ResolvableType elementType, Runnable produceTask, Object expected) throws Exception {
 
 		ResponseBodyEmitter emitter = handleValue(returnValue, asyncType, elementType);
 		assertThat(emitter).isNull();
@@ -322,7 +318,7 @@ public class ReactiveTypeHandlerTests {
 	}
 
 	private ResponseBodyEmitter handleValue(Object returnValue, Class<?> asyncType,
-			ResolvableType genericType) throws Exception {
+											ResolvableType genericType) throws Exception {
 
 		ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 		MethodParameter returnType = on(TestController.class).resolveReturnType(asyncType, genericType);
@@ -333,17 +329,29 @@ public class ReactiveTypeHandlerTests {
 	@SuppressWarnings("unused")
 	static class TestController {
 
-		String handleString() { return null; }
+		String handleString() {
+			return null;
+		}
 
-		Mono<String> handleMono() { return null; }
+		Mono<String> handleMono() {
+			return null;
+		}
 
-		Single<String> handleSingle() { return null; }
+		Single<String> handleSingle() {
+			return null;
+		}
 
-		Flux<Bar> handleFlux() { return null; }
+		Flux<Bar> handleFlux() {
+			return null;
+		}
 
-		Flux<String> handleFluxString() { return null; }
+		Flux<String> handleFluxString() {
+			return null;
+		}
 
-		Flux<ServerSentEvent<String>> handleFluxSseEventBuilder() { return null; }
+		Flux<ServerSentEvent<String>> handleFluxSseEventBuilder() {
+			return null;
+		}
 	}
 
 

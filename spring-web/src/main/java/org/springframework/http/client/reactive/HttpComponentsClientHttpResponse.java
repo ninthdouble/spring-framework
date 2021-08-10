@@ -16,16 +16,11 @@
 
 package org.springframework.http.client.reactive;
 
-import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.hc.client5.http.cookie.Cookie;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.Message;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -33,14 +28,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+
+import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * {@link ClientHttpResponse} implementation for the Apache HttpComponents HttpClient 5.x.
  *
  * @author Martin Tarjányi
  * @author Arjen Poutsma
- * @since 5.3
  * @see <a href="https://hc.apache.org/index.html">Apache HttpComponents</a>
+ * @since 5.3
  */
 class HttpComponentsClientHttpResponse implements ClientHttpResponse {
 
@@ -56,7 +55,7 @@ class HttpComponentsClientHttpResponse implements ClientHttpResponse {
 
 
 	public HttpComponentsClientHttpResponse(DataBufferFactory dataBufferFactory,
-			Message<HttpResponse, Publisher<ByteBuffer>> message, HttpClientContext context) {
+											Message<HttpResponse, Publisher<ByteBuffer>> message, HttpClientContext context) {
 
 		this.dataBufferFactory = dataBufferFactory;
 		this.message = message;

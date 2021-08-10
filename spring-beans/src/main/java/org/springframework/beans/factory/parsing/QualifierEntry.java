@@ -31,6 +31,7 @@ public class QualifierEntry implements ParseState.Entry {
 
 	/**
 	 * Create a new {@code QualifierEntry} instance.
+	 *
 	 * @param typeName the name of the qualifier type
 	 */
 	public QualifierEntry(String typeName) {

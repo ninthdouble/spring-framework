@@ -55,7 +55,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class EnableCachingTests extends AbstractCacheAnnotationTests {
 
-	/** hook into superclass suite of tests */
+	/**
+	 * hook into superclass suite of tests
+	 */
 	@Override
 	protected ConfigurableApplicationContext getApplicationContext() {
 		return new AnnotationConfigApplicationContext(EnableCachingConfig.class);
@@ -86,8 +88,7 @@ public class EnableCachingTests extends AbstractCacheAnnotationTests {
 		ctx.register(MultiCacheManagerConfig.class);
 		try {
 			ctx.refresh();
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			assertThat(ex.getMessage().contains("no unique bean of type CacheManager")).isTrue();
 			assertThat(ex).hasCauseInstanceOf(NoUniqueBeanDefinitionException.class);
 		}
@@ -106,8 +107,7 @@ public class EnableCachingTests extends AbstractCacheAnnotationTests {
 		ctx.register(MultiCacheManagerConfigurer.class, EnableCachingConfig.class);
 		try {
 			ctx.refresh();
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			Throwable root = ex.getRootCause();
 			boolean condition = root instanceof IllegalStateException;
 			assertThat(condition).isTrue();
@@ -121,8 +121,7 @@ public class EnableCachingTests extends AbstractCacheAnnotationTests {
 		ctx.register(EmptyConfig.class);
 		try {
 			ctx.refresh();
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			assertThat(ex.getMessage().contains("no bean of type CacheManager")).isTrue();
 			assertThat(ex).hasCauseInstanceOf(NoSuchBeanDefinitionException.class);
 		}

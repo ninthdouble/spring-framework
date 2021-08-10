@@ -16,15 +16,13 @@
 
 package org.springframework.core.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.annotation.Nonnull;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
+
+import javax.annotation.Nonnull;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -111,12 +109,12 @@ class AnnotationFilterTests {
 	@interface TestAnnotation {
 	}
 
-	@TestAnnotation
-	static class WithTestAnnotation {
-	}
-
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface OtherAnnotation {
+	}
+
+	@TestAnnotation
+	static class WithTestAnnotation {
 	}
 
 	@OtherAnnotation

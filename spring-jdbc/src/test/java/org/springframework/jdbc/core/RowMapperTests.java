@@ -16,21 +16,15 @@
 
 package org.springframework.jdbc.core;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
+
+import java.sql.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -114,7 +108,7 @@ public class RowMapperTests {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void queryWithArgsAndRowMapper() throws SQLException {
-		result = template.query("some SQL", new Object[] { "test1", "test2" }, testRowMapper);
+		result = template.query("some SQL", new Object[]{"test1", "test2"}, testRowMapper);
 		preparedStatement.setString(1, "test1");
 		preparedStatement.setString(2, "test2");
 		preparedStatement.close();
@@ -123,8 +117,8 @@ public class RowMapperTests {
 	@Test
 	public void queryWithArgsAndTypesAndRowMapper() throws SQLException {
 		result = template.query("some SQL",
-				new Object[] { "test1", "test2" },
-				new int[] { Types.VARCHAR, Types.VARCHAR },
+				new Object[]{"test1", "test2"},
+				new int[]{Types.VARCHAR, Types.VARCHAR},
 				testRowMapper);
 		verify(preparedStatement).setString(1, "test1");
 		verify(preparedStatement).setString(2, "test2");

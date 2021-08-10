@@ -16,18 +16,8 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +36,10 @@ import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -268,14 +262,11 @@ public class HandlerMethodMappingTests {
 	}
 
 
-
 	private static class MyHandlerMethodMapping extends AbstractHandlerMethodMapping<String> {
 
-		private UrlPathHelper pathHelper = new UrlPathHelper();
-
-		private PathMatcher pathMatcher = new AntPathMatcher();
-
 		private final List<String> matches = new ArrayList<>();
+		private UrlPathHelper pathHelper = new UrlPathHelper();
+		private PathMatcher pathMatcher = new AntPathMatcher();
 
 		public MyHandlerMethodMapping() {
 			setHandlerMethodMappingNamingStrategy(new SimpleMappingNamingStrategy());

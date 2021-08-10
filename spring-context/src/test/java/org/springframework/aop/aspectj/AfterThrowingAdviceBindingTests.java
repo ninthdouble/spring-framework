@@ -91,7 +91,7 @@ public class AfterThrowingAdviceBindingTests {
 	@Test
 	public void testAfterThrowingWithTypeSpecified() throws Throwable {
 		assertThatExceptionOfType(Throwable.class).isThrownBy(() ->
-					this.testBean.exceptional(new Throwable()));
+				this.testBean.exceptional(new Throwable()));
 		verify(mockCollaborator).noArgsOnThrowableMatch();
 	}
 
@@ -106,16 +106,6 @@ public class AfterThrowingAdviceBindingTests {
 
 
 final class AfterThrowingAdviceBindingTestAspect {
-
-	// collaborator interface that makes it easy to test this aspect is
-	// working as expected through mocking.
-	public interface AfterThrowingAdviceBindingCollaborator {
-		void noArgs();
-		void oneThrowable(Throwable t);
-		void oneRuntimeException(RuntimeException re);
-		void noArgsOnThrowableMatch();
-		void noArgsOnRuntimeExceptionMatch();
-	}
 
 	protected AfterThrowingAdviceBindingCollaborator collaborator = null;
 
@@ -141,5 +131,19 @@ final class AfterThrowingAdviceBindingTestAspect {
 
 	public void noArgsOnRuntimeExceptionMatch() {
 		this.collaborator.noArgsOnRuntimeExceptionMatch();
+	}
+
+	// collaborator interface that makes it easy to test this aspect is
+	// working as expected through mocking.
+	public interface AfterThrowingAdviceBindingCollaborator {
+		void noArgs();
+
+		void oneThrowable(Throwable t);
+
+		void oneRuntimeException(RuntimeException re);
+
+		void noArgsOnThrowableMatch();
+
+		void noArgsOnRuntimeExceptionMatch();
 	}
 }

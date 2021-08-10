@@ -16,12 +16,8 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -31,13 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
-import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * {@link MockMvcWebTestClient} equivalent of the MockMvc
@@ -97,7 +92,7 @@ class StatusAssertionTests {
 
 		@RequestMapping("/created")
 		@ResponseStatus(CREATED)
-		void created(){
+		void created() {
 		}
 
 		@Get(path = "/createdWithComposedAnnotation", status = CREATED)
@@ -106,12 +101,12 @@ class StatusAssertionTests {
 
 		@RequestMapping("/badRequest")
 		@ResponseStatus(code = BAD_REQUEST, reason = "Expired token")
-		void badRequest(){
+		void badRequest() {
 		}
 
 		@RequestMapping("/notImplemented")
 		@ResponseStatus(NOT_IMPLEMENTED)
-		void notImplemented(){
+		void notImplemented() {
 		}
 
 		@RequestMapping("/throwsException")

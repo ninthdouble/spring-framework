@@ -43,7 +43,7 @@ public interface PublishedEvents {
 	/**
 	 * Returns all application events of the given type that were fired during the test execution.
 	 *
-	 * @param <T> the event type
+	 * @param <T>  the event type
 	 * @param type must not be {@literal null}
 	 */
 	<T> TypedPublishedEvents<T> ofType(Class<T> type);
@@ -75,9 +75,9 @@ public interface PublishedEvents {
 		 * Returns all {@link TypedPublishedEvents} that match the given predicate
 		 * after applying the given mapping step.
 		 *
-		 * @param <S> the intermediate type to apply the {@link Predicate} on
-		 * @param mapper the mapping step to extract a part of the original event
-		 * subject to test for the {@link Predicate}
+		 * @param <S>       the intermediate type to apply the {@link Predicate} on
+		 * @param mapper    the mapping step to extract a part of the original event
+		 *                  subject to test for the {@link Predicate}
 		 * @param predicate the {@link Predicate} to apply on the value extracted
 		 * @return will never be {@literal null}
 		 */

@@ -16,11 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.standalone;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Controller;
@@ -38,15 +34,13 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /**
@@ -61,7 +55,7 @@ class ViewResolutionTests {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver("/WEB-INF/", ".jsp");
 
 		standaloneSetup(new PersonController()).setViewResolvers(viewResolver).build()
-			.perform(get("/person/Corea"))
+				.perform(get("/person/Corea"))
 				.andExpect(status().isOk())
 				.andExpect(model().size(1))
 				.andExpect(model().attributeExists("person"))
@@ -71,7 +65,7 @@ class ViewResolutionTests {
 	@Test
 	void jsonOnly() throws Exception {
 		standaloneSetup(new PersonController()).setSingleView(new MappingJackson2JsonView()).build()
-			.perform(get("/person/Corea"))
+				.perform(get("/person/Corea"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.person.name").value("Corea"));
@@ -83,7 +77,7 @@ class ViewResolutionTests {
 		marshaller.setClassesToBeBound(Person.class);
 
 		standaloneSetup(new PersonController()).setSingleView(new MarshallingView(marshaller)).build()
-			.perform(get("/person/Corea"))
+				.perform(get("/person/Corea"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_XML))
 				.andExpect(xpath("/person/name/text()").string(equalTo("Corea")));
@@ -107,31 +101,31 @@ class ViewResolutionTests {
 		cnViewResolver.afterPropertiesSet();
 
 		MockMvc mockMvc =
-			standaloneSetup(new PersonController())
-				.setViewResolvers(cnViewResolver, new InternalResourceViewResolver())
-				.build();
+				standaloneSetup(new PersonController())
+						.setViewResolvers(cnViewResolver, new InternalResourceViewResolver())
+						.build();
 
 		mockMvc.perform(get("/person/Corea"))
-			.andExpect(status().isOk())
-			.andExpect(model().size(1))
-			.andExpect(model().attributeExists("person"))
-			.andExpect(forwardedUrl("person/show"));
+				.andExpect(status().isOk())
+				.andExpect(model().size(1))
+				.andExpect(model().attributeExists("person"))
+				.andExpect(forwardedUrl("person/show"));
 
 		mockMvc.perform(get("/person/Corea").accept(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.person.name").value("Corea"));
+				.andExpect(status().isOk())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.person.name").value("Corea"));
 
 		mockMvc.perform(get("/person/Corea").accept(MediaType.APPLICATION_XML))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_XML))
-			.andExpect(xpath("/person/name/text()").string(equalTo("Corea")));
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_XML))
+				.andExpect(xpath("/person/name/text()").string(equalTo("Corea")));
 	}
 
 	@Test
 	void defaultViewResolver() throws Exception {
 		standaloneSetup(new PersonController()).build()
-			.perform(get("/person/Corea"))
+				.perform(get("/person/Corea"))
 				.andExpect(model().attribute("person", hasProperty("name", equalTo("Corea"))))
 				.andExpect(status().isOk())
 				.andExpect(forwardedUrl("person/show"));  // InternalResourceViewResolver

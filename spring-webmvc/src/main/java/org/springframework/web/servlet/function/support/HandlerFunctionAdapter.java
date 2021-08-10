@@ -16,15 +16,8 @@
 
 package org.springframework.web.servlet.function.support;
 
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.log.LogFormatUtils;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -39,6 +32,11 @@ import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * {@code HandlerAdapter} implementation that supports {@link HandlerFunction}s.
@@ -55,18 +53,19 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 	@Nullable
 	private Long asyncRequestTimeout;
 
+	@Override
+	public int getOrder() {
+		return this.order;
+	}
+
 	/**
 	 * Specify the order value for this HandlerAdapter bean.
 	 * <p>The default value is {@code Ordered.LOWEST_PRECEDENCE}, meaning non-ordered.
+	 *
 	 * @see org.springframework.core.Ordered#getOrder()
 	 */
 	public void setOrder(int order) {
 		this.order = order;
-	}
-
-	@Override
-	public int getOrder() {
-		return this.order;
 	}
 
 	/**
@@ -76,6 +75,7 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 	 * for further processing of the concurrently produced result.
 	 * <p>If this value is not set, the default timeout of the underlying
 	 * implementation is used.
+	 *
 	 * @param timeout the timeout value in milliseconds
 	 */
 	public void setAsyncRequestTimeout(long timeout) {
@@ -90,8 +90,8 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 	@Nullable
 	@Override
 	public ModelAndView handle(HttpServletRequest servletRequest,
-			HttpServletResponse servletResponse,
-			Object handler) throws Exception {
+							   HttpServletResponse servletResponse,
+							   Object handler) throws Exception {
 
 		WebAsyncManager asyncManager = getWebAsyncManager(servletRequest, servletResponse);
 
@@ -100,16 +100,14 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 
 		if (asyncManager.hasConcurrentResult()) {
 			serverResponse = handleAsync(asyncManager);
-		}
-		else {
+		} else {
 			HandlerFunction<?> handlerFunction = (HandlerFunction<?>) handler;
 			serverResponse = handlerFunction.handle(serverRequest);
 		}
 
 		if (serverResponse != null) {
 			return serverResponse.writeTo(servletRequest, servletResponse, new ServerRequestContext(serverRequest));
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -141,17 +139,13 @@ public class HandlerFunctionAdapter implements HandlerAdapter, Ordered {
 		});
 		if (result instanceof ServerResponse) {
 			return (ServerResponse) result;
-		}
-		else if (result instanceof Exception) {
+		} else if (result instanceof Exception) {
 			throw (Exception) result;
-		}
-		else if (result instanceof Throwable) {
+		} else if (result instanceof Throwable) {
 			throw new ServletException("Async processing failed", (Throwable) result);
-		}
-		else if (result == null) {
+		} else if (result == null) {
 			return null;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unknown result from WebAsyncManager: [" + result + "]");
 		}
 	}

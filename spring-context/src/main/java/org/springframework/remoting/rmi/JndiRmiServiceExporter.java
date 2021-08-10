@@ -53,13 +53,12 @@ import org.springframework.util.ReflectionUtils;
  *
  * <pre class="code">&lt;property name="jndiEnvironment"&gt;
  * 	 &lt;props>
- *		 &lt;prop key="java.naming.factory.initial"&gt;com.sun.jndi.cosnaming.CNCtxFactory&lt;/prop&gt;
- *		 &lt;prop key="java.naming.provider.url"&gt;iiop://localhost:1050&lt;/prop&gt;
- *	 &lt;/props&gt;
+ * 		 &lt;prop key="java.naming.factory.initial"&gt;com.sun.jndi.cosnaming.CNCtxFactory&lt;/prop&gt;
+ * 		 &lt;prop key="java.naming.provider.url"&gt;iiop://localhost:1050&lt;/prop&gt;
+ * 	 &lt;/props&gt;
  * &lt;/property&gt;</pre>
  *
  * @author Juergen Hoeller
- * @since 1.1
  * @see #setService
  * @see #setJndiTemplate
  * @see #setJndiEnvironment
@@ -67,6 +66,7 @@ import org.springframework.util.ReflectionUtils;
  * @see JndiRmiClientInterceptor
  * @see JndiRmiProxyFactoryBean
  * @see javax.rmi.PortableRemoteObject#exportObject
+ * @since 1.1
  * @deprecated as of 5.3 (phasing out serialization-based remoting)
  */
 @Deprecated
@@ -84,8 +84,7 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 					JndiRmiServiceExporter.class.getClassLoader().loadClass("javax.rmi.PortableRemoteObject");
 			exportObject = portableRemoteObject.getMethod("exportObject", Remote.class);
 			unexportObject = portableRemoteObject.getMethod("unexportObject", Remote.class);
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			// java.corba module not available on JDK 9+
 			exportObject = null;
 			unexportObject = null;
@@ -103,6 +102,7 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 	/**
 	 * Set the JNDI template to use for JNDI lookups.
 	 * You can also specify JNDI environment settings via "jndiEnvironment".
+	 *
 	 * @see #setJndiEnvironment
 	 */
 	public void setJndiTemplate(JndiTemplate jndiTemplate) {
@@ -112,6 +112,7 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 	/**
 	 * Set the JNDI environment to use for JNDI lookups.
 	 * Creates a JndiTemplate with the given environment settings.
+	 *
 	 * @see #setJndiTemplate
 	 */
 	public void setJndiEnvironment(Properties jndiEnvironment) {
@@ -133,6 +134,7 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 
 	/**
 	 * Initialize this service exporter, binding the specified service to JNDI.
+	 *
 	 * @throws NamingException if service binding failed
 	 * @throws RemoteException if service export failed
 	 */
@@ -151,6 +153,7 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 	/**
 	 * Rebind the specified service to JNDI, for recovering in case
 	 * of the target registry having been restarted.
+	 *
 	 * @throws NamingException if service binding failed
 	 */
 	public void rebind() throws NamingException {
@@ -177,15 +180,13 @@ public class JndiRmiServiceExporter extends RmiBasedExporter implements Initiali
 		if (method != null) {
 			try {
 				method.invoke(null, this.exportedObject);
-			}
-			catch (InvocationTargetException ex) {
+			} catch (InvocationTargetException ex) {
 				Throwable targetEx = ex.getTargetException();
 				if (targetEx instanceof RemoteException) {
 					throw (RemoteException) targetEx;
 				}
 				ReflectionUtils.rethrowRuntimeException(targetEx);
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				throw new IllegalStateException("PortableRemoteObject invocation failed", ex);
 			}
 		}

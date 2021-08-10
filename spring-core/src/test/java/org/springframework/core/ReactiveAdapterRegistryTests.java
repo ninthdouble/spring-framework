@@ -16,11 +16,6 @@
 
 package org.springframework.core;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 import kotlinx.coroutines.Deferred;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,10 +24,16 @@ import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ReactiveAdapterRegistry}.
+ *
  * @author Rossen Stoyanchev
  */
 @SuppressWarnings("unchecked")
@@ -58,6 +59,20 @@ class ReactiveAdapterRegistryTests {
 
 		assertThat(adapter3).isNotNull();
 		assertThat(adapter3).isNotSameAs(adapter1);
+	}
+
+	private ReactiveAdapter getAdapter(Class<?> reactiveType) {
+		ReactiveAdapter adapter = this.registry.getAdapter(reactiveType);
+		assertThat(adapter).isNotNull();
+		return adapter;
+	}
+
+	private static class ExtendedFlux<T> extends Flux<T> {
+
+		@Override
+		public void subscribe(CoreSubscriber<? super T> actual) {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 	@Nested
@@ -96,7 +111,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toCompletableFuture() throws Exception {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1, 2, 3});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1, 2, 3});
 			Object target = getAdapter(CompletableFuture.class).fromPublisher(source);
 			assertThat(target instanceof CompletableFuture).isTrue();
 			assertThat(((CompletableFuture<Integer>) target).get()).isEqualTo(Integer.valueOf(1));
@@ -133,7 +148,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toSingle() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1});
 			Object target = getAdapter(rx.Single.class).fromPublisher(source);
 			assertThat(target instanceof rx.Single).isTrue();
 			assertThat(((rx.Single<Integer>) target).toBlocking().value()).isEqualTo(Integer.valueOf(1));
@@ -141,7 +156,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toCompletable() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1, 2, 3});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1, 2, 3});
 			Object target = getAdapter(rx.Completable.class).fromPublisher(source);
 			assertThat(target instanceof rx.Completable).isTrue();
 			assertThat(((rx.Completable) target).get()).isNull();
@@ -207,7 +222,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toSingle() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1});
 			Object target = getAdapter(io.reactivex.Single.class).fromPublisher(source);
 			assertThat(target instanceof io.reactivex.Single).isTrue();
 			assertThat(((io.reactivex.Single<Integer>) target).blockingGet()).isEqualTo(Integer.valueOf(1));
@@ -215,7 +230,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toCompletable() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1, 2, 3});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1, 2, 3});
 			Object target = getAdapter(io.reactivex.Completable.class).fromPublisher(source);
 			assertThat(target instanceof io.reactivex.Completable).isTrue();
 			((io.reactivex.Completable) target).blockingAwait();
@@ -290,7 +305,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toSingle() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1});
 			Object target = getAdapter(io.reactivex.rxjava3.core.Single.class).fromPublisher(source);
 			assertThat(target instanceof io.reactivex.rxjava3.core.Single).isTrue();
 			assertThat(((io.reactivex.rxjava3.core.Single<Integer>) target).blockingGet()).isEqualTo(Integer.valueOf(1));
@@ -298,7 +313,7 @@ class ReactiveAdapterRegistryTests {
 
 		@Test
 		void toCompletable() {
-			Publisher<Integer> source = Flux.fromArray(new Integer[] {1, 2, 3});
+			Publisher<Integer> source = Flux.fromArray(new Integer[]{1, 2, 3});
 			Object target = getAdapter(io.reactivex.rxjava3.core.Completable.class).fromPublisher(source);
 			assertThat(target instanceof io.reactivex.rxjava3.core.Completable).isTrue();
 			((io.reactivex.rxjava3.core.Completable) target).blockingAwait();
@@ -354,21 +369,6 @@ class ReactiveAdapterRegistryTests {
 			assertThat(getAdapter(CompletableFuture.class).getDescriptor().isDeferred()).isEqualTo(false);
 			assertThat(getAdapter(Deferred.class).getDescriptor().isDeferred()).isEqualTo(true);
 			assertThat(getAdapter(kotlinx.coroutines.flow.Flow.class).getDescriptor().isDeferred()).isEqualTo(true);
-		}
-	}
-
-	private ReactiveAdapter getAdapter(Class<?> reactiveType) {
-		ReactiveAdapter adapter = this.registry.getAdapter(reactiveType);
-		assertThat(adapter).isNotNull();
-		return adapter;
-	}
-
-
-	private static class ExtendedFlux<T> extends Flux<T> {
-
-		@Override
-		public void subscribe(CoreSubscriber<? super T> actual) {
-			throw new UnsupportedOperationException();
 		}
 	}
 

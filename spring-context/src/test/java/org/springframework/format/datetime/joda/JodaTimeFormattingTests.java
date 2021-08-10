@@ -505,69 +505,45 @@ public class JodaTimeFormattingTests {
 	@SuppressWarnings("unused")
 	private static class JodaTimeBean {
 
+		private final List<JodaTimeBean> children = new ArrayList<>();
 		private LocalDate localDate;
-
-		@DateTimeFormat(style="M-")
+		@DateTimeFormat(style = "M-")
 		private LocalDate localDateAnnotated;
-
 		private LocalTime localTime;
-
-		@DateTimeFormat(style="-M")
+		@DateTimeFormat(style = "-M")
 		private LocalTime localTimeAnnotated;
-
 		private LocalDateTime localDateTime;
-
-		@DateTimeFormat(style="MS")
+		@DateTimeFormat(style = "MS")
 		private LocalDateTime localDateTimeAnnotated;
-
 		private DateTime dateTime;
-
-		@DateTimeFormat(style="MS")
+		@DateTimeFormat(style = "MS")
 		private DateTime dateTimeAnnotated;
-
 		@DateTimeFormat
 		private Date date;
-
-		@DateTimeFormat(style="S-")
+		@DateTimeFormat(style = "S-")
 		private Date dateAnnotated;
-
-		@DateTimeFormat(style="S-")
+		@DateTimeFormat(style = "S-")
 		private Calendar calendarAnnotated;
-
 		private Long millis;
-
 		@DateTimeFormat
 		private DateTime dateTimeAnnotatedDefault;
-
 		private Long millisAnnotated;
-
-		@DateTimeFormat(pattern="M/d/yy h:mm a")
+		@DateTimeFormat(pattern = "M/d/yy h:mm a")
 		private DateTime dateTimeAnnotatedPattern;
-
-		@DateTimeFormat(iso=ISO.DATE)
+		@DateTimeFormat(iso = ISO.DATE)
 		private LocalDate isoDate;
-
-		@DateTimeFormat(iso=ISO.TIME)
+		@DateTimeFormat(iso = ISO.TIME)
 		private LocalTime isoTime;
-
-		@DateTimeFormat(iso=ISO.DATE_TIME)
+		@DateTimeFormat(iso = ISO.DATE_TIME)
 		private DateTime isoDateTime;
-
-		@DateTimeFormat(iso=ISO.DATE_TIME)
+		@DateTimeFormat(iso = ISO.DATE_TIME)
 		private Instant instantAnnotated;
-
-		@DateTimeFormat(iso=ISO.DATE_TIME)
+		@DateTimeFormat(iso = ISO.DATE_TIME)
 		private Instant mutableDateTimeAnnotated;
-
 		private Period period;
-
 		private Duration duration;
-
 		private YearMonth yearMonth;
-
 		private MonthDay monthDay;
-
-		private final List<JodaTimeBean> children = new ArrayList<>();
 
 		public LocalDate getLocalDate() {
 			return localDate;
@@ -681,12 +657,12 @@ public class JodaTimeFormattingTests {
 			this.millis = millis;
 		}
 
-		@DateTimeFormat(style="S-")
+		@DateTimeFormat(style = "S-")
 		public Long getMillisAnnotated() {
 			return millisAnnotated;
 		}
 
-		public void setMillisAnnotated(@DateTimeFormat(style="S-") Long millisAnnotated) {
+		public void setMillisAnnotated(@DateTimeFormat(style = "S-") Long millisAnnotated) {
 			this.millisAnnotated = millisAnnotated;
 		}
 

@@ -16,6 +16,10 @@
 
 package org.springframework.util;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.tests.sample.objects.TestObject;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -23,11 +27,6 @@ import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.tests.sample.objects.TestObject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -322,7 +321,7 @@ class ReflectionUtilsTests {
 	void getDeclaredMethodsReturnsCopy() {
 		Method[] m1 = ReflectionUtils.getDeclaredMethods(A.class);
 		Method[] m2 = ReflectionUtils.getDeclaredMethods(A.class);
-		assertThat(m1). isNotSameAs(m2);
+		assertThat(m1).isNotSameAs(m2);
 	}
 
 	private static class ListSavingMethodCallback implements ReflectionUtils.MethodCallback {
@@ -363,9 +362,8 @@ class ReflectionUtilsTests {
 
 	private static class TestObjectSubclassWithNewField extends TestObject {
 
-		private int magic;
-
 		protected String prot = "foo";
+		private int magic;
 	}
 
 	private static class TestObjectSubclassWithFinalField extends TestObject {

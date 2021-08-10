@@ -16,16 +16,9 @@
 
 package org.springframework.web.reactive.config;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import reactor.test.StepVerifier;
-
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.CacheControl;
@@ -33,19 +26,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.PathContainer;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.reactive.resource.CachingResourceResolver;
-import org.springframework.web.reactive.resource.CachingResourceTransformer;
-import org.springframework.web.reactive.resource.CssLinkResourceTransformer;
-import org.springframework.web.reactive.resource.PathResourceResolver;
-import org.springframework.web.reactive.resource.ResourceResolver;
-import org.springframework.web.reactive.resource.ResourceTransformer;
-import org.springframework.web.reactive.resource.ResourceTransformerSupport;
-import org.springframework.web.reactive.resource.ResourceUrlProvider;
-import org.springframework.web.reactive.resource.ResourceWebHandler;
-import org.springframework.web.reactive.resource.VersionResourceResolver;
-import org.springframework.web.reactive.resource.WebJarsResourceResolver;
+import org.springframework.web.reactive.resource.*;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,7 +101,7 @@ class ResourceHandlerRegistryTests {
 
 	@Test
 	void order() {
-		assertThat(this.registry.getHandlerMapping().getOrder()).isEqualTo(Integer.MAX_VALUE -1);
+		assertThat(this.registry.getHandlerMapping().getOrder()).isEqualTo(Integer.MAX_VALUE - 1);
 
 		this.registry.setOrder(0);
 		assertThat(this.registry.getHandlerMapping().getOrder()).isEqualTo(0);
@@ -203,13 +192,13 @@ class ResourceHandlerRegistryTests {
 
 		this.registration.setCacheControl(CacheControl.maxAge(3600, TimeUnit.MILLISECONDS))
 				.resourceChain(false)
-					.addResolver(cachingResolver)
-					.addResolver(versionResolver)
-					.addResolver(webjarsResolver)
-					.addResolver(pathResourceResolver)
-					.addTransformer(cachingTransformer)
-					.addTransformer(appCacheTransformer)
-					.addTransformer(cssLinkTransformer);
+				.addResolver(cachingResolver)
+				.addResolver(versionResolver)
+				.addResolver(webjarsResolver)
+				.addResolver(pathResourceResolver)
+				.addTransformer(cachingTransformer)
+				.addTransformer(appCacheTransformer)
+				.addTransformer(cssLinkTransformer);
 
 		ResourceWebHandler handler = getHandler("/resources/**");
 		List<ResourceResolver> resolvers = handler.getResourceResolvers();

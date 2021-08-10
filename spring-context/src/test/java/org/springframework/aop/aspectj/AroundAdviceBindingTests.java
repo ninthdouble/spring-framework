@@ -40,19 +40,16 @@ import static org.mockito.Mockito.verify;
  */
 public class AroundAdviceBindingTests {
 
-	private AroundAdviceBindingCollaborator mockCollaborator;
-
-	private ITestBean testBeanProxy;
-
-	private TestBean testBeanTarget;
-
 	protected ApplicationContext ctx;
+	private AroundAdviceBindingCollaborator mockCollaborator;
+	private ITestBean testBeanProxy;
+	private TestBean testBeanTarget;
 
 	@BeforeEach
 	public void onSetUp() throws Exception {
 		ctx = new ClassPathXmlApplicationContext(getClass().getSimpleName() + ".xml", getClass());
 
-		AroundAdviceBindingTestAspect  aroundAdviceAspect = ((AroundAdviceBindingTestAspect) ctx.getBean("testAspect"));
+		AroundAdviceBindingTestAspect aroundAdviceAspect = ((AroundAdviceBindingTestAspect) ctx.getBean("testAspect"));
 
 		ITestBean injectedTestBean = (ITestBean) ctx.getBean("testBean");
 		assertThat(AopUtils.isAopProxy(injectedTestBean)).isTrue();
@@ -112,8 +109,8 @@ class AroundAdviceBindingTestAspect {
 		return ((Integer) pjp.proceed()).intValue();
 	}
 
-	public void oneIntAndOneObject(ProceedingJoinPoint pjp, int x , Object o) throws Throwable {
-		this.collaborator.oneIntAndOneObject(x,o);
+	public void oneIntAndOneObject(ProceedingJoinPoint pjp, int x, Object o) throws Throwable {
+		this.collaborator.oneIntAndOneObject(x, o);
 		pjp.proceed();
 	}
 

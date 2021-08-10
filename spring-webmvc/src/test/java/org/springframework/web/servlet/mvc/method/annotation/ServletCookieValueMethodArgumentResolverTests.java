@@ -16,19 +16,17 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.reflect.Method;
-
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.Cookie;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -82,7 +80,7 @@ public class ServletCookieValueMethodArgumentResolverTests {
 
 
 	public void params(@CookieValue("name") Cookie cookie,
-			@CookieValue(name = "name", defaultValue = "bar") String cookieString) {
+					   @CookieValue(name = "name", defaultValue = "bar") String cookieString) {
 	}
 
 }

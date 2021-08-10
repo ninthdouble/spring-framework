@@ -16,29 +16,17 @@
 
 package org.springframework.jms.connection;
 
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
+
+import javax.jms.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSession;
-import javax.jms.TransactionInProgressException;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
 
 /**
  * Proxy for a target JMS {@link javax.jms.ConnectionFactory}, adding awareness of
@@ -79,9 +67,9 @@ import org.springframework.util.ClassUtils;
  * as long as no actual JMS 2.0 calls are triggered by the application's setup.
  *
  * @author Juergen Hoeller
- * @since 2.0
  * @see UserCredentialsConnectionFactoryAdapter
  * @see SingleConnectionFactory
+ * @since 2.0
  */
 public class TransactionAwareConnectionFactoryProxy
 		implements ConnectionFactory, QueueConnectionFactory, TopicConnectionFactory {
@@ -100,12 +88,21 @@ public class TransactionAwareConnectionFactoryProxy
 
 	/**
 	 * Create a new TransactionAwareConnectionFactoryProxy.
+	 *
 	 * @param targetConnectionFactory the target ConnectionFactory
 	 */
 	public TransactionAwareConnectionFactoryProxy(ConnectionFactory targetConnectionFactory) {
 		setTargetConnectionFactory(targetConnectionFactory);
 	}
 
+	/**
+	 * Return the target ConnectionFactory that this ConnectionFactory should delegate to.
+	 */
+	protected ConnectionFactory getTargetConnectionFactory() {
+		ConnectionFactory target = this.targetConnectionFactory;
+		Assert.state(target != null, "'targetConnectionFactory' is required");
+		return target;
+	}
 
 	/**
 	 * Set the target ConnectionFactory that this ConnectionFactory should delegate to.
@@ -116,12 +113,11 @@ public class TransactionAwareConnectionFactoryProxy
 	}
 
 	/**
-	 * Return the target ConnectionFactory that this ConnectionFactory should delegate to.
+	 * Return whether to allow for a local JMS transaction that is synchronized
+	 * with a Spring-managed transaction.
 	 */
-	protected ConnectionFactory getTargetConnectionFactory() {
-		ConnectionFactory target = this.targetConnectionFactory;
-		Assert.state(target != null, "'targetConnectionFactory' is required");
-		return target;
+	protected boolean isSynchedLocalTransactionAllowed() {
+		return this.synchedLocalTransactionAllowed;
 	}
 
 	/**
@@ -138,15 +134,6 @@ public class TransactionAwareConnectionFactoryProxy
 	public void setSynchedLocalTransactionAllowed(boolean synchedLocalTransactionAllowed) {
 		this.synchedLocalTransactionAllowed = synchedLocalTransactionAllowed;
 	}
-
-	/**
-	 * Return whether to allow for a local JMS transaction that is synchronized
-	 * with a Spring-managed transaction.
-	 */
-	protected boolean isSynchedLocalTransactionAllowed() {
-		return this.synchedLocalTransactionAllowed;
-	}
-
 
 	@Override
 	public Connection createConnection() throws JMSException {
@@ -224,6 +211,7 @@ public class TransactionAwareConnectionFactoryProxy
 	/**
 	 * Wrap the given Connection with a proxy that delegates every method call to it
 	 * but handles Session lookup in a transaction-aware fashion.
+	 *
 	 * @param target the original Connection to wrap
 	 * @return the wrapped Connection
 	 */
@@ -239,79 +227,6 @@ public class TransactionAwareConnectionFactoryProxy
 		return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(),
 				ClassUtils.toClassArray(classes), new TransactionAwareConnectionInvocationHandler(target));
 	}
-
-
-	/**
-	 * Invocation handler that exposes transactional Sessions for the underlying Connection.
-	 */
-	private class TransactionAwareConnectionInvocationHandler implements InvocationHandler {
-
-		private final Connection target;
-
-		public TransactionAwareConnectionInvocationHandler(Connection target) {
-			this.target = target;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			// Invocation on ConnectionProxy interface coming in...
-
-			switch (method.getName()) {
-				case "equals":
-					// Only consider equal when proxies are identical.
-					return (proxy == args[0]);
-				case "hashCode":
-					// Use hashCode of Connection proxy.
-					return System.identityHashCode(proxy);
-			}
-
-			if (Session.class == method.getReturnType()) {
-				Session session = ConnectionFactoryUtils.getTransactionalSession(
-						getTargetConnectionFactory(), this.target, isSynchedLocalTransactionAllowed());
-				if (session != null) {
-					return getCloseSuppressingSessionProxy(session);
-				}
-			}
-			else if (QueueSession.class == method.getReturnType()) {
-				QueueSession session = ConnectionFactoryUtils.getTransactionalQueueSession(
-						(QueueConnectionFactory) getTargetConnectionFactory(), (QueueConnection) this.target,
-						isSynchedLocalTransactionAllowed());
-				if (session != null) {
-					return getCloseSuppressingSessionProxy(session);
-				}
-			}
-			else if (TopicSession.class == method.getReturnType()) {
-				TopicSession session = ConnectionFactoryUtils.getTransactionalTopicSession(
-						(TopicConnectionFactory) getTargetConnectionFactory(), (TopicConnection) this.target,
-						isSynchedLocalTransactionAllowed());
-				if (session != null) {
-					return getCloseSuppressingSessionProxy(session);
-				}
-			}
-
-			// Invoke method on target Connection.
-			try {
-				return method.invoke(this.target, args);
-			}
-			catch (InvocationTargetException ex) {
-				throw ex.getTargetException();
-			}
-		}
-
-		private Session getCloseSuppressingSessionProxy(Session target) {
-			List<Class<?>> classes = new ArrayList<>(3);
-			classes.add(SessionProxy.class);
-			if (target instanceof QueueSession) {
-				classes.add(QueueSession.class);
-			}
-			if (target instanceof TopicSession) {
-				classes.add(TopicSession.class);
-			}
-			return (Session) Proxy.newProxyInstance(SessionProxy.class.getClassLoader(),
-					ClassUtils.toClassArray(classes), new CloseSuppressingSessionInvocationHandler(target));
-		}
-	}
-
 
 	/**
 	 * Invocation handler that suppresses close calls for a transactional JMS Session.
@@ -351,10 +266,77 @@ public class TransactionAwareConnectionFactoryProxy
 			// Invoke method on target Session.
 			try {
 				return method.invoke(this.target, args);
-			}
-			catch (InvocationTargetException ex) {
+			} catch (InvocationTargetException ex) {
 				throw ex.getTargetException();
 			}
+		}
+	}
+
+	/**
+	 * Invocation handler that exposes transactional Sessions for the underlying Connection.
+	 */
+	private class TransactionAwareConnectionInvocationHandler implements InvocationHandler {
+
+		private final Connection target;
+
+		public TransactionAwareConnectionInvocationHandler(Connection target) {
+			this.target = target;
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			// Invocation on ConnectionProxy interface coming in...
+
+			switch (method.getName()) {
+				case "equals":
+					// Only consider equal when proxies are identical.
+					return (proxy == args[0]);
+				case "hashCode":
+					// Use hashCode of Connection proxy.
+					return System.identityHashCode(proxy);
+			}
+
+			if (Session.class == method.getReturnType()) {
+				Session session = ConnectionFactoryUtils.getTransactionalSession(
+						getTargetConnectionFactory(), this.target, isSynchedLocalTransactionAllowed());
+				if (session != null) {
+					return getCloseSuppressingSessionProxy(session);
+				}
+			} else if (QueueSession.class == method.getReturnType()) {
+				QueueSession session = ConnectionFactoryUtils.getTransactionalQueueSession(
+						(QueueConnectionFactory) getTargetConnectionFactory(), (QueueConnection) this.target,
+						isSynchedLocalTransactionAllowed());
+				if (session != null) {
+					return getCloseSuppressingSessionProxy(session);
+				}
+			} else if (TopicSession.class == method.getReturnType()) {
+				TopicSession session = ConnectionFactoryUtils.getTransactionalTopicSession(
+						(TopicConnectionFactory) getTargetConnectionFactory(), (TopicConnection) this.target,
+						isSynchedLocalTransactionAllowed());
+				if (session != null) {
+					return getCloseSuppressingSessionProxy(session);
+				}
+			}
+
+			// Invoke method on target Connection.
+			try {
+				return method.invoke(this.target, args);
+			} catch (InvocationTargetException ex) {
+				throw ex.getTargetException();
+			}
+		}
+
+		private Session getCloseSuppressingSessionProxy(Session target) {
+			List<Class<?>> classes = new ArrayList<>(3);
+			classes.add(SessionProxy.class);
+			if (target instanceof QueueSession) {
+				classes.add(QueueSession.class);
+			}
+			if (target instanceof TopicSession) {
+				classes.add(TopicSession.class);
+			}
+			return (Session) Proxy.newProxyInstance(SessionProxy.class.getClassLoader(),
+					ClassUtils.toClassArray(classes), new CloseSuppressingSessionInvocationHandler(target));
 		}
 	}
 

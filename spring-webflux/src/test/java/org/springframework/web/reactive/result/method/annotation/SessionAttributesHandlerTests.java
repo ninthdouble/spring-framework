@@ -17,21 +17,21 @@
 package org.springframework.web.reactive.result.method.annotation;
 
 
-import java.util.HashSet;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.WebSession;
 import org.springframework.web.testfixture.server.MockWebSession;
 
+import java.util.HashSet;
+
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test fixture with {@link SessionAttributesHandler}.
+ *
  * @author Rossen Stoyanchev
  */
 public class SessionAttributesHandlerTests {
@@ -102,7 +102,7 @@ public class SessionAttributesHandlerTests {
 	}
 
 
-	@SessionAttributes(names = { "attr1", "attr2" }, types = { TestBean.class })
+	@SessionAttributes(names = {"attr1", "attr2"}, types = {TestBean.class})
 	private static class TestController {
 	}
 

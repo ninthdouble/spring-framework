@@ -148,18 +148,6 @@ public class ImportAwareTests {
 	}
 
 
-	@Configuration
-	@Import(ImportedConfig.class)
-	static class ImportingConfig {
-	}
-
-
-	@Configuration
-	@EnableImportedConfig(foo = "xyz")
-	static class IndirectlyImportingConfig {
-	}
-
-
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)
 	@Import(ImportedConfig.class)
@@ -167,6 +155,54 @@ public class ImportAwareTests {
 		String foo() default "";
 	}
 
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Import(ImportedRegistrar.class)
+	public @interface EnableImportRegistrar {
+	}
+
+
+	@Import(SomeConfiguration.class)
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface EnableSomeConfiguration {
+
+		String value() default "";
+	}
+
+
+	@Import(LiteConfiguration.class)
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface EnableLiteConfiguration {
+
+		String value() default "";
+	}
+
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Import(FeatureConfiguration.class)
+	public @interface EnableFeature {
+
+		FeaturePolicy[] policies() default {};
+
+		@interface FeaturePolicy {
+
+			String name();
+		}
+	}
+
+	@Configuration
+	@Import(ImportedConfig.class)
+	static class ImportingConfig {
+	}
+
+	@Configuration
+	@EnableImportedConfig(foo = "xyz")
+	static class IndirectlyImportingConfig {
+	}
 
 	@Configuration
 	static class ImportedConfig implements ImportAware {
@@ -189,7 +225,6 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	@Configuration
 	static class OtherImportedConfig {
 
@@ -199,12 +234,10 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	@Configuration
 	@Import(ImportedConfigLite.class)
 	static class ImportingConfigLite {
 	}
-
 
 	@Configuration(proxyBeanMethods = false)
 	static class ImportedConfigLite implements ImportAware {
@@ -227,7 +260,6 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	static class BPP implements BeanPostProcessor, BeanFactoryAware {
 
 		@Override
@@ -245,25 +277,16 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	@Configuration
 	@EnableImportRegistrar
 	static class ImportingRegistrarConfig {
 	}
-
 
 	@Configuration
 	@EnableImportRegistrar
 	@Import(ImportedConfig.class)
 	static class ImportingRegistrarConfigWithImport {
 	}
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Import(ImportedRegistrar.class)
-	public @interface EnableImportRegistrar {
-	}
-
 
 	static class ImportedRegistrar implements ImportBeanDefinitionRegistrar {
 
@@ -282,12 +305,10 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	@EnableSomeConfiguration("bar")
 	@Configuration
 	public static class ConfigurationOne {
 	}
-
 
 	@Conditional(OnMissingBeanCondition.class)
 	@EnableSomeConfiguration("foo")
@@ -295,22 +316,11 @@ public class ImportAwareTests {
 	public static class ConfigurationTwo {
 	}
 
-
 	@Conditional(OnMissingBeanCondition.class)
 	@EnableLiteConfiguration("foo")
 	@Configuration
 	public static class ConfigurationThree {
 	}
-
-
-	@Import(SomeConfiguration.class)
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface EnableSomeConfiguration {
-
-		String value() default "";
-	}
-
 
 	@Configuration
 	public static class SomeConfiguration implements ImportAware {
@@ -328,16 +338,6 @@ public class ImportAwareTests {
 		}
 	}
 
-
-	@Import(LiteConfiguration.class)
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface EnableLiteConfiguration {
-
-		String value() default "";
-	}
-
-
 	@Configuration(proxyBeanMethods = false)
 	public static class LiteConfiguration implements ImportAware {
 
@@ -354,7 +354,6 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	public static class MetadataHolder {
 
 		private final AnnotationMetadata importMetadata;
@@ -363,7 +362,6 @@ public class ImportAwareTests {
 			this.importMetadata = importMetadata;
 		}
 	}
-
 
 	private static final class OnMissingBeanCondition implements ConfigurationCondition {
 
@@ -378,7 +376,6 @@ public class ImportAwareTests {
 		}
 	}
 
-
 	@Configuration
 	@EnableFeature(policies = {
 			@EnableFeature.FeaturePolicy(name = "one"),
@@ -386,21 +383,6 @@ public class ImportAwareTests {
 	})
 	public static class ApplicationConfiguration {
 	}
-
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Import(FeatureConfiguration.class)
-	public @interface EnableFeature {
-
-		FeaturePolicy[] policies() default {};
-
-		@interface FeaturePolicy {
-
-			String name();
-		}
-	}
-
 
 	@Configuration
 	public static class FeatureConfiguration implements ImportAware {

@@ -28,6 +28,7 @@ public interface UpdatedRowsFetchSpec {
 
 	/**
 	 * Get the number of updated rows.
+	 *
 	 * @return a Mono emitting the number of updated rows
 	 */
 	Mono<Integer> rowsUpdated();

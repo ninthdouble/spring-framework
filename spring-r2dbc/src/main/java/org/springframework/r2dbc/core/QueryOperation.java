@@ -25,8 +25,8 @@ import java.util.function.Supplier;
  * {@code INSERT}, and such.
  *
  * @author Mark Paluch
- * @since 5.3
  * @see PreparedOperation
+ * @since 5.3
  */
 @FunctionalInterface
 public interface QueryOperation extends Supplier<String> {
@@ -34,6 +34,7 @@ public interface QueryOperation extends Supplier<String> {
 	/**
 	 * Return the string-representation of this operation to
 	 * be used with {@link io.r2dbc.spi.Statement} creation.
+	 *
 	 * @return the operation as SQL string
 	 * @see io.r2dbc.spi.Connection#createStatement(String)
 	 */

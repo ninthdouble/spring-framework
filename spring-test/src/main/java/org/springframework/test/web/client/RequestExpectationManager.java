@@ -16,11 +16,11 @@
 
 package org.springframework.test.web.client;
 
-import java.io.IOException;
-import java.time.Duration;
-
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
+
+import java.io.IOException;
+import java.time.Duration;
 
 /**
  * Encapsulates the behavior required to implement {@link MockRestServiceServer}
@@ -53,6 +53,7 @@ public interface RequestExpectationManager {
 	/**
 	 * Verify that all expectations have been met.
 	 * <p>This is a delegate for {@link MockRestServiceServer#verify()}.
+	 *
 	 * @throws AssertionError if not all expectations are met
 	 * @see MockRestServiceServer#verify()
 	 */
@@ -62,9 +63,10 @@ public interface RequestExpectationManager {
 	 * Variant of {@link #verify()} that waits for up to the specified time for
 	 * all expectations to be fulfilled. This can be useful for tests that
 	 * involve asynchronous requests.
+	 *
 	 * @param timeout how long to wait for all expecations to be met
 	 * @throws AssertionError if not all expectations are met by the specified
-	 * timeout, or if any expectation fails at any time before that.
+	 *                        timeout, or if any expectation fails at any time before that.
 	 * @since 5.3.4
 	 */
 	void verify(Duration timeout);
@@ -72,6 +74,7 @@ public interface RequestExpectationManager {
 	/**
 	 * Reset the internal state removing all expectations and recorded requests.
 	 * <p>This is a delegate for {@link MockRestServiceServer#reset()}.
+	 *
 	 * @see MockRestServiceServer#reset()
 	 */
 	void reset();
@@ -81,10 +84,11 @@ public interface RequestExpectationManager {
 	 * Validate the given actual request against the declared expectations.
 	 * Is successful return the mock response to use or raise an error.
 	 * <p>This is used in {@link MockRestServiceServer} against actual requests.
+	 *
 	 * @param request the request
 	 * @return the response to return if the request was validated.
 	 * @throws AssertionError when some expectations were not met
-	 * @throws IOException in case of any validation errors
+	 * @throws IOException    in case of any validation errors
 	 */
 	ClientHttpResponse validateRequest(ClientHttpRequest request) throws IOException;
 }

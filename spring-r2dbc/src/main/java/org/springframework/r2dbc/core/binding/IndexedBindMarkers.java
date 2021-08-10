@@ -44,7 +44,8 @@ class IndexedBindMarkers implements BindMarkers {
 
 	/**
 	 * Create a new {@link IndexedBindMarker} instance given {@code prefix} and {@code beginWith}.
-	 * @param prefix bind parameter prefix
+	 *
+	 * @param prefix    bind parameter prefix
 	 * @param beginWith the first index to use
 	 */
 	IndexedBindMarkers(String prefix, int beginWith) {
@@ -63,6 +64,7 @@ class IndexedBindMarkers implements BindMarkers {
 
 	/**
 	 * A single indexed bind marker.
+	 *
 	 * @author Mark Paluch
 	 */
 	static class IndexedBindMarker implements BindMarker {

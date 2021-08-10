@@ -16,34 +16,10 @@
 
 package org.springframework.web.reactive.function.server;
 
-import java.net.URI;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.codec.Hints;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ReactiveHttpOutputMessage;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.*;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -54,6 +30,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Default {@link ServerResponse.BodyBuilder} implementation.
@@ -82,8 +67,7 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 			AbstractServerResponse abstractOther = (AbstractServerResponse) other;
 			this.statusCode = abstractOther.statusCode;
 			this.hints.putAll(abstractOther.hints);
-		}
-		else {
+		} else {
 			this.statusCode = other.statusCode().value();
 		}
 	}
@@ -248,7 +232,7 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 		return initBuilder(producer, BodyInserters.fromProducer(producer, elementTypeRef));
 	}
 
-	private  <T> Mono<ServerResponse> initBuilder(T entity, BodyInserter<T, ReactiveHttpOutputMessage> inserter) {
+	private <T> Mono<ServerResponse> initBuilder(T entity, BodyInserter<T, ReactiveHttpOutputMessage> inserter) {
 		return new DefaultEntityResponseBuilder<>(entity, inserter)
 				.status(this.statusCode)
 				.headers(this.headers)
@@ -301,12 +285,9 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 		private static final Set<HttpMethod> SAFE_METHODS = EnumSet.of(HttpMethod.GET, HttpMethod.HEAD);
 
 		final int statusCode;
-
-		private final HttpHeaders headers;
-
-		private final MultiValueMap<String, ResponseCookie> cookies;
-
 		final Map<String, Object> hints;
+		private final HttpHeaders headers;
+		private final MultiValueMap<String, ResponseCookie> cookies;
 
 
 		protected AbstractServerResponse(
@@ -317,6 +298,14 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 			this.headers = HttpHeaders.readOnlyHttpHeaders(headers);
 			this.cookies = CollectionUtils.unmodifiableMultiValueMap(new LinkedMultiValueMap<>(cookies));
 			this.hints = hints;
+		}
+
+		private static <K, V> void copy(MultiValueMap<K, V> src, MultiValueMap<K, V> dst) {
+			if (!src.isEmpty()) {
+				src.entrySet().stream()
+						.filter(entry -> !dst.containsKey(entry.getKey()))
+						.forEach(entry -> dst.put(entry.getKey(), entry.getValue()));
+			}
 		}
 
 		@Override
@@ -346,8 +335,7 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 			HttpMethod httpMethod = exchange.getRequest().getMethod();
 			if (SAFE_METHODS.contains(httpMethod) && exchange.checkNotModified(headers().getETag(), lastModified)) {
 				return exchange.getResponse().setComplete();
-			}
-			else {
+			} else {
 				return writeToInternal(exchange, context);
 			}
 		}
@@ -359,14 +347,6 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 		}
 
 		protected abstract Mono<Void> writeToInternal(ServerWebExchange exchange, Context context);
-
-		private static <K,V> void copy(MultiValueMap<K,V> src, MultiValueMap<K,V> dst) {
-			if (!src.isEmpty()) {
-				src.entrySet().stream()
-						.filter(entry -> !dst.containsKey(entry.getKey()))
-						.forEach(entry -> dst.put(entry.getKey(), entry.getValue()));
-			}
-		}
 	}
 
 
@@ -375,8 +355,8 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 		private final BiFunction<ServerWebExchange, Context, Mono<Void>> writeFunction;
 
 		public WriterFunctionResponse(int statusCode, HttpHeaders headers,
-				MultiValueMap<String, ResponseCookie> cookies,
-				BiFunction<ServerWebExchange, Context, Mono<Void>> writeFunction) {
+									  MultiValueMap<String, ResponseCookie> cookies,
+									  BiFunction<ServerWebExchange, Context, Mono<Void>> writeFunction) {
 
 			super(statusCode, headers, cookies, Collections.emptyMap());
 			Assert.notNull(writeFunction, "BiFunction must not be null");
@@ -396,8 +376,8 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 
 
 		public BodyInserterResponse(int statusCode, HttpHeaders headers,
-				MultiValueMap<String, ResponseCookie> cookies,
-				BodyInserter<T, ? super ServerHttpResponse> body, Map<String, Object> hints) {
+									MultiValueMap<String, ResponseCookie> cookies,
+									BodyInserter<T, ? super ServerHttpResponse> body, Map<String, Object> hints) {
 
 			super(statusCode, headers, cookies, hints);
 			Assert.notNull(body, "BodyInserter must not be null");
@@ -411,10 +391,12 @@ class DefaultServerResponseBuilder implements ServerResponse.BodyBuilder {
 				public List<HttpMessageWriter<?>> messageWriters() {
 					return context.messageWriters();
 				}
+
 				@Override
 				public Optional<ServerHttpRequest> serverRequest() {
 					return Optional.of(exchange.getRequest());
 				}
+
 				@Override
 				public Map<String, Object> hints() {
 					hints.put(Hints.LOG_PREFIX_HINT, exchange.getLogPrefix());

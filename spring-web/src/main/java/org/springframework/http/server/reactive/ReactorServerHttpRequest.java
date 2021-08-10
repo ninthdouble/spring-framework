@@ -16,22 +16,11 @@
 
 package org.springframework.http.server.reactive;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.net.ssl.SSLSession;
-
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.commons.logging.Log;
-import reactor.core.publisher.Flux;
-import reactor.netty.Connection;
-import reactor.netty.http.server.HttpServerRequest;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.HttpCookie;
@@ -41,6 +30,15 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+import reactor.netty.Connection;
+import reactor.netty.http.server.HttpServerRequest;
+
+import javax.net.ssl.SSLSession;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Adapt {@link ServerHttpRequest} to the Reactor {@link HttpServerRequest}.
@@ -51,7 +49,9 @@ import org.springframework.util.MultiValueMap;
  */
 class ReactorServerHttpRequest extends AbstractServerHttpRequest {
 
-	/** Reactor Netty 1.0.5+. */
+	/**
+	 * Reactor Netty 1.0.5+.
+	 */
 	static final boolean reactorNettyRequestChannelOperationsIdPresent = ClassUtils.isPresent(
 			"reactor.netty.ChannelOperationsId", ReactorServerHttpRequest.class.getClassLoader());
 
@@ -87,24 +87,20 @@ class ReactorServerHttpRequest extends AbstractServerHttpRequest {
 			final int portIndex;
 			if (header.startsWith("[")) {
 				portIndex = header.indexOf(':', header.indexOf(']'));
-			}
-			else {
+			} else {
 				portIndex = header.indexOf(':');
 			}
 			if (portIndex != -1) {
 				try {
 					return new URI(scheme, null, header.substring(0, portIndex),
 							Integer.parseInt(header.substring(portIndex + 1)), null, null, null);
-				}
-				catch (NumberFormatException ex) {
+				} catch (NumberFormatException ex) {
 					throw new URISyntaxException(header, "Unable to parse port", portIndex);
 				}
-			}
-			else {
+			} else {
 				return new URI(scheme, header, null, null);
 			}
-		}
-		else {
+		} else {
 			InetSocketAddress localAddress = request.hostAddress();
 			Assert.state(localAddress != null, "No host address available");
 			return new URI(scheme, null, localAddress.getHostString(),

@@ -16,16 +16,7 @@
 
 package org.springframework.web.server.adapter;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,17 +33,33 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebHandler;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static java.time.Duration.ofMillis;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link WebHttpHandlerBuilder}.
+ *
  * @author Rossen Stoyanchev
  */
 public class WebHttpHandlerBuilderTests {
 
-	@Test  // SPR-15074
+	private static Mono<Void> writeToResponse(ServerWebExchange exchange, String value) {
+		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+		DataBuffer buffer = DefaultDataBufferFactory.sharedInstance.wrap(bytes);
+		return exchange.getResponse().writeWith(Flux.just(buffer));
+	}
+
+	@Test
+		// SPR-15074
 	void orderedWebFilterBeans() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(OrderedWebFilterBeanConfig.class);
@@ -81,7 +88,8 @@ public class WebHttpHandlerBuilderTests {
 		assertThat(builder.hasForwardedHeaderTransformer()).isTrue();
 	}
 
-	@Test  // SPR-15074
+	@Test
+		// SPR-15074
 	void orderedWebExceptionHandlerBeans() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(OrderedExceptionHandlerBeanConfig.class);
@@ -109,7 +117,8 @@ public class WebHttpHandlerBuilderTests {
 		assertThat(response.getBodyAsString().block(ofMillis(5000))).isEqualTo("handled");
 	}
 
-	@Test  // SPR-16972
+	@Test
+		// SPR-16972
 	void cloneWithApplicationContext() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(NoFilterConfig.class);
@@ -154,13 +163,6 @@ public class WebHttpHandlerBuilderTests {
 		assertThat(headerValue.apply("decoratorC")).isLessThan(headerValue.apply("decoratorB"));
 	}
 
-	private static Mono<Void> writeToResponse(ServerWebExchange exchange, String value) {
-		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-		DataBuffer buffer = DefaultDataBufferFactory.sharedInstance.wrap(bytes);
-		return exchange.getResponse().writeWith(Flux.just(buffer));
-	}
-
-
 	@Configuration
 	static class HttpHandlerDecoratorFactoryBeansConfig {
 
@@ -204,12 +206,14 @@ public class WebHttpHandlerBuilderTests {
 
 		private static final String ATTRIBUTE = "attr";
 
-		@Bean @Order(2)
+		@Bean
+		@Order(2)
 		public WebFilter filterA() {
 			return createFilter("FilterA");
 		}
 
-		@Bean @Order(1)
+		@Bean
+		@Order(1)
 		public WebFilter filterB() {
 			return createFilter("FilterB");
 		}

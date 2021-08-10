@@ -16,14 +16,8 @@
 
 package org.springframework.test.web.reactive.server;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-
 import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -32,9 +26,12 @@ import org.springframework.lang.Nullable;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.util.CollectionUtils;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+import static org.springframework.test.util.AssertionErrors.*;
 
 /**
  * Assertions on headers of the response.
@@ -42,8 +39,8 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
  * @author Rossen Stoyanchev
  * @author Brian Clozel
  * @author Sam Brannen
- * @since 5.0
  * @see WebTestClient.ResponseSpec#expectHeader()
+ * @since 5.0
  */
 public class HeaderAssertions {
 
@@ -67,6 +64,7 @@ public class HeaderAssertions {
 
 	/**
 	 * Expect a header with the given name to match the given long value.
+	 *
 	 * @since 5.3
 	 */
 	public WebTestClient.ResponseSpec valueEquals(String headerName, long value) {
@@ -82,6 +80,7 @@ public class HeaderAssertions {
 	 * <p>An {@link AssertionError} is thrown if the response does not contain
 	 * the specified header, or if the supplied {@code value} does not match the
 	 * primary header value.
+	 *
 	 * @since 5.3
 	 */
 	public WebTestClient.ResponseSpec valueEqualsDate(String headerName, long value) {
@@ -102,7 +101,8 @@ public class HeaderAssertions {
 
 	/**
 	 * Match the first value of the response header with a regex.
-	 * @param name the header name
+	 *
+	 * @param name    the header name
 	 * @param pattern the regex pattern
 	 */
 	public WebTestClient.ResponseSpec valueMatches(String name, String pattern) {
@@ -117,7 +117,8 @@ public class HeaderAssertions {
 	 * patterns which are applied to the values of the header in the
 	 * same order. Note that the number of pattenrs must match the
 	 * number of actual values.
-	 * @param name the header name
+	 *
+	 * @param name     the header name
 	 * @param patterns one or more regex patterns, one per expected value
 	 * @since 5.3
 	 */
@@ -141,7 +142,8 @@ public class HeaderAssertions {
 
 	/**
 	 * Assert the first value of the response header with a Hamcrest {@link Matcher}.
-	 * @param name the header name
+	 *
+	 * @param name    the header name
 	 * @param matcher the matcher to use
 	 * @since 5.1
 	 */
@@ -156,7 +158,8 @@ public class HeaderAssertions {
 
 	/**
 	 * Assert all values of the response header with a Hamcrest {@link Matcher}.
-	 * @param name the header name
+	 *
+	 * @param name    the header name
 	 * @param matcher the matcher to use
 	 * @since 5.3
 	 */
@@ -171,7 +174,8 @@ public class HeaderAssertions {
 
 	/**
 	 * Consume the first value of the named response header.
-	 * @param name the header name
+	 *
+	 * @param name     the header name
 	 * @param consumer the consumer to use
 	 * @since 5.1
 	 */
@@ -183,7 +187,8 @@ public class HeaderAssertions {
 
 	/**
 	 * Consume all values of the named response header.
-	 * @param name the header name
+	 *
+	 * @param name     the header name
 	 * @param consumer the consumer to use
 	 * @since 5.3
 	 */
@@ -208,6 +213,7 @@ public class HeaderAssertions {
 
 	/**
 	 * Expect that the header with the given name is present.
+	 *
 	 * @since 5.0.3
 	 */
 	public WebTestClient.ResponseSpec exists(String name) {
@@ -298,6 +304,7 @@ public class HeaderAssertions {
 
 	/**
 	 * Expect a "Location" header with the given value.
+	 *
 	 * @since 5.3
 	 */
 	public WebTestClient.ResponseSpec location(String location) {

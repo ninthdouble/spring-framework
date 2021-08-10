@@ -16,21 +16,20 @@
 
 package org.springframework.web.reactive.result.view.freemarker;
 
-import java.util.HashMap;
-import java.util.Properties;
-
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.ui.freemarker.SpringTemplateLoader;
+
+import java.util.HashMap;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
@@ -67,7 +66,7 @@ public class FreeMarkerConfigurerTests {
 		freeMarkerConfigurer.afterPropertiesSet();
 		Configuration cfg = freeMarkerConfigurer.getConfiguration();
 		assertThat(cfg.getTemplateLoader()).isInstanceOf(MultiTemplateLoader.class);
-		MultiTemplateLoader multiTemplateLoader = (MultiTemplateLoader)cfg.getTemplateLoader();
+		MultiTemplateLoader multiTemplateLoader = (MultiTemplateLoader) cfg.getTemplateLoader();
 		assertThat(multiTemplateLoader.getTemplateLoader(0)).isInstanceOf(SpringTemplateLoader.class);
 		assertThat(multiTemplateLoader.getTemplateLoader(1)).isInstanceOf(ClassTemplateLoader.class);
 	}
@@ -87,6 +86,7 @@ public class FreeMarkerConfigurerTests {
 				}
 				return new ByteArrayResource("test".getBytes(), "test");
 			}
+
 			@Override
 			public ClassLoader getClassLoader() {
 				return getClass().getClassLoader();

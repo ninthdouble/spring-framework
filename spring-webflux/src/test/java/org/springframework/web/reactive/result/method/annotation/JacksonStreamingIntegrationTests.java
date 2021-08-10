@@ -16,11 +16,6 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.time.Duration;
-
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +29,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.AbstractHttpHandlerIntegrationTests;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
 
 import static org.springframework.http.MediaType.APPLICATION_NDJSON;
 import static org.springframework.http.MediaType.APPLICATION_NDJSON_VALUE;
@@ -105,7 +104,7 @@ class JacksonStreamingIntegrationTests extends AbstractHttpHandlerIntegrationTes
 	static class JacksonStreamingController {
 
 		@GetMapping(value = "/stream",
-				produces = { APPLICATION_NDJSON_VALUE, "application/stream+x-jackson-smile" })
+				produces = {APPLICATION_NDJSON_VALUE, "application/stream+x-jackson-smile"})
 		Flux<Person> person() {
 			return testInterval(Duration.ofMillis(100), 50).map(l -> new Person("foo " + l));
 		}

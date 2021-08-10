@@ -16,25 +16,24 @@
 
 package org.springframework.web.servlet.function;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.web.servlet.ModelAndView;
-
 /**
  * Base class for {@link ServerResponse} implementations with error handling.
+ *
  * @author Arjen Poutsma
  * @since 5.3
  */
@@ -46,7 +45,7 @@ abstract class ErrorHandlingServerResponse implements ServerResponse {
 
 
 	protected final <T extends ServerResponse> void addErrorHandler(Predicate<Throwable> predicate,
-			BiFunction<Throwable, ServerRequest, T> errorHandler) {
+																	BiFunction<Throwable, ServerRequest, T> errorHandler) {
 
 		Assert.notNull(predicate, "Predicate must not be null");
 		Assert.notNull(errorHandler, "ErrorHandler must not be null");
@@ -55,19 +54,16 @@ abstract class ErrorHandlingServerResponse implements ServerResponse {
 
 	@Nullable
 	protected final ModelAndView handleError(Throwable t, HttpServletRequest servletRequest,
-			HttpServletResponse servletResponse, Context context) throws ServletException, IOException {
+											 HttpServletResponse servletResponse, Context context) throws ServletException, IOException {
 
 		ServerResponse serverResponse = errorResponse(t, servletRequest);
 		if (serverResponse != null) {
 			return serverResponse.writeTo(servletRequest, servletResponse, context);
-		}
-		else if (t instanceof ServletException) {
+		} else if (t instanceof ServletException) {
 			throw (ServletException) t;
-		}
-		else if (t instanceof IOException) {
+		} else if (t instanceof IOException) {
 			throw (IOException) t;
-		}
-		else {
+		} else {
 			throw new ServletException(t);
 		}
 	}

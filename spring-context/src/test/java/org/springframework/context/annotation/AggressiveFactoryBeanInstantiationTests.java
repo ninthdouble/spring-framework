@@ -41,7 +41,7 @@ public class AggressiveFactoryBeanInstantiationTests {
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
 			context.register(SimpleFactoryBean.class);
 			context.addBeanFactoryPostProcessor(factory ->
-				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory, String.class)
+					BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory, String.class)
 			);
 			context.refresh();
 		}
@@ -52,7 +52,7 @@ public class AggressiveFactoryBeanInstantiationTests {
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
 			context.register(BeanMethodConfiguration.class);
 			context.addBeanFactoryPostProcessor(factory ->
-				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory, String.class)
+					BeanFactoryUtils.beanNamesForTypeIncludingAncestors(factory, String.class)
 			);
 			context.refresh();
 		}
@@ -64,8 +64,7 @@ public class AggressiveFactoryBeanInstantiationTests {
 			context.register(BeanMethodConfigurationWithExceptionInInitializer.class);
 			context.refresh();
 			fail("Should have thrown BeanCreationException");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			PrintWriter pw = new PrintWriter(baos);
 			ex.printStackTrace(pw);

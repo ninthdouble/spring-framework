@@ -16,11 +16,10 @@
 
 package org.springframework.web.context.request.async;
 
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.context.request.async.DeferredResult.DeferredResultHandler;
+
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

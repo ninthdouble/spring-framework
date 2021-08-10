@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.NestedTestConfiguration;
@@ -92,8 +91,8 @@ class SqlScriptNestedTests {
 	@Nested
 	@NestedTestConfiguration(EnclosingConfiguration.OVERRIDE)
 	@Sql({
-		"/org/springframework/test/context/jdbc/recreate-schema.sql",
-		"/org/springframework/test/context/jdbc/data-add-catbert.sql"
+			"/org/springframework/test/context/jdbc/recreate-schema.sql",
+			"/org/springframework/test/context/jdbc/data-add-catbert.sql"
 	})
 	class NestedSqlMergeModeTests extends AbstractSqlMergeModeTests {
 
@@ -115,10 +114,10 @@ class SqlScriptNestedTests {
 
 			@Test
 			@Sql({
-				"/org/springframework/test/context/jdbc/recreate-schema.sql",
-				"/org/springframework/test/context/jdbc/data.sql",
-				"/org/springframework/test/context/jdbc/data-add-dogbert.sql",
-				"/org/springframework/test/context/jdbc/data-add-catbert.sql"
+					"/org/springframework/test/context/jdbc/recreate-schema.sql",
+					"/org/springframework/test/context/jdbc/data.sql",
+					"/org/springframework/test/context/jdbc/data-add-dogbert.sql",
+					"/org/springframework/test/context/jdbc/data-add-catbert.sql"
 			})
 			@SqlMergeMode(MergeMode.OVERRIDE)
 			void overridden() {
@@ -145,10 +144,10 @@ class SqlScriptNestedTests {
 
 			@Test
 			@Sql({
-				"/org/springframework/test/context/jdbc/recreate-schema.sql",
-				"/org/springframework/test/context/jdbc/data.sql",
-				"/org/springframework/test/context/jdbc/data-add-dogbert.sql",
-				"/org/springframework/test/context/jdbc/data-add-catbert.sql"
+					"/org/springframework/test/context/jdbc/recreate-schema.sql",
+					"/org/springframework/test/context/jdbc/data.sql",
+					"/org/springframework/test/context/jdbc/data-add-dogbert.sql",
+					"/org/springframework/test/context/jdbc/data-add-catbert.sql"
 			})
 			void overridden() {
 				assertUsers("Dilbert", "Dogbert", "Catbert");

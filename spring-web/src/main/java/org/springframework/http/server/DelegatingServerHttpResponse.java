@@ -16,12 +16,12 @@
 
 package org.springframework.http.server;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Implementation of {@code ServerHttpResponse} that delegates all calls to a
@@ -36,6 +36,7 @@ public class DelegatingServerHttpResponse implements ServerHttpResponse {
 
 	/**
 	 * Create a new {@code DelegatingServerHttpResponse}.
+	 *
 	 * @param delegate the response to delegate to
 	 */
 	public DelegatingServerHttpResponse(ServerHttpResponse delegate) {
@@ -45,6 +46,7 @@ public class DelegatingServerHttpResponse implements ServerHttpResponse {
 
 	/**
 	 * Returns the target response that this response delegates to.
+	 *
 	 * @return the delegate
 	 */
 	public ServerHttpResponse getDelegate() {

@@ -16,14 +16,13 @@
 
 package org.springframework.test.web.reactive.server;
 
-import java.time.Duration;
-import java.util.function.Consumer;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-
 import org.springframework.http.ResponseCookie;
 import org.springframework.test.util.AssertionErrors;
+
+import java.time.Duration;
+import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 

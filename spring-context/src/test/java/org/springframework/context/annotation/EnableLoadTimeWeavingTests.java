@@ -75,7 +75,7 @@ public class EnableLoadTimeWeavingTests {
 
 
 	@Configuration
-	@EnableLoadTimeWeaving(aspectjWeaving=AspectJWeaving.DISABLED)
+	@EnableLoadTimeWeaving(aspectjWeaving = AspectJWeaving.DISABLED)
 	static class EnableLTWConfig_withAjWeavingDisabled implements LoadTimeWeavingConfigurer {
 
 		@Override
@@ -85,7 +85,7 @@ public class EnableLoadTimeWeavingTests {
 	}
 
 	@Configuration
-	@EnableLoadTimeWeaving(aspectjWeaving=AspectJWeaving.AUTODETECT)
+	@EnableLoadTimeWeaving(aspectjWeaving = AspectJWeaving.AUTODETECT)
 	static class EnableLTWConfig_withAjWeavingAutodetect implements LoadTimeWeavingConfigurer {
 
 		@Override
@@ -95,7 +95,7 @@ public class EnableLoadTimeWeavingTests {
 	}
 
 	@Configuration
-	@EnableLoadTimeWeaving(aspectjWeaving=AspectJWeaving.ENABLED)
+	@EnableLoadTimeWeaving(aspectjWeaving = AspectJWeaving.ENABLED)
 	static class EnableLTWConfig_withAjWeavingEnabled implements LoadTimeWeavingConfigurer {
 
 		@Override

@@ -16,19 +16,18 @@
 
 package org.springframework.http.server.reactive;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
+import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
+import reactor.core.publisher.Mono;
+
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
-import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -50,7 +49,7 @@ public class ContextPathCompositeHandlerTests {
 	private void testInvalid(String contextPath, String expectedError) {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new ContextPathCompositeHandler(Collections.singletonMap(contextPath, new TestHttpHandler())))
-			.withMessage(expectedError);
+				.withMessage(expectedError);
 	}
 
 	@Test

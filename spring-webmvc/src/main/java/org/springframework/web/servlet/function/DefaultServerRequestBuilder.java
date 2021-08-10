@@ -16,31 +16,6 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -56,6 +31,25 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 /**
  * Default {@link ServerRequest.Builder} implementation.
  *
@@ -67,19 +61,12 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 	private final HttpServletRequest servletRequest;
 
 	private final List<HttpMessageConverter<?>> messageConverters;
-
-	private String methodName;
-
-	private URI uri;
-
 	private final HttpHeaders headers = new HttpHeaders();
-
 	private final MultiValueMap<String, Cookie> cookies = new LinkedMultiValueMap<>();
-
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
-
 	private final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
+	private String methodName;
+	private URI uri;
 	@Nullable
 	private InetSocketAddress remoteAddress;
 
@@ -217,9 +204,9 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 		private final InetSocketAddress remoteAddress;
 
 		public BuiltServerRequest(HttpServletRequest servletRequest, String methodName, URI uri,
-				HttpHeaders headers, MultiValueMap<String, Cookie> cookies,
-				Map<String, Object> attributes, MultiValueMap<String, String> params,
-				@Nullable InetSocketAddress remoteAddress, byte[] body, List<HttpMessageConverter<?>> messageConverters) {
+								  HttpHeaders headers, MultiValueMap<String, Cookie> cookies,
+								  Map<String, Object> attributes, MultiValueMap<String, String> params,
+								  @Nullable InetSocketAddress remoteAddress, byte[] body, List<HttpMessageConverter<?>> messageConverters) {
 
 			this.servletRequest = servletRequest;
 			this.methodName = methodName;
@@ -327,8 +314,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 					.get(RouterFunctions.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 			if (pathVariables != null) {
 				return pathVariables;
-			}
-			else {
+			} else {
 				return Collections.emptyMap();
 			}
 		}

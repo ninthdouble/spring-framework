@@ -16,14 +16,13 @@
 
 package org.springframework.jdbc.support;
 
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
 import org.springframework.core.SpringProperties;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.lang.Nullable;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
 
 /**
  * {@link JdbcAccessor}-aligned subclass of the plain {@link DataSourceTransactionManager},
@@ -45,10 +44,10 @@ import org.springframework.lang.Nullable;
  *
  * @author Juergen Hoeller
  * @author Sebastien Deleuze
- * @since 5.3
  * @see DataSourceTransactionManager
  * @see #setDataSource
  * @see #setExceptionTranslator
+ * @since 5.3
  */
 @SuppressWarnings("serial")
 public class JdbcTransactionManager extends DataSourceTransactionManager {
@@ -70,6 +69,7 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 	/**
 	 * Create a new JdbcTransactionManager instance.
 	 * A DataSource has to be set to be able to use it.
+	 *
 	 * @see #setDataSource
 	 */
 	public JdbcTransactionManager() {
@@ -78,6 +78,7 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 
 	/**
 	 * Create a new JdbcTransactionManager instance.
+	 *
 	 * @param dataSource the JDBC DataSource to manage transactions for
 	 */
 	public JdbcTransactionManager(DataSource dataSource) {
@@ -91,6 +92,7 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 	 * Specify the database product name for the DataSource that this transaction manager
 	 * uses. This allows to initialize an SQLErrorCodeSQLExceptionTranslator without
 	 * obtaining a Connection from the DataSource to get the meta-data.
+	 *
 	 * @param dbName the database product name that identifies the error codes entry
 	 * @see JdbcAccessor#setDatabaseProductName
 	 * @see SQLErrorCodeSQLExceptionTranslator#setDatabaseProductName
@@ -103,21 +105,10 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 	}
 
 	/**
-	 * Set the exception translator for this instance.
-	 * <p>If no custom translator is provided, a default
-	 * {@link SQLErrorCodeSQLExceptionTranslator} is used
-	 * which examines the SQLException's vendor-specific error code.
-	 * @see JdbcAccessor#setExceptionTranslator
-	 * @see org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
-	 */
-	public void setExceptionTranslator(SQLExceptionTranslator exceptionTranslator) {
-		this.exceptionTranslator = exceptionTranslator;
-	}
-
-	/**
 	 * Return the exception translator for this instance.
 	 * <p>Creates a default {@link SQLErrorCodeSQLExceptionTranslator}
 	 * for the specified DataSource if none set.
+	 *
 	 * @see #getDataSource()
 	 */
 	public SQLExceptionTranslator getExceptionTranslator() {
@@ -130,8 +121,7 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 			if (exceptionTranslator == null) {
 				if (shouldIgnoreXml) {
 					exceptionTranslator = new SQLExceptionSubclassTranslator();
-				}
-				else {
+				} else {
 					exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(obtainDataSource());
 				}
 				this.exceptionTranslator = exceptionTranslator;
@@ -141,23 +131,38 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 	}
 
 	/**
+	 * Set the exception translator for this instance.
+	 * <p>If no custom translator is provided, a default
+	 * {@link SQLErrorCodeSQLExceptionTranslator} is used
+	 * which examines the SQLException's vendor-specific error code.
+	 *
+	 * @see JdbcAccessor#setExceptionTranslator
+	 * @see org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
+	 */
+	public void setExceptionTranslator(SQLExceptionTranslator exceptionTranslator) {
+		this.exceptionTranslator = exceptionTranslator;
+	}
+
+	/**
+	 * Return whether to lazily initialize the SQLExceptionTranslator for this transaction manager.
+	 *
+	 * @see #getExceptionTranslator()
+	 */
+	public boolean isLazyInit() {
+		return this.lazyInit;
+	}
+
+	/**
 	 * Set whether to lazily initialize the SQLExceptionTranslator for this transaction manager,
 	 * on first encounter of an SQLException. Default is "true"; can be switched to
 	 * "false" for initialization on startup.
 	 * <p>Early initialization just applies if {@code afterPropertiesSet()} is called.
+	 *
 	 * @see #getExceptionTranslator()
 	 * @see #afterPropertiesSet()
 	 */
 	public void setLazyInit(boolean lazyInit) {
 		this.lazyInit = lazyInit;
-	}
-
-	/**
-	 * Return whether to lazily initialize the SQLExceptionTranslator for this transaction manager.
-	 * @see #getExceptionTranslator()
-	 */
-	public boolean isLazyInit() {
-		return this.lazyInit;
 	}
 
 	/**
@@ -176,6 +181,7 @@ public class JdbcTransactionManager extends DataSourceTransactionManager {
 	/**
 	 * This implementation attempts to use the {@link SQLExceptionTranslator},
 	 * falling back to a {@link org.springframework.transaction.TransactionSystemException}.
+	 *
 	 * @see #getExceptionTranslator()
 	 * @see DataSourceTransactionManager#translateException
 	 */

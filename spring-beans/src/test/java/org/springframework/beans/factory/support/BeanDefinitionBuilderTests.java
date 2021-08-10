@@ -16,14 +16,13 @@
 
 package org.springframework.beans.factory.support;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.ResolvableType;
+
+import java.util.Arrays;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,7 +35,7 @@ class BeanDefinitionBuilderTests {
 
 	@Test
 	void builderWithBeanClassWithSimpleProperty() {
-		String[] dependsOn = new String[] { "A", "B", "C" };
+		String[] dependsOn = new String[]{"A", "B", "C"};
 		BeanDefinitionBuilder bdb = BeanDefinitionBuilder.rootBeanDefinition(TestBean.class);
 		bdb.setScope(BeanDefinition.SCOPE_PROTOTYPE);
 		bdb.addPropertyValue("age", "15");

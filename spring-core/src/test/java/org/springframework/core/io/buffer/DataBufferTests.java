@@ -16,17 +16,15 @@
 
 package org.springframework.core.io.buffer;
 
+import org.springframework.core.testfixture.io.buffer.AbstractDataBufferAllocatingTests;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.springframework.core.testfixture.io.buffer.AbstractDataBufferAllocatingTests;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Arjen Poutsma
@@ -85,8 +83,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
 					buffer.readPosition(-1));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -99,8 +96,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
 					buffer.readPosition(1));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -115,8 +111,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 			buffer.read();
 			assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
 					buffer.writePosition(0));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -129,8 +124,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
 					buffer.writePosition(2));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -164,8 +158,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatIllegalArgumentException().isThrownBy(() ->
 					buffer.write(null, StandardCharsets.UTF_8));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -178,8 +171,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatIllegalArgumentException().isThrownBy(() ->
 					buffer.write("test", null));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -268,8 +260,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatIllegalArgumentException().isThrownBy(() ->
 					buffer.toString(null));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -436,8 +427,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		try {
 			assertThatIllegalArgumentException().isThrownBy(() ->
 					buffer.capacity(-1));
-		}
-		finally {
+		} finally {
 			release(buffer);
 		}
 	}
@@ -720,7 +710,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 		byte[] bytes = new byte[3];
 		composite.read(bytes);
 
-		assertThat(bytes).isEqualTo(new byte[] {'a','b','c'});
+		assertThat(bytes).isEqualTo(new byte[]{'a', 'b', 'c'});
 
 		release(composite);
 	}
@@ -738,7 +728,7 @@ class DataBufferTests extends AbstractDataBufferAllocatingTests {
 				buffer.getByte(-1));
 
 		assertThatExceptionOfType(IndexOutOfBoundsException.class).isThrownBy(() ->
-			buffer.getByte(3));
+				buffer.getByte(3));
 
 		release(buffer);
 	}

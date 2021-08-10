@@ -16,16 +16,15 @@
 
 package org.springframework.test.web.client.response;
 
-import java.net.SocketTimeoutException;
-import java.net.URI;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.client.MockClientHttpResponse;
 import org.springframework.test.web.client.ResponseCreator;
 import org.springframework.util.StreamUtils;
+
+import java.net.SocketTimeoutException;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

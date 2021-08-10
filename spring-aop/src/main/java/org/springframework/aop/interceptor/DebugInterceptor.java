@@ -17,7 +17,6 @@
 package org.springframework.aop.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.springframework.lang.Nullable;
 
 /**
@@ -49,6 +48,7 @@ public class DebugInterceptor extends SimpleTraceInterceptor {
 	/**
 	 * Create a new DebugInterceptor with dynamic or static logger,
 	 * according to the given flag.
+	 *
 	 * @param useDynamicLogger whether to use a dynamic logger or a static logger
 	 * @see #setUseDynamicLogger
 	 */

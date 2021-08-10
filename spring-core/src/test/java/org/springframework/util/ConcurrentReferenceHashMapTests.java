@@ -16,28 +16,17 @@
 
 package org.springframework.util;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.ConcurrentReferenceHashMap.Entry;
 import org.springframework.util.ConcurrentReferenceHashMap.Reference;
 import org.springframework.util.ConcurrentReferenceHashMap.Restructure;
 import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.util.comparator.NullSafeComparator;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -102,7 +91,7 @@ class ConcurrentReferenceHashMapTests {
 		new ConcurrentReferenceHashMap<Integer, String>(0, 1);
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new TestWeakConcurrentCache<Integer, String>(-1, 1))
-			.withMessageContaining("Initial capacity must not be negative");
+				.withMessageContaining("Initial capacity must not be negative");
 	}
 
 	@Test
@@ -110,7 +99,7 @@ class ConcurrentReferenceHashMapTests {
 		new ConcurrentReferenceHashMap<Integer, String>(0, 0.1f, 1);
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new TestWeakConcurrentCache<Integer, String>(0, 0.0f, 1))
-			.withMessageContaining("Load factor must be positive");
+				.withMessageContaining("Load factor must be positive");
 	}
 
 	@Test
@@ -118,7 +107,7 @@ class ConcurrentReferenceHashMapTests {
 		new ConcurrentReferenceHashMap<Integer, String>(1, 1);
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new TestWeakConcurrentCache<Integer, String>(1, 0))
-			.withMessageContaining("Concurrency level must be positive");
+				.withMessageContaining("Concurrency level must be positive");
 	}
 
 	@Test
@@ -509,10 +498,11 @@ class ConcurrentReferenceHashMapTests {
 
 	/**
 	 * Time a multi-threaded access to a cache.
+	 *
 	 * @return the timing stopwatch
 	 */
 	private <V> StopWatch timeMultiThreaded(String id, final Map<Integer, V> map,
-			ValueFactory<V> factory) throws InterruptedException {
+											ValueFactory<V> factory) throws InterruptedException {
 
 		StopWatch stopWatch = new StopWatch(id);
 		for (int i = 0; i < 500; i++) {
@@ -554,18 +544,12 @@ class ConcurrentReferenceHashMapTests {
 
 	private static class TestWeakConcurrentCache<K, V> extends ConcurrentReferenceHashMap<K, V> {
 
-		private int supplementalHash;
-
 		private final LinkedList<MockReference<K, V>> queue = new LinkedList<>();
-
+		private int supplementalHash;
 		private boolean disableTestHooks;
 
 		public TestWeakConcurrentCache() {
 			super();
-		}
-
-		public void setDisableTestHooks(boolean disableTestHooks) {
-			this.disableTestHooks = disableTestHooks;
 		}
 
 		public TestWeakConcurrentCache(int initialCapacity, float loadFactor, int concurrencyLevel) {
@@ -574,6 +558,10 @@ class ConcurrentReferenceHashMapTests {
 
 		public TestWeakConcurrentCache(int initialCapacity, int concurrencyLevel) {
 			super(initialCapacity, concurrencyLevel);
+		}
+
+		public void setDisableTestHooks(boolean disableTestHooks) {
+			this.disableTestHooks = disableTestHooks;
 		}
 
 		@Override
@@ -600,6 +588,7 @@ class ConcurrentReferenceHashMapTests {
 					}
 					return new MockReference<>(entry, hash, next, TestWeakConcurrentCache.this.queue);
 				}
+
 				@Override
 				public Reference<K, V> pollForPurge() {
 					if (TestWeakConcurrentCache.this.disableTestHooks) {
@@ -619,12 +608,9 @@ class ConcurrentReferenceHashMapTests {
 	private static class MockReference<K, V> implements Reference<K, V> {
 
 		private final int hash;
-
-		private Entry<K, V> entry;
-
 		private final Reference<K, V> next;
-
 		private final LinkedList<MockReference<K, V>> queue;
+		private Entry<K, V> entry;
 
 		public MockReference(Entry<K, V> entry, int hash, Reference<K, V> next, LinkedList<MockReference<K, V>> queue) {
 			this.hash = hash;

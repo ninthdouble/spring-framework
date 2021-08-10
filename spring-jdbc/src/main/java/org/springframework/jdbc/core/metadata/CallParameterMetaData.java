@@ -16,17 +16,17 @@
 
 package org.springframework.jdbc.core.metadata;
 
-import java.sql.DatabaseMetaData;
-
 import org.springframework.lang.Nullable;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * Holder of meta-data for a specific parameter that is used for call processing.
  *
  * @author Thomas Risberg
  * @author Juergen Hoeller
- * @since 2.5
  * @see GenericCallMetaDataProvider
+ * @since 2.5
  */
 public class CallParameterMetaData {
 
@@ -57,10 +57,11 @@ public class CallParameterMetaData {
 
 	/**
 	 * Constructor taking all the properties including the function marker.
+	 *
 	 * @since 5.2.9
 	 */
 	public CallParameterMetaData(boolean function, @Nullable String columnName, int columnType,
-			int sqlType, @Nullable String typeName, boolean nullable) {
+								 int sqlType, @Nullable String typeName, boolean nullable) {
 
 		this.function = function;
 		this.parameterName = columnName;
@@ -73,6 +74,7 @@ public class CallParameterMetaData {
 
 	/**
 	 * Return whether this parameter is declared in a function.
+	 *
 	 * @since 5.2.9
 	 */
 	public boolean isFunction() {
@@ -99,6 +101,7 @@ public class CallParameterMetaData {
 	 * for our purposes: type {@link DatabaseMetaData#procedureColumnReturn} or
 	 * {@link DatabaseMetaData#procedureColumnResult}, or in case of a function,
 	 * {@link DatabaseMetaData#functionReturn}.
+	 *
 	 * @since 4.3.15
 	 */
 	public boolean isReturnParameter() {

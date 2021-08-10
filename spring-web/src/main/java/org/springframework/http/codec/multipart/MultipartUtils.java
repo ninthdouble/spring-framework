@@ -16,17 +16,18 @@
 
 package org.springframework.http.codec.multipart;
 
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 import java.io.IOException;
 import java.nio.channels.Channel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-
 /**
  * Various static utility methods for dealing with multipart parsing.
+ *
  * @author Arjen Poutsma
  * @since 5.3
  */
@@ -86,8 +87,7 @@ abstract class MultipartUtils {
 			if (channel.isOpen()) {
 				channel.close();
 			}
-		}
-		catch (IOException ignore) {
+		} catch (IOException ignore) {
 		}
 	}
 

@@ -16,15 +16,9 @@
 
 package org.springframework.core.style;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -96,10 +90,10 @@ class DefaultValueStylerTests {
 		int[] array = new int[0];
 		assertThat(styler.style(array)).isEqualTo("array<Object>[[empty]]");
 
-		array = new int[] { 1 };
+		array = new int[]{1};
 		assertThat(styler.style(array)).isEqualTo("array<Integer>[1]");
 
-		array = new int[] { 1, 2 };
+		array = new int[]{1, 2};
 		assertThat(styler.style(array)).isEqualTo("array<Integer>[1, 2]");
 	}
 
@@ -108,10 +102,10 @@ class DefaultValueStylerTests {
 		String[] array = new String[0];
 		assertThat(styler.style(array)).isEqualTo("array<String>[[empty]]");
 
-		array = new String[] { "str1" };
+		array = new String[]{"str1"};
 		assertThat(styler.style(array)).isEqualTo("array<String>['str1']");
 
-		array = new String[] { "str1", "str2" };
+		array = new String[]{"str1", "str2"};
 		assertThat(styler.style(array)).isEqualTo("array<String>['str1', 'str2']");
 	}
 

@@ -16,10 +16,7 @@
 
 package org.springframework.transaction.event;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.event.ApplicationListenerMethodAdapter;
 import org.springframework.core.ResolvableType;
@@ -28,6 +25,8 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -38,6 +37,47 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Oliver Drotbohm
  */
 public class TransactionalApplicationListenerMethodAdapterTests {
+
+	private static void assertPhase(Method method, TransactionPhase expected) {
+		assertThat(method).as("Method must not be null").isNotNull();
+		TransactionalEventListener annotation =
+				AnnotatedElementUtils.findMergedAnnotation(method, TransactionalEventListener.class);
+		assertThat(annotation.phase()).as("Wrong phase for '" + method + "'").isEqualTo(expected);
+	}
+
+	private static void supportsEventType(boolean match, Method method, ResolvableType eventType) {
+		ApplicationListenerMethodAdapter adapter = createTestInstance(method);
+		assertThat(adapter.supportsEventType(eventType)).as("Wrong match for event '" + eventType + "' on " + method).isEqualTo(match);
+	}
+
+	private static TransactionalApplicationListenerMethodAdapter createTestInstance(Method m) {
+		return new TransactionalApplicationListenerMethodAdapter("test", SampleEvents.class, m) {
+			@Override
+			protected Object getTargetBean() {
+				return new SampleEvents();
+			}
+		};
+	}
+
+	private static ResolvableType createGenericEventType(Class<?> payloadType) {
+		return ResolvableType.forClassWithGenerics(PayloadApplicationEvent.class, payloadType);
+	}
+
+	private static void runInTransaction(Runnable runnable) {
+		TransactionSynchronizationManager.setActualTransactionActive(true);
+		TransactionSynchronizationManager.initSynchronization();
+		try {
+			runnable.run();
+			TransactionSynchronizationManager.getSynchronizations().forEach(it -> {
+				it.beforeCommit(false);
+				it.afterCommit();
+				it.afterCompletion(TransactionSynchronization.STATUS_COMMITTED);
+			});
+		} finally {
+			TransactionSynchronizationManager.clearSynchronization();
+			TransactionSynchronizationManager.setActualTransactionActive(false);
+		}
+	}
 
 	@Test
 	public void defaultPhase() {
@@ -122,50 +162,6 @@ public class TransactionalApplicationListenerMethodAdapterTests {
 		assertThat(adapter.getTransactionPhase()).isEqualTo(TransactionPhase.AFTER_COMMIT);
 		assertThat(adapter.getListenerId()).endsWith("identifier");
 	}
-
-
-	private static void assertPhase(Method method, TransactionPhase expected) {
-		assertThat(method).as("Method must not be null").isNotNull();
-		TransactionalEventListener annotation =
-				AnnotatedElementUtils.findMergedAnnotation(method, TransactionalEventListener.class);
-		assertThat(annotation.phase()).as("Wrong phase for '" + method + "'").isEqualTo(expected);
-	}
-
-	private static void supportsEventType(boolean match, Method method, ResolvableType eventType) {
-		ApplicationListenerMethodAdapter adapter = createTestInstance(method);
-		assertThat(adapter.supportsEventType(eventType)).as("Wrong match for event '" + eventType + "' on " + method).isEqualTo(match);
-	}
-
-	private static TransactionalApplicationListenerMethodAdapter createTestInstance(Method m) {
-		return new TransactionalApplicationListenerMethodAdapter("test", SampleEvents.class, m) {
-			@Override
-			protected Object getTargetBean() {
-				return new SampleEvents();
-			}
-		};
-	}
-
-	private static ResolvableType createGenericEventType(Class<?> payloadType) {
-		return ResolvableType.forClassWithGenerics(PayloadApplicationEvent.class, payloadType);
-	}
-
-	private static void runInTransaction(Runnable runnable) {
-		TransactionSynchronizationManager.setActualTransactionActive(true);
-		TransactionSynchronizationManager.initSynchronization();
-		try {
-			runnable.run();
-			TransactionSynchronizationManager.getSynchronizations().forEach(it -> {
-				it.beforeCommit(false);
-				it.afterCommit();
-				it.afterCompletion(TransactionSynchronization.STATUS_COMMITTED);
-			});
-		}
-		finally {
-			TransactionSynchronizationManager.clearSynchronization();
-			TransactionSynchronizationManager.setActualTransactionActive(false);
-		}
-	}
-
 
 	static class SampleEvents {
 

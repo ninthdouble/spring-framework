@@ -16,25 +16,12 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.codec.ByteBufferEncoder;
 import org.springframework.core.codec.CharSequenceEncoder;
@@ -51,6 +38,18 @@ import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolverBuilder;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,12 +78,12 @@ public class MessageWriterResultHandlerTests {
 			writerList.add(new ResourceHttpMessageWriter());
 			writerList.add(new EncoderHttpMessageWriter<>(new Jaxb2XmlEncoder()));
 			writerList.add(new EncoderHttpMessageWriter<>(new Jackson2JsonEncoder()));
-		}
-		else {
+		} else {
 			writerList = Arrays.asList(writers);
 		}
 		RequestedContentTypeResolver resolver = new RequestedContentTypeResolverBuilder().build();
-		return new AbstractMessageWriterResultHandler(writerList, resolver) {};
+		return new AbstractMessageWriterResultHandler(writerList, resolver) {
+		};
 	}
 
 
@@ -189,6 +188,12 @@ public class MessageWriterResultHandlerTests {
 	}
 
 
+	private interface Identifiable extends Serializable {
+
+		@SuppressWarnings("unused")
+		Long getId();
+	}
+
 	@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 	@SuppressWarnings("unused")
 	private static class ParentClass {
@@ -211,7 +216,6 @@ public class MessageWriterResultHandlerTests {
 		}
 	}
 
-
 	@JsonTypeName("foo")
 	private static class Foo extends ParentClass {
 
@@ -219,7 +223,6 @@ public class MessageWriterResultHandlerTests {
 			super(parentProperty);
 		}
 	}
-
 
 	@JsonTypeName("bar")
 	private static class Bar extends ParentClass {
@@ -229,15 +232,7 @@ public class MessageWriterResultHandlerTests {
 		}
 	}
 
-
-	private interface Identifiable extends Serializable {
-
-		@SuppressWarnings("unused")
-		Long getId();
-	}
-
-
-	@SuppressWarnings({ "serial" })
+	@SuppressWarnings({"serial"})
 	private static class SimpleBean implements Identifiable {
 
 		private Long id;
@@ -264,29 +259,52 @@ public class MessageWriterResultHandlerTests {
 	@SuppressWarnings("unused")
 	private static class TestController {
 
-		Resource resource() { return null; }
+		Resource resource() {
+			return null;
+		}
 
-		String string() { return null; }
+		String string() {
+			return null;
+		}
 
-		void voidReturn() { }
+		void voidReturn() {
+		}
 
-		Mono<Void> monoVoid() { return null; }
+		Mono<Void> monoVoid() {
+			return null;
+		}
 
-		Completable completable() { return null; }
+		Completable completable() {
+			return null;
+		}
 
-		Flux<Void> fluxVoid() { return null; }
+		Flux<Void> fluxVoid() {
+			return null;
+		}
 
-		Observable<Void> observableVoid() { return null; }
+		Observable<Void> observableVoid() {
+			return null;
+		}
 
-		Flowable<Void> flowableVoid() { return null; }
+		Flowable<Void> flowableVoid() {
+			return null;
+		}
 
-		OutputStream outputStream() { return null; }
+		OutputStream outputStream() {
+			return null;
+		}
 
-		List<ParentClass> listParentClass() { return null; }
+		List<ParentClass> listParentClass() {
+			return null;
+		}
 
-		Identifiable identifiable() { return null; }
+		Identifiable identifiable() {
+			return null;
+		}
 
-		List<Identifiable> listIdentifiable() { return null; }
+		List<Identifiable> listIdentifiable() {
+			return null;
+		}
 	}
 
 }

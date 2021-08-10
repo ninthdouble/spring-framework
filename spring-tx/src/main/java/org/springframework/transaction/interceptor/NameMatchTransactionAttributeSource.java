@@ -16,16 +16,8 @@
 
 package org.springframework.transaction.interceptor;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.lang.Nullable;
@@ -34,14 +26,21 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringValueResolver;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Simple {@link TransactionAttributeSource} implementation that
  * allows attributes to be matched by registered name.
  *
  * @author Juergen Hoeller
- * @since 21.08.2003
  * @see #isMatch
  * @see MethodMapTransactionAttributeSource
+ * @since 21.08.2003
  */
 @SuppressWarnings("serial")
 public class NameMatchTransactionAttributeSource
@@ -53,7 +52,9 @@ public class NameMatchTransactionAttributeSource
 	 */
 	protected static final Log logger = LogFactory.getLog(NameMatchTransactionAttributeSource.class);
 
-	/** Keys are method names; values are TransactionAttributes. */
+	/**
+	 * Keys are method names; values are TransactionAttributes.
+	 */
 	private final Map<String, TransactionAttribute> nameMap = new HashMap<>();
 
 	@Nullable
@@ -63,6 +64,7 @@ public class NameMatchTransactionAttributeSource
 	/**
 	 * Set a name/attribute map, consisting of method names
 	 * (e.g. "myMethod") and {@link TransactionAttribute} instances.
+	 *
 	 * @see #setProperties
 	 * @see TransactionAttribute
 	 */
@@ -75,6 +77,7 @@ public class NameMatchTransactionAttributeSource
 	 * <p>Expects method names as keys and String attributes definitions as values,
 	 * parsable into {@link TransactionAttribute} instances via a
 	 * {@link TransactionAttributeEditor}.
+	 *
 	 * @see #setNameMap
 	 * @see TransactionAttributeEditor
 	 */
@@ -94,8 +97,9 @@ public class NameMatchTransactionAttributeSource
 	 * Add an attribute for a transactional method.
 	 * <p>Method names can be exact matches, or of the pattern "xxx*",
 	 * "*xxx", or "*xxx*" for matching multiple methods.
+	 *
 	 * @param methodName the name of the method
-	 * @param attr attribute associated with the method
+	 * @param attr       attribute associated with the method
 	 */
 	public void addTransactionalMethod(String methodName, TransactionAttribute attr) {
 		if (logger.isDebugEnabled()) {
@@ -113,7 +117,7 @@ public class NameMatchTransactionAttributeSource
 	}
 
 	@Override
-	public void afterPropertiesSet()  {
+	public void afterPropertiesSet() {
 		for (TransactionAttribute attr : this.nameMap.values()) {
 			if (attr instanceof DefaultTransactionAttribute) {
 				((DefaultTransactionAttribute) attr).resolveAttributeStrings(this.embeddedValueResolver);
@@ -152,6 +156,7 @@ public class NameMatchTransactionAttributeSource
 	 * Determine if the given method name matches the mapped name.
 	 * <p>The default implementation checks for "xxx*", "*xxx", and "*xxx*" matches,
 	 * as well as direct equality. Can be overridden in subclasses.
+	 *
 	 * @param methodName the method name of the class
 	 * @param mappedName the name in the descriptor
 	 * @return {@code true} if the names match

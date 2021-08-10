@@ -16,18 +16,17 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.time.Duration;
-import java.util.Collections;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.time.Duration;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,8 +52,7 @@ class SseServerResponseTests {
 		ServerResponse response = ServerResponse.sse(sse -> {
 			try {
 				sse.send(body);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new UncheckedIOException(ex);
 			}
 		});
@@ -74,8 +72,7 @@ class SseServerResponseTests {
 		ServerResponse response = ServerResponse.sse(sse -> {
 			try {
 				sse.send(person);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new UncheckedIOException(ex);
 			}
 		});
@@ -98,8 +95,7 @@ class SseServerResponseTests {
 						.comment("comment line 1\ncomment line 2")
 						.retry(Duration.ofSeconds(1))
 						.data("data");
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new UncheckedIOException(ex);
 			}
 		});

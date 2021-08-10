@@ -15,19 +15,18 @@
  */
 package org.springframework.core;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.springframework.tests.sample.objects.TestObject;
+import org.springframework.util.ConcurrentReferenceHashMap;
 import reactor.blockhound.BlockHound;
 import reactor.core.scheduler.ReactorBlockHoundIntegration;
 import reactor.core.scheduler.Schedulers;
 
-import org.springframework.tests.sample.objects.TestObject;
-import org.springframework.util.ConcurrentReferenceHashMap;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,7 +62,7 @@ public class SpringCoreBlockHoundIntegrationTests {
 		testNonBlockingTask(() -> {
 			Method setName = TestObject.class.getMethod("setName", String.class);
 			String[] names = new LocalVariableTableParameterNameDiscoverer().getParameterNames(setName);
-			assertThat(names).isEqualTo(new String[] {"name"});
+			assertThat(names).isEqualTo(new String[]{"name"});
 		});
 	}
 
@@ -101,8 +100,7 @@ public class SpringCoreBlockHoundIntegrationTests {
 			try {
 				task.run();
 				future.complete(null);
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				future.completeExceptionally(ex);
 			}
 		});

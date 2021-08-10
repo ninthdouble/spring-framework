@@ -16,14 +16,8 @@
 
 package org.springframework.http.codec.cbor;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.testfixture.io.buffer.AbstractLeakCheckingTests;
@@ -32,6 +26,11 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.MimeType;
 import org.springframework.web.testfixture.xml.Pojo;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -58,8 +57,7 @@ public class Jackson2CborEncoderTests extends AbstractLeakCheckingTests {
 						.readValue(DataBufferTestUtils.dumpBytes(dataBuffer));
 				assertThat(actual).isEqualTo(expected);
 				release(dataBuffer);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw new UncheckedIOException(ex);
 			}
 		};

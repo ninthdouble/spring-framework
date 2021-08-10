@@ -16,16 +16,10 @@
 
 package org.springframework.test.context.junit.jupiter.transaction;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.platform.testkit.engine.EngineTestKit;
 import org.junit.platform.testkit.engine.Events;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -36,10 +30,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.testkit.engine.EventConditions.event;
-import static org.junit.platform.testkit.engine.EventConditions.finishedWithFailure;
-import static org.junit.platform.testkit.engine.EventConditions.test;
+import static org.junit.platform.testkit.engine.EventConditions.*;
 import static org.junit.platform.testkit.engine.TestExecutionResultConditions.instanceOf;
 import static org.junit.platform.testkit.engine.TestExecutionResultConditions.message;
 import static org.springframework.test.transaction.TransactionAssert.assertThatTransaction;
@@ -50,8 +46,8 @@ import static org.springframework.test.transaction.TransactionAssert.assertThatT
  * Jupiter's {@link Timeout @Timeout}.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see org.springframework.test.context.junit4.TimedTransactionalSpringRunnerTests
+ * @since 5.2
  */
 class TimedTransactionalSpringExtensionTests {
 
@@ -64,10 +60,10 @@ class TimedTransactionalSpringExtensionTests {
 				.assertStatistics(stats -> stats.started(4).succeeded(2).failed(2));
 
 		events.failed().assertThatEvents().haveExactly(2,
-			event(test("WithExceededJUnitJupiterTimeout"),
-				finishedWithFailure(
-					instanceOf(TimeoutException.class),
-					message(msg -> msg.endsWith("timed out after 10 milliseconds")))));
+				event(test("WithExceededJUnitJupiterTimeout"),
+						finishedWithFailure(
+								instanceOf(TimeoutException.class),
+								message(msg -> msg.endsWith("timed out after 10 milliseconds")))));
 	}
 
 

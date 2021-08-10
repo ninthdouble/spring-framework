@@ -17,7 +17,6 @@
 package org.springframework.core.testfixture.io.buffer;
 
 import org.junit.jupiter.api.AfterEach;
-
 import org.springframework.core.io.buffer.DataBufferFactory;
 
 /**
@@ -26,8 +25,8 @@ import org.springframework.core.io.buffer.DataBufferFactory;
  * throwing an {@link AssertionError} if not.
  *
  * @author Arjen Poutsma
- * @since 5.1.3
  * @see LeakAwareDataBufferFactory
+ * @since 5.1.3
  */
 public abstract class AbstractLeakCheckingTests {
 

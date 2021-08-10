@@ -16,14 +16,13 @@
 
 package org.springframework.web.context.support;
 
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.Assert;
+
+import javax.servlet.ServletContext;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
-
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.Assert;
 
 /**
  * {@link org.springframework.context.support.LiveBeansView} subclass
@@ -41,6 +40,7 @@ public class ServletContextLiveBeansView extends org.springframework.context.sup
 
 	/**
 	 * Create a new LiveBeansView for the given ServletContext.
+	 *
 	 * @param servletContext current ServletContext
 	 */
 	public ServletContextLiveBeansView(ServletContext servletContext) {

@@ -16,9 +16,9 @@
 
 package org.springframework.web.servlet.function;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +30,7 @@ class DefaultAsyncServerResponseTests {
 	@Test
 	void block() {
 		ServerResponse wrappee = ServerResponse.ok().build();
-		CompletableFuture<ServerResponse> future =  CompletableFuture.completedFuture(wrappee);
+		CompletableFuture<ServerResponse> future = CompletableFuture.completedFuture(wrappee);
 		AsyncServerResponse response = AsyncServerResponse.create(future);
 
 		assertThat(response.block()).isSameAs(wrappee);

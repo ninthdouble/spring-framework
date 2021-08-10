@@ -16,17 +16,16 @@
 
 package org.springframework.jca.cci.object;
 
-import java.sql.SQLException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.InteractionSpec;
 import javax.resource.cci.Record;
 import javax.resource.cci.RecordFactory;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
+import java.sql.SQLException;
 
 /**
  * EIS operation object that expects mapped input and output objects,
@@ -40,9 +39,9 @@ import org.springframework.util.Assert;
  *
  * @author Thierry Templier
  * @author Juergen Hoeller
- * @since 1.2
  * @see #createInputRecord(javax.resource.cci.RecordFactory, Object)
  * @see #extractOutputData(javax.resource.cci.Record)
+ * @since 1.2
  * @deprecated as of 5.3, in favor of specific data access APIs
  * (or native CCI usage if there is no alternative)
  */
@@ -58,6 +57,7 @@ public abstract class MappingRecordOperation extends EisOperation {
 	/**
 	 * Convenient constructor with ConnectionFactory and specifications
 	 * (connection and interaction).
+	 *
 	 * @param connectionFactory the ConnectionFactory to use to obtain connections
 	 */
 	public MappingRecordOperation(ConnectionFactory connectionFactory, InteractionSpec interactionSpec) {
@@ -72,6 +72,7 @@ public abstract class MappingRecordOperation extends EisOperation {
 	 * <p>Specify a RecordCreator here if you always need to call CCI's
 	 * {@code Interaction.execute} variant with a passed-in output Record.
 	 * This RecordCreator will then be invoked to create a default output Record instance.
+	 *
 	 * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record)
 	 * @see javax.resource.cci.Interaction#execute(javax.resource.cci.InteractionSpec, Record, Record)
 	 * @see org.springframework.jca.cci.core.CciTemplate#setOutputRecordCreator
@@ -82,8 +83,9 @@ public abstract class MappingRecordOperation extends EisOperation {
 
 	/**
 	 * Execute the interaction encapsulated by this operation object.
+	 *
 	 * @param inputObject the input data, to be converted to a Record
-	 * by the {@code createInputRecord} method
+	 *                    by the {@code createInputRecord} method
 	 * @return the output data extracted with the {@code extractOutputData} method
 	 * @throws DataAccessException if there is any problem
 	 * @see #createInputRecord
@@ -101,10 +103,11 @@ public abstract class MappingRecordOperation extends EisOperation {
 	/**
 	 * Subclasses must implement this method to generate an input Record
 	 * from an input object passed into the {@code execute} method.
+	 *
 	 * @param inputObject the passed-in input object
 	 * @return the CCI input Record
 	 * @throws ResourceException if thrown by a CCI method, to be auto-converted
-	 * to a DataAccessException
+	 *                           to a DataAccessException
 	 * @see #execute(Object)
 	 */
 	protected abstract Record createInputRecord(RecordFactory recordFactory, Object inputObject)
@@ -113,10 +116,11 @@ public abstract class MappingRecordOperation extends EisOperation {
 	/**
 	 * Subclasses must implement this method to convert the Record returned
 	 * by CCI execution into a result object for the {@code execute} method.
+	 *
 	 * @param outputRecord the Record returned by CCI execution
 	 * @return the result object
 	 * @throws ResourceException if thrown by a CCI method, to be auto-converted
-	 * to a DataAccessException
+	 *                           to a DataAccessException
 	 * @see #execute(Object)
 	 */
 	protected abstract Object extractOutputData(Record outputRecord)

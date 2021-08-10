@@ -16,9 +16,9 @@
 
 package org.springframework.core.metrics;
 
-import java.util.function.Supplier;
-
 import org.springframework.lang.Nullable;
+
+import java.util.function.Supplier;
 
 /**
  * Step recording metrics about a particular phase or action happening during the {@link ApplicationStartup}.
@@ -61,14 +61,16 @@ public interface StartupStep {
 
 	/**
 	 * Add a {@link Tag} to the step.
-	 * @param key tag key
+	 *
+	 * @param key   tag key
 	 * @param value tag value
 	 */
 	StartupStep tag(String key, String value);
 
 	/**
 	 * Add a {@link Tag} to the step.
-	 * @param key tag key
+	 *
+	 * @param key   tag key
 	 * @param value {@link Supplier} for the tag value
 	 */
 	StartupStep tag(String key, Supplier<String> value);

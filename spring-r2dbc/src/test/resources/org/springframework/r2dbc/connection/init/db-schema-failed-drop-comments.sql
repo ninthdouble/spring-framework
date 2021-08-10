@@ -2,4 +2,7 @@
 drop table users;
 
 -- Create the test table
-create table users (last_name varchar(50) not null);
+create table users
+(
+    last_name varchar(50) not null
+);

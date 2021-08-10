@@ -16,17 +16,10 @@
 
 package org.springframework.util.xml;
 
-import java.util.Properties;
-
-import javax.xml.transform.ErrorListener;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.URIResolver;
-
 import org.junit.jupiter.api.Test;
+
+import javax.xml.transform.*;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -121,23 +114,23 @@ class TransformerUtilsTests {
 		}
 
 		@Override
-		public void setURIResolver(URIResolver resolver) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
 		public URIResolver getURIResolver() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setOutputProperties(Properties oformat) {
+		public void setURIResolver(URIResolver resolver) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public Properties getOutputProperties() {
 			return this.outputProperties;
+		}
+
+		@Override
+		public void setOutputProperties(Properties oformat) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -151,12 +144,12 @@ class TransformerUtilsTests {
 		}
 
 		@Override
-		public void setErrorListener(ErrorListener listener) throws IllegalArgumentException {
+		public ErrorListener getErrorListener() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public ErrorListener getErrorListener() {
+		public void setErrorListener(ErrorListener listener) throws IllegalArgumentException {
 			throw new UnsupportedOperationException();
 		}
 	}

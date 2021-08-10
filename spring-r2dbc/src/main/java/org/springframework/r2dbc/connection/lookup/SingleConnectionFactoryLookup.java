@@ -17,7 +17,6 @@
 package org.springframework.r2dbc.connection.lookup;
 
 import io.r2dbc.spi.ConnectionFactory;
-
 import org.springframework.util.Assert;
 
 /**
@@ -35,6 +34,7 @@ public class SingleConnectionFactoryLookup implements ConnectionFactoryLookup {
 
 	/**
 	 * Create a new instance of the {@link SingleConnectionFactoryLookup} class.
+	 *
 	 * @param connectionFactory the single {@link ConnectionFactory} to wrap
 	 */
 	public SingleConnectionFactoryLookup(ConnectionFactory connectionFactory) {

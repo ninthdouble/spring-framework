@@ -16,17 +16,16 @@
 
 package org.springframework.transaction.support;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.testfixture.beans.DerivedTestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.transaction.testfixture.CallCountingTransactionManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -57,11 +56,11 @@ public class SimpleTransactionScopeTests {
 
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				context.getBean(TestBean.class))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				context.getBean(DerivedTestBean.class))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 
 		TestBean bean1 = null;
 		DerivedTestBean bean2 = null;
@@ -90,8 +89,7 @@ public class SimpleTransactionScopeTests {
 			assertThat(context.getBean(DerivedTestBean.class)).isSameAs(bean2b);
 			assertThat(bean2b).isNotSameAs(bean2);
 			assertThat(bean2b).isNotSameAs(bean2a);
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationUtils.triggerAfterCompletion(TransactionSynchronization.STATUS_COMMITTED);
 			TransactionSynchronizationManager.clearSynchronization();
 		}
@@ -102,11 +100,11 @@ public class SimpleTransactionScopeTests {
 
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				context.getBean(TestBean.class))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				context.getBean(DerivedTestBean.class))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 	}
 
 	@Test

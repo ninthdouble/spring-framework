@@ -16,12 +16,7 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.util.Map;
-
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.Hints;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -33,6 +28,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.lang.Nullable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 /**
  * {@link HttpMessageWriter} for writing with {@link Part}. This can be useful
@@ -52,8 +51,8 @@ public class PartHttpMessageWriter extends MultipartWriterSupport implements Htt
 
 	@Override
 	public Mono<Void> write(Publisher<? extends Part> parts,
-			ResolvableType elementType, @Nullable MediaType mediaType, ReactiveHttpOutputMessage outputMessage,
-			Map<String, Object> hints) {
+							ResolvableType elementType, @Nullable MediaType mediaType, ReactiveHttpOutputMessage outputMessage,
+							Map<String, Object> hints) {
 
 		byte[] boundary = generateMultipartBoundary();
 

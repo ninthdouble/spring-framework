@@ -16,23 +16,23 @@
 
 package org.springframework.web.server.session;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.web.server.WebSession;
+import reactor.core.scheduler.Schedulers;
+
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Test;
-import reactor.core.scheduler.Schedulers;
-
-import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.web.server.WebSession;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 /**
  * Unit tests for {@link InMemoryWebSessionStore}.
+ *
  * @author Rob Winch
  */
 public class InMemoryWebSessionStoreTests {
@@ -133,7 +133,7 @@ public class InMemoryWebSessionStoreTests {
 	public void expirationCheckPeriod() {
 
 		DirectFieldAccessor accessor = new DirectFieldAccessor(this.store);
-		Map<?,?> sessions = (Map<?, ?>) accessor.getPropertyValue("sessions");
+		Map<?, ?> sessions = (Map<?, ?>) accessor.getPropertyValue("sessions");
 		assertThat(sessions).isNotNull();
 
 		// Create 100 sessions
@@ -155,7 +155,7 @@ public class InMemoryWebSessionStoreTests {
 		IntStream.range(0, 10000).forEach(i -> insertSession());
 		assertThatIllegalStateException().isThrownBy(
 				this::insertSession)
-			.withMessage("Max sessions limit reached: 10000");
+				.withMessage("Max sessions limit reached: 10000");
 	}
 
 	private WebSession insertSession() {

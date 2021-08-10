@@ -16,15 +16,11 @@
 
 package org.springframework.context.testfixture;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @author Juergen Hoeller
@@ -75,7 +71,7 @@ public class SimpleMapScope implements Scope, Serializable {
 	}
 
 	public void close() {
-		for (Iterator<Runnable> it = this.callbacks.iterator(); it.hasNext();) {
+		for (Iterator<Runnable> it = this.callbacks.iterator(); it.hasNext(); ) {
 			Runnable runnable = it.next();
 			runnable.run();
 		}

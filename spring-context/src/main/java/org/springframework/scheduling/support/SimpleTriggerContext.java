@@ -53,9 +53,10 @@ public class SimpleTriggerContext implements TriggerContext {
 	/**
 	 * Create a SimpleTriggerContext with the given time values,
 	 * exposing the system clock for the default time zone.
+	 *
 	 * @param lastScheduledExecutionTime last <i>scheduled</i> execution time
-	 * @param lastActualExecutionTime last <i>actual</i> execution time
-	 * @param lastCompletionTime last completion time
+	 * @param lastActualExecutionTime    last <i>actual</i> execution time
+	 * @param lastCompletionTime         last completion time
 	 */
 	public SimpleTriggerContext(Date lastScheduledExecutionTime, Date lastActualExecutionTime, Date lastCompletionTime) {
 		this();
@@ -67,9 +68,10 @@ public class SimpleTriggerContext implements TriggerContext {
 	/**
 	 * Create a SimpleTriggerContext with all time values set to {@code null},
 	 * exposing the given clock.
+	 *
 	 * @param clock the clock to use for trigger calculation
-	 * @since 5.3
 	 * @see #update(Date, Date, Date)
+	 * @since 5.3
 	 */
 	public SimpleTriggerContext(Clock clock) {
 		this.clock = clock;
@@ -78,9 +80,10 @@ public class SimpleTriggerContext implements TriggerContext {
 
 	/**
 	 * Update this holder's state with the latest time values.
- 	 * @param lastScheduledExecutionTime last <i>scheduled</i> execution time
-	 * @param lastActualExecutionTime last <i>actual</i> execution time
-	 * @param lastCompletionTime last completion time
+	 *
+	 * @param lastScheduledExecutionTime last <i>scheduled</i> execution time
+	 * @param lastActualExecutionTime    last <i>actual</i> execution time
+	 * @param lastCompletionTime         last completion time
 	 */
 	public void update(Date lastScheduledExecutionTime, Date lastActualExecutionTime, Date lastCompletionTime) {
 		this.lastScheduledExecutionTime = lastScheduledExecutionTime;

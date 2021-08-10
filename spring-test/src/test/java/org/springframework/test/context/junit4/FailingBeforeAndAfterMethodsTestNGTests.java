@@ -21,8 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.testng.TestNG;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
@@ -33,6 +31,7 @@ import org.springframework.test.context.testng.TrackingTestNGTestListener;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.util.ClassUtils;
+import org.testng.TestNG;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,24 +63,8 @@ public class FailingBeforeAndAfterMethodsTestNGTests {
 	protected final int expectedFailedConfigurationsCount;
 
 
-	@Parameters(name = "{0}")
-	public static Object[][] testData() {
-		return new Object[][] {
-			{ AlwaysFailingBeforeTestClassTestCase.class.getSimpleName(), 1, 0, 0, 1 },
-			{ AlwaysFailingAfterTestClassTestCase.class.getSimpleName(), 1, 1, 0, 1 },
-			{ AlwaysFailingPrepareTestInstanceTestCase.class.getSimpleName(), 1, 0, 0, 1 },
-			{ AlwaysFailingBeforeTestMethodTestCase.class.getSimpleName(), 1, 0, 0, 1 },
-			{ AlwaysFailingBeforeTestExecutionTestCase.class.getSimpleName(), 1, 0, 1, 0 },
-			{ AlwaysFailingAfterTestExecutionTestCase.class.getSimpleName(), 1, 0, 1, 0 },
-			{ AlwaysFailingAfterTestMethodTestCase.class.getSimpleName(), 1, 1, 0, 1 },
-			{ FailingBeforeTransactionTestCase.class.getSimpleName(), 1, 0, 0, 1 },
-			{ FailingAfterTransactionTestCase.class.getSimpleName(), 1, 1, 0, 1 }
-		};
-	}
-
-
 	public FailingBeforeAndAfterMethodsTestNGTests(String testClassName, int expectedTestStartCount,
-			int expectedTestSuccessCount, int expectedFailureCount, int expectedFailedConfigurationsCount) throws Exception {
+												   int expectedTestSuccessCount, int expectedFailureCount, int expectedFailedConfigurationsCount) throws Exception {
 
 		this.clazz = ClassUtils.forName(getClass().getName() + "." + testClassName, getClass().getClassLoader());
 		this.expectedTestStartCount = expectedTestStartCount;
@@ -90,6 +73,20 @@ public class FailingBeforeAndAfterMethodsTestNGTests {
 		this.expectedFailedConfigurationsCount = expectedFailedConfigurationsCount;
 	}
 
+	@Parameters(name = "{0}")
+	public static Object[][] testData() {
+		return new Object[][]{
+				{AlwaysFailingBeforeTestClassTestCase.class.getSimpleName(), 1, 0, 0, 1},
+				{AlwaysFailingAfterTestClassTestCase.class.getSimpleName(), 1, 1, 0, 1},
+				{AlwaysFailingPrepareTestInstanceTestCase.class.getSimpleName(), 1, 0, 0, 1},
+				{AlwaysFailingBeforeTestMethodTestCase.class.getSimpleName(), 1, 0, 0, 1},
+				{AlwaysFailingBeforeTestExecutionTestCase.class.getSimpleName(), 1, 0, 1, 0},
+				{AlwaysFailingAfterTestExecutionTestCase.class.getSimpleName(), 1, 0, 1, 0},
+				{AlwaysFailingAfterTestMethodTestCase.class.getSimpleName(), 1, 1, 0, 1},
+				{FailingBeforeTransactionTestCase.class.getSimpleName(), 1, 0, 0, 1},
+				{FailingAfterTransactionTestCase.class.getSimpleName(), 1, 1, 0, 1}
+		};
+	}
 
 	@Test
 	@Ignore("Fails against TestNG 6.11")
@@ -97,7 +94,7 @@ public class FailingBeforeAndAfterMethodsTestNGTests {
 		TrackingTestNGTestListener listener = new TrackingTestNGTestListener();
 		TestNG testNG = new TestNG();
 		testNG.addListener(listener);
-		testNG.setTestClasses(new Class<?>[] {this.clazz});
+		testNG.setTestClasses(new Class<?>[]{this.clazz});
 		testNG.setVerbose(0);
 		testNG.run();
 

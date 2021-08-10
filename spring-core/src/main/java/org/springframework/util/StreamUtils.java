@@ -16,20 +16,10 @@
 
 package org.springframework.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterInputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.nio.charset.Charset;
-
 import org.springframework.lang.Nullable;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * Simple utility methods for dealing with streams. The copy methods of this class are
@@ -41,8 +31,8 @@ import org.springframework.lang.Nullable;
  * @author Juergen Hoeller
  * @author Phillip Webb
  * @author Brian Clozel
- * @since 3.2.2
  * @see FileCopyUtils
+ * @since 3.2.2
  */
 public abstract class StreamUtils {
 
@@ -57,6 +47,7 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given InputStream into a new byte array.
 	 * <p>Leaves the stream open when done.
+	 *
 	 * @param in the stream to copy from (may be {@code null} or empty)
 	 * @return the new byte array that has been copied to (possibly empty)
 	 * @throws IOException in case of I/O errors
@@ -74,7 +65,8 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given InputStream into a String.
 	 * <p>Leaves the stream open when done.
-	 * @param in the InputStream to copy from (may be {@code null} or empty)
+	 *
+	 * @param in      the InputStream to copy from (may be {@code null} or empty)
 	 * @param charset the {@link Charset} to use to decode the bytes
 	 * @return the String that has been copied to (possibly empty)
 	 * @throws IOException in case of I/O errors
@@ -97,7 +89,8 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given {@link ByteArrayOutputStream} into a {@link String}.
 	 * <p>This is a more effective equivalent of {@code new String(baos.toByteArray(), charset)}.
-	 * @param baos the {@code ByteArrayOutputStream} to be copied into a String
+	 *
+	 * @param baos    the {@code ByteArrayOutputStream} to be copied into a String
 	 * @param charset the {@link Charset} to use to decode the bytes
 	 * @return the String that has been copied to (possibly empty)
 	 * @since 5.2.6
@@ -108,8 +101,7 @@ public abstract class StreamUtils {
 		try {
 			// Can be replaced with toString(Charset) call in Java 10+
 			return baos.toString(charset.name());
-		}
-		catch (UnsupportedEncodingException ex) {
+		} catch (UnsupportedEncodingException ex) {
 			// Should never happen
 			throw new IllegalArgumentException("Invalid charset name: " + charset, ex);
 		}
@@ -118,7 +110,8 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given byte array to the given OutputStream.
 	 * <p>Leaves the stream open when done.
-	 * @param in the byte array to copy from
+	 *
+	 * @param in  the byte array to copy from
 	 * @param out the OutputStream to copy to
 	 * @throws IOException in case of I/O errors
 	 */
@@ -133,9 +126,10 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given String to the given OutputStream.
 	 * <p>Leaves the stream open when done.
-	 * @param in the String to copy from
+	 *
+	 * @param in      the String to copy from
 	 * @param charset the Charset
-	 * @param out the OutputStream to copy to
+	 * @param out     the OutputStream to copy to
 	 * @throws IOException in case of I/O errors
 	 */
 	public static void copy(String in, Charset charset, OutputStream out) throws IOException {
@@ -151,7 +145,8 @@ public abstract class StreamUtils {
 	/**
 	 * Copy the contents of the given InputStream to the given OutputStream.
 	 * <p>Leaves both streams open when done.
-	 * @param in the InputStream to copy from
+	 *
+	 * @param in  the InputStream to copy from
 	 * @param out the OutputStream to copy to
 	 * @return the number of bytes copied
 	 * @throws IOException in case of I/O errors
@@ -176,10 +171,11 @@ public abstract class StreamUtils {
 	 * <p>If the specified range exceeds the length of the InputStream, this copies
 	 * up to the end of the stream and returns the actual number of copied bytes.
 	 * <p>Leaves both streams open when done.
-	 * @param in the InputStream to copy from
-	 * @param out the OutputStream to copy to
+	 *
+	 * @param in    the InputStream to copy from
+	 * @param out   the OutputStream to copy to
 	 * @param start the position to start copying from
-	 * @param end the position to end copying
+	 * @param end   the position to end copying
 	 * @return the number of bytes copied
 	 * @throws IOException in case of I/O errors
 	 * @since 4.3
@@ -199,12 +195,10 @@ public abstract class StreamUtils {
 			int bytesRead = in.read(buffer);
 			if (bytesRead == -1) {
 				break;
-			}
-			else if (bytesRead <= bytesToCopy) {
+			} else if (bytesRead <= bytesToCopy) {
 				out.write(buffer, 0, bytesRead);
 				bytesToCopy -= bytesRead;
-			}
-			else {
+			} else {
 				out.write(buffer, 0, (int) bytesToCopy);
 				bytesToCopy = 0;
 			}
@@ -215,6 +209,7 @@ public abstract class StreamUtils {
 	/**
 	 * Drain the remaining content of the given InputStream.
 	 * <p>Leaves the InputStream open when done.
+	 *
 	 * @param in the InputStream to drain
 	 * @return the number of bytes read
 	 * @throws IOException in case of I/O errors
@@ -233,6 +228,7 @@ public abstract class StreamUtils {
 
 	/**
 	 * Return an efficient empty {@link InputStream}.
+	 *
 	 * @return a {@link ByteArrayInputStream} based on an empty byte array
 	 * @since 4.2.2
 	 */
@@ -243,6 +239,7 @@ public abstract class StreamUtils {
 	/**
 	 * Return a variant of the given {@link InputStream} where calling
 	 * {@link InputStream#close() close()} has no effect.
+	 *
 	 * @param in the InputStream to decorate
 	 * @return a version of the InputStream that ignores calls to close
 	 */
@@ -254,6 +251,7 @@ public abstract class StreamUtils {
 	/**
 	 * Return a variant of the given {@link OutputStream} where calling
 	 * {@link OutputStream#close() close()} has no effect.
+	 *
 	 * @param out the OutputStream to decorate
 	 * @return a version of the OutputStream that ignores calls to close
 	 */

@@ -18,7 +18,6 @@ package org.springframework.test.context.junit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.test.annotation.Repeat;
 import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,8 +33,8 @@ import static org.springframework.test.transaction.TransactionAssert.assertThatT
  * timeout} attribute.
  *
  * @author Sam Brannen
- * @since 2.5
  * @see org.springframework.test.context.junit.jupiter.transaction.TimedTransactionalSpringExtensionTests
+ * @since 2.5
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration("transactionalTests-context.xml")

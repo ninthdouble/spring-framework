@@ -32,8 +32,8 @@ import org.springframework.util.Assert;
  *
  * @author Juergen Hoeller
  * @author Arjen Poutsma
- * @since 3.0
  * @see CronExpression
+ * @since 3.0
  */
 public class CronTrigger implements Trigger {
 
@@ -44,8 +44,9 @@ public class CronTrigger implements Trigger {
 
 	/**
 	 * Build a {@code CronTrigger} from the pattern provided in the default time zone.
+	 *
 	 * @param expression a space-separated list of time fields, following cron
-	 * expression conventions
+	 *                   expression conventions
 	 */
 	public CronTrigger(String expression) {
 		this(expression, ZoneId.systemDefault());
@@ -53,9 +54,10 @@ public class CronTrigger implements Trigger {
 
 	/**
 	 * Build a {@code CronTrigger} from the pattern provided in the given time zone.
+	 *
 	 * @param expression a space-separated list of time fields, following cron
-	 * expression conventions
-	 * @param timeZone a time zone in which the trigger times will be generated
+	 *                   expression conventions
+	 * @param timeZone   a time zone in which the trigger times will be generated
 	 */
 	public CronTrigger(String expression, TimeZone timeZone) {
 		this(expression, timeZone.toZoneId());
@@ -63,11 +65,12 @@ public class CronTrigger implements Trigger {
 
 	/**
 	 * Build a {@code CronTrigger} from the pattern provided in the given time zone.
+	 *
 	 * @param expression a space-separated list of time fields, following cron
-	 * expression conventions
-	 * @param zoneId a time zone in which the trigger times will be generated
-	 * @since 5.3
+	 *                   expression conventions
+	 * @param zoneId     a time zone in which the trigger times will be generated
 	 * @see CronExpression#parse(String)
+	 * @since 5.3
 	 */
 	public CronTrigger(String expression, ZoneId zoneId) {
 		Assert.hasLength(expression, "Expression must not be empty");
@@ -103,8 +106,7 @@ public class CronTrigger implements Trigger {
 				// in order to prevent accidental re-fires in the same second.
 				date = scheduled;
 			}
-		}
-		else {
+		} else {
 			date = new Date();
 		}
 		ZonedDateTime dateTime = ZonedDateTime.ofInstant(date.toInstant(), this.zoneId);

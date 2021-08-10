@@ -16,20 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,11 +34,7 @@ import org.springframework.http.codec.multipart.Part;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.DispatcherHandler;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -58,6 +42,17 @@ import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.AbstractHttpHandlerIntegrationTests;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.UndertowHttpServer;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,6 +60,35 @@ class MultipartIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 
 	private WebClient webClient;
 
+	private static void verifyContents(Path tempFile, Resource resource) {
+		try {
+			byte[] tempBytes = Files.readAllBytes(tempFile);
+			// Use FileCopyUtils since the resource might reside in a JAR instead of in the file system.
+			byte[] resourceBytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
+			assertThat(tempBytes).isEqualTo(resourceBytes);
+		} catch (IOException ex) {
+			throw new AssertionError(ex);
+		}
+	}
+
+	private static String partMapDescription(MultiValueMap<String, Part> partsMap) {
+		return partsMap.keySet().stream().sorted()
+				.map(key -> partListDescription(partsMap.get(key)))
+				.collect(Collectors.joining(",", "Map[", "]"));
+	}
+
+	private static Mono<String> partFluxDescription(Flux<? extends Part> partsFlux) {
+		return partsFlux.collectList().map(MultipartIntegrationTests::partListDescription);
+	}
+
+	private static String partListDescription(List<? extends Part> parts) {
+		return parts.stream().map(MultipartIntegrationTests::partDescription)
+				.collect(Collectors.joining(",", "[", "]"));
+	}
+
+	private static String partDescription(Part part) {
+		return part instanceof FilePart ? part.name() + ":" + ((FilePart) part).filename() : part.name();
+	}
 
 	@Override
 	protected HttpHandler createHttpHandler() {
@@ -79,7 +103,6 @@ class MultipartIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 		super.startServer(httpServer);
 		this.webClient = WebClient.create("http://localhost:" + this.port);
 	}
-
 
 	@ParameterizedHttpServerTest
 	void requestPart(HttpServer httpServer) throws Exception {
@@ -209,19 +232,6 @@ class MultipartIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 		return builder.build();
 	}
 
-	private static void verifyContents(Path tempFile, Resource resource) {
-		try {
-			byte[] tempBytes = Files.readAllBytes(tempFile);
-			// Use FileCopyUtils since the resource might reside in a JAR instead of in the file system.
-			byte[] resourceBytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
-			assertThat(tempBytes).isEqualTo(resourceBytes);
-		}
-		catch (IOException ex) {
-			throw new AssertionError(ex);
-		}
-	}
-
-
 	@Configuration
 	@EnableWebFlux
 	@SuppressWarnings("unused")
@@ -239,8 +249,8 @@ class MultipartIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 
 		@PostMapping("/requestPart")
 		void requestPart(@RequestPart FormFieldPart fieldPart,
-				@RequestPart("fileParts") FilePart fileParts,
-				@RequestPart("jsonPart") Mono<Person> personMono) {
+						 @RequestPart("fileParts") FilePart fileParts,
+						 @RequestPart("jsonPart") Mono<Person> personMono) {
 
 			assertThat(fieldPart.value()).isEqualTo("fieldValue");
 			assertThat(partDescription(fileParts)).isEqualTo("fileParts:foo.txt");
@@ -278,40 +288,20 @@ class MultipartIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 		}
 
 		private Mono<Path> createTempFile(String suffix) {
-					return Mono.defer(() -> {
-						try {
-							return Mono.just(Files.createTempFile("MultipartIntegrationTests", suffix));
-						}
-						catch (IOException ex) {
-							return Mono.error(ex);
-						}
-					})
-							.subscribeOn(Schedulers.boundedElastic());
+			return Mono.defer(() -> {
+				try {
+					return Mono.just(Files.createTempFile("MultipartIntegrationTests", suffix));
+				} catch (IOException ex) {
+					return Mono.error(ex);
 				}
+			})
+					.subscribeOn(Schedulers.boundedElastic());
+		}
 
 		@PostMapping("/modelAttribute")
 		String modelAttribute(@ModelAttribute FormBean formBean) {
 			return formBean.toString();
 		}
-	}
-
-	private static String partMapDescription(MultiValueMap<String, Part> partsMap) {
-		return partsMap.keySet().stream().sorted()
-				.map(key -> partListDescription(partsMap.get(key)))
-				.collect(Collectors.joining(",", "Map[", "]"));
-	}
-
-	private static Mono<String> partFluxDescription(Flux<? extends Part> partsFlux) {
-		return partsFlux.collectList().map(MultipartIntegrationTests::partListDescription);
-	}
-
-	private static String partListDescription(List<? extends Part> parts) {
-		return parts.stream().map(MultipartIntegrationTests::partDescription)
-				.collect(Collectors.joining(",", "[", "]"));
-	}
-
-	private static String partDescription(Part part) {
-		return part instanceof FilePart ? part.name() + ":" + ((FilePart) part).filename() : part.name();
 	}
 
 	static class FormBean {

@@ -16,10 +16,10 @@
 
 package org.springframework.http.codec.multipart;
 
+import reactor.core.publisher.Mono;
+
 import java.io.File;
 import java.nio.file.Path;
-
-import reactor.core.publisher.Mono;
 
 /**
  * Specialization of {@link Part} that represents an uploaded file received in
@@ -39,6 +39,7 @@ public interface FilePart extends Part {
 	 * as ".." and others that can be used maliciously. It is recommended to not
 	 * use this filename directly. Preferably generate a unique one and save
 	 * this one one somewhere for reference, if necessary.
+	 *
 	 * @return the original filename, or the empty String if no file has been chosen
 	 * in the multipart form, or {@code null} if not defined or not available
 	 * @see <a href="https://tools.ietf.org/html/rfc7578#section-4.2">RFC 7578, Section 4.2</a>
@@ -51,6 +52,7 @@ public interface FilePart extends Part {
 	 * given destination file. If the destination file already exists, it will
 	 * be truncated first.
 	 * <p>The default implementation delegates to {@link #transferTo(Path)}.
+	 *
 	 * @param dest the target file
 	 * @return completion {@code Mono} with the result of the file transfer,
 	 * possibly {@link IllegalStateException} if the part isn't a file
@@ -64,11 +66,12 @@ public interface FilePart extends Part {
 	 * Convenience method to copy the content of the file in this part to the
 	 * given destination file. If the destination file already exists, it will
 	 * be truncated first.
+	 *
 	 * @param dest the target file
 	 * @return completion {@code Mono} with the result of the file transfer,
 	 * possibly {@link IllegalStateException} if the part isn't a file
-	 * @since 5.1
 	 * @see #transferTo(File)
+	 * @since 5.1
 	 */
 	Mono<Void> transferTo(Path dest);
 

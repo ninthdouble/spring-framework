@@ -16,14 +16,7 @@
 
 package org.springframework.beans.factory;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-
+import org.openjdk.jmh.annotations.*;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -38,6 +31,27 @@ import org.springframework.beans.testfixture.beans.TestBean;
  */
 @BenchmarkMode(Mode.Throughput)
 public class DefaultListableBeanFactoryBenchmark {
+
+	@Benchmark
+	public Object prototypeCreation(PrototypeCreationState state) {
+		return state.beanFactory.getBean("test");
+	}
+
+	@Benchmark
+	public Object singletLookup(SingletonLookupState state) {
+		return state.beanFactory.getBean("test");
+	}
+
+	@Benchmark
+	public Object singletLookupByType(SingletonLookupState state) {
+		return state.beanFactory.getBean(TestBean.class);
+	}
+
+	// See SPR-6870
+	@Benchmark
+	public Object singletLookupByTypeManyBeans(SingletonLookupState state) {
+		return state.beanFactory.getBean(B.class);
+	}
 
 	public static class Shared {
 		public DefaultListableBeanFactory beanFactory;
@@ -87,11 +101,6 @@ public class DefaultListableBeanFactoryBenchmark {
 
 	}
 
-	@Benchmark
-	public Object prototypeCreation(PrototypeCreationState state) {
-		return state.beanFactory.getBean("test");
-	}
-
 	@State(Scope.Benchmark)
 	public static class SingletonLookupState extends Shared {
 
@@ -101,16 +110,6 @@ public class DefaultListableBeanFactoryBenchmark {
 			this.beanFactory.registerBeanDefinition("test", new RootBeanDefinition(TestBean.class));
 			this.beanFactory.freezeConfiguration();
 		}
-	}
-
-	@Benchmark
-	public Object singletLookup(SingletonLookupState state) {
-		return state.beanFactory.getBean("test");
-	}
-
-	@Benchmark
-	public Object singletLookupByType(SingletonLookupState state) {
-		return state.beanFactory.getBean(TestBean.class);
 	}
 
 	@State(Scope.Benchmark)
@@ -125,12 +124,6 @@ public class DefaultListableBeanFactoryBenchmark {
 			}
 			this.beanFactory.freezeConfiguration();
 		}
-	}
-
-	// See SPR-6870
-	@Benchmark
-	public Object singletLookupByTypeManyBeans(SingletonLookupState state) {
-		return state.beanFactory.getBean(B.class);
 	}
 
 	static class A {

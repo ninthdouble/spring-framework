@@ -16,15 +16,14 @@
 
 package org.springframework.web.reactive.socket.client;
 
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
-
 import org.apache.tomcat.websocket.WsWebSocketContainer;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.web.reactive.socket.HandshakeInfo;
 import org.springframework.web.reactive.socket.adapter.StandardWebSocketSession;
 import org.springframework.web.reactive.socket.adapter.TomcatWebSocketSession;
+import reactor.core.publisher.Sinks;
+
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
 
 /**
  * {@link WebSocketClient} implementation for use with the Java WebSocket API.

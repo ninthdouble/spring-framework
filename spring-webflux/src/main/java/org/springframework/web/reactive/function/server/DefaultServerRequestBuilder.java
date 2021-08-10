@@ -16,6 +16,27 @@
 
 package org.springframework.web.reactive.function.server;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.codec.Hints;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.*;
+import org.springframework.http.codec.HttpMessageReader;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.http.server.RequestPath;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.lang.Nullable;
+import org.springframework.util.*;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebSession;
+import org.springframework.web.util.UriUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
@@ -28,36 +49,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.core.ResolvableType;
-import org.springframework.core.codec.Hints;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.InvalidMediaTypeException;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.HttpMessageReader;
-import org.springframework.http.codec.multipart.Part;
-import org.springframework.http.server.RequestPath;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebSession;
-import org.springframework.web.util.UriUtils;
-
 /**
  * Default {@link ServerRequest.Builder} implementation.
  *
@@ -68,19 +59,12 @@ import org.springframework.web.util.UriUtils;
 class DefaultServerRequestBuilder implements ServerRequest.Builder {
 
 	private final List<HttpMessageReader<?>> messageReaders;
-
-	private ServerWebExchange exchange;
-
-	private String methodName;
-
-	private URI uri;
-
 	private final HttpHeaders headers = new HttpHeaders();
-
 	private final MultiValueMap<String, HttpCookie> cookies = new LinkedMultiValueMap<>();
-
 	private final Map<String, Object> attributes = new LinkedHashMap<>();
-
+	private ServerWebExchange exchange;
+	private String methodName;
+	private URI uri;
 	private Flux<DataBuffer> body = Flux.empty();
 
 
@@ -205,7 +189,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 		private final Flux<DataBuffer> body;
 
 		public BuiltServerHttpRequest(String id, String method, URI uri, HttpHeaders headers,
-				MultiValueMap<String, HttpCookie> cookies, Flux<DataBuffer> body) {
+									  MultiValueMap<String, HttpCookie> cookies, Flux<DataBuffer> body) {
 
 			this.id = id;
 			this.method = method;
@@ -232,8 +216,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 					String value = matcher.group(3);
 					if (value != null) {
 						value = UriUtils.decode(value, StandardCharsets.UTF_8);
-					}
-					else {
+					} else {
 						value = (StringUtils.hasLength(eq) ? "" : null);
 					}
 					queryParams.add(name, value);
@@ -309,7 +292,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 		private final Mono<MultiValueMap<String, Part>> multipartDataMono;
 
 		DelegatingServerWebExchange(ServerHttpRequest request, Map<String, Object> attributes,
-				ServerWebExchange delegate, List<HttpMessageReader<?>> messageReaders) {
+									ServerWebExchange delegate, List<HttpMessageReader<?>> messageReaders) {
 
 			this.request = request;
 			this.attributes = attributes;
@@ -320,7 +303,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 
 		@SuppressWarnings("unchecked")
 		private static Mono<MultiValueMap<String, String>> initFormData(ServerHttpRequest request,
-				List<HttpMessageReader<?>> readers) {
+																		List<HttpMessageReader<?>> readers) {
 
 			try {
 				MediaType contentType = request.getHeaders().getContentType();
@@ -333,8 +316,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 							.switchIfEmpty(EMPTY_FORM_DATA)
 							.cache();
 				}
-			}
-			catch (InvalidMediaTypeException ex) {
+			} catch (InvalidMediaTypeException ex) {
 				// Ignore
 			}
 			return EMPTY_FORM_DATA;
@@ -342,7 +324,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 
 		@SuppressWarnings("unchecked")
 		private static Mono<MultiValueMap<String, Part>> initMultipartData(ServerHttpRequest request,
-				List<HttpMessageReader<?>> readers) {
+																		   List<HttpMessageReader<?>> readers) {
 
 			try {
 				MediaType contentType = request.getHeaders().getContentType();
@@ -355,8 +337,7 @@ class DefaultServerRequestBuilder implements ServerRequest.Builder {
 							.switchIfEmpty(EMPTY_MULTIPART_DATA)
 							.cache();
 				}
-			}
-			catch (InvalidMediaTypeException ex) {
+			} catch (InvalidMediaTypeException ex) {
 				// Ignore
 			}
 			return EMPTY_MULTIPART_DATA;

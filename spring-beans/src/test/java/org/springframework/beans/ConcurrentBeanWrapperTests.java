@@ -16,17 +16,17 @@
 
 package org.springframework.beans;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,6 +43,34 @@ class ConcurrentBeanWrapperTests {
 	private final Set<TestRun> set = ConcurrentHashMap.newKeySet();
 
 	private Throwable ex = null;
+
+	private static void performSet() {
+		TestBean bean = new TestBean();
+
+		Properties p = (Properties) System.getProperties().clone();
+
+		assertThat(p).as("The System properties must not be empty").isNotEmpty();
+
+		for (Iterator<?> i = p.entrySet().iterator(); i.hasNext(); ) {
+			i.next();
+			if (Math.random() > 0.9) {
+				i.remove();
+			}
+		}
+
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		try {
+			p.store(buffer, null);
+		} catch (IOException e) {
+			// ByteArrayOutputStream does not throw
+			// any IOException
+		}
+		String value = new String(buffer.toByteArray());
+
+		BeanWrapperImpl wrapper = new BeanWrapperImpl(bean);
+		wrapper.setPropertyValue("properties", value);
+		assertThat(bean.getProperties()).isEqualTo(p);
+	}
 
 	@RepeatedTest(100)
 	void testSingleThread() {
@@ -63,8 +91,7 @@ class ConcurrentBeanWrapperTests {
 			while (!set.isEmpty() && ex == null) {
 				try {
 					wait();
-				}
-				catch (InterruptedException e) {
+				} catch (InterruptedException e) {
 					logger.info(e.toString());
 				}
 				logger.info(set.size() + " threads still active.");
@@ -74,36 +101,6 @@ class ConcurrentBeanWrapperTests {
 			throw new AssertionError("Unexpected exception", ex);
 		}
 	}
-
-	private static void performSet() {
-		TestBean bean = new TestBean();
-
-		Properties p = (Properties) System.getProperties().clone();
-
-		assertThat(p).as("The System properties must not be empty").isNotEmpty();
-
-		for (Iterator<?> i = p.entrySet().iterator(); i.hasNext();) {
-			i.next();
-			if (Math.random() > 0.9) {
-				i.remove();
-			}
-		}
-
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		try {
-			p.store(buffer, null);
-		}
-		catch (IOException e) {
-			// ByteArrayOutputStream does not throw
-			// any IOException
-		}
-		String value = new String(buffer.toByteArray());
-
-		BeanWrapperImpl wrapper = new BeanWrapperImpl(bean);
-		wrapper.setPropertyValue("properties", value);
-		assertThat(bean.getProperties()).isEqualTo(p);
-	}
-
 
 	private static class TestRun implements Runnable {
 
@@ -119,11 +116,9 @@ class ConcurrentBeanWrapperTests {
 				for (int i = 0; i < 100; i++) {
 					performSet();
 				}
-			}
-			catch (Throwable e) {
+			} catch (Throwable e) {
 				test.ex = e;
-			}
-			finally {
+			} finally {
 				synchronized (test) {
 					test.set.remove(this);
 					test.notifyAll();

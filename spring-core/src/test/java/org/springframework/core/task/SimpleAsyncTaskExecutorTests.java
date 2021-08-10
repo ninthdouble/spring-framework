@@ -16,15 +16,12 @@
 
 package org.springframework.core.task;
 
-import java.util.concurrent.ThreadFactory;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.ConcurrencyThrottleSupport;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.util.concurrent.ThreadFactory;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rick Evans
@@ -83,8 +80,7 @@ class SimpleAsyncTaskExecutorTests {
 			executor.execute(task);
 			try {
 				monitor.wait();
-			}
-			catch (InterruptedException ignored) {
+			} catch (InterruptedException ignored) {
 			}
 		}
 	}
@@ -112,8 +108,7 @@ class SimpleAsyncTaskExecutorTests {
 			synchronized (this.monitor) {
 				try {
 					doRun();
-				}
-				finally {
+				} finally {
 					this.monitor.notifyAll();
 				}
 			}

@@ -16,22 +16,17 @@
 
 package org.springframework.beans.factory.xml;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Element;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.TypedStringValue;
-import org.springframework.beans.factory.parsing.AliasDefinition;
-import org.springframework.beans.factory.parsing.BeanComponentDefinition;
-import org.springframework.beans.factory.parsing.ComponentDefinition;
-import org.springframework.beans.factory.parsing.ImportDefinition;
-import org.springframework.beans.factory.parsing.PassThroughSourceExtractor;
+import org.springframework.beans.factory.parsing.*;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.testfixture.beans.CollectingReaderEventListener;
 import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.Element;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +40,6 @@ public class EventPublicationTests {
 	private final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 
 	private final CollectingReaderEventListener eventListener = new CollectingReaderEventListener();
-
 
 
 	@BeforeEach

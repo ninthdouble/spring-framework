@@ -16,14 +16,13 @@
 
 package org.springframework.test.context.support;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.Configuration;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -54,16 +53,22 @@ class AnnotationConfigContextLoaderUtilsTests {
 	void detectDefaultConfigurationClassesWithExplicitConfigurationAnnotation() {
 		Class<?>[] configClasses = detectDefaultConfigurationClasses(ExplicitConfigTestCase.class);
 		assertThat(configClasses).isNotNull();
-		assertThat(configClasses).isEqualTo(new Class<?>[] { ExplicitConfigTestCase.Config.class });
+		assertThat(configClasses).isEqualTo(new Class<?>[]{ExplicitConfigTestCase.Config.class});
 	}
 
 	@Test
 	void detectDefaultConfigurationClassesWithConfigurationMetaAnnotation() {
 		Class<?>[] configClasses = detectDefaultConfigurationClasses(MetaAnnotatedConfigTestCase.class);
 		assertThat(configClasses).isNotNull();
-		assertThat(configClasses).isEqualTo(new Class<?>[] { MetaAnnotatedConfigTestCase.Config.class });
+		assertThat(configClasses).isEqualTo(new Class<?>[]{MetaAnnotatedConfigTestCase.Config.class});
 	}
 
+
+	@Configuration
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	private static @interface MetaConfig {
+	}
 
 	private static class NoConfigTestCase {
 
@@ -74,12 +79,6 @@ class AnnotationConfigContextLoaderUtilsTests {
 		@Configuration
 		static class Config {
 		}
-	}
-
-	@Configuration
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	private static @interface MetaConfig {
 	}
 
 	private static class MetaAnnotatedConfigTestCase {

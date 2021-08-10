@@ -16,14 +16,14 @@
 
 package org.springframework.jdbc.datasource.init;
 
+import org.springframework.util.Assert;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * Composite {@link DatabasePopulator} that delegates to a list of given
@@ -42,6 +42,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create an empty {@code CompositeDatabasePopulator}.
+	 *
 	 * @see #setPopulators
 	 * @see #addPopulators
 	 */
@@ -50,6 +51,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create a {@code CompositeDatabasePopulator} with the given populators.
+	 *
 	 * @param populators one or more populators to delegate to
 	 * @since 4.3
 	 */
@@ -60,6 +62,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create a {@code CompositeDatabasePopulator} with the given populators.
+	 *
 	 * @param populators one or more populators to delegate to
 	 * @since 4.3
 	 */

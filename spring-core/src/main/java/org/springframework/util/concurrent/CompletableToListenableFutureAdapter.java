@@ -16,20 +16,16 @@
 
 package org.springframework.util.concurrent;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * Adapts a {@link CompletableFuture} or {@link CompletionStage} into a
  * Spring {@link ListenableFuture}.
  *
+ * @param <T> the result type returned by this Future's {@code get} method
  * @author Sebastien Deleuze
  * @author Juergen Hoeller
  * @since 4.2
- * @param <T> the result type returned by this Future's {@code get} method
  */
 public class CompletableToListenableFutureAdapter<T> implements ListenableFuture<T> {
 
@@ -40,6 +36,7 @@ public class CompletableToListenableFutureAdapter<T> implements ListenableFuture
 
 	/**
 	 * Create a new adapter for the given {@link CompletionStage}.
+	 *
 	 * @since 4.3.7
 	 */
 	public CompletableToListenableFutureAdapter(CompletionStage<T> completionStage) {
@@ -54,8 +51,7 @@ public class CompletableToListenableFutureAdapter<T> implements ListenableFuture
 		this.completableFuture.whenComplete((result, ex) -> {
 			if (ex != null) {
 				this.callbacks.failure(ex);
-			}
-			else {
+			} else {
 				this.callbacks.success(result);
 			}
 		});

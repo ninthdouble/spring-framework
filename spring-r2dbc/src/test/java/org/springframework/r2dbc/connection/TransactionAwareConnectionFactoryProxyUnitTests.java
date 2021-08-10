@@ -16,25 +16,20 @@
 
 package org.springframework.r2dbc.connection;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Wrapped;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.transaction.reactive.TransactionalOperator;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.verifyNoInteractions;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for {@link TransactionAwareConnectionFactoryProxy}.
@@ -55,7 +50,7 @@ class TransactionAwareConnectionFactoryProxyUnitTests {
 	R2dbcTransactionManager tm;
 
 	@BeforeEach
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	void before() {
 		when(connectionFactoryMock.create()).thenReturn((Mono) Mono.just(connectionMock1),
 				(Mono) Mono.just(connectionMock2), (Mono) Mono.just(connectionMock3));
@@ -84,8 +79,8 @@ class TransactionAwareConnectionFactoryProxyUnitTests {
 
 		new TransactionAwareConnectionFactoryProxy(connectionFactoryMock).create()
 				.map(Connection.class::cast).flatMap(
-						connection -> Mono.from(connection.close()).then(Mono.just(connection))).as(
-								StepVerifier::create)
+				connection -> Mono.from(connection.close()).then(Mono.just(connection))).as(
+				StepVerifier::create)
 				.consumeNextWith(wrapped -> assertThat(((Wrapped<?>) wrapped).unwrap()).isEqualTo(connectionMock1))
 				.verifyComplete();
 	}
@@ -104,8 +99,8 @@ class TransactionAwareConnectionFactoryProxyUnitTests {
 
 		new TransactionAwareConnectionFactoryProxy(connectionFactoryMock).create()
 				.map(Connection.class::cast).flatMap(
-						connection -> Mono.from(connection.close())
-								.then(Mono.just(connection))).as(StepVerifier::create)
+				connection -> Mono.from(connection.close())
+						.then(Mono.just(connection))).as(StepVerifier::create)
 				.consumeNextWith(connection -> assertThatIllegalStateException().isThrownBy(
 						connection::getMetadata)).verifyComplete();
 	}

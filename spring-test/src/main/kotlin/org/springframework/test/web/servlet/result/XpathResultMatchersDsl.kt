@@ -27,7 +27,7 @@ import org.w3c.dom.NodeList
  * @author Sebastien Deleuze
  * @since 5.3
  */
-class XpathResultMatchersDsl internal constructor (private val actions: ResultActions, expression: String, namespaces: Map<String, String>? = null, vararg args: Any?) {
+class XpathResultMatchersDsl internal constructor(private val actions: ResultActions, expression: String, namespaces: Map<String, String>? = null, vararg args: Any?) {
 
 	private val matchers = if (namespaces == null) MockMvcResultMatchers.xpath(expression, args) else MockMvcResultMatchers.xpath(expression, namespaces, args)
 

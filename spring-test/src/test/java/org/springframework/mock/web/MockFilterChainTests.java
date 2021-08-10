@@ -16,22 +16,13 @@
 
 package org.springframework.mock.web;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import javax.servlet.*;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -88,7 +79,7 @@ class MockFilterChainTests {
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				chain.doFilter(this.request, this.response))
-			.withMessage("This FilterChain has already been called!");
+				.withMessage("This FilterChain has already been called!");
 	}
 
 	@Test
@@ -99,7 +90,7 @@ class MockFilterChainTests {
 		verify(servlet).service(this.request, this.response);
 		assertThatIllegalStateException().isThrownBy(() ->
 				chain.doFilter(this.request, this.response))
-			.withMessage("This FilterChain has already been called!");
+				.withMessage("This FilterChain has already been called!");
 	}
 
 	@Test
@@ -119,7 +110,7 @@ class MockFilterChainTests {
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				chain.doFilter(this.request, this.response))
-			.withMessage("This FilterChain has already been called!");
+				.withMessage("This FilterChain has already been called!");
 	}
 
 
@@ -141,8 +132,7 @@ class MockFilterChainTests {
 
 			if (this.servlet != null) {
 				this.servlet.service(request, response);
-			}
-			else {
+			} else {
 				chain.doFilter(request, response);
 			}
 		}

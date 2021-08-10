@@ -17,12 +17,11 @@
 package org.springframework.http.server.reactive;
 
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * {@link ServerHttpResponse} decorator for HTTP HEAD requests.
@@ -52,14 +51,12 @@ public class HttpHeadResponseDecorator extends ServerHttpResponseDecorator {
 						if (buffer != null) {
 							getHeaders().setContentLength(buffer.readableByteCount());
 							DataBufferUtils.release(buffer);
-						}
-						else {
+						} else {
 							getHeaders().setContentLength(0);
 						}
 					})
 					.then();
-		}
-		else {
+		} else {
 			return Flux.from(body)
 					.doOnNext(DataBufferUtils::release)
 					.then();

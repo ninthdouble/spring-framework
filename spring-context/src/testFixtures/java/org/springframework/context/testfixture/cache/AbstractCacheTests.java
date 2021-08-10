@@ -16,15 +16,14 @@
 
 package org.springframework.context.testfixture.cache;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.cache.Cache;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.cache.Cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -167,8 +166,7 @@ public abstract class AbstractCacheTests<T extends Cache> {
 			cache.get(key, () -> {
 				throw new UnsupportedOperationException("Expected exception");
 			});
-		}
-		catch (Cache.ValueRetrievalException ex) {
+		} catch (Cache.ValueRetrievalException ex) {
 			assertThat(ex.getCause()).isNotNull();
 			assertThat(ex.getCause().getClass()).isEqualTo(UnsupportedOperationException.class);
 		}
@@ -193,8 +191,7 @@ public abstract class AbstractCacheTests<T extends Cache> {
 					return counter.incrementAndGet();
 				});
 				results.add(value);
-			}
-			finally {
+			} finally {
 				latch.countDown();
 			}
 		};

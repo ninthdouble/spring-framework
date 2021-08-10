@@ -15,11 +15,6 @@
  */
 package org.springframework.web.servlet.handler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -27,6 +22,10 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Wraps {@link MatchableHandlerMapping}s configured with a {@link PathPatternParser}

@@ -16,20 +16,12 @@
 
 package org.springframework.http.codec.json;
 
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import kotlinx.serialization.KSerializer;
 import kotlinx.serialization.SerializersKt;
 import kotlinx.serialization.descriptors.PolymorphicKind;
 import kotlinx.serialization.descriptors.SerialDescriptor;
 import kotlinx.serialization.json.Json;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.AbstractDecoder;
 import org.springframework.core.codec.StringDecoder;
@@ -38,6 +30,13 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Decode a byte stream into JSON and convert to Object's with
@@ -76,6 +75,13 @@ public class KotlinSerializationJsonDecoder extends AbstractDecoder<Object> {
 	}
 
 	/**
+	 * Return the {@link #setMaxInMemorySize configured} byte count limit.
+	 */
+	public int getMaxInMemorySize() {
+		return this.stringDecoder.getMaxInMemorySize();
+	}
+
+	/**
 	 * Configure a limit on the number of bytes that can be buffered whenever
 	 * the input stream needs to be aggregated. This can be a result of
 	 * decoding to a single {@code DataBuffer},
@@ -84,41 +90,33 @@ public class KotlinSerializationJsonDecoder extends AbstractDecoder<Object> {
 	 * It can also occur when splitting the input stream, e.g. delimited text,
 	 * in which case the limit applies to data buffered between delimiters.
 	 * <p>By default this is set to 256K.
+	 *
 	 * @param byteCount the max number of bytes to buffer, or -1 for unlimited
 	 */
 	public void setMaxInMemorySize(int byteCount) {
 		this.stringDecoder.setMaxInMemorySize(byteCount);
 	}
 
-	/**
-	 * Return the {@link #setMaxInMemorySize configured} byte count limit.
-	 */
-	public int getMaxInMemorySize() {
-		return this.stringDecoder.getMaxInMemorySize();
-	}
-
-
 	@Override
 	public boolean canDecode(ResolvableType elementType, @Nullable MimeType mimeType) {
 		try {
 			serializer(elementType.getType());
 			return (super.canDecode(elementType, mimeType) && !CharSequence.class.isAssignableFrom(elementType.toClass()));
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
 
 	@Override
 	public Flux<Object> decode(Publisher<DataBuffer> inputStream, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+							   @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		return Flux.error(new UnsupportedOperationException());
 	}
 
 	@Override
 	public Mono<Object> decodeToMono(Publisher<DataBuffer> inputStream, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+									 @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		return this.stringDecoder
 				.decodeToMono(inputStream, elementType, mimeType, hints)
@@ -130,6 +128,7 @@ public class KotlinSerializationJsonDecoder extends AbstractDecoder<Object> {
 	 * using kotlinx.serialization. If no serializer can be found, an exception is thrown.
 	 * <p>Resolved serializers are cached and cached results are returned on successive calls.
 	 * TODO Avoid relying on throwing exception when https://github.com/Kotlin/kotlinx.serialization/pull/1164 is fixed
+	 *
 	 * @param type the type to find a serializer for
 	 * @return a resolved serializer for the given type
 	 * @throws RuntimeException if no serializer supporting the given type can be found
@@ -151,7 +150,7 @@ public class KotlinSerializationJsonDecoder extends AbstractDecoder<Object> {
 		if (descriptor.getKind().equals(PolymorphicKind.OPEN.INSTANCE)) {
 			return true;
 		}
-		for (int i = 0 ; i < descriptor.getElementsCount() ; i++) {
+		for (int i = 0; i < descriptor.getElementsCount(); i++) {
 			SerialDescriptor elementDescriptor = descriptor.getElementDescriptor(i);
 			if (!alreadyProcessed.contains(elementDescriptor.getSerialName()) && hasPolymorphism(elementDescriptor, alreadyProcessed)) {
 				return true;

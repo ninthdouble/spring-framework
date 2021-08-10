@@ -16,21 +16,14 @@
 
 package org.springframework.dao.support;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.TypeMismatchDataAccessException;
+
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -49,19 +42,19 @@ public class DataAccessUtilsTests {
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.requiredUniqueResult(col))
-			.satisfies(sizeRequirements(1, 0));
+				.satisfies(sizeRequirements(1, 0));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.objectResult(col, String.class))
-			.satisfies(sizeRequirements(1, 0));
+				.satisfies(sizeRequirements(1, 0));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.intResult(col))
-			.satisfies(sizeRequirements(1, 0));
+				.satisfies(sizeRequirements(1, 0));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.longResult(col))
-			.satisfies(sizeRequirements(1, 0));
+				.satisfies(sizeRequirements(1, 0));
 	}
 
 	@Test
@@ -72,23 +65,23 @@ public class DataAccessUtilsTests {
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.uniqueResult(col))
-			.satisfies(sizeRequirements(1, 2));
+				.satisfies(sizeRequirements(1, 2));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.requiredUniqueResult(col))
-			.satisfies(sizeRequirements(1, 2));
+				.satisfies(sizeRequirements(1, 2));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.objectResult(col, String.class))
-			.satisfies(sizeRequirements(1, 2));
+				.satisfies(sizeRequirements(1, 2));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.intResult(col))
-			.satisfies(sizeRequirements(1, 2));
+				.satisfies(sizeRequirements(1, 2));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class).isThrownBy(() ->
 				DataAccessUtils.longResult(col))
-			.satisfies(sizeRequirements(1, 2));
+				.satisfies(sizeRequirements(1, 2));
 	}
 
 	@Test
@@ -124,8 +117,8 @@ public class DataAccessUtilsTests {
 		Collection<Integer> col = Arrays.asList(Integer.valueOf(555), Integer.valueOf(555));
 
 		assertThatExceptionOfType(IncorrectResultSizeDataAccessException.class)
-			.isThrownBy(() -> DataAccessUtils.uniqueResult(col))
-			.satisfies(sizeRequirements(1, 2));
+				.isThrownBy(() -> DataAccessUtils.uniqueResult(col))
+				.satisfies(sizeRequirements(1, 2));
 	}
 
 	@Test

@@ -16,18 +16,10 @@
 
 package org.springframework.aop.framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.accessibility.Accessible;
-import javax.swing.JFrame;
-import javax.swing.RootPaneContainer;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.interceptor.DebugInterceptor;
 import org.springframework.aop.support.AopUtils;
@@ -42,6 +34,11 @@ import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.testfixture.TimeStamped;
+
+import javax.accessibility.Accessible;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -124,15 +121,13 @@ public class ProxyFactoryTests {
 		// Check out of bounds
 		try {
 			pf.removeAdvisor(-1);
-		}
-		catch (AopConfigException ex) {
+		} catch (AopConfigException ex) {
 			// Ok
 		}
 
 		try {
 			pf.removeAdvisor(2);
-		}
-		catch (AopConfigException ex) {
+		} catch (AopConfigException ex) {
 			// Ok
 		}
 
@@ -391,7 +386,7 @@ public class ProxyFactoryTests {
 
 
 	@Order(1)
-	public static class B implements Runnable{
+	public static class B implements Runnable {
 
 		@Override
 		public void run() {

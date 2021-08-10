@@ -16,10 +16,10 @@
 
 package org.springframework.r2dbc.core.binding;
 
+import org.springframework.util.Assert;
+
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Function;
-
-import org.springframework.util.Assert;
 
 /**
  * Name-based bind markers.

@@ -82,6 +82,18 @@ public class ImportAnnotationDetectionTests {
 		assertThat(ctx.getBean("testBean1", TestBean.class).getName()).isEqualTo("1");
 	}
 
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Import(Config1.class)
+	@interface MetaImport1 {
+	}
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Import(Config2.class)
+	@interface MetaImport2 {
+	}
+
 	@Configuration
 	@MetaImport1
 	@MetaImport2
@@ -101,21 +113,6 @@ public class ImportAnnotationDetectionTests {
 	@Import(Config2a.class)
 	static class MultiMetaImportConfigWithLocalImportWithBeanOverride {
 	}
-
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Import(Config1.class)
-	@interface MetaImport1 {
-	}
-
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Import(Config2.class)
-	@interface MetaImport2 {
-	}
-
 
 	@Configuration
 	static class Config1 {

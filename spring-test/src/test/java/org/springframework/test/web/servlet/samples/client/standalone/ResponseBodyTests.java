@@ -16,15 +16,14 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone;
 
-import javax.validation.constraints.NotNull;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.constraints.NotNull;
 
 import static org.hamcrest.Matchers.equalTo;
 

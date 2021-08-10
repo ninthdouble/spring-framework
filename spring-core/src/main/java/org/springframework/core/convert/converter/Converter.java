@@ -26,17 +26,18 @@ import org.springframework.util.Assert;
  *
  * <p>Implementations may additionally implement {@link ConditionalConverter}.
  *
+ * @param <S> the source type
+ * @param <T> the target type
  * @author Keith Donald
  * @author Josh Cummings
  * @since 3.0
- * @param <S> the source type
- * @param <T> the target type
  */
 @FunctionalInterface
 public interface Converter<S, T> {
 
 	/**
 	 * Convert the source object of type {@code S} to target type {@code T}.
+	 *
 	 * @param source the source object to convert, which must be an instance of {@code S} (never {@code null})
 	 * @return the converted object, which must be an instance of {@code T} (potentially {@code null})
 	 * @throws IllegalArgumentException if the source cannot be converted to the desired target type
@@ -48,10 +49,11 @@ public interface Converter<S, T> {
 	 * Construct a composed {@link Converter} that first applies this {@link Converter}
 	 * to its input, and then applies the {@code after} {@link Converter} to the
 	 * result.
+	 *
 	 * @param after the {@link Converter} to apply after this {@link Converter}
-	 * is applied
-	 * @param <U> the type of output of both the {@code after} {@link Converter}
-	 * and the composed {@link Converter}
+	 *              is applied
+	 * @param <U>   the type of output of both the {@code after} {@link Converter}
+	 *              and the composed {@link Converter}
 	 * @return a composed {@link Converter} that first applies this {@link Converter}
 	 * and then applies the {@code after} {@link Converter}
 	 * @since 5.3

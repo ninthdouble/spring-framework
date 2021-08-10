@@ -40,6 +40,7 @@ public interface ApplicationEventMulticaster {
 
 	/**
 	 * Add a listener to be notified of all events.
+	 *
 	 * @param listener the listener to add
 	 * @see #removeApplicationListener(ApplicationListener)
 	 * @see #removeApplicationListeners(Predicate)
@@ -48,6 +49,7 @@ public interface ApplicationEventMulticaster {
 
 	/**
 	 * Add a listener bean to be notified of all events.
+	 *
 	 * @param listenerBeanName the name of the listener bean to add
 	 * @see #removeApplicationListenerBean(String)
 	 * @see #removeApplicationListenerBeans(Predicate)
@@ -56,6 +58,7 @@ public interface ApplicationEventMulticaster {
 
 	/**
 	 * Remove a listener from the notification list.
+	 *
 	 * @param listener the listener to remove
 	 * @see #addApplicationListener(ApplicationListener)
 	 * @see #removeApplicationListeners(Predicate)
@@ -64,6 +67,7 @@ public interface ApplicationEventMulticaster {
 
 	/**
 	 * Remove a listener bean from the notification list.
+	 *
 	 * @param listenerBeanName the name of the listener bean to remove
 	 * @see #addApplicationListenerBean(String)
 	 * @see #removeApplicationListenerBeans(Predicate)
@@ -77,11 +81,12 @@ public interface ApplicationEventMulticaster {
 	 * {@link EventListener} methods).
 	 * <p>Note: This just applies to instance registrations, not to listeners
 	 * registered by bean name.
+	 *
 	 * @param predicate the predicate to identify listener instances to remove,
-	 * e.g. checking {@link SmartApplicationListener#getListenerId()}
-	 * @since 5.3.5
+	 *                  e.g. checking {@link SmartApplicationListener#getListenerId()}
 	 * @see #addApplicationListener(ApplicationListener)
 	 * @see #removeApplicationListener(ApplicationListener)
+	 * @since 5.3.5
 	 */
 	void removeApplicationListeners(Predicate<ApplicationListener<?>> predicate);
 
@@ -91,10 +96,11 @@ public interface ApplicationEventMulticaster {
 	 * implement the {@link ApplicationListener} interface directly).
 	 * <p>Note: This just applies to bean name registrations, not to
 	 * programmatically registered {@code ApplicationListener} instances.
+	 *
 	 * @param predicate the predicate to identify listener bean names to remove
-	 * @since 5.3.5
 	 * @see #addApplicationListenerBean(String)
 	 * @see #removeApplicationListenerBean(String)
+	 * @since 5.3.5
 	 */
 	void removeApplicationListenerBeans(Predicate<String> predicate);
 
@@ -102,6 +108,7 @@ public interface ApplicationEventMulticaster {
 	 * Remove all listeners registered with this multicaster.
 	 * <p>After a remove call, the multicaster will perform no action
 	 * on event notification until new listeners are registered.
+	 *
 	 * @see #removeApplicationListeners(Predicate)
 	 */
 	void removeAllListeners();
@@ -110,6 +117,7 @@ public interface ApplicationEventMulticaster {
 	 * Multicast the given application event to appropriate listeners.
 	 * <p>Consider using {@link #multicastEvent(ApplicationEvent, ResolvableType)}
 	 * if possible as it provides better support for generics-based events.
+	 *
 	 * @param event the event to multicast
 	 */
 	void multicastEvent(ApplicationEvent event);
@@ -118,7 +126,8 @@ public interface ApplicationEventMulticaster {
 	 * Multicast the given application event to appropriate listeners.
 	 * <p>If the {@code eventType} is {@code null}, a default type is built
 	 * based on the {@code event} instance.
-	 * @param event the event to multicast
+	 *
+	 * @param event     the event to multicast
 	 * @param eventType the type of event (can be {@code null})
 	 * @since 4.2
 	 */

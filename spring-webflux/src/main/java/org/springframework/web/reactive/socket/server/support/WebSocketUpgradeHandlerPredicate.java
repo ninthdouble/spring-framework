@@ -16,10 +16,10 @@
 
 package org.springframework.web.reactive.socket.server.support;
 
-import java.util.function.BiPredicate;
-
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.function.BiPredicate;
 
 /**
  * A predicate for use with

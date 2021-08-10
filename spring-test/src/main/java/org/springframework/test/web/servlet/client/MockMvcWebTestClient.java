@@ -15,23 +15,13 @@
  */
 package org.springframework.test.web.servlet.client;
 
-import java.util.function.Supplier;
-
-import javax.servlet.Filter;
-
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.lang.Nullable;
 import org.springframework.test.web.reactive.server.ExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.test.web.servlet.DispatcherServletCustomizer;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultHandler;
-import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
@@ -41,14 +31,12 @@ import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.servlet.FlashMapManager;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.View;
-import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.Filter;
+import java.util.function.Supplier;
 
 /**
  * The main class for testing Spring MVC applications via {@link WebTestClient}
@@ -149,11 +137,13 @@ public interface MockMvcWebTestClient {
 				matcher.match((MvcResult) serverResult);
 				return this;
 			}
+
 			@Override
 			public ResultActions andDo(ResultHandler handler) throws Exception {
 				handler.handle((MvcResult) serverResult);
 				return this;
 			}
+
 			@Override
 			public MvcResult andReturn() {
 				return (MvcResult) serverResult;

@@ -18,7 +18,6 @@ package org.springframework.beans.factory.xml;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -56,7 +55,7 @@ public class ProfileXmlBeanDefinitionTests {
 	private static final String NULL_ACTIVE = null;
 	private static final String UNKNOWN_ACTIVE = "unknown";
 	private static final String[] NONE_ACTIVE = new String[0];
-	private static final String[] MULTI_ACTIVE = new String[] { PROD_ACTIVE, DEV_ACTIVE };
+	private static final String[] MULTI_ACTIVE = new String[]{PROD_ACTIVE, DEV_ACTIVE};
 
 	private static final String TARGET_BEAN = "foo";
 

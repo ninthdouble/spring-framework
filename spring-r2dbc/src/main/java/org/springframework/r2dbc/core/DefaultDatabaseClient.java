@@ -16,6 +16,22 @@
 
 package org.springframework.r2dbc.core;
 
+import io.r2dbc.spi.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.reactivestreams.Publisher;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.lang.Nullable;
+import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
+import org.springframework.r2dbc.core.binding.BindMarkersFactory;
+import org.springframework.r2dbc.core.binding.BindTarget;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,30 +45,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.R2dbcException;
-import io.r2dbc.spi.Result;
-import io.r2dbc.spi.Row;
-import io.r2dbc.spi.RowMetadata;
-import io.r2dbc.spi.Statement;
-import io.r2dbc.spi.Wrapped;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.lang.Nullable;
-import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
-import org.springframework.r2dbc.core.binding.BindMarkersFactory;
-import org.springframework.r2dbc.core.binding.BindTarget;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Default implementation of {@link DatabaseClient}.
@@ -77,7 +69,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 
 
 	DefaultDatabaseClient(BindMarkersFactory bindMarkersFactory, ConnectionFactory connectionFactory,
-			ExecuteFunction executeFunction, boolean namedParameters) {
+						  ExecuteFunction executeFunction, boolean namedParameters) {
 
 		this.bindMarkersFactory = bindMarkersFactory;
 		this.connectionFactory = connectionFactory;
@@ -85,6 +77,42 @@ class DefaultDatabaseClient implements DatabaseClient {
 		this.namedParameterExpander = (namedParameters ? new NamedParameterExpander() : null);
 	}
 
+	/**
+	 * Create a close-suppressing proxy for the given R2DBC
+	 * Connection. Called by the {@code execute} method.
+	 *
+	 * @param con the R2DBC Connection to create a proxy for
+	 * @return the Connection proxy
+	 */
+	private static Connection createConnectionProxy(Connection con) {
+		return (Connection) Proxy.newProxyInstance(DatabaseClient.class.getClassLoader(),
+				new Class<?>[]{Connection.class, Wrapped.class},
+				new CloseSuppressingInvocationHandler(con));
+	}
+
+	private static Mono<Integer> sumRowsUpdated(
+			Function<Connection, Flux<Result>> resultFunction, Connection it) {
+		return resultFunction.apply(it)
+				.flatMap(Result::getRowsUpdated)
+				.collect(Collectors.summingInt(Integer::intValue));
+	}
+
+	/**
+	 * Determine SQL from potential provider object.
+	 *
+	 * @param sqlProvider object that's potentially a SqlProvider
+	 * @return the SQL string, or {@code null}
+	 * @see SqlProvider
+	 */
+	@Nullable
+	private static String getSql(Object sqlProvider) {
+
+		if (sqlProvider instanceof SqlProvider) {
+			return ((SqlProvider) sqlProvider).getSql();
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public ConnectionFactory getConnectionFactory() {
@@ -110,12 +138,11 @@ class DefaultDatabaseClient implements DatabaseClient {
 				connection -> new ConnectionCloseHolder(connection, this::closeConnection));
 
 		return Mono.usingWhen(connectionMono, connectionCloseHolder -> {
-			// Create close-suppressing Connection proxy
-			Connection connectionToUse = createConnectionProxy(connectionCloseHolder.connection);
+					// Create close-suppressing Connection proxy
+					Connection connectionToUse = createConnectionProxy(connectionCloseHolder.connection);
 					try {
 						return action.apply(connectionToUse);
-					}
-					catch (R2dbcException ex) {
+					} catch (R2dbcException ex) {
 						String sql = getSql(action);
 						return Mono.error(ConnectionFactoryUtils.convertR2dbcException("doInConnection", sql, ex));
 					}
@@ -132,12 +159,11 @@ class DefaultDatabaseClient implements DatabaseClient {
 				connection -> new ConnectionCloseHolder(connection, this::closeConnection));
 
 		return Flux.usingWhen(connectionMono, connectionCloseHolder -> {
-			// Create close-suppressing Connection proxy, also preparing returned Statements.
-			Connection connectionToUse = createConnectionProxy(connectionCloseHolder.connection);
+					// Create close-suppressing Connection proxy, also preparing returned Statements.
+					Connection connectionToUse = createConnectionProxy(connectionCloseHolder.connection);
 					try {
 						return action.apply(connectionToUse);
-					}
-					catch (R2dbcException ex) {
+					} catch (R2dbcException ex) {
 						String sql = getSql(action);
 						return Flux.error(ConnectionFactoryUtils.convertR2dbcException("doInConnectionMany", sql, ex));
 					}
@@ -149,6 +175,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 
 	/**
 	 * Obtain a {@link Connection}.
+	 *
 	 * @return a {@link Mono} able to emit a {@link Connection}
 	 */
 	private Mono<Connection> getConnection() {
@@ -157,6 +184,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 
 	/**
 	 * Release the {@link Connection}.
+	 *
 	 * @param connection to close.
 	 * @return a {@link Publisher} that completes successfully when the connection is
 	 * closed
@@ -165,11 +193,12 @@ class DefaultDatabaseClient implements DatabaseClient {
 
 		return ConnectionFactoryUtils.currentConnectionFactory(
 				obtainConnectionFactory()).then().onErrorResume(Exception.class,
-						e -> Mono.from(connection.close()));
+				e -> Mono.from(connection.close()));
 	}
 
 	/**
 	 * Obtain the {@link ConnectionFactory} for actual use.
+	 *
 	 * @return the ConnectionFactory (never {@code null})
 	 */
 	private ConnectionFactory obtainConnectionFactory() {
@@ -177,41 +206,101 @@ class DefaultDatabaseClient implements DatabaseClient {
 	}
 
 	/**
-	 * Create a close-suppressing proxy for the given R2DBC
-	 * Connection. Called by the {@code execute} method.
-	 * @param con the R2DBC Connection to create a proxy for
-	 * @return the Connection proxy
+	 * Invocation handler that suppresses close calls on R2DBC Connections. Also prepares
+	 * returned Statement (Prepared/CallbackStatement) objects.
+	 *
+	 * @see Connection#close()
 	 */
-	private static Connection createConnectionProxy(Connection con) {
-		return (Connection) Proxy.newProxyInstance(DatabaseClient.class.getClassLoader(),
-				new Class<?>[] { Connection.class, Wrapped.class },
-				new CloseSuppressingInvocationHandler(con));
-	}
+	private static class CloseSuppressingInvocationHandler implements InvocationHandler {
 
-	private static Mono<Integer> sumRowsUpdated(
-			Function<Connection, Flux<Result>> resultFunction, Connection it) {
-		return resultFunction.apply(it)
-				.flatMap(Result::getRowsUpdated)
-				.collect(Collectors.summingInt(Integer::intValue));
+		private final Connection target;
+
+		CloseSuppressingInvocationHandler(Connection target) {
+			this.target = target;
+		}
+
+		@Override
+		@Nullable
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			switch (method.getName()) {
+				case "equals":
+					// Only consider equal when proxies are identical.
+					return proxy == args[0];
+				case "hashCode":
+					// Use hashCode of PersistenceManager proxy.
+					return System.identityHashCode(proxy);
+				case "unwrap":
+					return this.target;
+				case "close":
+					// Handle close method: suppress, not valid.
+					return Mono.error(
+							new UnsupportedOperationException("Close is not supported!"));
+			}
+
+			// Invoke method on target Connection.
+			try {
+				return method.invoke(this.target, args);
+			} catch (InvocationTargetException ex) {
+				throw ex.getTargetException();
+			}
+		}
 	}
 
 	/**
-	 * Determine SQL from potential provider object.
-	 * @param sqlProvider object that's potentially a SqlProvider
-	 * @return the SQL string, or {@code null}
-	 * @see SqlProvider
+	 * Holder for a connection that makes sure the close action is invoked atomically only once.
 	 */
-	@Nullable
-	private static String getSql(Object sqlProvider) {
+	static class ConnectionCloseHolder extends AtomicBoolean {
 
-		if (sqlProvider instanceof SqlProvider) {
-			return ((SqlProvider) sqlProvider).getSql();
+		private static final long serialVersionUID = -8994138383301201380L;
+
+		final Connection connection;
+
+		final Function<Connection, Publisher<Void>> closeFunction;
+
+		ConnectionCloseHolder(Connection connection,
+							  Function<Connection, Publisher<Void>> closeFunction) {
+			this.connection = connection;
+			this.closeFunction = closeFunction;
 		}
-		else {
-			return null;
+
+		Mono<Void> close() {
+			return Mono.defer(() -> {
+				if (compareAndSet(false, true)) {
+					return Mono.from(this.closeFunction.apply(this.connection));
+				}
+				return Mono.empty();
+			});
 		}
 	}
 
+	static class StatementWrapper implements BindTarget {
+
+		final Statement statement;
+
+		StatementWrapper(Statement statement) {
+			this.statement = statement;
+		}
+
+		@Override
+		public void bind(String identifier, Object value) {
+			this.statement.bind(identifier, value);
+		}
+
+		@Override
+		public void bind(int index, Object value) {
+			this.statement.bind(index, value);
+		}
+
+		@Override
+		public void bindNull(String identifier, Class<?> type) {
+			this.statement.bindNull(identifier, type);
+		}
+
+		@Override
+		public void bindNull(int index, Class<?> type) {
+			this.statement.bindNull(index, type);
+		}
+	}
 
 	/**
 	 * Base class for {@link DatabaseClient.GenericExecuteSpec} implementations.
@@ -234,7 +323,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 		}
 
 		DefaultGenericExecuteSpec(Map<Integer, Parameter> byIndex, Map<String, Parameter> byName,
-				Supplier<String> sqlSupplier, StatementFilterFunction filterFunction) {
+								  Supplier<String> sqlSupplier, StatementFilterFunction filterFunction) {
 
 			this.byIndex = byIndex;
 			this.byName = byName;
@@ -251,8 +340,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 			Map<Integer, Parameter> byIndex = new LinkedHashMap<>(this.byIndex);
 			if (value instanceof Parameter) {
 				byIndex.put(index, (Parameter) value);
-			}
-			else {
+			} else {
 				byIndex.put(index, Parameter.fromOrEmpty(value, value.getClass()));
 			}
 
@@ -280,8 +368,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 			Map<String, Parameter> byName = new LinkedHashMap<>(this.byName);
 			if (value instanceof Parameter) {
 				byName.put(name, (Parameter) value);
-			}
-			else {
+			} else {
 				byName.put(name, Parameter.fromOrEmpty(value, value.getClass()));
 			}
 
@@ -373,7 +460,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 			Function<Connection, Flux<Result>> resultFunction = connection -> {
 				Statement statement = statementFunction.apply(connection);
 				return Flux.from(this.filterFunction.filter(statement, DefaultDatabaseClient.this.executeFunction))
-				.cast(Result.class).checkpoint("SQL \"" + sql + "\" [DatabaseClient]");
+						.cast(Result.class).checkpoint("SQL \"" + sql + "\" [DatabaseClient]");
 			};
 
 			return new DefaultFetchSpec<>(
@@ -384,7 +471,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 		}
 
 		private MapBindParameterSource retrieveParameters(String sql, List<String> parameterNames,
-				Map<String, Parameter> remainderByName, Map<Integer, Parameter> remainderByIndex) {
+														  Map<String, Parameter> remainderByName, Map<Integer, Parameter> remainderByIndex) {
 
 			Map<String, Parameter> namedBindings = CollectionUtils.newLinkedHashMap(parameterNames.size());
 			for (String parameterName : parameterNames) {
@@ -400,7 +487,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 
 		@Nullable
 		private Parameter getParameter(Map<String, Parameter> remainderByName,
-				Map<Integer, Parameter> remainderByIndex, List<String> parameterNames, String parameterName) {
+									   Map<Integer, Parameter> remainderByIndex, List<String> parameterNames, String parameterName) {
 
 			if (this.byName.containsKey(parameterName)) {
 				remainderByName.remove(parameterName);
@@ -428,8 +515,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 				Object value = parameter.getValue();
 				if (value != null) {
 					statement.bind(name, value);
-				}
-				else {
+				} else {
 					statement.bindNull(name, parameter.getType());
 				}
 			});
@@ -440,8 +526,7 @@ class DefaultDatabaseClient implements DatabaseClient {
 				Object value = parameter.getValue();
 				if (value != null) {
 					statement.bind(i, value);
-				}
-				else {
+				} else {
 					statement.bindNull(i, parameter.getType());
 				}
 			});
@@ -451,107 +536,6 @@ class DefaultDatabaseClient implements DatabaseClient {
 			String sql = sqlSupplier.get();
 			Assert.state(StringUtils.hasText(sql), "SQL returned by SQL supplier must not be empty!");
 			return sql;
-		}
-	}
-
-
-	/**
-	 * Invocation handler that suppresses close calls on R2DBC Connections. Also prepares
-	 * returned Statement (Prepared/CallbackStatement) objects.
-	 *
-	 * @see Connection#close()
-	 */
-	private static class CloseSuppressingInvocationHandler implements InvocationHandler {
-
-		private final Connection target;
-
-		CloseSuppressingInvocationHandler(Connection target) {
-			this.target = target;
-		}
-
-		@Override
-		@Nullable
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			switch (method.getName()) {
-				case "equals":
-					// Only consider equal when proxies are identical.
-					return proxy == args[0];
-				case "hashCode":
-					// Use hashCode of PersistenceManager proxy.
-					return System.identityHashCode(proxy);
-				case "unwrap":
-					return this.target;
-				case "close":
-					// Handle close method: suppress, not valid.
-					return Mono.error(
-							new UnsupportedOperationException("Close is not supported!"));
-			}
-
-			// Invoke method on target Connection.
-			try {
-				return method.invoke(this.target, args);
-			}
-			catch (InvocationTargetException ex) {
-				throw ex.getTargetException();
-			}
-		}
-	}
-
-
-	/**
-	 * Holder for a connection that makes sure the close action is invoked atomically only once.
-	 */
-	static class ConnectionCloseHolder extends AtomicBoolean {
-
-		private static final long serialVersionUID = -8994138383301201380L;
-
-		final Connection connection;
-
-		final Function<Connection, Publisher<Void>> closeFunction;
-
-		ConnectionCloseHolder(Connection connection,
-				Function<Connection, Publisher<Void>> closeFunction) {
-			this.connection = connection;
-			this.closeFunction = closeFunction;
-		}
-
-		Mono<Void> close() {
-			return Mono.defer(() -> {
-				if (compareAndSet(false, true)) {
-					return Mono.from(this.closeFunction.apply(this.connection));
-				}
-				return Mono.empty();
-			});
-		}
-	}
-
-
-	static class StatementWrapper implements BindTarget {
-
-		final Statement statement;
-
-		StatementWrapper(Statement statement) {
-			this.statement = statement;
-		}
-
-		@Override
-		public void bind(String identifier, Object value) {
-			this.statement.bind(identifier, value);
-		}
-
-		@Override
-		public void bind(int index, Object value) {
-			this.statement.bind(index, value);
-		}
-
-		@Override
-		public void bindNull(String identifier, Class<?> type) {
-			this.statement.bindNull(identifier, type);
-		}
-
-		@Override
-		public void bindNull(int index, Class<?> type) {
-			this.statement.bindNull(index, type);
 		}
 	}
 

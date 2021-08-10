@@ -16,14 +16,12 @@
 
 package org.springframework.web.servlet.i18n;
 
-import java.util.Locale;
-
-import javax.servlet.http.HttpSession;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.HttpSession;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

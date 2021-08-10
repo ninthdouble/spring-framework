@@ -17,7 +17,6 @@
 package org.springframework.aop.target.dynamic;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.testfixture.EnabledForTestGroups;
 
 import static org.assertj.core.api.Assertions.assertThat;

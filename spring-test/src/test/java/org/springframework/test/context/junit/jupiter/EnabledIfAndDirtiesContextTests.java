@@ -16,16 +16,15 @@
 
 package org.springframework.test.context.junit.jupiter;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.testkit.engine.EngineTestKit;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -37,8 +36,8 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  * {@link SpringExtension} in a JUnit Jupiter environment.
  *
  * @author Sam Brannen
- * @since 5.2.14
  * @see DisabledIfAndDirtiesContextTests
+ * @since 5.2.14
  */
 class EnabledIfAndDirtiesContextTests {
 

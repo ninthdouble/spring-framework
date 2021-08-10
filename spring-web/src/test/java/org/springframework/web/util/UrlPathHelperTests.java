@@ -18,7 +18,6 @@ package org.springframework.web.util;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -277,8 +276,7 @@ public class UrlPathHelperTests {
 		try {
 			request.setAttribute(WEBSPHERE_URI_ATTRIBUTE, "/test/foo/");
 			tomcatDefaultServletFolder();
-		}
-		finally {
+		} finally {
 			UrlPathHelper.websphereComplianceFlag = false;
 		}
 	}

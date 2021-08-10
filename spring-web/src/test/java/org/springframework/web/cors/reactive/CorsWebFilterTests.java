@@ -16,41 +16,32 @@
 package org.springframework.web.cors.reactive;
 
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.servlet.ServletException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_MAX_AGE;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD;
-import static org.springframework.http.HttpHeaders.HOST;
-import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.http.HttpHeaders.*;
 
 /**
  * Unit tests for {@link CorsWebFilter}.
+ *
  * @author Sebastien Deleuze
  */
 public class CorsWebFilterTests {
 
-	private CorsWebFilter filter;
-
 	private final CorsConfiguration config = new CorsConfiguration();
+	private CorsWebFilter filter;
 
 	@BeforeEach
 	public void setup() throws Exception {
@@ -70,8 +61,7 @@ public class CorsWebFilterTests {
 				HttpHeaders headers = filterExchange.getResponse().getHeaders();
 				assertThat(headers.getFirst(ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
 				assertThat(headers.getFirst(ACCESS_CONTROL_EXPOSE_HEADERS)).isNull();
-			}
-			catch (AssertionError ex) {
+			} catch (AssertionError ex) {
 				return Mono.error(ex);
 			}
 			return Mono.empty();
@@ -91,8 +81,7 @@ public class CorsWebFilterTests {
 				HttpHeaders headers = filterExchange.getResponse().getHeaders();
 				assertThat(headers.getFirst(ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
 				assertThat(headers.getFirst(ACCESS_CONTROL_EXPOSE_HEADERS)).isNull();
-			}
-			catch (AssertionError ex) {
+			} catch (AssertionError ex) {
 				return Mono.error(ex);
 			}
 			return Mono.empty();
@@ -112,8 +101,7 @@ public class CorsWebFilterTests {
 				HttpHeaders headers = filterExchange.getResponse().getHeaders();
 				assertThat(headers.getFirst(ACCESS_CONTROL_ALLOW_ORIGIN)).isEqualTo("https://domain2.com");
 				assertThat(headers.getFirst(ACCESS_CONTROL_EXPOSE_HEADERS)).isEqualTo("header3, header4");
-			}
-			catch (AssertionError ex) {
+			} catch (AssertionError ex) {
 				return Mono.error(ex);
 			}
 			return Mono.empty();

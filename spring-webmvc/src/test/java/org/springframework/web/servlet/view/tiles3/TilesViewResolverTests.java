@@ -15,15 +15,14 @@
  */
 package org.springframework.web.servlet.view.tiles3;
 
-import java.util.Locale;
-
 import org.apache.tiles.request.Request;
 import org.apache.tiles.request.render.Renderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;

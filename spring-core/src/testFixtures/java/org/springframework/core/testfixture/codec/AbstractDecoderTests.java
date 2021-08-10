@@ -16,16 +16,8 @@
 
 package org.springframework.core.testfixture.codec;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.Decoder;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -33,6 +25,13 @@ import org.springframework.core.testfixture.io.buffer.AbstractLeakCheckingTests;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -53,6 +52,7 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 
 	/**
 	 * Construct a new {@code AbstractDecoderTests} instance for the given decoder.
+	 *
 	 * @param decoder the decoder
 	 */
 	protected AbstractDecoderTests(D decoder) {
@@ -94,13 +94,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 *     <li>{@link #testDecodeEmpty(ResolvableType, MimeType, Map)}</li>
 	 * </ul>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputClass the desired output class
+	 * @param input        the input to be provided to the decoder
+	 * @param outputClass  the desired output class
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param <T> the output type
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecodeAll(Publisher<DataBuffer> input, Class<? extends T> outputClass,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
+									 Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
 
 		testDecodeAll(input, ResolvableType.forClass(outputClass), stepConsumer, null, null);
 	}
@@ -115,16 +115,16 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 *     <li>{@link #testDecodeEmpty(ResolvableType, MimeType, Map)}</li>
 	 * </ul>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputType the desired output type
+	 * @param input        the input to be provided to the decoder
+	 * @param outputType   the desired output type
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
-	 * @param <T> the output type
+	 * @param mimeType     the mime type to use for decoding. May be {@code null}.
+	 * @param hints        the hints used for decoding. May be {@code null}.
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecodeAll(Publisher<DataBuffer> input, ResolvableType outputType,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+									 Consumer<StepVerifier.FirstStep<T>> stepConsumer,
+									 @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		testDecode(input, outputType, stepConsumer, mimeType, hints);
 		testDecodeError(input, outputType, mimeType, hints);
@@ -148,13 +148,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * 	 .verifyComplete());
 	 * </pre>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputClass the desired output class
+	 * @param input        the input to be provided to the decoder
+	 * @param outputClass  the desired output class
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param <T> the output type
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecode(Publisher<DataBuffer> input, Class<? extends T> outputClass,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
+								  Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
 
 		testDecode(input, ResolvableType.forClass(outputClass), stepConsumer, null, null);
 	}
@@ -175,17 +175,17 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * 	 .verifyComplete());
 	 * </pre>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputType the desired output type
+	 * @param input        the input to be provided to the decoder
+	 * @param outputType   the desired output type
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
-	 * @param <T> the output type
+	 * @param mimeType     the mime type to use for decoding. May be {@code null}.
+	 * @param hints        the hints used for decoding. May be {@code null}.
+	 * @param <T>          the output type
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> void testDecode(Publisher<DataBuffer> input, ResolvableType outputType,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+								  Consumer<StepVerifier.FirstStep<T>> stepConsumer,
+								  @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Flux<T> result = (Flux<T>) this.decoder.decode(input, outputType, mimeType, hints);
 		StepVerifier.FirstStep<T> step = StepVerifier.create(result);
@@ -198,14 +198,14 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * followed by an {@link InputException}.
 	 * The result is expected to contain one "normal" element, followed by the error.
 	 *
-	 * @param input the input to be provided to the decoder
+	 * @param input      the input to be provided to the decoder
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 * @see InputException
 	 */
 	protected void testDecodeError(Publisher<DataBuffer> input, ResolvableType outputType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+								   @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Flux<DataBuffer> buffer = Mono.from(input).concatWith(Flux.error(new InputException()));
 		assertThatExceptionOfType(InputException.class).isThrownBy(() ->
@@ -218,13 +218,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * followed by a cancel signal.
 	 * The result is expected to contain one "normal" element.
 	 *
-	 * @param input the input to be provided to the decoder
+	 * @param input      the input to be provided to the decoder
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 */
 	protected void testDecodeCancel(Publisher<DataBuffer> input, ResolvableType outputType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+									@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Flux<?> result = this.decoder.decode(input, outputType, mimeType, hints);
 		StepVerifier.create(result).expectNextCount(1).thenCancel().verify();
@@ -235,11 +235,11 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * The output is expected to be empty as well.
 	 *
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 */
 	protected void testDecodeEmpty(ResolvableType outputType, @Nullable MimeType mimeType,
-			@Nullable Map<String, Object> hints) {
+								   @Nullable Map<String, Object> hints) {
 
 		Flux<DataBuffer> input = Flux.empty();
 		Flux<?> result = this.decoder.decode(input, outputType, mimeType, hints);
@@ -258,13 +258,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 *     <li>{@link #testDecodeToMonoEmpty(ResolvableType, MimeType, Map)}</li>
 	 * </ul>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputClass the desired output class
+	 * @param input        the input to be provided to the decoder
+	 * @param outputClass  the desired output class
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param <T> the output type
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecodeToMonoAll(Publisher<DataBuffer> input,
-			Class<? extends T> outputClass, Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
+										   Class<? extends T> outputClass, Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
 
 		testDecodeToMonoAll(input, ResolvableType.forClass(outputClass), stepConsumer, null, null);
 	}
@@ -279,16 +279,16 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 *     <li>{@link #testDecodeToMonoEmpty(ResolvableType, MimeType, Map)}</li>
 	 * </ul>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputType the desired output type
+	 * @param input        the input to be provided to the decoder
+	 * @param outputType   the desired output type
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
-	 * @param <T> the output type
+	 * @param mimeType     the mime type to use for decoding. May be {@code null}.
+	 * @param hints        the hints used for decoding. May be {@code null}.
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecodeToMonoAll(Publisher<DataBuffer> input, ResolvableType outputType,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+										   Consumer<StepVerifier.FirstStep<T>> stepConsumer,
+										   @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		testDecodeToMono(input, outputType, stepConsumer, mimeType, hints);
 		testDecodeToMonoError(input, outputType, mimeType, hints);
@@ -312,13 +312,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * 	 .verifyComplete());
 	 * </pre>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputClass the desired output class
+	 * @param input        the input to be provided to the decoder
+	 * @param outputClass  the desired output class
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param <T> the output type
+	 * @param <T>          the output type
 	 */
 	protected <T> void testDecodeToMono(Publisher<DataBuffer> input,
-			Class<? extends T> outputClass, Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
+										Class<? extends T> outputClass, Consumer<StepVerifier.FirstStep<T>> stepConsumer) {
 
 		testDecodeToMono(input, ResolvableType.forClass(outputClass), stepConsumer, null, null);
 	}
@@ -339,17 +339,17 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * 	 .verifyComplete());
 	 * </pre>
 	 *
-	 * @param input the input to be provided to the decoder
-	 * @param outputType the desired output type
+	 * @param input        the input to be provided to the decoder
+	 * @param outputType   the desired output type
 	 * @param stepConsumer a consumer to {@linkplain StepVerifier verify} the output
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
-	 * @param <T> the output type
+	 * @param mimeType     the mime type to use for decoding. May be {@code null}.
+	 * @param hints        the hints used for decoding. May be {@code null}.
+	 * @param <T>          the output type
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T> void testDecodeToMono(Publisher<DataBuffer> input, ResolvableType outputType,
-			Consumer<StepVerifier.FirstStep<T>> stepConsumer,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+										Consumer<StepVerifier.FirstStep<T>> stepConsumer,
+										@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Mono<T> result = (Mono<T>) this.decoder.decodeToMono(input, outputType, mimeType, hints);
 		StepVerifier.FirstStep<T> step = StepVerifier.create(result);
@@ -362,14 +362,14 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * followed by an {@link InputException}.
 	 * The result is expected to contain the error.
 	 *
-	 * @param input the input to be provided to the decoder
+	 * @param input      the input to be provided to the decoder
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 * @see InputException
 	 */
 	protected void testDecodeToMonoError(Publisher<DataBuffer> input, ResolvableType outputType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+										 @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		input = Mono.from(input).concatWith(Flux.error(new InputException()));
 		Mono<?> result = this.decoder.decodeToMono(input, outputType, mimeType, hints);
@@ -380,13 +380,13 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * Test a {@link Decoder#decodeToMono decode} scenario where the input stream is canceled.
 	 * This test method will immediately cancel the output stream.
 	 *
-	 * @param input the input to be provided to the decoder
+	 * @param input      the input to be provided to the decoder
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 */
 	protected void testDecodeToMonoCancel(Publisher<DataBuffer> input, ResolvableType outputType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+										  @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Mono<?> result = this.decoder.decodeToMono(input, outputType, mimeType, hints);
 		StepVerifier.create(result).thenCancel().verify();
@@ -397,11 +397,11 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * The output is expected to be empty as well.
 	 *
 	 * @param outputType the desired output type
-	 * @param mimeType the mime type to use for decoding. May be {@code null}.
-	 * @param hints the hints used for decoding. May be {@code null}.
+	 * @param mimeType   the mime type to use for decoding. May be {@code null}.
+	 * @param hints      the hints used for decoding. May be {@code null}.
 	 */
 	protected void testDecodeToMonoEmpty(ResolvableType outputType, @Nullable MimeType mimeType,
-			@Nullable Map<String, Object> hints) {
+										 @Nullable Map<String, Object> hints) {
 
 		Mono<?> result = this.decoder.decodeToMono(Flux.empty(), outputType, mimeType, hints);
 		StepVerifier.create(result).verifyComplete();
@@ -409,6 +409,7 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 
 	/**
 	 * Creates a deferred {@link DataBuffer} containing the given bytes.
+	 *
 	 * @param bytes the bytes that are to be stored in the buffer
 	 * @return the deferred buffer
 	 */
@@ -424,6 +425,7 @@ public abstract class AbstractDecoderTests<D extends Decoder<?>> extends Abstrac
 	 * Exception used in {@link #testDecodeError} and {@link #testDecodeToMonoError}
 	 */
 	@SuppressWarnings("serial")
-	public static class InputException extends RuntimeException {}
+	public static class InputException extends RuntimeException {
+	}
 
 }

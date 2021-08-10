@@ -16,25 +16,23 @@
 
 package org.springframework.jms.support.converter;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.core.MethodParameter;
+
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import org.springframework.core.MethodParameter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -136,7 +134,7 @@ public class MappingJackson2MessageConverterTests {
 		given(textMessageMock.getStringProperty("__typeid__")).willReturn(MyBean.class.getName());
 		given(textMessageMock.getText()).willReturn(text);
 
-		MyBean result = (MyBean)converter.fromMessage(textMessageMock);
+		MyBean result = (MyBean) converter.fromMessage(textMessageMock);
 		assertThat(unmarshalled).as("Invalid result").isEqualTo(result);
 	}
 
@@ -149,7 +147,7 @@ public class MappingJackson2MessageConverterTests {
 		given(textMessageMock.getStringProperty("__typeid__")).willReturn(MyBean.class.getName());
 		given(textMessageMock.getText()).willReturn(text);
 
-		MyBean result = (MyBean)converter.fromMessage(textMessageMock);
+		MyBean result = (MyBean) converter.fromMessage(textMessageMock);
 		assertThat(unmarshalled).as("Invalid result").isEqualTo(result);
 	}
 
@@ -265,6 +263,15 @@ public class MappingJackson2MessageConverterTests {
 	}
 
 
+	private interface Summary {
+	}
+
+
+	private interface Full extends Summary {
+	}
+
+	;
+
 	public static class MyBean {
 
 		private String foo;
@@ -305,11 +312,7 @@ public class MappingJackson2MessageConverterTests {
 		}
 	}
 
-
-	private interface Summary {};
-
-	private interface Full extends Summary {};
-
+	;
 
 	@SuppressWarnings("unused")
 	private static class MyAnotherBean {

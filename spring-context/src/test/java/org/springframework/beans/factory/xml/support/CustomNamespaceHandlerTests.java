@@ -126,8 +126,8 @@ public class CustomNamespaceHandlerTests {
 		assertThat(this.beanFactory.getType("debuggingTestBeanNoInstance")).isEqualTo(ApplicationListener.class);
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				this.beanFactory.getBean("debuggingTestBeanNoInstance"))
-			.havingRootCause()
-			.isInstanceOf(BeanInstantiationException.class);
+				.havingRootCause()
+				.isInstanceOf(BeanInstantiationException.class);
 	}
 
 	@Test

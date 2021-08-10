@@ -16,17 +16,17 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.servlet.mvc.condition.ParamsRequestCondition.ParamExpression;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ParamsRequestCondition}.
+ *
  * @author Arjen Poutsma
  */
 public class ParamsRequestConditionTests {

@@ -16,14 +16,8 @@
 
 package org.springframework.test.context.support;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ActiveProfilesResolver;
@@ -31,6 +25,11 @@ import org.springframework.test.context.TestContextAnnotationUtils.AnnotationDes
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.springframework.test.context.TestContextAnnotationUtils.findAnnotationDescriptor;
 
@@ -44,9 +43,9 @@ import static org.springframework.test.context.TestContextAnnotationUtils.findAn
  *
  * @author Sam Brannen
  * @author Michail Nikolaev
- * @since 4.1
  * @see ActiveProfiles
  * @see ActiveProfilesResolver
+ * @since 4.1
  */
 abstract class ActiveProfilesUtils {
 
@@ -61,8 +60,9 @@ abstract class ActiveProfilesUtils {
 	 * {@link ActiveProfiles @ActiveProfiles} will be taken into consideration.
 	 * Specifically, if the {@code inheritProfiles} flag is set to {@code true}, profiles
 	 * defined in the test class will be merged with those defined in superclasses.
+	 *
 	 * @param testClass the class for which to resolve the active profiles (must not be
-	 * {@code null})
+	 *                  {@code null})
 	 * @return the set of active profiles for the specified class, including active
 	 * profiles from superclasses if appropriate (never {@code null})
 	 * @see ActiveProfiles
@@ -94,12 +94,10 @@ abstract class ActiveProfilesUtils {
 			Class<? extends ActiveProfilesResolver> resolverClass = annotation.resolver();
 			if (ActiveProfilesResolver.class == resolverClass) {
 				resolver = defaultActiveProfilesResolver;
-			}
-			else {
+			} else {
 				try {
 					resolver = BeanUtils.instantiateClass(resolverClass, ActiveProfilesResolver.class);
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					String msg = String.format("Could not instantiate ActiveProfilesResolver of type [%s] " +
 							"for test class [%s]", resolverClass.getName(), rootDeclaringClass.getName());
 					logger.error(msg);

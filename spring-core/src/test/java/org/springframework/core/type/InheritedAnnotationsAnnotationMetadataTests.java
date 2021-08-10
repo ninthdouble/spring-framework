@@ -16,20 +16,15 @@
 
 package org.springframework.core.type;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
 import org.springframework.util.MultiValueMap;
+
+import java.lang.annotation.*;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,8 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code SimpleAnnotationMetadata} does not.
  *
  * @author Sam Brannen
- * @since 5.2.3
  * @see AnnotationMetadataTests
+ * @since 5.2.3
  */
 class InheritedAnnotationsAnnotationMetadataTests {
 
@@ -58,11 +53,11 @@ class InheritedAnnotationsAnnotationMetadataTests {
 	@Test
 	void getAnnotationTypes() {
 		assertThat(standardMetadata.getAnnotationTypes()).containsExactlyInAnyOrder(
-			NamedAnnotation3.class.getName(),
-			InheritedComposedAnnotation.class.getName());
+				NamedAnnotation3.class.getName(),
+				InheritedComposedAnnotation.class.getName());
 
 		assertThat(asmMetadata.getAnnotationTypes()).containsExactly(
-			NamedAnnotation3.class.getName());
+				NamedAnnotation3.class.getName());
 	}
 
 	@Test
@@ -82,10 +77,10 @@ class InheritedAnnotationsAnnotationMetadataTests {
 
 		metaAnnotationTypes = standardMetadata.getMetaAnnotationTypes(InheritedComposedAnnotation.class.getName());
 		assertThat(metaAnnotationTypes).containsExactlyInAnyOrder(
-			MetaAnnotation.class.getName(),
-			NamedAnnotation1.class.getName(),
-			NamedAnnotation2.class.getName(),
-			NamedAnnotation3.class.getName());
+				MetaAnnotation.class.getName(),
+				NamedAnnotation1.class.getName(),
+				NamedAnnotation2.class.getName(),
+				NamedAnnotation3.class.getName());
 
 		metaAnnotationTypes = asmMetadata.getMetaAnnotationTypes(InheritedComposedAnnotation.class.getName());
 		assertThat(metaAnnotationTypes).isEmpty();

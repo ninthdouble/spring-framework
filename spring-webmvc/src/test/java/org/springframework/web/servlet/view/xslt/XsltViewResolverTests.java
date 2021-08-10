@@ -16,12 +16,11 @@
 
 package org.springframework.web.servlet.view.xslt;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.util.ClassUtils;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

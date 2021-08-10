@@ -16,27 +16,20 @@
 
 package org.springframework.beans.testfixture.factory.xml;
 
-import java.beans.PropertyEditorSupport;
-import java.util.StringTokenizer;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanIsNotAFactoryException;
-import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.testfixture.beans.LifecycleBean;
 import org.springframework.beans.testfixture.beans.MustBeInitialized;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.beans.testfixture.beans.factory.DummyFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import java.beans.PropertyEditorSupport;
+import java.util.StringTokenizer;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Subclasses must initialize the bean factory and any other variables they need.
@@ -118,11 +111,11 @@ public abstract class AbstractBeanFactoryTests {
 	public void getInstanceByNonmatchingClass() {
 		assertThatExceptionOfType(BeanNotOfRequiredTypeException.class).isThrownBy(() ->
 				getBeanFactory().getBean("rod", BeanFactory.class))
-			.satisfies(ex -> {
-				assertThat(ex.getBeanName()).isEqualTo("rod");
-				assertThat(ex.getRequiredType()).isEqualTo(BeanFactory.class);
-				assertThat(ex.getActualType()).isEqualTo(TestBean.class).isEqualTo(getBeanFactory().getBean("rod").getClass());
-			});
+				.satisfies(ex -> {
+					assertThat(ex.getBeanName()).isEqualTo("rod");
+					assertThat(ex.getRequiredType()).isEqualTo(BeanFactory.class);
+					assertThat(ex.getActualType()).isEqualTo(TestBean.class).isEqualTo(getBeanFactory().getBean("rod").getClass());
+				});
 	}
 
 	@Test
@@ -143,11 +136,11 @@ public abstract class AbstractBeanFactoryTests {
 	public void getSharedInstanceByNonmatchingClass() {
 		assertThatExceptionOfType(BeanNotOfRequiredTypeException.class).isThrownBy(() ->
 				getBeanFactory().getBean("rod", BeanFactory.class))
-			.satisfies(ex -> {
-				assertThat(ex.getBeanName()).isEqualTo("rod");
-				assertThat(ex.getRequiredType()).isEqualTo(BeanFactory.class);
-				assertThat(ex.getActualType()).isEqualTo(TestBean.class);
-			});
+				.satisfies(ex -> {
+					assertThat(ex.getBeanName()).isEqualTo("rod");
+					assertThat(ex.getRequiredType()).isEqualTo(BeanFactory.class);
+					assertThat(ex.getActualType()).isEqualTo(TestBean.class);
+				});
 	}
 
 	@Test
@@ -194,8 +187,8 @@ public abstract class AbstractBeanFactoryTests {
 	@Test
 	public void typeMismatch() {
 		assertThatExceptionOfType(BeanCreationException.class)
-			.isThrownBy(() -> getBeanFactory().getBean("typeMismatch"))
-			.withCauseInstanceOf(TypeMismatchException.class);
+				.isThrownBy(() -> getBeanFactory().getBean("typeMismatch"))
+				.withCauseInstanceOf(TypeMismatchException.class);
 	}
 
 	@Test
@@ -270,7 +263,7 @@ public abstract class AbstractBeanFactoryTests {
 
 		assertThatExceptionOfType(NoSuchBeanDefinitionException.class).isThrownBy(() ->
 				cbf.getBean(alias))
-			.satisfies(ex -> assertThat(ex.getBeanName()).isEqualTo(alias));
+				.satisfies(ex -> assertThat(ex.getBeanName()).isEqualTo(alias));
 
 		// Create alias
 		cbf.registerAlias("rod", alias);

@@ -16,9 +16,9 @@
 
 package org.springframework.core.env;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,7 +61,8 @@ class SimpleCommandLinePropertySourceTests {
 		assertThat(ps.getProperty("o3")).isNull();
 	}
 
-	@Test // gh-24464
+	@Test
+		// gh-24464
 	void withOptionalArg_andArgIsEmpty() {
 		EnumerablePropertySource<?> ps = new SimpleCommandLinePropertySource("--foo=");
 

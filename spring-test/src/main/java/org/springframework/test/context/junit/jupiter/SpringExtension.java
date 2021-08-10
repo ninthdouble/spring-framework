@@ -16,33 +16,14 @@
 
 package org.springframework.test.context.junit.jupiter;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.AfterAllCallback;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolver;
-import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import org.junit.platform.commons.annotation.Testable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
 import org.springframework.context.ApplicationContext;
@@ -59,6 +40,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodFilter;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * {@code SpringExtension} integrates the <em>Spring TestContext Framework</em>
  * into JUnit 5's <em>Jupiter</em> programming model.
@@ -68,12 +54,12 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
  * {@code @SpringJUnitWebConfig}.
  *
  * @author Sam Brannen
- * @since 5.0
  * @see org.springframework.test.context.junit.jupiter.EnabledIf
  * @see org.springframework.test.context.junit.jupiter.DisabledIf
  * @see org.springframework.test.context.junit.jupiter.SpringJUnitConfig
  * @see org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig
  * @see org.springframework.test.context.TestContextManager
+ * @since 5.0
  */
 public class SpringExtension implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor,
 		BeforeEachCallback, AfterEachCallback, BeforeTestExecutionCallback, AfterTestExecutionCallback,
@@ -101,9 +87,50 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
 	private static final MethodFilter autowiredTestOrLifecycleMethodFilter =
 			ReflectionUtils.USER_DECLARED_METHODS
-				.and(method -> !Modifier.isPrivate(method.getModifiers()))
-				.and(SpringExtension::isAutowiredTestOrLifecycleMethod);
+					.and(method -> !Modifier.isPrivate(method.getModifiers()))
+					.and(SpringExtension::isAutowiredTestOrLifecycleMethod);
 
+	/**
+	 * Get the {@link ApplicationContext} associated with the supplied {@code ExtensionContext}.
+	 *
+	 * @param context the current {@code ExtensionContext} (never {@code null})
+	 * @return the application context
+	 * @throws IllegalStateException if an error occurs while retrieving the application context
+	 * @see org.springframework.test.context.TestContext#getApplicationContext()
+	 */
+	public static ApplicationContext getApplicationContext(ExtensionContext context) {
+		return getTestContextManager(context).getTestContext().getApplicationContext();
+	}
+
+	/**
+	 * Get the {@link TestContextManager} associated with the supplied {@code ExtensionContext}.
+	 *
+	 * @return the {@code TestContextManager} (never {@code null})
+	 */
+	static TestContextManager getTestContextManager(ExtensionContext context) {
+		Assert.notNull(context, "ExtensionContext must not be null");
+		Class<?> testClass = context.getRequiredTestClass();
+		Store store = getStore(context);
+		return store.getOrComputeIfAbsent(testClass, TestContextManager::new, TestContextManager.class);
+	}
+
+	private static Store getStore(ExtensionContext context) {
+		return context.getRoot().getStore(TEST_CONTEXT_MANAGER_NAMESPACE);
+	}
+
+	private static boolean isAutowiredTestOrLifecycleMethod(Method method) {
+		MergedAnnotations mergedAnnotations =
+				MergedAnnotations.from(method, SearchStrategy.DIRECT, RepeatableContainers.none());
+		if (!mergedAnnotations.isPresent(Autowired.class)) {
+			return false;
+		}
+		for (Class<? extends Annotation> annotationType : JUPITER_ANNOTATION_TYPES) {
+			if (mergedAnnotations.isPresent(annotationType)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Delegates to {@link TestContextManager#beforeTestClass}.
@@ -120,8 +147,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 	public void afterAll(ExtensionContext context) throws Exception {
 		try {
 			getTestContextManager(context).afterTestClass();
-		}
-		finally {
+		} finally {
 			getStore(context).remove(context.getRequiredTestClass());
 		}
 	}
@@ -141,6 +167,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 	/**
 	 * Validate that test methods and test lifecycle methods in the supplied
 	 * test class are not annotated with {@link Autowired @Autowired}.
+	 *
 	 * @since 5.3.2
 	 */
 	private void validateAutowiredConfig(ExtensionContext context) {
@@ -148,16 +175,16 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 		// re-validate all methods for the same test class multiple times.
 		Store store = context.getStore(AUTOWIRED_VALIDATION_NAMESPACE);
 		String errorMessage = store.getOrComputeIfAbsent(context.getRequiredTestClass(),
-			testClass -> {
-				Method[] methodsWithErrors =
-						ReflectionUtils.getUniqueDeclaredMethods(testClass, autowiredTestOrLifecycleMethodFilter);
-				return (methodsWithErrors.length == 0 ? NO_AUTOWIRED_VIOLATIONS_DETECTED :
-						String.format(
-							"Test methods and test lifecycle methods must not be annotated with @Autowired. " +
-							"You should instead annotate individual method parameters with @Autowired, " +
-							"@Qualifier, or @Value. Offending methods in test class %s: %s",
-							testClass.getName(), Arrays.toString(methodsWithErrors)));
-			}, String.class);
+				testClass -> {
+					Method[] methodsWithErrors =
+							ReflectionUtils.getUniqueDeclaredMethods(testClass, autowiredTestOrLifecycleMethodFilter);
+					return (methodsWithErrors.length == 0 ? NO_AUTOWIRED_VIOLATIONS_DETECTED :
+							String.format(
+									"Test methods and test lifecycle methods must not be annotated with @Autowired. " +
+											"You should instead annotate individual method parameters with @Autowired, " +
+											"@Qualifier, or @Value. Offending methods in test class %s: %s",
+									testClass.getName(), Arrays.toString(methodsWithErrors)));
+				}, String.class);
 
 		if (errorMessage != NO_AUTOWIRED_VIOLATIONS_DETECTED) {
 			throw new IllegalStateException(errorMessage);
@@ -227,6 +254,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 	 * Spring will assume the responsibility for resolving all parameters in the
 	 * constructor. Consequently, no other registered {@link ParameterResolver}
 	 * will be able to resolve parameters.
+	 *
 	 * @see #resolveParameter
 	 * @see TestConstructorUtils#isAutowirableConstructor(Constructor, Class)
 	 * @see ParameterResolutionDelegate#isAutowirable
@@ -247,7 +275,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 	private boolean supportsApplicationEvents(ParameterContext parameterContext) {
 		if (ApplicationEvents.class.isAssignableFrom(parameterContext.getParameter().getType())) {
 			Assert.isTrue(parameterContext.getDeclaringExecutable() instanceof Method,
-				"ApplicationEvents can only be injected into test and lifecycle methods");
+					"ApplicationEvents can only be injected into test and lifecycle methods");
 			return true;
 		}
 		return false;
@@ -257,6 +285,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 	 * Resolve a value for the {@link Parameter} in the supplied {@link ParameterContext} by
 	 * retrieving the corresponding dependency from the test's {@link ApplicationContext}.
 	 * <p>Delegates to {@link ParameterResolutionDelegate#resolveDependency}.
+	 *
 	 * @see #supportsParameter
 	 * @see ParameterResolutionDelegate#resolveDependency
 	 */
@@ -269,47 +298,6 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 		ApplicationContext applicationContext = getApplicationContext(extensionContext);
 		return ParameterResolutionDelegate.resolveDependency(parameter, index, testClass,
 				applicationContext.getAutowireCapableBeanFactory());
-	}
-
-
-	/**
-	 * Get the {@link ApplicationContext} associated with the supplied {@code ExtensionContext}.
-	 * @param context the current {@code ExtensionContext} (never {@code null})
-	 * @return the application context
-	 * @throws IllegalStateException if an error occurs while retrieving the application context
-	 * @see org.springframework.test.context.TestContext#getApplicationContext()
-	 */
-	public static ApplicationContext getApplicationContext(ExtensionContext context) {
-		return getTestContextManager(context).getTestContext().getApplicationContext();
-	}
-
-	/**
-	 * Get the {@link TestContextManager} associated with the supplied {@code ExtensionContext}.
-	 * @return the {@code TestContextManager} (never {@code null})
-	 */
-	static TestContextManager getTestContextManager(ExtensionContext context) {
-		Assert.notNull(context, "ExtensionContext must not be null");
-		Class<?> testClass = context.getRequiredTestClass();
-		Store store = getStore(context);
-		return store.getOrComputeIfAbsent(testClass, TestContextManager::new, TestContextManager.class);
-	}
-
-	private static Store getStore(ExtensionContext context) {
-		return context.getRoot().getStore(TEST_CONTEXT_MANAGER_NAMESPACE);
-	}
-
-	private static boolean isAutowiredTestOrLifecycleMethod(Method method) {
-		MergedAnnotations mergedAnnotations =
-				MergedAnnotations.from(method, SearchStrategy.DIRECT, RepeatableContainers.none());
-		if (!mergedAnnotations.isPresent(Autowired.class)) {
-			return false;
-		}
-		for (Class<? extends Annotation> annotationType : JUPITER_ANNOTATION_TYPES) {
-			if (mergedAnnotations.isPresent(annotationType)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

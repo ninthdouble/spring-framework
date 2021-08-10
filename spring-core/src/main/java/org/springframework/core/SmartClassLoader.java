@@ -16,9 +16,9 @@
 
 package org.springframework.core;
 
-import java.security.ProtectionDomain;
-
 import org.springframework.lang.Nullable;
+
+import java.security.ProtectionDomain;
 
 /**
  * Interface to be implemented by a reloading-aware ClassLoader
@@ -39,6 +39,7 @@ public interface SmartClassLoader {
 	 * <p>Typically used to check whether the result may be cached (for this
 	 * ClassLoader) or whether it should be reobtained every time.
 	 * The default implementation always returns {@code false}.
+	 *
 	 * @param clazz the class to check (usually loaded from this ClassLoader)
 	 * @return whether the class should be expected to appear in a reloaded
 	 * version (with a different {@code Class} object) later on
@@ -60,10 +61,11 @@ public interface SmartClassLoader {
 	 * defined in the present class loader. In case of a reloadable class loader,
 	 * we prefer the base application class loader for proxying general classes
 	 * not defined in the reloadable class loader itself.
+	 *
 	 * @return the original ClassLoader (the same reference by default)
-	 * @since 5.3.5
 	 * @see ClassLoader#getParent()
 	 * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator
+	 * @since 5.3.5
 	 */
 	default ClassLoader getOriginalClassLoader() {
 		return (ClassLoader) this;
@@ -81,17 +83,18 @@ public interface SmartClassLoader {
 	 * Note that the JDK 9+ {@code Lookup#defineClass} method does not support
 	 * a custom target class loader for the new definition; it rather always
 	 * defines the class in the same class loader as the lookup's context class.
-	 * @param name the name of the class
-	 * @param b the bytes defining the class
+	 *
+	 * @param name             the name of the class
+	 * @param b                the bytes defining the class
 	 * @param protectionDomain the protection domain for the class, if any
 	 * @return the newly created class
-	 * @throws LinkageError in case of a bad class definition
-	 * @throws SecurityException in case of an invalid definition attempt
+	 * @throws LinkageError                  in case of a bad class definition
+	 * @throws SecurityException             in case of an invalid definition attempt
 	 * @throws UnsupportedOperationException in case of a custom definition attempt
-	 * not being possible (thrown by the default implementation in this interface)
-	 * @since 5.3.4
+	 *                                       not being possible (thrown by the default implementation in this interface)
 	 * @see ClassLoader#defineClass(String, byte[], int, int, ProtectionDomain)
 	 * @see java.lang.invoke.MethodHandles.Lookup#defineClass(byte[])
+	 * @since 5.3.4
 	 */
 	default Class<?> publicDefineClass(String name, byte[] b, @Nullable ProtectionDomain protectionDomain) {
 		throw new UnsupportedOperationException();

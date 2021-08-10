@@ -16,12 +16,12 @@
 
 package org.springframework.jca.cci.object;
 
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.InteractionSpec;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import javax.resource.cci.ConnectionFactory;
+import javax.resource.cci.InteractionSpec;
 
 /**
  * Base class for EIS operation objects that work with the CCI API.
@@ -31,9 +31,9 @@ import org.springframework.util.Assert;
  * are an alternative to working with a CciTemplate directly.
  *
  * @author Juergen Hoeller
- * @since 1.2
  * @see #setConnectionFactory
  * @see #setInteractionSpec
+ * @since 1.2
  * @deprecated as of 5.3, in favor of specific data access APIs
  * (or native CCI usage if there is no alternative)
  */
@@ -46,22 +46,22 @@ public abstract class EisOperation implements InitializingBean {
 	@Nullable
 	private InteractionSpec interactionSpec;
 
-
-	/**
-	 * Set the CciTemplate to be used by this operation.
-	 * Alternatively, specify a CCI ConnectionFactory.
-	 * @see #setConnectionFactory
-	 */
-	public void setCciTemplate(org.springframework.jca.cci.core.CciTemplate cciTemplate) {
-		Assert.notNull(cciTemplate, "CciTemplate must not be null");
-		this.cciTemplate = cciTemplate;
-	}
-
 	/**
 	 * Return the CciTemplate used by this operation.
 	 */
 	public org.springframework.jca.cci.core.CciTemplate getCciTemplate() {
 		return this.cciTemplate;
+	}
+
+	/**
+	 * Set the CciTemplate to be used by this operation.
+	 * Alternatively, specify a CCI ConnectionFactory.
+	 *
+	 * @see #setConnectionFactory
+	 */
+	public void setCciTemplate(org.springframework.jca.cci.core.CciTemplate cciTemplate) {
+		Assert.notNull(cciTemplate, "CciTemplate must not be null");
+		this.cciTemplate = cciTemplate;
 	}
 
 	/**
@@ -72,13 +72,6 @@ public abstract class EisOperation implements InitializingBean {
 	}
 
 	/**
-	 * Set the CCI InteractionSpec for this operation.
-	 */
-	public void setInteractionSpec(@Nullable InteractionSpec interactionSpec) {
-		this.interactionSpec = interactionSpec;
-	}
-
-	/**
 	 * Return the CCI InteractionSpec for this operation.
 	 */
 	@Nullable
@@ -86,6 +79,12 @@ public abstract class EisOperation implements InitializingBean {
 		return this.interactionSpec;
 	}
 
+	/**
+	 * Set the CCI InteractionSpec for this operation.
+	 */
+	public void setInteractionSpec(@Nullable InteractionSpec interactionSpec) {
+		this.interactionSpec = interactionSpec;
+	}
 
 	@Override
 	public void afterPropertiesSet() {

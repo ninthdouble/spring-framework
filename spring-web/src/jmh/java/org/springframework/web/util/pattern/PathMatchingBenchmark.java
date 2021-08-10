@@ -16,40 +16,25 @@
 
 package org.springframework.web.util.pattern;
 
+import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
+import org.springframework.http.server.PathContainer;
+import org.springframework.util.AntPathMatcher;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.infra.Blackhole;
-
-import org.springframework.http.server.PathContainer;
-import org.springframework.util.AntPathMatcher;
-
 /**
  * Benchmarks for matching requests paths against path patterns in a web context.
  * We're considering here the {@link org.springframework.util.AntPathMatcher} and
  * {@link PathPatternParser} implementations with typical sets of patterns.
+ *
  * @author Brian Clozel
  */
 @BenchmarkMode(Mode.Throughput)
 public class PathMatchingBenchmark {
-
-	@State(Scope.Benchmark)
-	public static class AllRoutesPatternParser extends PatternParserData {
-
-		@Setup(Level.Trial)
-		public void registerPatterns() {
-			parseRoutes(RouteGenerator.allRoutes());
-		}
-	}
 
 	@Benchmark
 	public void matchAllRoutesWithPathPatternParser(AllRoutesPatternParser data, Blackhole bh) {
@@ -74,30 +59,12 @@ public class PathMatchingBenchmark {
 		}
 	}
 
-	@State(Scope.Benchmark)
-	public static class StaticRoutesPatternParser extends PatternParserData {
-
-		@Setup(Level.Trial)
-		public void registerPatterns() {
-			parseRoutes(RouteGenerator.staticRoutes());
-		}
-	}
-
 	@Benchmark
 	public void matchStaticRoutesWithPathPatternParser(StaticRoutesPatternParser data, Blackhole bh) {
 		for (PathContainer path : data.requestPaths) {
 			for (PathPattern pattern : data.patterns) {
 				bh.consume(pattern.matches(path));
 			}
-		}
-	}
-
-	@State(Scope.Benchmark)
-	public static class AllRoutesAntPathMatcher extends AntPathMatcherData {
-
-		@Setup(Level.Trial)
-		public void registerPatterns() {
-			parseRoutes(RouteGenerator.allRoutes());
 		}
 	}
 
@@ -124,15 +91,6 @@ public class PathMatchingBenchmark {
 		}
 	}
 
-	@State(Scope.Benchmark)
-	public static class StaticRoutesAntPathMatcher extends AntPathMatcherData {
-
-		@Setup(Level.Trial)
-		public void registerPatterns() {
-			parseRoutes(RouteGenerator.staticRoutes());
-		}
-	}
-
 	@Benchmark
 	public void matchStaticRoutesWithAntPathMatcher(StaticRoutesAntPathMatcher data, Blackhole bh) {
 		for (String path : data.requestPaths) {
@@ -142,6 +100,41 @@ public class PathMatchingBenchmark {
 		}
 	}
 
+	@State(Scope.Benchmark)
+	public static class AllRoutesPatternParser extends PatternParserData {
+
+		@Setup(Level.Trial)
+		public void registerPatterns() {
+			parseRoutes(RouteGenerator.allRoutes());
+		}
+	}
+
+	@State(Scope.Benchmark)
+	public static class StaticRoutesPatternParser extends PatternParserData {
+
+		@Setup(Level.Trial)
+		public void registerPatterns() {
+			parseRoutes(RouteGenerator.staticRoutes());
+		}
+	}
+
+	@State(Scope.Benchmark)
+	public static class AllRoutesAntPathMatcher extends AntPathMatcherData {
+
+		@Setup(Level.Trial)
+		public void registerPatterns() {
+			parseRoutes(RouteGenerator.allRoutes());
+		}
+	}
+
+	@State(Scope.Benchmark)
+	public static class StaticRoutesAntPathMatcher extends AntPathMatcherData {
+
+		@Setup(Level.Trial)
+		public void registerPatterns() {
+			parseRoutes(RouteGenerator.staticRoutes());
+		}
+	}
 
 	static class PatternParserData {
 
@@ -190,8 +183,7 @@ public class PathMatchingBenchmark {
 			this.pattern = pattern;
 			if (matchingPaths.length > 0) {
 				this.matchingPaths = Arrays.asList(matchingPaths);
-			}
-			else {
+			} else {
 				this.matchingPaths = Collections.singletonList(pattern);
 			}
 		}

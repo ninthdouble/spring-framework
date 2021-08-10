@@ -16,13 +16,12 @@
 
 package org.springframework.web.context.request;
 
-import javax.servlet.ServletRequestEvent;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.task.MockRunnable;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.ServletRequestEvent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,8 +96,7 @@ public class RequestContextListenerTests {
 		thread.start();
 		try {
 			thread.join();
-		}
-		catch (InterruptedException ex) {
+		} catch (InterruptedException ex) {
 		}
 		// Still bound to original thread, but at least completed.
 		assertThat(RequestContextHolder.getRequestAttributes()).isNotNull();

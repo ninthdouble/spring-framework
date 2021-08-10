@@ -16,21 +16,17 @@
 
 package org.springframework.test.web.client;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.test.web.client.ExpectedCount.max;
-import static org.springframework.test.web.client.ExpectedCount.min;
-import static org.springframework.test.web.client.ExpectedCount.once;
-import static org.springframework.test.web.client.ExpectedCount.twice;
+import static org.springframework.test.web.client.ExpectedCount.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -49,10 +45,9 @@ public class UnorderedRequestExpectationManagerTests {
 	public void unexpectedRequest() throws Exception {
 		try {
 			this.manager.validateRequest(createRequest(GET, "/foo"));
-		}
-		catch (AssertionError error) {
+		} catch (AssertionError error) {
 			assertThat(error.getMessage()).isEqualTo(("No further requests expected: HTTP GET /foo\n" +
-						"0 request(s) executed.\n"));
+					"0 request(s) executed.\n"));
 		}
 	}
 
@@ -93,12 +88,12 @@ public class UnorderedRequestExpectationManagerTests {
 		this.manager.validateRequest(createRequest(GET, "/foo"));
 		assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
 				this.manager.validateRequest(createRequest(GET, "/foo")))
-			.withMessage("No further requests expected: HTTP GET /foo\n" +
-				"4 request(s) executed:\n" +
-				"GET /bar\n" +
-				"GET /foo\n" +
-				"GET /bar\n" +
-				"GET /foo\n");
+				.withMessage("No further requests expected: HTTP GET /foo\n" +
+						"4 request(s) executed:\n" +
+						"GET /bar\n" +
+						"GET /foo\n" +
+						"GET /bar\n" +
+						"GET /foo\n");
 	}
 
 	@Test
@@ -110,19 +105,18 @@ public class UnorderedRequestExpectationManagerTests {
 		this.manager.validateRequest(createRequest(GET, "/foo"));
 		assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
 				this.manager.verify())
-			.withMessageContaining("3 request(s) executed:\n" +
-				"GET /bar\n" +
-				"GET /foo\n" +
-				"GET /foo\n");
+				.withMessageContaining("3 request(s) executed:\n" +
+						"GET /bar\n" +
+						"GET /foo\n" +
+						"GET /foo\n");
 	}
 
 
 	@SuppressWarnings("deprecation")
 	private ClientHttpRequest createRequest(HttpMethod method, String url) {
 		try {
-			return new org.springframework.mock.http.client.MockAsyncClientHttpRequest(method,  new URI(url));
-		}
-		catch (URISyntaxException ex) {
+			return new org.springframework.mock.http.client.MockAsyncClientHttpRequest(method, new URI(url));
+		} catch (URISyntaxException ex) {
 			throw new IllegalStateException(ex);
 		}
 	}

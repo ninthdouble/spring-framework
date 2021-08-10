@@ -16,15 +16,8 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,17 +28,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-import static org.springframework.http.HttpHeaders.IF_MODIFIED_SINCE;
-import static org.springframework.http.HttpHeaders.LAST_MODIFIED;
-import static org.springframework.http.HttpHeaders.VARY;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.http.HttpHeaders.*;
 
 /**
  * {@link MockMvcWebTestClient} equivalent of the MockMvc
@@ -56,16 +47,10 @@ import static org.springframework.http.HttpHeaders.VARY;
 public class HeaderAssertionTests {
 
 	private static final String ERROR_MESSAGE = "Should have thrown an AssertionError";
-
-
-	private String now;
-
-	private String minuteAgo;
-
-	private WebTestClient testClient;
-
 	private final long currentTime = System.currentTimeMillis();
-
+	private String now;
+	private String minuteAgo;
+	private WebTestClient testClient;
 	private SimpleDateFormat dateFormat;
 
 
@@ -157,8 +142,7 @@ public class HeaderAssertionTests {
 					.expectHeader().valueEquals("X-Custom-Header", 99L);
 
 			fail(ERROR_MESSAGE);
-		}
-		catch (AssertionError err) {
+		} catch (AssertionError err) {
 			if (ERROR_MESSAGE.equals(err.getMessage())) {
 				throw err;
 			}
@@ -231,8 +215,7 @@ public class HeaderAssertionTests {
 			assertions.accept(spec);
 
 			fail(ERROR_MESSAGE);
-		}
-		catch (AssertionError err) {
+		} catch (AssertionError err) {
 			if (ERROR_MESSAGE.equals(err.getMessage())) {
 				throw err;
 			}

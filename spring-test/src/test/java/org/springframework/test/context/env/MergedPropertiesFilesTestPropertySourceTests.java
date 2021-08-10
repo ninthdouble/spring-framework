@@ -17,7 +17,6 @@
 package org.springframework.test.context.env;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;

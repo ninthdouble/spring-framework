@@ -16,15 +16,14 @@
 
 package org.springframework.test.context.junit4;
 
-import java.util.Properties;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.testfixture.beans.Pet;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,9 +48,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * </p>
  *
  * @author Sam Brannen
- * @since 2.5
  * @see org.springframework.test.context.support.GenericPropertiesContextLoader
  * @see SpringJUnit4ClassRunnerAppCtxTests
+ * @since 2.5
  */
 @RunWith(SpringRunner.class)
 @SuppressWarnings("deprecation")

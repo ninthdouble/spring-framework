@@ -17,7 +17,6 @@
 package org.springframework.beans.factory.xml;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.testfixture.beans.ITestBean;
@@ -63,7 +62,7 @@ public class SimplePropertyNamespaceHandlerTests {
 		DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				new XmlBeanDefinitionReader(beanFactory).loadBeanDefinitions(
-							new ClassPathResource("simplePropertyNamespaceHandlerTestsWithErrors.xml", getClass())));
+						new ClassPathResource("simplePropertyNamespaceHandlerTestsWithErrors.xml", getClass())));
 	}
 
 	@Test

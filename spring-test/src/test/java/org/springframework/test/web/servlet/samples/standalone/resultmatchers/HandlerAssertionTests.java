@@ -16,20 +16,17 @@
 
 package org.springframework.test.web.servlet.samples.standalone.resultmatchers;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.lang.reflect.Method;
+
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,9 +53,9 @@ public class HandlerAssertionTests {
 	public void methodCallOnNonMock() throws Exception {
 		assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
 				this.mockMvc.perform(get("/")).andExpect(handler().methodCall("bogus")))
-			.withMessageContaining("The supplied object [bogus] is not an instance of")
-			.withMessageContaining(MvcUriComponentsBuilder.MethodInvocationInfo.class.getName())
-			.withMessageContaining("Ensure that you invoke the handler method via MvcUriComponentsBuilder.on()");
+				.withMessageContaining("The supplied object [bogus] is not an instance of")
+				.withMessageContaining(MvcUriComponentsBuilder.MethodInvocationInfo.class.getName())
+				.withMessageContaining("Ensure that you invoke the handler method via MvcUriComponentsBuilder.on()");
 	}
 
 	@Test

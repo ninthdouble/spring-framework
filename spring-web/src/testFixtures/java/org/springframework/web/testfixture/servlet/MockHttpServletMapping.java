@@ -16,10 +16,10 @@
 
 package org.springframework.web.testfixture.servlet;
 
+import org.springframework.lang.Nullable;
+
 import javax.servlet.http.HttpServletMapping;
 import javax.servlet.http.MappingMatch;
-
-import org.springframework.lang.Nullable;
 
 /**
  * Mock implementation of {@link HttpServletMapping}.

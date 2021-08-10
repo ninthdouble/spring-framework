@@ -16,18 +16,17 @@
 
 package org.springframework.test.context.junit.jupiter;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Store;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit.SpringJUnitJupiterTestSuite;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -44,8 +43,8 @@ import static org.mockito.Mockito.mock;
  * Platform, simply run {@link SpringJUnitJupiterTestSuite} as a JUnit 4 test.
  *
  * @author Sam Brannen
- * @since 5.0
  * @see DisabledIfTests
+ * @since 5.0
  */
 class DisabledIfConditionTests {
 
@@ -71,9 +70,9 @@ class DisabledIfConditionTests {
 		Method method = ReflectionUtils.findMethod(getClass(), methodName);
 
 		assertThatIllegalStateException()
-			.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
-			.withMessageContaining(
-				"@DisabledIf(\"#{6 * 7}\") on " + method + " must evaluate to a String or a Boolean, not java.lang.Integer");
+				.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
+				.withMessageContaining(
+						"@DisabledIf(\"#{6 * 7}\") on " + method + " must evaluate to a String or a Boolean, not java.lang.Integer");
 	}
 
 	@Test
@@ -82,9 +81,9 @@ class DisabledIfConditionTests {
 		Method method = ReflectionUtils.findMethod(getClass(), methodName);
 
 		assertThatIllegalStateException()
-			.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
-			.withMessageContaining(
-				"@DisabledIf(\"#{'enigma'}\") on " + method + " must evaluate to \"true\" or \"false\", not \"enigma\"");
+				.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
+				.withMessageContaining(
+						"@DisabledIf(\"#{'enigma'}\") on " + method + " must evaluate to \"true\" or \"false\", not \"enigma\"");
 	}
 
 	@Test
@@ -99,7 +98,7 @@ class DisabledIfConditionTests {
 		ConditionEvaluationResult result = condition.evaluateExecutionCondition(buildExtensionContext("defaultReason"));
 		assertThat(result.isDisabled()).isTrue();
 		assertThat(result.getReason().get())
-			.endsWith("defaultReason() is disabled because @DisabledIf(\"#{1 + 1 eq 2}\") evaluated to true");
+				.endsWith("defaultReason() is disabled because @DisabledIf(\"#{1 + 1 eq 2}\") evaluated to true");
 	}
 
 	@Test
@@ -107,7 +106,7 @@ class DisabledIfConditionTests {
 		ConditionEvaluationResult result = condition.evaluateExecutionCondition(buildExtensionContext("neverDisabledWithDefaultReason"));
 		assertThat(result.isDisabled()).isFalse();
 		assertThat(result.getReason().get())
-			.endsWith("neverDisabledWithDefaultReason() is enabled because @DisabledIf(\"false\") did not evaluate to true");
+				.endsWith("neverDisabledWithDefaultReason() is enabled because @DisabledIf(\"false\") did not evaluate to true");
 	}
 
 	// -------------------------------------------------------------------------
@@ -127,8 +126,8 @@ class DisabledIfConditionTests {
 
 	private void assertExpressionIsBlank(String methodName) {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
-			.withMessageContaining("must not be blank");
+				.isThrownBy(() -> condition.evaluateExecutionCondition(buildExtensionContext(methodName)))
+				.withMessageContaining("must not be blank");
 	}
 
 	// -------------------------------------------------------------------------

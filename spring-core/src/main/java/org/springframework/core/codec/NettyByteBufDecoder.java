@@ -16,11 +16,8 @@
 
 package org.springframework.core.codec;
 
-import java.util.Map;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -28,6 +25,8 @@ import org.springframework.core.io.buffer.NettyDataBuffer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+
+import java.util.Map;
 
 /**
  * Decoder for {@link ByteBuf ByteBufs}.
@@ -50,7 +49,7 @@ public class NettyByteBufDecoder extends AbstractDataBufferDecoder<ByteBuf> {
 
 	@Override
 	public ByteBuf decode(DataBuffer dataBuffer, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+						  @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(Hints.getLogPrefix(hints) + "Read " + dataBuffer.readableByteCount() + " bytes");

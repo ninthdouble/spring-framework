@@ -16,13 +16,7 @@
 
 package org.springframework.http.converter;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -32,6 +26,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.MockHttpInputMessage;
 import org.springframework.http.MockHttpOutputMessage;
 import org.springframework.util.FileCopyUtils;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -75,7 +74,7 @@ public class ResourceHttpMessageConverterTests {
 
 	@Test  // SPR-13443
 	public void shouldReadInputStreamResource() throws IOException {
-		try (InputStream body = getClass().getResourceAsStream("logo.jpg") ) {
+		try (InputStream body = getClass().getResourceAsStream("logo.jpg")) {
 			MockHttpInputMessage inputMessage = new MockHttpInputMessage(body);
 			inputMessage.getHeaders().setContentType(MediaType.IMAGE_JPEG);
 			inputMessage.getHeaders().setContentDisposition(
@@ -92,7 +91,7 @@ public class ResourceHttpMessageConverterTests {
 	@Test  // SPR-14882
 	public void shouldNotReadInputStreamResource() throws IOException {
 		ResourceHttpMessageConverter noStreamConverter = new ResourceHttpMessageConverter(false);
-		try (InputStream body = getClass().getResourceAsStream("logo.jpg") ) {
+		try (InputStream body = getClass().getResourceAsStream("logo.jpg")) {
 			MockHttpInputMessage inputMessage = new MockHttpInputMessage(body);
 			inputMessage.getHeaders().setContentType(MediaType.IMAGE_JPEG);
 			assertThatExceptionOfType(HttpMessageNotReadableException.class).isThrownBy(() ->

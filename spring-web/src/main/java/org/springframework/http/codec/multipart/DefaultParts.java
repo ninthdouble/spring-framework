@@ -16,17 +16,16 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.nio.file.Path;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.nio.file.Path;
 
 /**
  * Default implementations of {@link Part} and subtypes.
@@ -38,8 +37,9 @@ abstract class DefaultParts {
 
 	/**
 	 * Create a new {@link FormFieldPart} with the given parameters.
+	 *
 	 * @param headers the part headers
-	 * @param value the form field value
+	 * @param value   the form field value
 	 * @return the created part
 	 */
 	public static FormFieldPart formFieldPart(HttpHeaders headers, String value) {
@@ -53,6 +53,7 @@ abstract class DefaultParts {
 	 * Create a new {@link Part} or {@link FilePart} with the given parameters.
 	 * Returns {@link FilePart} if the {@code Content-Disposition} of the given
 	 * headers contains a filename, or a "normal" {@link Part} otherwise
+	 *
 	 * @param headers the part headers
 	 * @param content the content of the part
 	 * @return {@link Part} or {@link FilePart}, depending on {@link HttpHeaders#getContentDisposition()}
@@ -64,8 +65,7 @@ abstract class DefaultParts {
 		String filename = headers.getContentDisposition().getFilename();
 		if (filename != null) {
 			return new DefaultFilePart(headers, content);
-		}
-		else {
+		} else {
 			return new DefaultPart(headers, content);
 		}
 	}
@@ -129,8 +129,7 @@ abstract class DefaultParts {
 			String name = headers().getContentDisposition().getName();
 			if (name != null) {
 				return "DefaultFormFieldPart{" + name() + "}";
-			}
-			else {
+			} else {
 				return "DefaultFormFieldPart";
 			}
 		}
@@ -159,8 +158,7 @@ abstract class DefaultParts {
 			String name = headers().getContentDisposition().getName();
 			if (name != null) {
 				return "DefaultPart{" + name + "}";
-			}
-			else {
+			} else {
 				return "DefaultPart";
 			}
 		}
@@ -196,8 +194,7 @@ abstract class DefaultParts {
 			String filename = contentDisposition.getFilename();
 			if (name != null) {
 				return "DefaultFilePart{" + name() + " (" + filename + ")}";
-			}
-			else {
+			} else {
 				return "DefaultFilePart{(" + filename + ")}";
 			}
 		}

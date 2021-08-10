@@ -16,11 +16,6 @@
 
 package org.springframework.test.context.junit.jupiter.event;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -31,13 +26,17 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.testkit.engine.EngineTestKit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
@@ -112,6 +111,10 @@ class ParallelApplicationEventsIntegrationTests {
 		@Autowired
 		ApplicationEvents events;
 
+		private static void assertPayloads(Stream<String> events, String... values) {
+			assertThat(events.peek(payloads::add)).extracting(Object::toString).containsExactly(values);
+		}
+
 		@Test
 		void test1(TestInfo testInfo) {
 			assertTestExpectations(this.events, testInfo);
@@ -168,10 +171,6 @@ class ParallelApplicationEventsIntegrationTests {
 			String localPayload = testName + "-" + threadName;
 			context.publishEvent(localPayload);
 			assertPayloads(events.stream(String.class), localPayload);
-		}
-
-		private static void assertPayloads(Stream<String> events, String... values) {
-			assertThat(events.peek(payloads::add)).extracting(Object::toString).containsExactly(values);
 		}
 
 		@Configuration

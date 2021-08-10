@@ -16,24 +16,8 @@
 
 package org.springframework.web.reactive.socket.client;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.ClientEndpointConfig.Configurator;
-import javax.websocket.ContainerProvider;
-import javax.websocket.Endpoint;
-import javax.websocket.HandshakeResponse;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -42,14 +26,23 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.adapter.ContextWebSocketHandler;
 import org.springframework.web.reactive.socket.adapter.StandardWebSocketHandlerAdapter;
 import org.springframework.web.reactive.socket.adapter.StandardWebSocketSession;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+import reactor.core.scheduler.Schedulers;
+
+import javax.websocket.*;
+import javax.websocket.ClientEndpointConfig.Configurator;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link WebSocketClient} implementation for use with the Java WebSocket API.
  *
  * @author Violeta Georgieva
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see <a href="https://www.jcp.org/en/jsr/detail?id=356">https://www.jcp.org/en/jsr/detail?id=356</a>
+ * @since 5.0
  */
 public class StandardWebSocketClient implements WebSocketClient {
 
@@ -70,6 +63,7 @@ public class StandardWebSocketClient implements WebSocketClient {
 
 	/**
 	 * Constructor accepting an existing {@link WebSocketContainer} instance.
+	 *
 	 * @param webSocketContainer a web socket container
 	 */
 	public StandardWebSocketClient(WebSocketContainer webSocketContainer) {
@@ -110,8 +104,7 @@ public class StandardWebSocketClient implements WebSocketClient {
 					try {
 						this.webSocketContainer.connectToServer(endpoint, config, url);
 						return completion.asMono();
-					}
-					catch (Exception ex) {
+					} catch (Exception ex) {
 						return Mono.error(ex);
 					}
 				})
@@ -119,7 +112,7 @@ public class StandardWebSocketClient implements WebSocketClient {
 	}
 
 	private StandardWebSocketHandlerAdapter createEndpoint(URI url, WebSocketHandler handler,
-			Sinks.Empty<Void> completionSink, DefaultConfigurator configurator) {
+														   Sinks.Empty<Void> completionSink, DefaultConfigurator configurator) {
 
 		return new StandardWebSocketHandlerAdapter(handler, session ->
 				createWebSocketSession(session, createHandshakeInfo(url, configurator), completionSink));

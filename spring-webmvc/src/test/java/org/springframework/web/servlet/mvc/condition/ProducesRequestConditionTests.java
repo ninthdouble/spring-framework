@@ -16,20 +16,18 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.FixedContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition.ProduceMediaTypeExpression;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,7 +155,7 @@ public class ProducesRequestConditionTests {
 				new FixedContentNegotiationStrategy(MediaType.TEXT_HTML));
 
 		ProducesRequestCondition none = new ProducesRequestCondition(new String[0], null, manager);
-		ProducesRequestCondition html = new ProducesRequestCondition(new String[] {"text/html"}, null, manager);
+		ProducesRequestCondition html = new ProducesRequestCondition(new String[]{"text/html"}, null, manager);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addHeader("Accept", "*/*");
@@ -330,7 +328,7 @@ public class ProducesRequestConditionTests {
 
 	@Test
 	public void instantiateWithProducesAndHeaderConditions() {
-		String[] produces = new String[] {"text/plain"};
+		String[] produces = new String[]{"text/plain"};
 		String[] headers = new String[]{"foo=bar", "accept=application/xml,application/pdf"};
 		ProducesRequestCondition condition = new ProducesRequestCondition(produces, headers);
 
@@ -362,7 +360,7 @@ public class ProducesRequestConditionTests {
 	private void assertConditions(ProducesRequestCondition condition, String... expected) {
 		Collection<ProduceMediaTypeExpression> expressions = condition.getContent();
 		assertThat(expressions.stream().map(expr -> expr.getMediaType().toString()))
-			.containsExactlyInAnyOrder(expected);
+				.containsExactlyInAnyOrder(expected);
 	}
 
 }

@@ -16,17 +16,11 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.lang.Nullable;
+
+import java.lang.annotation.*;
 
 /**
  * {@code @TestConstructor} is a type-level annotation that is used to configure
@@ -58,7 +52,6 @@ import org.springframework.lang.Nullable;
  * {@link NestedTestConfiguration @NestedTestConfiguration} for details.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see org.springframework.beans.factory.annotation.Autowired @Autowired
  * @see org.springframework.test.context.junit.jupiter.SpringExtension SpringExtension
  * @see org.springframework.test.context.junit.jupiter.SpringJUnitConfig @SpringJUnitConfig
@@ -67,6 +60,7 @@ import org.springframework.lang.Nullable;
  * @see ContextHierarchy @ContextHierarchy
  * @see ActiveProfiles @ActiveProfiles
  * @see TestPropertySource @TestPropertySource
+ * @since 5.2
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -90,6 +84,7 @@ public @interface TestConstructor {
 	 * <p>As of Spring Framework 5.3, this property may also be configured as a
 	 * <a href="https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params">JUnit
 	 * Platform configuration parameter</a>.
+	 *
 	 * @see #autowireMode
 	 */
 	String TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME = "spring.test.constructor.autowire.mode";
@@ -101,6 +96,7 @@ public @interface TestConstructor {
 	 * <p>Setting this flag overrides the global default. See
 	 * {@link #TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME} for details on how
 	 * to change the global default.
+	 *
 	 * @return an {@link AutowireMode} to take precedence over the global default
 	 * @see #TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME
 	 * @see org.springframework.beans.factory.annotation.Autowired @Autowired
@@ -112,6 +108,7 @@ public @interface TestConstructor {
 
 	/**
 	 * Defines autowiring modes for parameters in a test constructor.
+	 *
 	 * @see #ALL
 	 * @see #ANNOTATED
 	 */
@@ -121,6 +118,7 @@ public @interface TestConstructor {
 		 * All test constructor parameters will be autowired as if the constructor
 		 * itself were annotated with
 		 * {@link org.springframework.beans.factory.annotation.Autowired @Autowired}.
+		 *
 		 * @see #ANNOTATED
 		 */
 		ALL,
@@ -132,6 +130,7 @@ public @interface TestConstructor {
 		 * {@link org.springframework.beans.factory.annotation.Qualifier @Qualifier},
 		 * or {@link org.springframework.beans.factory.annotation.Value @Value},
 		 * or if the constructor itself is annotated with {@code @Autowired}.
+		 *
 		 * @see #ALL
 		 */
 		ANNOTATED;
@@ -140,10 +139,11 @@ public @interface TestConstructor {
 		/**
 		 * Get the {@code AutowireMode} enum constant with the supplied name,
 		 * ignoring case.
+		 *
 		 * @param name the name of the enum constant to retrieve
 		 * @return the corresponding enum constant or {@code null} if not found
-		 * @since 5.3
 		 * @see AutowireMode#valueOf(String)
+		 * @since 5.3
 		 */
 		@Nullable
 		public static AutowireMode from(@Nullable String name) {
@@ -152,8 +152,7 @@ public @interface TestConstructor {
 			}
 			try {
 				return AutowireMode.valueOf(name.trim().toUpperCase());
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				Log logger = LogFactory.getLog(AutowireMode.class);
 				if (logger.isDebugEnabled()) {
 					logger.debug(String.format("Failed to parse autowire mode from '%s': %s", name, ex.getMessage()));

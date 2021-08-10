@@ -17,7 +17,6 @@
 package org.springframework.jms.listener.endpoint;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jms.support.QosSettings;
 
 import static org.assertj.core.api.Assertions.assertThat;

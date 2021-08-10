@@ -16,21 +16,12 @@
 
 package org.springframework.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.springframework.lang.Nullable;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Specialization of {@link Properties} that sorts properties alphanumerically
@@ -43,8 +34,8 @@ import org.springframework.lang.Nullable;
  * <p>Comments in generated properties files can also be optionally omitted.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see java.util.Properties
+ * @since 5.2
  */
 @SuppressWarnings("serial")
 class SortedProperties extends Properties {
@@ -62,8 +53,9 @@ class SortedProperties extends Properties {
 	/**
 	 * Construct a new {@code SortedProperties} instance that honors the supplied
 	 * {@code omitComments} flag.
+	 *
 	 * @param omitComments {@code true} if comments should be omitted when
-	 * storing properties in a file
+	 *                     storing properties in a file
 	 */
 	SortedProperties(boolean omitComments) {
 		this.omitComments = omitComments;
@@ -75,10 +67,11 @@ class SortedProperties extends Properties {
 	 * {@code omitComments} flag.
 	 * <p>Default properties from the supplied {@code Properties} object will
 	 * not be copied.
-	 * @param properties the {@code Properties} object from which to copy the
-	 * initial properties
+	 *
+	 * @param properties   the {@code Properties} object from which to copy the
+	 *                     initial properties
 	 * @param omitComments {@code true} if comments should be omitted when
-	 * storing properties in a file
+	 *                     storing properties in a file
 	 */
 	SortedProperties(Properties properties, boolean omitComments) {
 		this(omitComments);
@@ -122,6 +115,7 @@ class SortedProperties extends Properties {
 
 	/**
 	 * Return a sorted enumeration of the keys in this {@link Properties} object.
+	 *
 	 * @see #keySet()
 	 */
 	@Override

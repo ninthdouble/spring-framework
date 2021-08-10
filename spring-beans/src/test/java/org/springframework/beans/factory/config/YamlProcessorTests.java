@@ -16,23 +16,16 @@
 
 package org.springframework.beans.factory.config;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ByteArrayResource;
 import org.yaml.snakeyaml.constructor.ConstructorException;
 import org.yaml.snakeyaml.parser.ParserException;
 import org.yaml.snakeyaml.scanner.ScannerException;
 
-import org.springframework.core.io.ByteArrayResource;
+import java.net.URL;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link YamlProcessor}.
@@ -74,15 +67,17 @@ class YamlProcessorTests {
 	void badDocumentStart() {
 		setYaml("foo # a document\nbar: baz");
 		assertThatExceptionOfType(ParserException.class)
-			.isThrownBy(() -> this.processor.process((properties, map) -> {}))
-			.withMessageContaining("line 2, column 1");
+				.isThrownBy(() -> this.processor.process((properties, map) -> {
+				}))
+				.withMessageContaining("line 2, column 1");
 	}
 
 	@Test
 	void badResource() {
 		setYaml("foo: bar\ncd\nspam:\n  foo: baz");
 		assertThatExceptionOfType(ScannerException.class)
-				.isThrownBy(() -> this.processor.process((properties, map) -> {}))
+				.isThrownBy(() -> this.processor.process((properties, map) -> {
+				}))
 				.withMessageContaining("line 3, column 1");
 	}
 
@@ -157,7 +152,8 @@ class YamlProcessorTests {
 		URL url = new URL("https://localhost:9000/");
 		setYaml("value: !!java.net.URL [\"" + url + "\"]");
 		assertThatExceptionOfType(ConstructorException.class)
-				.isThrownBy(() -> this.processor.process((properties, map) -> {}))
+				.isThrownBy(() -> this.processor.process((properties, map) -> {
+				}))
 				.withMessageContaining("Unsupported type encountered in YAML document: java.net.URL");
 	}
 
@@ -181,7 +177,8 @@ class YamlProcessorTests {
 		setYaml("value: !!java.net.URL [\"https://localhost:9000/\"]");
 
 		assertThatExceptionOfType(ConstructorException.class)
-				.isThrownBy(() -> this.processor.process((properties, map) -> {}))
+				.isThrownBy(() -> this.processor.process((properties, map) -> {
+				}))
 				.withMessageContaining("Unsupported type encountered in YAML document: java.net.URL");
 	}
 

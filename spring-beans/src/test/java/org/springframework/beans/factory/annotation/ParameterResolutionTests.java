@@ -16,16 +16,15 @@
 
 package org.springframework.beans.factory.annotation;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.util.ClassUtils;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.beans.factory.config.DependencyDescriptor;
-import org.springframework.util.ClassUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -47,7 +46,7 @@ public class ParameterResolutionTests {
 	public void isAutowirablePreconditions() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ParameterResolutionDelegate.isAutowirable(null, 0))
-			.withMessageContaining("Parameter must not be null");
+				.withMessageContaining("Parameter must not be null");
 	}
 
 	@Test
@@ -95,21 +94,21 @@ public class ParameterResolutionTests {
 	public void resolveDependencyPreconditionsForParameter() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ParameterResolutionDelegate.resolveDependency(null, 0, null, mock(AutowireCapableBeanFactory.class)))
-			.withMessageContaining("Parameter must not be null");
+				.withMessageContaining("Parameter must not be null");
 	}
 
 	@Test
 	public void resolveDependencyPreconditionsForContainingClass() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ParameterResolutionDelegate.resolveDependency(getParameter(), 0, null, null))
-			.withMessageContaining("Containing class must not be null");
+				.withMessageContaining("Containing class must not be null");
 	}
 
 	@Test
 	public void resolveDependencyPreconditionsForBeanFactory() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ParameterResolutionDelegate.resolveDependency(getParameter(), 0, getClass(), null))
-			.withMessageContaining("AutowireCapableBeanFactory must not be null");
+				.withMessageContaining("AutowireCapableBeanFactory must not be null");
 	}
 
 	private Parameter getParameter() throws NoSuchMethodException {
@@ -148,9 +147,9 @@ public class ParameterResolutionTests {
 	public static class AutowirableClass {
 
 		public AutowirableClass(@Autowired String firstParameter,
-				@Qualifier("someQualifier") String secondParameter,
-				@Value("${someValue}") String thirdParameter,
-				@Autowired(required = false) String fourthParameter) {
+								@Qualifier("someQualifier") String secondParameter,
+								@Value("${someValue}") String thirdParameter,
+								@Autowired(required = false) String fourthParameter) {
 		}
 
 		public AutowirableClass(String notAutowirableParameter) {
@@ -159,7 +158,7 @@ public class ParameterResolutionTests {
 		public class InnerAutowirableClass {
 
 			public InnerAutowirableClass(@Autowired String firstParameter,
-					@Qualifier("someQualifier") String secondParameter) {
+										 @Qualifier("someQualifier") String secondParameter) {
 			}
 		}
 	}

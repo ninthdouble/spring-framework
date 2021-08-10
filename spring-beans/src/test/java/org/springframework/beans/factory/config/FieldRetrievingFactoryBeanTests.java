@@ -16,13 +16,12 @@
 
 package org.springframework.beans.factory.config;
 
-import java.sql.Connection;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.beans.testfixture.beans.TestBean;
+
+import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifiedResource;
@@ -85,8 +84,7 @@ public class FieldRetrievingFactoryBeanTests {
 		fr.setTargetField("TRANSACTION_SERIALIZABLE");
 		try {
 			fr.afterPropertiesSet();
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 
@@ -96,8 +94,7 @@ public class FieldRetrievingFactoryBeanTests {
 		fr.setTargetClass(Connection.class);
 		try {
 			fr.afterPropertiesSet();
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 
@@ -107,8 +104,7 @@ public class FieldRetrievingFactoryBeanTests {
 		fr.setTargetObject(new PublicFieldHolder());
 		try {
 			fr.afterPropertiesSet();
-		}
-		catch (IllegalArgumentException expected) {
+		} catch (IllegalArgumentException expected) {
 		}
 	}
 

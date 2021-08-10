@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.function;
 
+import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-
-import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;

@@ -17,19 +17,11 @@
 package org.springframework.web.servlet.function;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.web.servlet.function.RequestPredicates.GET;
-import static org.springframework.web.servlet.function.RequestPredicates.accept;
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
-import static org.springframework.web.servlet.function.RequestPredicates.method;
-import static org.springframework.web.servlet.function.RequestPredicates.methods;
-import static org.springframework.web.servlet.function.RequestPredicates.param;
-import static org.springframework.web.servlet.function.RequestPredicates.path;
-import static org.springframework.web.servlet.function.RequestPredicates.pathExtension;
+import static org.springframework.web.servlet.function.RequestPredicates.*;
 import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 /**
@@ -42,9 +34,9 @@ public class ToStringVisitorTests {
 		HandlerFunction<ServerResponse> handler = new SimpleHandlerFunction();
 		RouterFunction<ServerResponse> routerFunction = route()
 				.path("/foo", builder ->
-					builder.path("/bar", () -> route()
-							.GET("/baz", handler)
-							.build())
+						builder.path("/bar", () -> route()
+								.GET("/baz", handler)
+								.build())
 				)
 				.build();
 
@@ -83,8 +75,8 @@ public class ToStringVisitorTests {
 		testPredicate(method(HttpMethod.GET).negate(), "!(GET)");
 
 		testPredicate(GET("/foo")
-				.or(contentType(MediaType.TEXT_PLAIN))
-				.and(accept(MediaType.APPLICATION_JSON).negate()),
+						.or(contentType(MediaType.TEXT_PLAIN))
+						.and(accept(MediaType.APPLICATION_JSON).negate()),
 				"(((GET && /foo) || Content-Type: text/plain) && !(Accept: application/json))");
 	}
 

@@ -16,11 +16,8 @@
 
 package org.springframework.web.reactive.config;
 
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.format.support.FormattingConversionService;
@@ -31,6 +28,8 @@ import org.springframework.web.reactive.result.method.annotation.RequestMappingH
 import org.springframework.web.reactive.result.method.annotation.ResponseBodyResultHandler;
 import org.springframework.web.reactive.result.method.annotation.ResponseEntityResultHandler;
 import org.springframework.web.reactive.result.view.ViewResolutionResultHandler;
+
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -53,7 +52,8 @@ public class DelegatingWebFluxConfigurationIntegrationTests {
 
 	@Test
 	void requestMappingHandlerMappingUsesWebFluxInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		RequestMappingHandlerMapping handlerMapping = this.context.getBean(RequestMappingHandlerMapping.class);
 		assertThat(handlerMapping.getContentTypeResolver()).isSameAs(this.context.getBean("webFluxContentTypeResolver"));
 	}
@@ -69,7 +69,8 @@ public class DelegatingWebFluxConfigurationIntegrationTests {
 
 	@Test
 	void requestMappingHandlerAdapterUsesWebFluxInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		RequestMappingHandlerAdapter mappingHandlerAdapter = this.context.getBean(RequestMappingHandlerAdapter.class);
 		assertThat(mappingHandlerAdapter.getReactiveAdapterRegistry()).isSameAs(this.context.getBean("webFluxAdapterRegistry"));
 		assertThat(mappingHandlerAdapter.getWebBindingInitializer()).hasFieldOrPropertyWithValue("conversionService",
@@ -109,7 +110,8 @@ public class DelegatingWebFluxConfigurationIntegrationTests {
 
 	@Test
 	void responseEntityResultHandlerUsesWebFluxInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		ResponseEntityResultHandler responseEntityResultHandler = this.context.getBean(ResponseEntityResultHandler.class);
 		assertThat(responseEntityResultHandler.getAdapterRegistry()).isSameAs(this.context.getBean("webFluxAdapterRegistry"));
 		assertThat(responseEntityResultHandler.getContentTypeResolver()).isSameAs(this.context.getBean("webFluxContentTypeResolver"));
@@ -135,7 +137,8 @@ public class DelegatingWebFluxConfigurationIntegrationTests {
 
 	@Test
 	void responseBodyResultHandlerUsesWebFluxInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		ResponseBodyResultHandler responseBodyResultHandler = this.context.getBean(ResponseBodyResultHandler.class);
 		assertThat(responseBodyResultHandler.getAdapterRegistry()).isSameAs(this.context.getBean("webFluxAdapterRegistry"));
 		assertThat(responseBodyResultHandler.getContentTypeResolver()).isSameAs(this.context.getBean("webFluxContentTypeResolver"));
@@ -161,7 +164,8 @@ public class DelegatingWebFluxConfigurationIntegrationTests {
 
 	@Test
 	void viewResolutionResultHandlerUsesWebFluxInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		ViewResolutionResultHandler viewResolutionResultHandler = this.context.getBean(ViewResolutionResultHandler.class);
 		assertThat(viewResolutionResultHandler.getAdapterRegistry()).isSameAs(this.context.getBean("webFluxAdapterRegistry"));
 		assertThat(viewResolutionResultHandler.getContentTypeResolver()).isSameAs(this.context.getBean("webFluxContentTypeResolver"));

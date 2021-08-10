@@ -283,22 +283,56 @@ public class ValidatorFactoryTests {
 	}
 
 
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Constraint(validatedBy = NameAddressValidator.class)
+	public @interface NameAddressValid {
+
+		String message() default "Street must not contain name";
+
+		Class<?>[] groups() default {};
+
+		Class<?>[] payload() default {};
+	}
+
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Constraint(validatedBy = InnerValidator.class)
+	public @interface InnerValid {
+
+		String message() default "NOT VALID";
+
+		Class<?>[] groups() default {};
+
+		Class<? extends Payload>[] payload() default {};
+	}
+
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@Constraint(validatedBy = NotXListValidator.class)
+	public @interface NotXList {
+
+		String message() default "Should not be X";
+
+		Class<?>[] groups() default {};
+
+		Class<? extends Payload>[] payload() default {};
+	}
+
 	@NameAddressValid
 	public static class ValidPerson {
 
+		public boolean expectsAutowiredValidator = false;
 		@NotNull
 		private String name;
-
 		@Valid
 		private ValidAddress address = new ValidAddress();
-
 		@Valid
 		private List<ValidAddress> addressList = new ArrayList<>();
-
 		@Valid
 		private Set<ValidAddress> addressSet = new LinkedHashSet<>();
-
-		public boolean expectsAutowiredValidator = false;
 
 		public String getName() {
 			return name;
@@ -333,7 +367,6 @@ public class ValidatorFactoryTests {
 		}
 	}
 
-
 	public static class ValidAddress {
 
 		@NotNull
@@ -347,20 +380,6 @@ public class ValidatorFactoryTests {
 			this.street = street;
 		}
 	}
-
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Constraint(validatedBy = NameAddressValidator.class)
-	public @interface NameAddressValid {
-
-		String message() default "Street must not contain name";
-
-		Class<?>[] groups() default {};
-
-		Class<?>[] payload() default {};
-	}
-
 
 	public static class NameAddressValidator implements ConstraintValidator<NameAddressValid, ValidPerson> {
 
@@ -385,7 +404,6 @@ public class ValidatorFactoryTests {
 		}
 	}
 
-
 	public static class MainBean {
 
 		@InnerValid
@@ -395,7 +413,6 @@ public class ValidatorFactoryTests {
 			return inner;
 		}
 	}
-
 
 	public static class MainBeanWithOptional {
 
@@ -407,7 +424,6 @@ public class ValidatorFactoryTests {
 		}
 	}
 
-
 	public static class InnerBean {
 
 		private String value;
@@ -415,24 +431,11 @@ public class ValidatorFactoryTests {
 		public String getValue() {
 			return value;
 		}
+
 		public void setValue(String value) {
 			this.value = value;
 		}
 	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	@Constraint(validatedBy=InnerValidator.class)
-	public @interface InnerValid {
-
-		String message() default "NOT VALID";
-
-		Class<?>[] groups() default { };
-
-		Class<? extends Payload>[] payload() default {};
-	}
-
 
 	public static class InnerValidator implements ConstraintValidator<InnerValid, InnerBean> {
 
@@ -451,7 +454,6 @@ public class ValidatorFactoryTests {
 		}
 	}
 
-
 	public static class ListContainer {
 
 		@NotXList
@@ -465,20 +467,6 @@ public class ValidatorFactoryTests {
 			return list;
 		}
 	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	@Constraint(validatedBy = NotXListValidator.class)
-	public @interface NotXList {
-
-		String message() default "Should not be X";
-
-		Class<?>[] groups() default {};
-
-		Class<? extends Payload>[] payload() default {};
-	}
-
 
 	public static class NotXListValidator implements ConstraintValidator<NotXList, List<String>> {
 

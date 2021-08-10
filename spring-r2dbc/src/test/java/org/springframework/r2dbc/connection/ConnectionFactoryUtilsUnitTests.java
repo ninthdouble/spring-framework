@@ -16,22 +16,9 @@
 
 package org.springframework.r2dbc.connection;
 
-import io.r2dbc.spi.R2dbcBadGrammarException;
-import io.r2dbc.spi.R2dbcDataIntegrityViolationException;
-import io.r2dbc.spi.R2dbcException;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import io.r2dbc.spi.R2dbcPermissionDeniedException;
-import io.r2dbc.spi.R2dbcRollbackException;
-import io.r2dbc.spi.R2dbcTimeoutException;
-import io.r2dbc.spi.R2dbcTransientResourceException;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.Test;
-
-import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.PermissionDeniedDataAccessException;
-import org.springframework.dao.QueryTimeoutException;
-import org.springframework.dao.TransientDataAccessResourceException;
+import org.springframework.dao.*;
 import org.springframework.r2dbc.BadSqlGrammarException;
 import org.springframework.r2dbc.UncategorizedR2dbcException;
 
@@ -106,7 +93,7 @@ public class ConnectionFactoryUtilsUnitTests {
 				"SOME-SQL", new R2dbcTransientResourceException("MESSAGE"));
 		assertThat(exception).isInstanceOf(
 				TransientDataAccessResourceException.class).hasMessage(
-						"TASK; SQL [SOME-SQL]; MESSAGE; nested exception is io.r2dbc.spi.R2dbcTransientResourceException: MESSAGE");
+				"TASK; SQL [SOME-SQL]; MESSAGE; nested exception is io.r2dbc.spi.R2dbcTransientResourceException: MESSAGE");
 	}
 
 	@Test
@@ -115,7 +102,7 @@ public class ConnectionFactoryUtilsUnitTests {
 				new R2dbcTransientResourceException("MESSAGE"));
 		assertThat(exception).isInstanceOf(
 				TransientDataAccessResourceException.class).hasMessage(
-						"TASK; MESSAGE; nested exception is io.r2dbc.spi.R2dbcTransientResourceException: MESSAGE");
+				"TASK; MESSAGE; nested exception is io.r2dbc.spi.R2dbcTransientResourceException: MESSAGE");
 	}
 
 	@Test
@@ -125,7 +112,7 @@ public class ConnectionFactoryUtilsUnitTests {
 				"SOME-SQL", new R2dbcTransientResourceException());
 		assertThat(exception).isInstanceOf(
 				TransientDataAccessResourceException.class).hasMessage(
-						"TASK; SQL [SOME-SQL]; null; nested exception is io.r2dbc.spi.R2dbcTransientResourceException");
+				"TASK; SQL [SOME-SQL]; null; nested exception is io.r2dbc.spi.R2dbcTransientResourceException");
 	}
 
 	@SuppressWarnings("serial")

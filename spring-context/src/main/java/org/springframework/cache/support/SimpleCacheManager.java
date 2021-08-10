@@ -40,6 +40,7 @@ public class SimpleCacheManager extends AbstractCacheManager {
 
 	/**
 	 * Specify the collection of Cache instances to use for this CacheManager.
+	 *
 	 * @see #initializeCaches()
 	 */
 	public void setCaches(Collection<? extends Cache> caches) {

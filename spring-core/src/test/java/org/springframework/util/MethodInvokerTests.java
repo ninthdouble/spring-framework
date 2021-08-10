@@ -16,11 +16,11 @@
 
 package org.springframework.util;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -157,15 +157,20 @@ class MethodInvokerTests {
 	}
 
 
+	private interface Greetable {
+
+		String getGreeting();
+	}
+
+
+	private interface Person extends Greetable {
+	}
+
 	public static class TestClass1 {
 
 		public static int _staticField1;
 
 		public int _field1 = 0;
-
-		public int method1() {
-			return ++_field1;
-		}
 
 		public static int staticMethod1() {
 			return ++TestClass1._staticField1;
@@ -202,8 +207,11 @@ class MethodInvokerTests {
 		public static String supertypes2(Collection<?> c, List<?> l, String s, String s2) {
 			return s;
 		}
-	}
 
+		public int method1() {
+			return ++_field1;
+		}
+	}
 
 	@SuppressWarnings("unused")
 	public static class Greeter {
@@ -228,17 +236,6 @@ class MethodInvokerTests {
 			return "regular: " + regular.getGreeting();
 		}
 	}
-
-
-	private interface Greetable {
-
-		String getGreeting();
-	}
-
-
-	private interface Person extends Greetable {
-	}
-
 
 	private static class Purchaser implements Greetable {
 
@@ -286,7 +283,7 @@ class MethodInvokerTests {
 
 		@Override
 		public String getGreeting() {
-			return "welcome back " + name ;
+			return "welcome back " + name;
 		}
 	}
 

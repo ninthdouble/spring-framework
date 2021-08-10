@@ -16,11 +16,11 @@
 
 package org.springframework.test.context.jdbc;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
-
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Repeatable;
 
 /**
  * Subclass of {@link RepeatableSqlAnnotationSqlScriptsParentTests} which verifies

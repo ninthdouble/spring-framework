@@ -16,12 +16,11 @@
 
 package org.springframework.jdbc.datasource.lookup;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -36,7 +35,7 @@ public class MapDataSourceLookupTests {
 
 
 	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void getDataSourcesReturnsUnmodifiableMap() throws Exception {
 		MapDataSourceLookup lookup = new MapDataSourceLookup();
 		Map dataSources = lookup.getDataSources();
@@ -85,7 +84,7 @@ public class MapDataSourceLookupTests {
 	}
 
 	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void getDataSourceWhereSuppliedMapHasNonDataSourceTypeUnderSpecifiedKey() throws Exception {
 		Map dataSources = new HashMap();
 		dataSources.put(DATA_SOURCE_NAME, new Object());

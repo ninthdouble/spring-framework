@@ -21,13 +21,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.mock;
 import static org.mockito.BDDMockito.when;
 
@@ -66,15 +63,15 @@ public class BeanFactoryConnectionFactoryLookupUnitTests {
 
 		when(beanFactory.getBean(CONNECTION_FACTORY_BEAN_NAME,
 				ConnectionFactory.class)).thenThrow(
-						new BeanNotOfRequiredTypeException(CONNECTION_FACTORY_BEAN_NAME,
-								ConnectionFactory.class, String.class));
+				new BeanNotOfRequiredTypeException(CONNECTION_FACTORY_BEAN_NAME,
+						ConnectionFactory.class, String.class));
 
 		BeanFactoryConnectionFactoryLookup lookup = new BeanFactoryConnectionFactoryLookup(
 				beanFactory);
 
 		assertThatExceptionOfType(
 				ConnectionFactoryLookupFailureException.class).isThrownBy(
-						() -> lookup.getConnectionFactory(CONNECTION_FACTORY_BEAN_NAME));
+				() -> lookup.getConnectionFactory(CONNECTION_FACTORY_BEAN_NAME));
 	}
 
 	@Test

@@ -16,23 +16,19 @@
 
 package org.springframework.orm.jpa;
 
-import java.lang.reflect.Proxy;
-import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.testfixture.io.SerializationTestUtils;
+import org.springframework.orm.jpa.domain.DriversLicense;
+import org.springframework.orm.jpa.domain.Person;
 
 import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.lang.reflect.Proxy;
+import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.testfixture.io.SerializationTestUtils;
-import org.springframework.orm.jpa.domain.DriversLicense;
-import org.springframework.orm.jpa.domain.Person;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration tests for LocalContainerEntityManagerFactoryBean.
@@ -103,12 +99,12 @@ public abstract class AbstractContainerEntityManagerFactoryIntegrationTests
 	@Test
 	public void testGetReferenceWhenNoRow() {
 		assertThatExceptionOfType(Exception.class).isThrownBy(() -> {
-				Person notThere = sharedEntityManager.getReference(Person.class, 666);
-				// We may get here (as with Hibernate). Either behaviour is valid:
-				// throw exception on first access or on getReference itself.
-				notThere.getFirstName();
-			})
-		.matches(ex -> ex.getClass().getName().endsWith("NotFoundException"));
+			Person notThere = sharedEntityManager.getReference(Person.class, 666);
+			// We may get here (as with Hibernate). Either behaviour is valid:
+			// throw exception on first access or on getReference itself.
+			notThere.getFirstName();
+		})
+				.matches(ex -> ex.getClass().getName().endsWith("NotFoundException"));
 	}
 
 	@Test
@@ -131,8 +127,7 @@ public abstract class AbstractContainerEntityManagerFactoryIntegrationTests
 			assertThat(newTony.getDriversLicense()).isNotNull();
 
 			newTony.getDriversLicense().getSerialNumber();
-		}
-		finally {
+		} finally {
 			deleteFromTables("person", "drivers_license");
 		}
 	}
@@ -225,7 +220,7 @@ public abstract class AbstractContainerEntityManagerFactoryIntegrationTests
 		List<Person> people = q.getResultList();
 		assertThat(people.size()).isEqualTo(0);
 		assertThatExceptionOfType(Exception.class).isThrownBy(q::getSingleResult)
-			.withMessageContaining("closed");
+				.withMessageContaining("closed");
 		// We would typically expect an IllegalStateException, but Hibernate throws a
 		// PersistenceException. So we assert the contents of the exception message instead.
 

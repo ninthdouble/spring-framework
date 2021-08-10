@@ -19,7 +19,6 @@ package org.springframework.test.context.cache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.SpringProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +33,10 @@ import static org.springframework.test.context.cache.ContextCacheUtils.retrieveM
  * @since 4.3
  */
 class ContextCacheUtilsTests {
+
+	private static void assertDefaultValue() {
+		assertThat(retrieveMaxCacheSize()).isEqualTo(DEFAULT_MAX_CONTEXT_CACHE_SIZE);
+	}
 
 	@BeforeEach
 	@AfterEach
@@ -81,10 +84,6 @@ class ContextCacheUtilsTests {
 	void retrieveMaxCacheSizeFromSpringProperty() {
 		SpringProperties.setProperty(MAX_CONTEXT_CACHE_SIZE_PROPERTY_NAME, "99");
 		assertThat(retrieveMaxCacheSize()).isEqualTo(99);
-	}
-
-	private static void assertDefaultValue() {
-		assertThat(retrieveMaxCacheSize()).isEqualTo(DEFAULT_MAX_CONTEXT_CACHE_SIZE);
 	}
 
 }

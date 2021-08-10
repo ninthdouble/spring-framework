@@ -78,22 +78,25 @@ class ApplicationContextExpressionTests {
 			public Object get(String name, ObjectFactory<?> objectFactory) {
 				return objectFactory.getObject();
 			}
+
 			@Override
 			public Object remove(String name) {
 				return null;
 			}
+
 			@Override
 			public void registerDestructionCallback(String name, Runnable callback) {
 			}
+
 			@Override
 			public Object resolveContextualObject(String key) {
 				if (key.equals("mySpecialAttr")) {
 					return "42";
-				}
-				else {
+				} else {
 					return null;
 				}
 			}
+
 			@Override
 			public String getConversationId() {
 				return null;
@@ -202,8 +205,7 @@ class ApplicationContextExpressionTests {
 			assertThat(tb6.age).isEqualTo(42);
 			assertThat(tb6.country).isEqualTo("123 UK");
 			assertThat(tb6.tb).isSameAs(tb0);
-		}
-		finally {
+		} finally {
 			System.getProperties().remove("country");
 		}
 	}
@@ -236,8 +238,7 @@ class ApplicationContextExpressionTests {
 			assertThat(tb.getName()).isEqualTo("juergen2");
 			assertThat(tb.getCountry()).isEqualTo("UK2");
 			assertThat(tb.getCountry2()).isEqualTo("-UK2-");
-		}
-		finally {
+		} finally {
 			System.getProperties().remove("name");
 			System.getProperties().remove("country");
 		}
@@ -261,6 +262,7 @@ class ApplicationContextExpressionTests {
 				public void checkPropertiesAccess() {
 					throw new AccessControlException("Not Allowed");
 				}
+
 				@Override
 				public void checkPermission(Permission perm) {
 					// allow everything else
@@ -272,8 +274,7 @@ class ApplicationContextExpressionTests {
 			TestBean tb = ac.getBean("tb", TestBean.class);
 			assertThat(tb.getCountry()).isEqualTo("NL");
 
-		}
-		finally {
+		} finally {
 			System.setSecurityManager(oldSecurityManager);
 			System.getProperties().remove("country");
 		}
@@ -307,8 +308,7 @@ class ApplicationContextExpressionTests {
 			assertThat(resourceInjectionBean.file).isEqualTo(resource.getFile());
 			assertThat(FileCopyUtils.copyToByteArray(resourceInjectionBean.inputStream)).isEqualTo(FileCopyUtils.copyToByteArray(resource.getInputStream()));
 			assertThat(FileCopyUtils.copyToString(resourceInjectionBean.reader)).isEqualTo(FileCopyUtils.copyToString(new EncodedResource(resource).getReader()));
-		}
-		finally {
+		} finally {
 			System.getProperties().remove("logfile");
 		}
 	}
@@ -317,10 +317,12 @@ class ApplicationContextExpressionTests {
 	@SuppressWarnings("serial")
 	public static class ValueTestBean implements Serializable {
 
-		@Autowired @Value("XXX#{tb0.name}YYY#{mySpecialAttr}ZZZ")
+		@Autowired
+		@Value("XXX#{tb0.name}YYY#{mySpecialAttr}ZZZ")
 		public String name;
 
-		@Autowired @Value("#{mySpecialAttr}")
+		@Autowired
+		@Value("#{mySpecialAttr}")
 		public int age;
 
 		@Value("#{mySpecialAttr}")
@@ -331,18 +333,15 @@ class ApplicationContextExpressionTests {
 
 		@Value("${code} #{systemProperties.country}")
 		public ObjectFactory<String> countryFactory;
-
+		@Autowired
+		@Qualifier("original")
+		public transient TestBean tb;
 		@Value("${code}")
 		private transient Optional<String> optionalValue1;
-
 		@Value("${code:#{null}}")
 		private transient Optional<String> optionalValue2;
-
 		@Value("${codeX:#{null}}")
 		private transient Optional<String> optionalValue3;
-
-		@Autowired @Qualifier("original")
-		public transient TestBean tb;
 	}
 
 
@@ -419,7 +418,8 @@ class ApplicationContextExpressionTests {
 			this.country = country;
 		}
 
-		@Autowired @Qualifier("original")
+		@Autowired
+		@Qualifier("original")
 		public void setTb(TestBean tb) {
 			this.tb = tb;
 		}
@@ -434,29 +434,29 @@ class ApplicationContextExpressionTests {
 
 		public String country2;
 
-		@Value("#{systemProperties.name}")
-		public void setName(String name) {
-			this.name = name;
-		}
-
 		public String getName() {
 			return name;
 		}
 
-		public void setCountry(String country) {
-			this.country = country;
+		@Value("#{systemProperties.name}")
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public String getCountry() {
 			return country;
 		}
 
-		public void setCountry2(String country2) {
-			this.country2 = country2;
+		public void setCountry(String country) {
+			this.country = country;
 		}
 
 		public String getCountry2() {
 			return country2;
+		}
+
+		public void setCountry2(String country2) {
+			this.country2 = country2;
 		}
 	}
 

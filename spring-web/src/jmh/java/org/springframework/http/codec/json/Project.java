@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * Sample Pojo for JSON encoder benchmarks.
+ *
  * @author Brian Clozel
  */
 public class Project {
@@ -48,14 +49,6 @@ public class Project {
 		}
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
 	public List<Project> getSubProjects() {
 		return this.subProjects;
 	}
@@ -68,8 +61,16 @@ public class Project {
 		return this.name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getUrl() {
 		return this.url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }

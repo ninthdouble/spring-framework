@@ -16,12 +16,6 @@
 
 package org.springframework.http.client.reactive;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.function.Function;
-
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
@@ -32,24 +26,30 @@ import org.apache.hc.core5.http.nio.AsyncRequestProducer;
 import org.apache.hc.core5.http.nio.support.BasicRequestProducer;
 import org.apache.hc.core5.reactive.ReactiveEntityProducer;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.function.Function;
 
 import static org.springframework.http.MediaType.ALL_VALUE;
 
 /**
  * {@link ClientHttpRequest} implementation for the Apache HttpComponents HttpClient 5.x.
+ *
  * @author Martin Tarjányi
  * @author Arjen Poutsma
- * @since 5.3
  * @see <a href="https://hc.apache.org/index.html">Apache HttpComponents</a>
+ * @since 5.3
  */
 class HttpComponentsClientHttpRequest extends AbstractClientHttpRequest {
 
@@ -64,7 +64,7 @@ class HttpComponentsClientHttpRequest extends AbstractClientHttpRequest {
 
 
 	public HttpComponentsClientHttpRequest(HttpMethod method, URI uri, HttpClientContext context,
-			DataBufferFactory dataBufferFactory) {
+										   DataBufferFactory dataBufferFactory) {
 
 		this.context = context;
 		this.httpRequest = new BasicHttpRequest(method.name(), uri);
@@ -83,8 +83,7 @@ class HttpComponentsClientHttpRequest extends AbstractClientHttpRequest {
 	public URI getURI() {
 		try {
 			return this.httpRequest.getUri();
-		}
-		catch (URISyntaxException ex) {
+		} catch (URISyntaxException ex) {
 			throw new IllegalArgumentException("Invalid URI syntax: " + ex.getMessage());
 		}
 	}

@@ -16,25 +16,6 @@
 
 package org.springframework.web.filter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -44,6 +25,16 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * {@link javax.servlet.Filter} that makes form encoded data available through
@@ -67,6 +58,9 @@ public class HttpPutFormContentFilter extends OncePerRequestFilter {
 
 	private FormHttpMessageConverter formConverter = new AllEncompassingFormHttpMessageConverter();
 
+	public FormHttpMessageConverter getFormConverter() {
+		return this.formConverter;
+	}
 
 	/**
 	 * Set the converter to use for parsing form content.
@@ -75,10 +69,6 @@ public class HttpPutFormContentFilter extends OncePerRequestFilter {
 	public void setFormConverter(FormHttpMessageConverter converter) {
 		Assert.notNull(converter, "FormHttpMessageConverter is required.");
 		this.formConverter = converter;
-	}
-
-	public FormHttpMessageConverter getFormConverter() {
-		return this.formConverter;
 	}
 
 	/**
@@ -93,7 +83,7 @@ public class HttpPutFormContentFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
+									FilterChain filterChain) throws ServletException, IOException {
 
 		if (("PUT".equals(request.getMethod()) || "PATCH".equals(request.getMethod())) && isFormContentType(request)) {
 			HttpInputMessage inputMessage = new ServletServerHttpRequest(request) {
@@ -119,12 +109,10 @@ public class HttpPutFormContentFilter extends OncePerRequestFilter {
 			try {
 				MediaType mediaType = MediaType.parseMediaType(contentType);
 				return (MediaType.APPLICATION_FORM_URLENCODED.includes(mediaType));
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				return false;
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -176,8 +164,7 @@ public class HttpPutFormContentFilter extends OncePerRequestFilter {
 			}
 			if (parameterValues == null || getQueryString() == null) {
 				return StringUtils.toStringArray(formParam);
-			}
-			else {
+			} else {
 				List<String> result = new ArrayList<>(parameterValues.length + formParam.size());
 				result.addAll(Arrays.asList(parameterValues));
 				result.addAll(formParam);

@@ -16,13 +16,12 @@
 
 package org.springframework.http.converter;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,19 +16,14 @@
 
 package org.springframework.jdbc.support.rowset;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.InvalidResultSetAccessException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jdbc.InvalidResultSetAccessException;
+import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -210,14 +205,13 @@ public class ResultSetWrappingRowSetTests {
 		if (arg instanceof String) {
 			given(resultSet.findColumn((String) arg)).willReturn(1);
 			given(rsetMethod.invoke(resultSet, 1)).willReturn(ret).willThrow(new SQLException("test"));
-		}
-		else {
+		} else {
 			given(rsetMethod.invoke(resultSet, arg)).willReturn(ret).willThrow(new SQLException("test"));
 		}
 		rowsetMethod.invoke(rowSet, arg);
 		assertThatExceptionOfType(InvocationTargetException.class).isThrownBy(() ->
 				rowsetMethod.invoke(rowSet, arg)).
-			satisfies(ex -> assertThat(ex.getTargetException()).isExactlyInstanceOf(InvalidResultSetAccessException.class));
+				satisfies(ex -> assertThat(ex.getTargetException()).isExactlyInstanceOf(InvalidResultSetAccessException.class));
 	}
 
 }

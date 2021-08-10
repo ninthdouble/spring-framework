@@ -16,11 +16,10 @@
 
 package org.springframework.jdbc.support;
 
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.BadSqlGrammarException;
+
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,8 +41,7 @@ public class SQLStateExceptionTranslatorTests {
 		SQLException sex = new SQLException("Message", "42001", 1);
 		try {
 			throw this.trans.translate("task", sql, sex);
-		}
-		catch (BadSqlGrammarException ex) {
+		} catch (BadSqlGrammarException ex) {
 			// OK
 			assertThat(sql.equals(ex.getSql())).as("SQL is correct").isTrue();
 			assertThat(sex.equals(ex.getSQLException())).as("Exception matches").isTrue();

@@ -16,11 +16,11 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.function.BiFunction;
-
 import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Statement;
 import org.reactivestreams.Publisher;
+
+import java.util.function.BiFunction;
 
 /**
  * Represents a function that executes a {@link Statement} for a (delayed)
@@ -32,23 +32,24 @@ import org.reactivestreams.Publisher;
  *
  * <p>Typically, implementations invoke the {@link Statement#execute()} method
  * to initiate execution of the statement object.
- *
+ * <p>
  * For example:
  * <p><pre class="code">
  * DatabaseClient.builder()
- *		.executeFunction(statement -> statement.execute())
+ * 		.executeFunction(statement -> statement.execute())
  * 		.build();
  * </pre>
  *
  * @author Mark Paluch
- * @since 5.3
  * @see Statement#execute()
+ * @since 5.3
  */
 @FunctionalInterface
 public interface ExecuteFunction {
 
 	/**
 	 * Execute the given {@link Statement} for a stream of {@link Result} objects.
+	 *
 	 * @param statement the request to execute
 	 * @return the delayed result stream
 	 */

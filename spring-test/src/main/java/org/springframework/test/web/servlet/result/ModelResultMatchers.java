@@ -17,7 +17,6 @@
 package org.springframework.test.web.servlet.result;
 
 import org.hamcrest.Matcher;
-
 import org.springframework.lang.Nullable;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -28,11 +27,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertNotNull;
-import static org.springframework.test.util.AssertionErrors.assertNull;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.util.AssertionErrors.*;
 
 /**
  * Factory for assertions on the model.
@@ -155,6 +150,7 @@ public class ModelResultMatchers {
 
 	/**
 	 * Assert a field error code for a model attribute using exact String match.
+	 *
 	 * @since 4.1
 	 */
 	public ResultMatcher attributeHasFieldErrorCode(String name, String fieldName, String error) {
@@ -171,10 +167,11 @@ public class ModelResultMatchers {
 
 	/**
 	 * Assert a field error code for a model attribute using a {@link org.hamcrest.Matcher}.
+	 *
 	 * @since 4.1
 	 */
 	public ResultMatcher attributeHasFieldErrorCode(String name, String fieldName,
-			Matcher<? super String> matcher) {
+													Matcher<? super String> matcher) {
 
 		return mvcResult -> {
 			ModelAndView mav = getModelAndView(mvcResult);

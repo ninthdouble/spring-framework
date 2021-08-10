@@ -16,12 +16,11 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -68,8 +67,7 @@ public class UserCredentialsDataSourceAdapterTests {
 		adapter.setCredentialsForCurrentThread("user", "pw");
 		try {
 			assertThat(adapter.getConnection()).isEqualTo(connection);
-		}
-		finally {
+		} finally {
 			adapter.removeCredentialsFromCurrentThread();
 		}
 	}

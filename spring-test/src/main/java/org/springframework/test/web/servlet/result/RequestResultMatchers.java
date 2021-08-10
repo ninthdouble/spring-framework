@@ -16,13 +16,7 @@
 
 package org.springframework.test.web.servlet.result;
 
-import java.util.concurrent.Callable;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.hamcrest.Matcher;
-
 import org.springframework.lang.Nullable;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -30,11 +24,12 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.concurrent.Callable;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertFalse;
-import static org.springframework.test.util.AssertionErrors.assertNull;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.util.AssertionErrors.*;
 
 /**
  * Factory for assertions on the request.
@@ -55,6 +50,9 @@ public class RequestResultMatchers {
 	protected RequestResultMatchers() {
 	}
 
+	private static void assertAsyncStarted(HttpServletRequest request) {
+		assertTrue("Async not started", request.isAsyncStarted());
+	}
 
 	/**
 	 * Assert whether asynchronous processing started, usually as a result of a
@@ -65,6 +63,7 @@ public class RequestResultMatchers {
 	 * <p>Neither a {@code Callable} nor a {@code DeferredResult} will complete
 	 * processing all the way since a {@link MockHttpServletRequest} does not
 	 * perform asynchronous dispatches.
+	 *
 	 * @see #asyncNotStarted()
 	 */
 	public ResultMatcher asyncStarted() {
@@ -73,6 +72,7 @@ public class RequestResultMatchers {
 
 	/**
 	 * Assert that asynchronous processing was not started.
+	 *
 	 * @see #asyncStarted()
 	 */
 	public ResultMatcher asyncNotStarted() {
@@ -152,6 +152,7 @@ public class RequestResultMatchers {
 
 	/**
 	 * Assert the given session attributes do not exist.
+	 *
 	 * @since 5.2.1
 	 */
 	public ResultMatcher sessionAttributeDoesNotExist(String... names) {
@@ -162,10 +163,6 @@ public class RequestResultMatchers {
 				assertNull("Session attribute '" + name + "' exists", session.getAttribute(name));
 			}
 		};
-	}
-
-	private static void assertAsyncStarted(HttpServletRequest request) {
-		assertTrue("Async not started", request.isAsyncStarted());
 	}
 
 }

@@ -16,11 +16,11 @@
 
 package org.springframework.r2dbc.connection.lookup;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import io.r2dbc.spi.ConnectionFactory;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,7 +41,7 @@ public class MapConnectionFactoryLookupUnitTests {
 
 		assertThatThrownBy(() -> connectionFactories.put("",
 				new DummyConnectionFactory())).isInstanceOf(
-						UnsupportedOperationException.class);
+				UnsupportedOperationException.class);
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class MapConnectionFactoryLookupUnitTests {
 	}
 
 	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void getConnectionFactoryWhereSuppliedMapHasNonConnectionFactoryTypeUnderSpecifiedKey() {
 		Map connectionFactories = new HashMap<>();
 		connectionFactories.put(CONNECTION_FACTORY_NAME, new Object());
@@ -88,7 +88,7 @@ public class MapConnectionFactoryLookupUnitTests {
 
 		assertThatThrownBy(
 				() -> lookup.getConnectionFactory(CONNECTION_FACTORY_NAME)).isInstanceOf(
-						ClassCastException.class);
+				ClassCastException.class);
 	}
 
 	@Test
@@ -97,6 +97,6 @@ public class MapConnectionFactoryLookupUnitTests {
 
 		assertThatThrownBy(
 				() -> lookup.getConnectionFactory(CONNECTION_FACTORY_NAME)).isInstanceOf(
-						ConnectionFactoryLookupFailureException.class);
+				ConnectionFactoryLookupFailureException.class);
 	}
 }

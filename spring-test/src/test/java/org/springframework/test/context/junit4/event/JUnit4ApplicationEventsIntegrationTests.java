@@ -22,7 +22,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -52,6 +51,10 @@ public class JUnit4ApplicationEventsIntegrationTests {
 	@Autowired
 	ApplicationEvents applicationEvents;
 
+	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
+		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
+				.containsExactly(types);
+	}
 
 	@Before
 	public void beforeEach() {
@@ -85,20 +88,13 @@ public class JUnit4ApplicationEventsIntegrationTests {
 	@After
 	public void afterEach() {
 		assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
-			"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent");
+				"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent");
 		context.publishEvent(new CustomEvent("afterEach"));
 		assertThat(applicationEvents.stream(CustomEvent.class)).extracting(CustomEvent::getMessage)//
 				.containsExactly("beforeEach", this.testName.getMethodName(), "afterEach");
 		assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
-			"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent", "CustomEvent");
+				"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent", "CustomEvent");
 	}
-
-
-	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
-		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
-			.containsExactly(types);
-	}
-
 
 	@Configuration
 	static class Config {

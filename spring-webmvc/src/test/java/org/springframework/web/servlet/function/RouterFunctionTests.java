@@ -16,12 +16,11 @@
 
 package org.springframework.web.servlet.function;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.web.servlet.handler.PathPatternsTestUtils;
+
 import java.util.Collections;
 import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.web.servlet.handler.PathPatternsTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.web.servlet.function.RequestPredicates.GET;
@@ -100,8 +99,7 @@ class RouterFunctionTests {
 				.map(hf -> {
 					try {
 						return hf.handle(request);
-					}
-					catch (Exception ex) {
+					} catch (Exception ex) {
 						throw new AssertionError(ex.getMessage(), ex);
 					}
 				});
@@ -117,10 +115,10 @@ class RouterFunctionTests {
 				.withAttribute("foo", "bar")
 				.withAttribute("baz", "qux")
 				.and(RouterFunctions.route(GET("/atts/2"), request -> ServerResponse.ok().build())
-				.withAttributes(atts -> {
-					atts.put("foo", "bar");
-					atts.put("baz", "qux");
-				}));
+						.withAttributes(atts -> {
+							atts.put("foo", "bar");
+							atts.put("baz", "qux");
+						}));
 
 		AttributesTestVisitor visitor = new AttributesTestVisitor();
 		route.accept(visitor);
@@ -128,11 +126,9 @@ class RouterFunctionTests {
 	}
 
 
-
 	private ServerResponse handlerMethod(ServerRequest request) {
 		return ServerResponse.ok().body("42");
 	}
-
 
 
 }

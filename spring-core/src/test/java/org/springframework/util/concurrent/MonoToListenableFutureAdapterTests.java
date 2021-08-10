@@ -15,17 +15,18 @@
  */
 package org.springframework.util.concurrent;
 
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+
 import java.time.Duration;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link MonoToListenableFutureAdapter}.
+ *
  * @author Rossen Stoyanchev
  */
 class MonoToListenableFutureAdapterTests {

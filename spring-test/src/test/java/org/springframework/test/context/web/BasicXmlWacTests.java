@@ -17,7 +17,6 @@
 package org.springframework.test.context.web;
 
 import org.junit.Test;
-
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;

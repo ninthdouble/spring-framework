@@ -16,21 +16,12 @@
 
 package org.springframework.http.codec.json;
 
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import kotlinx.serialization.KSerializer;
 import kotlinx.serialization.SerializersKt;
 import kotlinx.serialization.descriptors.PolymorphicKind;
 import kotlinx.serialization.descriptors.SerialDescriptor;
 import kotlinx.serialization.json.Json;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.AbstractEncoder;
 import org.springframework.core.codec.CharSequenceEncoder;
@@ -41,6 +32,14 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Encode from an {@code Object} stream to a byte stream of JSON objects using
@@ -81,22 +80,20 @@ public class KotlinSerializationJsonEncoder extends AbstractEncoder<Object> {
 			serializer(elementType.getType());
 			return (super.canEncode(elementType, mimeType) && !String.class.isAssignableFrom(elementType.toClass()) &&
 					!ServerSentEvent.class.isAssignableFrom(elementType.toClass()));
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
 
 	@Override
 	public Flux<DataBuffer> encode(Publisher<?> inputStream, DataBufferFactory bufferFactory,
-			ResolvableType elementType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+								   ResolvableType elementType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		if (inputStream instanceof Mono) {
 			return Mono.from(inputStream)
 					.map(value -> encodeValue(value, bufferFactory, elementType, mimeType, hints))
 					.flux();
-		}
-		else {
+		} else {
 			ResolvableType listType = ResolvableType.forClassWithGenerics(List.class, elementType);
 			return Flux.from(inputStream)
 					.collectList()
@@ -107,7 +104,7 @@ public class KotlinSerializationJsonEncoder extends AbstractEncoder<Object> {
 
 	@Override
 	public DataBuffer encodeValue(Object value, DataBufferFactory bufferFactory,
-			ResolvableType valueType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+								  ResolvableType valueType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		String json = this.json.encodeToString(serializer(valueType.getType()), value);
 		return this.charSequenceEncoder.encodeValue(json, bufferFactory, valueType, mimeType, null);
@@ -118,6 +115,7 @@ public class KotlinSerializationJsonEncoder extends AbstractEncoder<Object> {
 	 * using kotlinx.serialization. If no serializer can be found, an exception is thrown.
 	 * <p>Resolved serializers are cached and cached results are returned on successive calls.
 	 * TODO Avoid relying on throwing exception when https://github.com/Kotlin/kotlinx.serialization/pull/1164 is fixed
+	 *
 	 * @param type the type to find a serializer for
 	 * @return a resolved serializer for the given type
 	 * @throws RuntimeException if no serializer supporting the given type can be found
@@ -139,7 +137,7 @@ public class KotlinSerializationJsonEncoder extends AbstractEncoder<Object> {
 		if (descriptor.getKind().equals(PolymorphicKind.OPEN.INSTANCE)) {
 			return true;
 		}
-		for (int i = 0 ; i < descriptor.getElementsCount() ; i++) {
+		for (int i = 0; i < descriptor.getElementsCount(); i++) {
 			SerialDescriptor elementDescriptor = descriptor.getElementDescriptor(i);
 			if (!alreadyProcessed.contains(elementDescriptor.getSerialName()) && hasPolymorphism(elementDescriptor, alreadyProcessed)) {
 				return true;

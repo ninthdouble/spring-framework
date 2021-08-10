@@ -16,16 +16,13 @@
 
 package org.springframework.http.client;
 
-import java.net.HttpURLConnection;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 
+import java.net.HttpURLConnection;
+
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Stephane Nicoll

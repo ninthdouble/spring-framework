@@ -16,30 +16,21 @@
 
 package org.springframework.web.servlet.function;
 
+import org.reactivestreams.Publisher;
+import org.springframework.core.ReactiveAdapterRegistry;
+
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-
-import org.reactivestreams.Publisher;
-
-import org.springframework.core.ReactiveAdapterRegistry;
 
 /**
  * Asynchronous subtype of {@link ServerResponse} that exposes the future
  * response.
  *
  * @author Arjen Poutsma
- * @since 5.3.2
  * @see ServerResponse#async(Object)
+ * @since 5.3.2
  */
 public interface AsyncServerResponse extends ServerResponse {
-
-	/**
-	 * Blocks indefinitely until the future response is obtained.
-	 */
-	ServerResponse block();
-
-
-	// Static creation methods
 
 	/**
 	 * Create a {@code AsyncServerResponse} with the given asynchronous response.
@@ -48,13 +39,17 @@ public interface AsyncServerResponse extends ServerResponse {
 	 * {@link Publisher Publisher&lt;ServerResponse&gt;} (or any
 	 * asynchronous producer of a single {@code ServerResponse} that can be
 	 * adapted via the {@link ReactiveAdapterRegistry}).
+	 *
 	 * @param asyncResponse a {@code CompletableFuture<ServerResponse>} or
-	 * {@code Publisher<ServerResponse>}
+	 *                      {@code Publisher<ServerResponse>}
 	 * @return the asynchronous response
 	 */
 	static AsyncServerResponse create(Object asyncResponse) {
 		return DefaultAsyncServerResponse.create(asyncResponse, null);
 	}
+
+
+	// Static creation methods
 
 	/**
 	 * Create a (built) response with the given asynchronous response.
@@ -63,14 +58,20 @@ public interface AsyncServerResponse extends ServerResponse {
 	 * {@link Publisher Publisher&lt;ServerResponse&gt;} (or any
 	 * asynchronous producer of a single {@code ServerResponse} that can be
 	 * adapted via the {@link ReactiveAdapterRegistry}).
+	 *
 	 * @param asyncResponse a {@code CompletableFuture<ServerResponse>} or
-	 * {@code Publisher<ServerResponse>}
-	 * @param timeout maximum time period to wait for before timing out
+	 *                      {@code Publisher<ServerResponse>}
+	 * @param timeout       maximum time period to wait for before timing out
 	 * @return the asynchronous response
 	 */
 	static AsyncServerResponse create(Object asyncResponse, Duration timeout) {
 		return DefaultAsyncServerResponse.create(asyncResponse, timeout);
 	}
+
+	/**
+	 * Blocks indefinitely until the future response is obtained.
+	 */
+	ServerResponse block();
 
 }
 

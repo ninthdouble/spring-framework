@@ -27,6 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class StringArrayPropertyEditorTests {
 
+	private static void assertTrimmedElements(Object value) {
+		assertThat(value).isInstanceOf(String[].class);
+		String[] array = (String[]) value;
+		for (int i = 0; i < array.length; ++i) {
+			assertThat(array[i]).isEqualTo(("" + i));
+		}
+	}
+
 	@Test
 	void withDefaultSeparator() {
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor();
@@ -90,14 +98,6 @@ class StringArrayPropertyEditorTests {
 		StringArrayPropertyEditor editor = new StringArrayPropertyEditor(",", true);
 		editor.setAsText("");
 		assertThat(editor.getValue()).isNull();
-	}
-
-	private static void assertTrimmedElements(Object value) {
-		assertThat(value).isInstanceOf(String[].class);
-		String[] array = (String[]) value;
-		for (int i = 0; i < array.length; ++i) {
-			assertThat(array[i]).isEqualTo(("" + i));
-		}
 	}
 
 }

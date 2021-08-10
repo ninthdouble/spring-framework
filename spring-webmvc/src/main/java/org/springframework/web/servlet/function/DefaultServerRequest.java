@@ -15,36 +15,6 @@
  */
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.security.Principal;
-import java.time.Instant;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRange;
@@ -64,6 +34,21 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UriBuilder;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.security.Principal;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * {@code ServerRequest} implementation based on a {@link HttpServletRequest}.
@@ -104,6 +89,37 @@ class DefaultServerRequest implements ServerRequest {
 				ServletRequestPathUtils.parseAndCache(servletRequest));
 	}
 
+	static Class<?> bodyClass(Type type) {
+		if (type instanceof Class) {
+			return (Class<?>) type;
+		}
+		if (type instanceof ParameterizedType) {
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+			if (parameterizedType.getRawType() instanceof Class) {
+				return (Class<?>) parameterizedType.getRawType();
+			}
+		}
+		return Object.class;
+	}
+
+	static Optional<ServerResponse> checkNotModified(
+			HttpServletRequest servletRequest, @Nullable Instant lastModified, @Nullable String etag) {
+
+		long lastModifiedTimestamp = -1;
+		if (lastModified != null && lastModified.isAfter(Instant.EPOCH)) {
+			lastModifiedTimestamp = lastModified.toEpochMilli();
+		}
+
+		CheckNotModifiedResponse response = new CheckNotModifiedResponse();
+		WebRequest webRequest = new ServletWebRequest(servletRequest, response);
+		if (webRequest.checkNotModified(etag, lastModifiedTimestamp)) {
+			return Optional.of(ServerResponse.status(response.status).
+					headers(headers -> headers.addAll(response.headers))
+					.build());
+		} else {
+			return Optional.empty();
+		}
+	}
 
 	@Override
 	public String methodName() {
@@ -167,19 +183,6 @@ class DefaultServerRequest implements ServerRequest {
 	public <T> T body(ParameterizedTypeReference<T> bodyType) throws IOException, ServletException {
 		Type type = bodyType.getType();
 		return bodyInternal(type, bodyClass(type));
-	}
-
-	static Class<?> bodyClass(Type type) {
-		if (type instanceof Class) {
-			return (Class<?>) type;
-		}
-		if (type instanceof ParameterizedType) {
-			ParameterizedType parameterizedType = (ParameterizedType) type;
-			if (parameterizedType.getRawType() instanceof Class) {
-				return (Class<?>) parameterizedType.getRawType();
-			}
-		}
-		return Object.class;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -251,8 +254,7 @@ class DefaultServerRequest implements ServerRequest {
 				servletRequest().getAttribute(RouterFunctions.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		if (pathVariables != null) {
 			return pathVariables;
-		}
-		else {
+		} else {
 			return Collections.emptyMap();
 		}
 	}
@@ -271,27 +273,6 @@ class DefaultServerRequest implements ServerRequest {
 	public String toString() {
 		return String.format("HTTP %s %s", method(), path());
 	}
-
-	static Optional<ServerResponse> checkNotModified(
-			HttpServletRequest servletRequest, @Nullable Instant lastModified, @Nullable String etag) {
-
-		long lastModifiedTimestamp = -1;
-		if (lastModified != null && lastModified.isAfter(Instant.EPOCH)) {
-			lastModifiedTimestamp = lastModified.toEpochMilli();
-		}
-
-		CheckNotModifiedResponse response = new CheckNotModifiedResponse();
-		WebRequest webRequest = new ServletWebRequest(servletRequest, response);
-		if (webRequest.checkNotModified(etag, lastModifiedTimestamp)) {
-			return Optional.of(ServerResponse.status(response.status).
-					headers(headers -> headers.addAll(response.headers))
-					.build());
-		}
-		else {
-			return Optional.empty();
-		}
-	}
-
 
 	/**
 	 * Default implementation of {@link Headers}.
@@ -387,8 +368,7 @@ class DefaultServerRequest implements ServerRequest {
 			String[] parameterValues = this.servletRequest.getParameterValues(name);
 			if (!ObjectUtils.isEmpty(parameterValues)) {
 				return Arrays.asList(parameterValues);
-			}
-			else {
+			} else {
 				return Collections.emptyList();
 			}
 		}
@@ -496,11 +476,6 @@ class DefaultServerRequest implements ServerRequest {
 		}
 
 		@Override
-		public void setStatus(int sc) {
-			this.status = sc;
-		}
-
-		@Override
 		@Deprecated
 		public void setStatus(int sc, String sm) {
 			this.status = sc;
@@ -509,6 +484,11 @@ class DefaultServerRequest implements ServerRequest {
 		@Override
 		public int getStatus() {
 			return this.status;
+		}
+
+		@Override
+		public void setStatus(int sc) {
+			this.status = sc;
 		}
 
 		@Override
@@ -595,7 +575,17 @@ class DefaultServerRequest implements ServerRequest {
 		}
 
 		@Override
+		public void setCharacterEncoding(String charset) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		public String getContentType() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void setContentType(String type) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -610,11 +600,6 @@ class DefaultServerRequest implements ServerRequest {
 		}
 
 		@Override
-		public void setCharacterEncoding(String charset) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
 		public void setContentLength(int len) {
 			throw new UnsupportedOperationException();
 		}
@@ -625,17 +610,12 @@ class DefaultServerRequest implements ServerRequest {
 		}
 
 		@Override
-		public void setContentType(String type) {
+		public int getBufferSize() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void setBufferSize(int size) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public int getBufferSize() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -660,12 +640,12 @@ class DefaultServerRequest implements ServerRequest {
 		}
 
 		@Override
-		public void setLocale(Locale loc) {
+		public Locale getLocale() {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public Locale getLocale() {
+		public void setLocale(Locale loc) {
 			throw new UnsupportedOperationException();
 		}
 	}

@@ -16,14 +16,13 @@
 
 package org.springframework.test.web.servlet.result;
 
-import java.nio.charset.StandardCharsets;
-
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.StubMvcResult;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -32,6 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Sebastien Deleuze
  */
 public class ContentResultMatchersTests {
+
+	private static final String CONTENT = "{\"foo\":\"bar\",\"foo array\":[\"foo\",\"bar\"]}";
+	private static final String UTF8_CONTENT = "{\"name\":\"Jürgen\"}";
 
 	@Test
 	public void typeMatches() throws Exception {
@@ -106,10 +108,6 @@ public class ContentResultMatchersTests {
 	public void jsonUtf8Match() throws Exception {
 		new ContentResultMatchers().json("{\"name\":\"Jürgen\"}").match(getStubMvcResult(UTF8_CONTENT));
 	}
-
-	private static final String CONTENT = "{\"foo\":\"bar\",\"foo array\":[\"foo\",\"bar\"]}";
-
-	private static final String UTF8_CONTENT = "{\"name\":\"Jürgen\"}";
 
 	private StubMvcResult getStubMvcResult(String content) throws Exception {
 		MockHttpServletResponse response = new MockHttpServletResponse();

@@ -16,16 +16,15 @@
 
 package org.springframework.core.type;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.testfixture.EnabledForTestGroups;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
+
+import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.testfixture.TestGroup.LONG_RUNNING;

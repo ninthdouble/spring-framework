@@ -16,16 +16,8 @@
 
 package org.springframework.transaction.annotation;
 
-import java.lang.management.ManagementFactory;
-import java.util.Collection;
-import java.util.Map;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,6 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.config.TransactionManagementConfigUtils;
 import org.springframework.transaction.event.TransactionalEventListenerFactory;
 import org.springframework.transaction.testfixture.CallCountingTransactionManager;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.util.Collection;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -80,10 +78,10 @@ public class AnnotationTransactionNamespaceHandlerTests {
 		// try with exceptional
 		assertThatExceptionOfType(Throwable.class).isThrownBy(() ->
 				testBean.exceptional(new IllegalArgumentException("foo")))
-			.satisfies(ex -> {
-				assertThat(ptm.begun).as("Should have another started transaction").isEqualTo(2);
-				assertThat(ptm.rollbacks).as("Should have 1 rolled back transaction").isEqualTo(1);
-			});
+				.satisfies(ex -> {
+					assertThat(ptm.begun).as("Should have another started transaction").isEqualTo(2);
+					assertThat(ptm.rollbacks).as("Should have 1 rolled back transaction").isEqualTo(1);
+				});
 	}
 
 	@Test

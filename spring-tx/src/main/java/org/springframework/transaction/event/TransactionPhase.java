@@ -16,9 +16,9 @@
 
 package org.springframework.transaction.event;
 
-import java.util.function.Consumer;
-
 import org.springframework.transaction.support.TransactionSynchronization;
+
+import java.util.function.Consumer;
 
 /**
  * The phase in which a transactional event listener applies.
@@ -26,15 +26,16 @@ import org.springframework.transaction.support.TransactionSynchronization;
  * @author Stephane Nicoll
  * @author Juergen Hoeller
  * @author Sam Brannen
- * @since 4.2
  * @see TransactionalEventListener#phase()
  * @see TransactionalApplicationListener#getTransactionPhase()
  * @see TransactionalApplicationListener#forPayload(TransactionPhase, Consumer)
+ * @since 4.2
  */
 public enum TransactionPhase {
 
 	/**
 	 * Handle the event before transaction commit.
+	 *
 	 * @see TransactionSynchronization#beforeCommit(boolean)
 	 */
 	BEFORE_COMMIT,
@@ -47,6 +48,7 @@ public enum TransactionPhase {
 	 * <p>Interactions with the underlying transactional resource will not be
 	 * committed in this phase. See
 	 * {@link TransactionSynchronization#afterCompletion(int)} for details.
+	 *
 	 * @see TransactionSynchronization#afterCompletion(int)
 	 * @see TransactionSynchronization#STATUS_COMMITTED
 	 */
@@ -59,6 +61,7 @@ public enum TransactionPhase {
 	 * <p>Interactions with the underlying transactional resource will not be
 	 * committed in this phase. See
 	 * {@link TransactionSynchronization#afterCompletion(int)} for details.
+	 *
 	 * @see TransactionSynchronization#afterCompletion(int)
 	 * @see TransactionSynchronization#STATUS_ROLLED_BACK
 	 */
@@ -72,6 +75,7 @@ public enum TransactionPhase {
 	 * <p>Interactions with the underlying transactional resource will not be
 	 * committed in this phase. See
 	 * {@link TransactionSynchronization#afterCompletion(int)} for details.
+	 *
 	 * @see TransactionSynchronization#afterCompletion(int)
 	 */
 	AFTER_COMPLETION

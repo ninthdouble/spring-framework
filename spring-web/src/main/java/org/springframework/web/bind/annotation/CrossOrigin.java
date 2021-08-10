@@ -16,15 +16,11 @@
 
 package org.springframework.web.bind.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.lang.annotation.*;
+import java.util.List;
 
 /**
  * Annotation for permitting cross-origin requests on specific handler classes
@@ -54,19 +50,27 @@ import org.springframework.web.cors.CorsConfiguration;
 @Documented
 public @interface CrossOrigin {
 
-	/** @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues} */
+	/**
+	 * @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues}
+	 */
 	@Deprecated
 	String[] DEFAULT_ORIGINS = {"*"};
 
-	/** @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues} */
+	/**
+	 * @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues}
+	 */
 	@Deprecated
 	String[] DEFAULT_ALLOWED_HEADERS = {"*"};
 
-	/** @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues} */
+	/**
+	 * @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues}
+	 */
 	@Deprecated
 	boolean DEFAULT_ALLOW_CREDENTIALS = false;
 
-	/** @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues} */
+	/**
+	 * @deprecated as of Spring 5.0, in favor of {@link CorsConfiguration#applyPermitDefaultValues}
+	 */
 	@Deprecated
 	long DEFAULT_MAX_AGE = 1800;
 
@@ -91,6 +95,7 @@ public @interface CrossOrigin {
 	 * patterns. Please, see {@link CorsConfiguration#setAllowedOriginPatterns(List)}
 	 * for details.
 	 * <p>By default this is not set.
+	 *
 	 * @since 5.3
 	 */
 	String[] originPatterns() default {};

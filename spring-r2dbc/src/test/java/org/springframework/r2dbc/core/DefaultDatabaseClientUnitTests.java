@@ -16,8 +16,6 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.Arrays;
-
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Result;
@@ -36,27 +34,21 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.lang.Nullable;
+import org.springframework.r2dbc.core.binding.BindMarkersFactory;
+import org.springframework.r2dbc.core.binding.BindTarget;
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.lang.Nullable;
-import org.springframework.r2dbc.core.binding.BindMarkersFactory;
-import org.springframework.r2dbc.core.binding.BindTarget;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.doReturn;
-import static org.mockito.BDDMockito.inOrder;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.verifyNoInteractions;
-import static org.mockito.BDDMockito.verifyNoMoreInteractions;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for {@link DefaultDatabaseClient}.
@@ -75,7 +67,7 @@ class DefaultDatabaseClientUnitTests {
 	private DatabaseClient.Builder databaseClientBuilder;
 
 	@BeforeEach
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	void before() {
 		ConnectionFactory connectionFactory = mock(ConnectionFactory.class);
 
@@ -153,13 +145,13 @@ class DefaultDatabaseClientUnitTests {
 
 		databaseClient.sql("SELECT * FROM table WHERE key = $1").bind(0,
 				Parameter.empty(String.class)).then().as(
-						StepVerifier::create).verifyComplete();
+				StepVerifier::create).verifyComplete();
 
 		verify(statement).bindNull(0, String.class);
 
 		databaseClient.sql("SELECT * FROM table WHERE key = $1").bind("$1",
 				Parameter.empty(String.class)).then().as(
-						StepVerifier::create).verifyComplete();
+				StepVerifier::create).verifyComplete();
 
 		verify(statement).bindNull("$1", String.class);
 	}
@@ -185,8 +177,8 @@ class DefaultDatabaseClientUnitTests {
 
 		databaseClient.sql(
 				"SELECT id, name, manual FROM legoset WHERE name IN (:name)").bind(0,
-						Arrays.asList("unknown", "dunno", "other")).then().as(
-								StepVerifier::create).verifyComplete();
+				Arrays.asList("unknown", "dunno", "other")).then().as(
+				StepVerifier::create).verifyComplete();
 
 		verify(statement).bind(0, "unknown");
 		verify(statement).bind(1, "dunno");
@@ -365,9 +357,9 @@ class DefaultDatabaseClientUnitTests {
 
 		databaseClient.sql("SELECT").filter(
 				(s, next) -> next.execute(s.returnGeneratedValues("foo"))).filter(
-						(s, next) -> next.execute(
-								s.returnGeneratedValues("bar"))).fetch().all().as(
-										StepVerifier::create).verifyComplete();
+				(s, next) -> next.execute(
+						s.returnGeneratedValues("bar"))).fetch().all().as(
+				StepVerifier::create).verifyComplete();
 
 		InOrder inOrder = inOrder(statement);
 		inOrder.verify(statement).returnGeneratedValues("foo");
@@ -387,8 +379,8 @@ class DefaultDatabaseClientUnitTests {
 
 		databaseClient.sql("SELECT").filter(
 				s -> s.returnGeneratedValues("foo")).filter(
-						s -> s.returnGeneratedValues("bar")).fetch().all().as(
-								StepVerifier::create).verifyComplete();
+				s -> s.returnGeneratedValues("bar")).fetch().all().as(
+				StepVerifier::create).verifyComplete();
 
 		InOrder inOrder = inOrder(statement);
 		inOrder.verify(statement).returnGeneratedValues("foo");

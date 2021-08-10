@@ -16,18 +16,10 @@
 
 package org.springframework.web.method.annotation;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.ui.Model;
@@ -47,6 +39,13 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -57,13 +56,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ModelFactoryOrderingTests {
 
 	private static final Log logger = LogFactory.getLog(ModelFactoryOrderingTests.class);
+	private static final ReflectionUtils.MethodFilter METHOD_FILTER = new ReflectionUtils.MethodFilter() {
 
+		@Override
+		public boolean matches(Method method) {
+			return ((AnnotationUtils.findAnnotation(method, RequestMapping.class) == null) &&
+					(AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null));
+		}
+	};
 	private NativeWebRequest webRequest;
-
 	private ModelAndViewContainer mavContainer;
-
 	private SessionAttributeStore sessionAttributeStore;
-
 
 	@BeforeEach
 	public void setup() {
@@ -145,7 +148,7 @@ public class ModelFactoryOrderingTests {
 		List<String> actual = getInvokedMethods();
 		for (String afterMethod : afterMethods) {
 			assertThat(actual.indexOf(beforeMethod) < actual.indexOf(afterMethod)).as(beforeMethod + " should be before " + afterMethod + ". Actual order: " +
-						actual.toString()).isTrue();
+					actual.toString()).isTrue();
 		}
 	}
 
@@ -153,7 +156,6 @@ public class ModelFactoryOrderingTests {
 	private List<String> getInvokedMethods() {
 		return (List<String>) this.mavContainer.getModel().get("methods");
 	}
-
 
 	private static class AbstractController {
 
@@ -312,22 +314,25 @@ public class ModelFactoryOrderingTests {
 		}
 	}
 
-	private static class A { }
-	private static class B1 { }
-	private static class B2 { }
-	private static class C1 { }
-	private static class C2 { }
-	private static class C3 { }
-	private static class C4 { }
+	private static class A {
+	}
 
+	private static class B1 {
+	}
 
-	private static final ReflectionUtils.MethodFilter METHOD_FILTER = new ReflectionUtils.MethodFilter() {
+	private static class B2 {
+	}
 
-		@Override
-		public boolean matches(Method method) {
-			return ((AnnotationUtils.findAnnotation(method, RequestMapping.class) == null) &&
-					(AnnotationUtils.findAnnotation(method, ModelAttribute.class) != null));
-		}
-	};
+	private static class C1 {
+	}
+
+	private static class C2 {
+	}
+
+	private static class C3 {
+	}
+
+	private static class C4 {
+	}
 
 }

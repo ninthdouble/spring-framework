@@ -123,6 +123,12 @@ class AutoProxyLazyInitTests {
 	static class ConfigWithStatic {
 
 		@Bean
+		@Lazy
+		static MyBean myBean() {
+			return new MyBeanImpl();
+		}
+
+		@Bean
 		BeanNameAutoProxyCreator lazyInitAutoProxyCreator() {
 			BeanNameAutoProxyCreator autoProxyCreator = new BeanNameAutoProxyCreator();
 			autoProxyCreator.setBeanNames("*");
@@ -133,12 +139,6 @@ class AutoProxyLazyInitTests {
 		@Bean
 		LazyInitTargetSourceCreator lazyInitTargetSourceCreator() {
 			return new StrictLazyInitTargetSourceCreator();
-		}
-
-		@Bean
-		@Lazy
-		static MyBean myBean() {
-			return new MyBeanImpl();
 		}
 	}
 
@@ -147,6 +147,12 @@ class AutoProxyLazyInitTests {
 	static class ConfigWithStaticAndInterface implements ApplicationListener<ApplicationContextEvent> {
 
 		@Bean
+		@Lazy
+		static MyBean myBean() {
+			return new MyBeanImpl();
+		}
+
+		@Bean
 		BeanNameAutoProxyCreator lazyInitAutoProxyCreator() {
 			BeanNameAutoProxyCreator autoProxyCreator = new BeanNameAutoProxyCreator();
 			autoProxyCreator.setBeanNames("*");
@@ -157,12 +163,6 @@ class AutoProxyLazyInitTests {
 		@Bean
 		LazyInitTargetSourceCreator lazyInitTargetSourceCreator() {
 			return new StrictLazyInitTargetSourceCreator();
-		}
-
-		@Bean
-		@Lazy
-		static MyBean myBean() {
-			return new MyBeanImpl();
 		}
 
 		@Override

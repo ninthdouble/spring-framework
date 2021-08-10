@@ -16,13 +16,12 @@
 
 package org.springframework.transaction.testfixture;
 
-import reactor.core.publisher.Mono;
-
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.reactive.AbstractReactiveTransactionManager;
 import org.springframework.transaction.reactive.GenericReactiveTransaction;
 import org.springframework.transaction.reactive.TransactionSynchronizationManager;
+import reactor.core.publisher.Mono;
 
 /**
  * @author Mark Paluch

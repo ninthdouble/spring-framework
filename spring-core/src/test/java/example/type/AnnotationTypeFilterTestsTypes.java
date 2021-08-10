@@ -30,14 +30,12 @@ package example.type;
 public class AnnotationTypeFilterTestsTypes {
 
 	@InheritedAnnotation
-	public static class SomeComponent {
-	}
-
-
-	@InheritedAnnotation
 	public interface SomeComponentInterface {
 	}
 
+	@InheritedAnnotation
+	public static class SomeComponent {
+	}
 
 	@SuppressWarnings("unused")
 	public static class SomeClassWithSomeComponentInterface implements Cloneable, SomeComponentInterface {

@@ -16,13 +16,6 @@
 
 package org.springframework.web.reactive.socket.server.upgrade;
 
-import java.net.URI;
-import java.util.function.Supplier;
-
-import reactor.core.publisher.Mono;
-import reactor.netty.http.server.HttpServerResponse;
-import reactor.netty.http.server.WebsocketServerSpec;
-
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
@@ -33,6 +26,12 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.adapter.ReactorNettyWebSocketSession;
 import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.netty.http.server.HttpServerResponse;
+import reactor.netty.http.server.WebsocketServerSpec;
+
+import java.net.URI;
+import java.util.function.Supplier;
 
 /**
  * A {@link RequestUpgradeStrategy} for use with Reactor Netty.
@@ -53,6 +52,7 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 
 	/**
 	 * Create an instances with a default {@link reactor.netty.http.server.WebsocketServerSpec.Builder}.
+	 *
 	 * @since 5.2.6
 	 */
 	public ReactorNettyRequestUpgradeStrategy() {
@@ -63,6 +63,7 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	/**
 	 * Create an instance with a pre-configured {@link reactor.netty.http.server.WebsocketServerSpec.Builder}
 	 * to use for WebSocket upgrades.
+	 *
 	 * @since 5.2.6
 	 */
 	public ReactorNettyRequestUpgradeStrategy(Supplier<WebsocketServerSpec.Builder> builderSupplier) {
@@ -76,6 +77,7 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	 * configuration. This can be used to check the configured parameters except
 	 * for sub-protocols which depend on the {@link WebSocketHandler} that is used
 	 * for a given upgrade.
+	 *
 	 * @since 5.2.6
 	 */
 	public WebsocketServerSpec getWebsocketServerSpec() {
@@ -97,6 +99,17 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	}
 
 	/**
+	 * Return the configured max length for frames.
+	 *
+	 * @since 5.1
+	 * @deprecated as of 5.2.6 in favor of {@link #getWebsocketServerSpec()}
+	 */
+	@Deprecated
+	public int getMaxFramePayloadLength() {
+		return getWebsocketServerSpec().maxFramePayloadLength();
+	}
+
+	/**
 	 * Configure the maximum allowable frame payload length. Setting this value
 	 * to your application's requirement may reduce denial of service attacks
 	 * using long data frames.
@@ -104,6 +117,7 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	 * {@link io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory
 	 * WebSocketServerHandshakerFactory} in Netty.
 	 * <p>By default set to 65536 (64K).
+	 *
 	 * @param maxFramePayloadLength the max length for frames.
 	 * @since 5.1
 	 * @deprecated as of 5.2.6 in favor of providing a supplier of
@@ -116,13 +130,14 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	}
 
 	/**
-	 * Return the configured max length for frames.
-	 * @since 5.1
+	 * Return the configured {@link #setHandlePing(boolean)}.
+	 *
+	 * @since 5.2.4
 	 * @deprecated as of 5.2.6 in favor of {@link #getWebsocketServerSpec()}
 	 */
 	@Deprecated
-	public int getMaxFramePayloadLength() {
-		return getWebsocketServerSpec().maxFramePayloadLength();
+	public boolean getHandlePing() {
+		return getWebsocketServerSpec().handlePing();
 	}
 
 	/**
@@ -133,6 +148,7 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 	 * <p>By default this is set to {@code false} in which case ping frames are
 	 * handled automatically by Reactor Netty. If set to {@code true}, ping
 	 * frames will be passed through to the {@link WebSocketHandler}.
+	 *
 	 * @param handlePing whether to let Ping frames through for handling
 	 * @since 5.2.4
 	 * @deprecated as of 5.2.6 in favor of providing a supplier of
@@ -144,20 +160,9 @@ public class ReactorNettyRequestUpgradeStrategy implements RequestUpgradeStrateg
 		this.handlePing = handlePing;
 	}
 
-	/**
-	 * Return the configured {@link #setHandlePing(boolean)}.
-	 * @since 5.2.4
-	 * @deprecated as of 5.2.6 in favor of {@link #getWebsocketServerSpec()}
-	 */
-	@Deprecated
-	public boolean getHandlePing() {
-		return getWebsocketServerSpec().handlePing();
-	}
-
-
 	@Override
 	public Mono<Void> upgrade(ServerWebExchange exchange, WebSocketHandler handler,
-			@Nullable String subProtocol, Supplier<HandshakeInfo> handshakeInfoFactory) {
+							  @Nullable String subProtocol, Supplier<HandshakeInfo> handshakeInfoFactory) {
 
 		ServerHttpResponse response = exchange.getResponse();
 		HttpServerResponse reactorResponse = ServerHttpResponseDecorator.getNativeResponse(response);

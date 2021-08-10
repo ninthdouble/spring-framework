@@ -16,11 +16,11 @@
 
 package org.springframework.core.convert.support;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Converts String to a Boolean.
@@ -58,11 +58,9 @@ final class StringToBooleanConverter implements Converter<String, Boolean> {
 		value = value.toLowerCase();
 		if (trueValues.contains(value)) {
 			return Boolean.TRUE;
-		}
-		else if (falseValues.contains(value)) {
+		} else if (falseValues.contains(value)) {
 			return Boolean.FALSE;
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Invalid boolean value '" + source + "'");
 		}
 	}

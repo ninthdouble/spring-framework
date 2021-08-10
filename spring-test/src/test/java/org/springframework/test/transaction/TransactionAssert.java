@@ -32,6 +32,10 @@ public class TransactionAssert {
 
 	private static final TransactionAssert instance = new TransactionAssert();
 
+	public static TransactionAssert assertThatTransaction() {
+		return instance;
+	}
+
 	public TransactionAssert isActive() {
 		return isInTransaction(true);
 	}
@@ -46,10 +50,6 @@ public class TransactionAssert {
 				.as("active transaction")
 				.isEqualTo(expected);
 		return this;
-	}
-
-	public static TransactionAssert assertThatTransaction() {
-		return instance;
 	}
 
 }

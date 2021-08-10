@@ -26,10 +26,10 @@ package org.springframework.r2dbc.core.binding;
  * pass of one or more parameters. It maintains bind indexes/bind parameter names.
  *
  * @author Mark Paluch
- * @since 5.3
  * @see BindMarker
  * @see BindMarkersFactory
  * @see io.r2dbc.spi.Statement#bind
+ * @since 5.3
  */
 @FunctionalInterface
 public interface BindMarkers {
@@ -43,6 +43,7 @@ public interface BindMarkers {
 	 * Create a new {@link BindMarker} that accepts a {@code hint}.
 	 * Implementations are allowed to consider/ignore/filter
 	 * the name hint to create more expressive bind markers.
+	 *
 	 * @param hint an optional name hint that can be used as part of the bind marker
 	 * @return a new {@link BindMarker}
 	 */

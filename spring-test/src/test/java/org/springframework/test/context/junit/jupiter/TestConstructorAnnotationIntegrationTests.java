@@ -17,7 +17,6 @@
 package org.springframework.test.context.junit.jupiter;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -39,10 +38,10 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
  * Platform, simply run {@link SpringJUnitJupiterTestSuite} as a JUnit 4 test.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see SpringExtension
  * @see SpringJUnitJupiterAutowiredConstructorInjectionTests
  * @see SpringJUnitJupiterConstructorInjectionTests
+ * @since 5.2
  */
 @SpringJUnitConfig(TestConfig.class)
 @TestPropertySource(properties = "enigma = 42")
@@ -56,7 +55,7 @@ class TestConstructorAnnotationIntegrationTests {
 
 
 	TestConstructorAnnotationIntegrationTests(ApplicationContext applicationContext, Person dilbert, Dog dog,
-			@Value("${enigma}") Integer enigma) {
+											  @Value("${enigma}") Integer enigma) {
 
 		this.applicationContext = applicationContext;
 		this.dilbert = dilbert;

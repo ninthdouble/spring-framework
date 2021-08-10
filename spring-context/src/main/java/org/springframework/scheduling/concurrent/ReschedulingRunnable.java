@@ -51,18 +51,15 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
 	private final SimpleTriggerContext triggerContext;
 
 	private final ScheduledExecutorService executor;
-
+	private final Object triggerContextMonitor = new Object();
 	@Nullable
 	private ScheduledFuture<?> currentFuture;
-
 	@Nullable
 	private Date scheduledExecutionTime;
 
-	private final Object triggerContextMonitor = new Object();
-
 
 	public ReschedulingRunnable(Runnable delegate, Trigger trigger, Clock clock,
-			ScheduledExecutorService executor, ErrorHandler errorHandler) {
+								ScheduledExecutorService executor, ErrorHandler errorHandler) {
 
 		super(delegate, errorHandler);
 		this.trigger = trigger;
@@ -158,7 +155,7 @@ class ReschedulingRunnable extends DelegatingErrorHandlingRunnable implements Sc
 			return 0;
 		}
 		long diff = getDelay(TimeUnit.MILLISECONDS) - other.getDelay(TimeUnit.MILLISECONDS);
-		return (diff == 0 ? 0 : ((diff < 0)? -1 : 1));
+		return (diff == 0 ? 0 : ((diff < 0) ? -1 : 1));
 	}
 
 }

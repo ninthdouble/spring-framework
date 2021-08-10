@@ -15,18 +15,18 @@
  */
 package org.springframework.web.util;
 
-import javax.servlet.http.MappingMatch;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.server.RequestPath;
 import org.springframework.web.testfixture.servlet.MockHttpServletMapping;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import javax.servlet.http.MappingMatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ServletRequestPathUtils}.
+ *
  * @author Rossen Stoyanchev
  */
 public class ServletRequestPathUtilsTests {

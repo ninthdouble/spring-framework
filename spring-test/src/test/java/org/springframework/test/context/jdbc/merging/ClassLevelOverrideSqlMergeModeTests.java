@@ -17,7 +17,6 @@
 package org.springframework.test.context.jdbc.merging;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
@@ -34,7 +33,7 @@ import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.OVERR
  * @author Dmitry Semukhin
  * @since 5.2
  */
-@Sql({ "../recreate-schema.sql", "../data-add-catbert.sql" })
+@Sql({"../recreate-schema.sql", "../data-add-catbert.sql"})
 @SqlMergeMode(OVERRIDE)
 class ClassLevelOverrideSqlMergeModeTests extends AbstractSqlMergeModeTests {
 
@@ -51,7 +50,7 @@ class ClassLevelOverrideSqlMergeModeTests extends AbstractSqlMergeModeTests {
 	}
 
 	@Test
-	@Sql({ "../recreate-schema.sql", "../data.sql", "../data-add-dogbert.sql", "../data-add-catbert.sql" })
+	@Sql({"../recreate-schema.sql", "../data.sql", "../data-add-dogbert.sql", "../data-add-catbert.sql"})
 	void overridden() {
 		assertUsers("Dilbert", "Dogbert", "Catbert");
 	}

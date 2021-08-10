@@ -16,11 +16,10 @@
 
 package org.springframework.web.servlet.view.groovy;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.DirectFieldAccessor;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

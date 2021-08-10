@@ -15,21 +15,20 @@
  */
 package org.springframework.web.util;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletMapping;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.MappingMatch;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.http.server.RequestPath;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletMapping;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.MappingMatch;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Utility class to assist with preparation and access to the lookup path for
@@ -44,7 +43,9 @@ import org.springframework.util.StringUtils;
  */
 public abstract class ServletRequestPathUtils {
 
-	/** Name of Servlet request attribute that holds the parsed {@link RequestPath}. */
+	/**
+	 * Name of Servlet request attribute that holds the parsed {@link RequestPath}.
+	 */
 	public static final String PATH_ATTRIBUTE = ServletRequestPathUtils.class.getName() + ".PATH";
 
 
@@ -70,6 +71,7 @@ public abstract class ServletRequestPathUtils {
 
 	/**
 	 * Return a {@link #parseAndCache  previously} parsed and cached {@code RequestPath}.
+	 *
 	 * @throws IllegalArgumentException if not found
 	 */
 	public static RequestPath getParsedRequestPath(ServletRequest request) {
@@ -80,16 +82,16 @@ public abstract class ServletRequestPathUtils {
 
 	/**
 	 * Set the cached, parsed {@code RequestPath} to the given value.
+	 *
 	 * @param requestPath the value to set to, or if {@code null} the cache
-	 * value is cleared.
-	 * @param request the current request
+	 *                    value is cleared.
+	 * @param request     the current request
 	 * @since 5.3.3
 	 */
 	public static void setParsedRequestPath(@Nullable RequestPath requestPath, ServletRequest request) {
 		if (requestPath != null) {
 			request.setAttribute(PATH_ATTRIBUTE, requestPath);
-		}
-		else {
+		} else {
 			request.removeAttribute(PATH_ATTRIBUTE);
 		}
 	}
@@ -123,6 +125,7 @@ public abstract class ServletRequestPathUtils {
 	 * ServletRequestPathFilter}. In other cases where {@code HandlerMapping}s
 	 * use String pattern matching with {@code PathMatcher}, the String
 	 * lookupPath is resolved separately by each {@code HandlerMapping}.
+	 *
 	 * @param request the current request
 	 * @return a String lookupPath or a {@code RequestPath}
 	 * @throws IllegalArgumentException if neither is available
@@ -154,6 +157,7 @@ public abstract class ServletRequestPathUtils {
 	 * <p>If the cached path is a {@link UrlPathHelper#resolveAndCacheLookupPath
 	 * pre-resolved} String lookupPath, then the returned String path value
 	 * depends on how {@link UrlPathHelper} that resolved is configured.
+	 *
 	 * @param request the current request
 	 * @return the full request mapping path as a String
 	 */
@@ -170,6 +174,7 @@ public abstract class ServletRequestPathUtils {
 	 * Check for a previously {@link UrlPathHelper#resolveAndCacheLookupPath
 	 * resolved} String lookupPath or a previously {@link #parseAndCache parsed}
 	 * {@code RequestPath}.
+	 *
 	 * @param request the current request
 	 * @return whether a pre-resolved or pre-parsed path is available
 	 */
@@ -194,6 +199,20 @@ public abstract class ServletRequestPathUtils {
 			Assert.notNull(servletPathPrefix, "`servletPathPrefix` is required");
 			this.requestPath = RequestPath.parse(rawPath, contextPath + servletPathPrefix);
 			this.contextPath = PathContainer.parsePath(StringUtils.hasText(contextPath) ? contextPath : "");
+		}
+
+		public static RequestPath parse(HttpServletRequest request) {
+			String requestUri = (String) request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE);
+			if (requestUri == null) {
+				requestUri = request.getRequestURI();
+			}
+			if (UrlPathHelper.servlet4Present) {
+				String servletPathPrefix = Servlet4Delegate.getServletPathPrefix(request);
+				if (StringUtils.hasText(servletPathPrefix)) {
+					return new ServletRequestPath(requestUri, request.getContextPath(), servletPathPrefix);
+				}
+			}
+			return RequestPath.parse(requestUri, request.getContextPath());
 		}
 
 		@Override
@@ -221,7 +240,6 @@ public abstract class ServletRequestPathUtils {
 			throw new UnsupportedOperationException();
 		}
 
-
 		@Override
 		public boolean equals(@Nullable Object other) {
 			if (this == other) {
@@ -241,21 +259,6 @@ public abstract class ServletRequestPathUtils {
 		@Override
 		public String toString() {
 			return this.requestPath.toString();
-		}
-
-
-		public static RequestPath parse(HttpServletRequest request) {
-			String requestUri = (String) request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE);
-			if (requestUri == null) {
-				requestUri = request.getRequestURI();
-			}
-			if (UrlPathHelper.servlet4Present) {
-				String servletPathPrefix = Servlet4Delegate.getServletPathPrefix(request);
-				if (StringUtils.hasText(servletPathPrefix)) {
-					return new ServletRequestPath(requestUri, request.getContextPath(), servletPathPrefix);
-				}
-			}
-			return RequestPath.parse(requestUri, request.getContextPath());
 		}
 	}
 

@@ -16,27 +16,20 @@
 
 package org.springframework.web.reactive.result.method;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
-import org.springframework.web.reactive.result.condition.ConsumesRequestCondition;
-import org.springframework.web.reactive.result.condition.HeadersRequestCondition;
-import org.springframework.web.reactive.result.condition.ParamsRequestCondition;
-import org.springframework.web.reactive.result.condition.PatternsRequestCondition;
-import org.springframework.web.reactive.result.condition.ProducesRequestCondition;
-import org.springframework.web.reactive.result.condition.RequestCondition;
-import org.springframework.web.reactive.result.condition.RequestConditionHolder;
-import org.springframework.web.reactive.result.condition.RequestMethodsRequestCondition;
+import org.springframework.web.reactive.result.condition.*;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Request mapping information. Encapsulates the following request mapping conditions:
@@ -94,32 +87,35 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 
 	/**
 	 * Full constructor with a mapping name.
+	 *
 	 * @deprecated as of 5.3.4 in favor using {@link RequestMappingInfo.Builder} via {@link #paths(String...)}.
 	 */
 	@Deprecated
 	public RequestMappingInfo(@Nullable String name, @Nullable PatternsRequestCondition patterns,
-			@Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
-			@Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
-			@Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom) {
+							  @Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
+							  @Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
+							  @Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom) {
 
 		this(name, patterns, methods, params, headers, consumes, produces, custom, new BuilderConfiguration());
 	}
 
 	/**
 	 * Create an instance with the given conditions.
+	 *
 	 * @deprecated as of 5.3.4 in favor using {@link RequestMappingInfo.Builder} via {@link #paths(String...)}.
 	 */
 	@Deprecated
 	public RequestMappingInfo(@Nullable PatternsRequestCondition patterns,
-			@Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
-			@Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
-			@Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom) {
+							  @Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
+							  @Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
+							  @Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom) {
 
 		this(null, patterns, methods, params, headers, consumes, produces, custom);
 	}
 
 	/**
 	 * Re-create a RequestMappingInfo with the given custom request condition.
+	 *
 	 * @deprecated since 5.3.4 in favor of using a {@link Builder} via {@link #mutate()}.
 	 */
 	@Deprecated
@@ -129,10 +125,10 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	}
 
 	private RequestMappingInfo(@Nullable String name, @Nullable PatternsRequestCondition patterns,
-			@Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
-			@Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
-			@Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom,
-			BuilderConfiguration options) {
+							   @Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
+							   @Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
+							   @Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom,
+							   BuilderConfiguration options) {
 
 		this.name = (StringUtils.hasText(name) ? name : null);
 		this.patternsCondition = (patterns != null ? patterns : EMPTY_PATTERNS);
@@ -149,6 +145,24 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 				this.consumesCondition, this.producesCondition, this.customConditionHolder);
 	}
 
+	private static int calculateHashCode(
+			PatternsRequestCondition patterns, RequestMethodsRequestCondition methods,
+			ParamsRequestCondition params, HeadersRequestCondition headers,
+			ConsumesRequestCondition consumes, ProducesRequestCondition produces,
+			RequestConditionHolder custom) {
+
+		return patterns.hashCode() * 31 + methods.hashCode() + params.hashCode() +
+				headers.hashCode() + consumes.hashCode() + produces.hashCode() + custom.hashCode();
+	}
+
+	/**
+	 * Create a new {@code RequestMappingInfo.Builder} with the given paths.
+	 *
+	 * @param paths the paths to use
+	 */
+	public static Builder paths(String... paths) {
+		return new DefaultBuilder(paths);
+	}
 
 	/**
 	 * Return the name for this mapping, or {@code null}.
@@ -168,6 +182,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 
 	/**
 	 * Return the mapping paths that are not patterns.
+	 *
 	 * @since 5.3
 	 */
 	public Set<String> getDirectPaths() {
@@ -222,10 +237,10 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		return this.customConditionHolder.getCondition();
 	}
 
-
 	/**
 	 * Combines "this" request mapping info (i.e. the current instance) with another request mapping info instance.
 	 * <p>Example: combine type- and method-level request mappings.
+	 *
 	 * @return a new request mapping info instance; never {@code null}
 	 */
 	@Override
@@ -247,11 +262,9 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	private String combineNames(RequestMappingInfo other) {
 		if (this.name != null && other.name != null) {
 			return this.name + "#" + other.name;
-		}
-		else if (this.name != null) {
+		} else if (this.name != null) {
 			return this.name;
-		}
-		else {
+		} else {
 			return other.name;
 		}
 	}
@@ -261,6 +274,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	 * a potentially new request mapping info with conditions tailored to the current request.
 	 * <p>For example the returned instance may contain the subset of URL patterns that match to
 	 * the current request, sorted with best matching patterns on top.
+	 *
 	 * @return a new instance in case all conditions match; or {@code null} otherwise
 	 */
 	@Override
@@ -361,16 +375,6 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		return this.hashCode;
 	}
 
-	private static int calculateHashCode(
-			PatternsRequestCondition patterns, RequestMethodsRequestCondition methods,
-			ParamsRequestCondition params, HeadersRequestCondition headers,
-			ConsumesRequestCondition consumes, ProducesRequestCondition produces,
-			RequestConditionHolder custom) {
-
-		return patterns.hashCode() * 31 + methods.hashCode() + params.hashCode() +
-				headers.hashCode() + consumes.hashCode() + produces.hashCode() + custom.hashCode();
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder("{");
@@ -401,22 +405,14 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		return builder.toString();
 	}
 
-
 	/**
 	 * Return a builder to create a new RequestMappingInfo by modifying this one.
+	 *
 	 * @return a builder to create a new, modified instance
 	 * @since 5.3.4
 	 */
 	public Builder mutate() {
 		return new MutateBuilder(this);
-	}
-
-	/**
-	 * Create a new {@code RequestMappingInfo.Builder} with the given paths.
-	 * @param paths the paths to use
-	 */
-	public static Builder paths(String... paths) {
-		return new DefaultBuilder(paths);
 	}
 
 
@@ -514,6 +510,31 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 			this.paths = paths;
 		}
 
+		static List<PathPattern> parse(String[] patterns, PathPatternParser parser) {
+			if (isEmpty(patterns)) {
+				return Collections.emptyList();
+			}
+			List<PathPattern> result = new ArrayList<>(patterns.length);
+			for (String path : patterns) {
+				if (StringUtils.hasText(path) && !path.startsWith("/")) {
+					path = "/" + path;
+				}
+				result.add(parser.parse(path));
+			}
+			return result;
+		}
+
+		static boolean isEmpty(String[] patterns) {
+			if (!ObjectUtils.isEmpty(patterns)) {
+				for (String pattern : patterns) {
+					if (StringUtils.hasText(pattern)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
 		@Override
 		public Builder paths(String... paths) {
 			this.paths = paths;
@@ -595,31 +616,6 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 							null : new ProducesRequestCondition(this.produces, this.headers, contentTypeResolver),
 					this.customCondition,
 					this.options);
-		}
-
-		static List<PathPattern> parse(String[] patterns, PathPatternParser parser) {
-			if (isEmpty(patterns)) {
-				return Collections.emptyList();
-			}
-			List<PathPattern> result = new ArrayList<>(patterns.length);
-			for (String path : patterns) {
-				if (StringUtils.hasText(path) && !path.startsWith("/")) {
-					path = "/" + path;
-				}
-				result.add(parser.parse(path));
-			}
-			return result;
-		}
-
-		static boolean isEmpty(String[] patterns) {
-			if (!ObjectUtils.isEmpty(patterns)) {
-				for (String pattern : patterns) {
-					if (StringUtils.hasText(pattern)) {
-						return false;
-					}
-				}
-			}
-			return true;
 		}
 	}
 
@@ -735,6 +731,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	 * Container for configuration options used for request mapping purposes.
 	 * Such configuration is required to create RequestMappingInfo instances but
 	 * is typically used across all RequestMappingInfo instances.
+	 *
 	 * @see Builder#options
 	 */
 	public static class BuilderConfiguration {
@@ -745,13 +742,18 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		@Nullable
 		private RequestedContentTypeResolver contentTypeResolver;
 
+		@Nullable
+		public PathPatternParser getPatternParser() {
+			return this.patternParser;
+		}
+
 		public void setPatternParser(PathPatternParser patternParser) {
 			this.patternParser = patternParser;
 		}
 
 		@Nullable
-		public PathPatternParser getPatternParser() {
-			return this.patternParser;
+		public RequestedContentTypeResolver getContentTypeResolver() {
+			return this.contentTypeResolver;
 		}
 
 		/**
@@ -760,11 +762,6 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		 */
 		public void setContentTypeResolver(RequestedContentTypeResolver resolver) {
 			this.contentTypeResolver = resolver;
-		}
-
-		@Nullable
-		public RequestedContentTypeResolver getContentTypeResolver() {
-			return this.contentTypeResolver;
 		}
 	}
 

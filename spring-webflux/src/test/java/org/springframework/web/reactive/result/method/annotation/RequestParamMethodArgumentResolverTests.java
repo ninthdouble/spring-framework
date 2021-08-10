@@ -16,15 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.format.support.DefaultFormattingConversionService;
@@ -36,6 +29,12 @@ import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -107,10 +106,10 @@ public class RequestParamMethodArgumentResolverTests {
 	public void doesNotSupportReactiveWrapper() {
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.testMethod.annot(requestParam()).arg(Mono.class, String.class)))
-			.withMessageStartingWith("RequestParamMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("RequestParamMethodArgumentResolver does not support reactive type wrapper");
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.testMethod.annotNotPresent(RequestParam.class).arg(Mono.class, String.class)))
-			.withMessageStartingWith("RequestParamMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("RequestParamMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test
@@ -127,7 +126,7 @@ public class RequestParamMethodArgumentResolverTests {
 		Object result = resolve(param, MockServerWebExchange.from(request));
 		boolean condition = result instanceof String[];
 		assertThat(condition).isTrue();
-		assertThat((String[]) result).isEqualTo(new String[] {"foo", "bar"});
+		assertThat((String[]) result).isEqualTo(new String[]{"foo", "bar"});
 	}
 
 	@Test

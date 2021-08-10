@@ -16,12 +16,8 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.FlashMap;
@@ -29,6 +25,9 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.support.SessionFlashMapManager;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -75,7 +74,7 @@ public class RedirectViewUriTemplateTests {
 	public void uriTemplateAndArrayQueryParam() throws Exception {
 		Map<String, Object> model = new HashMap<>();
 		model.put("foo", "bar");
-		model.put("fooArr", new String[] { "baz", "bazz" });
+		model.put("fooArr", new String[]{"baz", "bazz"});
 
 		RedirectView redirectView = new RedirectView("/foo/{foo}");
 		redirectView.renderMergedOutputModel(model, this.request, this.response);

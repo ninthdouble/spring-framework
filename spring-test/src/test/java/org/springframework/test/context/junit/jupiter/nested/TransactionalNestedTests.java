@@ -16,11 +16,8 @@
 
 package org.springframework.test.context.junit.jupiter.nested;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +32,8 @@ import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.NestedTestConfiguration.EnclosingConfiguration.INHERIT;
@@ -63,6 +62,35 @@ class TransactionalNestedTests {
 		assertCommit();
 	}
 
+	private void assertCommit() {
+		assertThat(TestTransaction.isFlaggedForRollback()).as("flagged for commit").isFalse();
+	}
+
+	private void assertRollback() {
+		assertThat(TestTransaction.isFlaggedForRollback()).as("flagged for rollback").isTrue();
+	}
+
+
+	@Transactional(propagation = NOT_SUPPORTED)
+	interface TestInterface {
+	}
+
+	@Configuration
+	@EnableTransactionManagement
+	static class Config {
+
+		@Bean
+		TransactionManager transactionManager(DataSource dataSource) {
+			return new DataSourceTransactionManager(dataSource);
+		}
+
+		@Bean
+		DataSource dataSource() {
+			return new EmbeddedDatabaseBuilder().generateUniqueName(true).build();
+		}
+	}
+
+	// -------------------------------------------------------------------------
 
 	@Nested
 	@SpringJUnitConfig(Config.class)
@@ -150,37 +178,6 @@ class TransactionalNestedTests {
 				}
 			}
 		}
-	}
-
-
-	private void assertCommit() {
-		assertThat(TestTransaction.isFlaggedForRollback()).as("flagged for commit").isFalse();
-	}
-
-	private void assertRollback() {
-		assertThat(TestTransaction.isFlaggedForRollback()).as("flagged for rollback").isTrue();
-	}
-
-	// -------------------------------------------------------------------------
-
-
-	@Configuration
-	@EnableTransactionManagement
-	static class Config {
-
-		@Bean
-		TransactionManager transactionManager(DataSource dataSource) {
-			return new DataSourceTransactionManager(dataSource);
-		}
-
-		@Bean
-		DataSource dataSource() {
-			return new EmbeddedDatabaseBuilder().generateUniqueName(true).build();
-		}
-	}
-
-	@Transactional(propagation = NOT_SUPPORTED)
-	interface TestInterface {
 	}
 
 }

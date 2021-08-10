@@ -16,7 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation
 
-import kotlinx.coroutines.delay
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

@@ -37,6 +37,7 @@ public class FormatterPropertyEditorAdapter extends PropertyEditorSupport {
 
 	/**
 	 * Create a new {@code FormatterPropertyEditorAdapter} for the given {@link Formatter}.
+	 *
 	 * @param formatter the {@link Formatter} to wrap
 	 */
 	@SuppressWarnings("unchecked")
@@ -48,38 +49,35 @@ public class FormatterPropertyEditorAdapter extends PropertyEditorSupport {
 
 	/**
 	 * Determine the {@link Formatter}-declared field type.
+	 *
 	 * @return the field type declared in the wrapped {@link Formatter} implementation
 	 * (never {@code null})
 	 * @throws IllegalArgumentException if the {@link Formatter}-declared field type
-	 * cannot be inferred
+	 *                                  cannot be inferred
 	 */
 	public Class<?> getFieldType() {
 		return FormattingConversionService.getFieldType(this.formatter);
-	}
-
-
-	@Override
-	public void setAsText(String text) throws IllegalArgumentException {
-		if (StringUtils.hasText(text)) {
-			try {
-				setValue(this.formatter.parse(text, LocaleContextHolder.getLocale()));
-			}
-			catch (IllegalArgumentException ex) {
-				throw ex;
-			}
-			catch (Throwable ex) {
-				throw new IllegalArgumentException("Parse attempt failed for value [" + text + "]", ex);
-			}
-		}
-		else {
-			setValue(null);
-		}
 	}
 
 	@Override
 	public String getAsText() {
 		Object value = getValue();
 		return (value != null ? this.formatter.print(value, LocaleContextHolder.getLocale()) : "");
+	}
+
+	@Override
+	public void setAsText(String text) throws IllegalArgumentException {
+		if (StringUtils.hasText(text)) {
+			try {
+				setValue(this.formatter.parse(text, LocaleContextHolder.getLocale()));
+			} catch (IllegalArgumentException ex) {
+				throw ex;
+			} catch (Throwable ex) {
+				throw new IllegalArgumentException("Parse attempt failed for value [" + text + "]", ex);
+			}
+		} else {
+			setValue(null);
+		}
 	}
 
 }

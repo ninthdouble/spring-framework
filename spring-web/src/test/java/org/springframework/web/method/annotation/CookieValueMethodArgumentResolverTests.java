@@ -16,13 +16,8 @@
 
 package org.springframework.web.method.annotation;
 
-import java.lang.reflect.Method;
-
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -31,6 +26,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.Cookie;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -89,7 +87,12 @@ public class CookieValueMethodArgumentResolverTests {
 	@Test
 	public void notFound() throws Exception {
 		assertThatExceptionOfType(ServletRequestBindingException.class).isThrownBy(() ->
-			resolver.resolveArgument(paramNamedCookie, null, webRequest, null));
+				resolver.resolveArgument(paramNamedCookie, null, webRequest, null));
+	}
+
+	public void params(@CookieValue("name") Cookie param1,
+					   @CookieValue(name = "name", defaultValue = "bar") String param2,
+					   String param3) {
 	}
 
 	private static class TestCookieValueMethodArgumentResolver extends AbstractCookieValueMethodArgumentResolver {
@@ -102,12 +105,6 @@ public class CookieValueMethodArgumentResolverTests {
 		protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
 			return null;
 		}
-	}
-
-
-	public void params(@CookieValue("name") Cookie param1,
-			@CookieValue(name = "name", defaultValue = "bar") String param2,
-			String param3) {
 	}
 
 }

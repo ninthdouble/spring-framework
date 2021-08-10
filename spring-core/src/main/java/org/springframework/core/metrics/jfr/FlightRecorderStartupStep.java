@@ -16,13 +16,12 @@
 
 package org.springframework.core.metrics.jfr;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.core.metrics.StartupStep;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import org.jetbrains.annotations.NotNull;
-
-import org.springframework.core.metrics.StartupStep;
 
 /**
  * {@link StartupStep} implementation for the Java Flight Recorder.
@@ -41,7 +40,7 @@ class FlightRecorderStartupStep implements StartupStep {
 
 
 	public FlightRecorderStartupStep(long id, String name, long parentId,
-			Consumer<FlightRecorderStartupStep> recordingCallback) {
+									 Consumer<FlightRecorderStartupStep> recordingCallback) {
 
 		this.event = new FlightRecorderStartupEvent(id, name, parentId);
 		this.event.begin();

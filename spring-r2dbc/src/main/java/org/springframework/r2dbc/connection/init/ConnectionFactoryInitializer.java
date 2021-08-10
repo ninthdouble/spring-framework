@@ -17,7 +17,6 @@
 package org.springframework.r2dbc.connection.init;
 
 import io.r2dbc.spi.ConnectionFactory;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.lang.Nullable;
@@ -31,8 +30,8 @@ import org.springframework.util.Assert;
  * @author Dave Syer
  * @author Sam Brannen
  * @author Mark Paluch
- * @since 5.3
  * @see DatabasePopulator
+ * @since 5.3
  */
 public class ConnectionFactoryInitializer implements InitializingBean, DisposableBean {
 
@@ -52,6 +51,7 @@ public class ConnectionFactoryInitializer implements InitializingBean, Disposabl
 	 * The {@link ConnectionFactory} for the database to populate when this
 	 * component is initialized and to clean up when this component is shut down.
 	 * <p>This property is mandatory with no default provided.
+	 *
 	 * @param connectionFactory the R2DBC {@link ConnectionFactory}
 	 */
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -60,6 +60,7 @@ public class ConnectionFactoryInitializer implements InitializingBean, Disposabl
 
 	/**
 	 * Set the {@link DatabasePopulator} to execute during the bean initialization phase.
+	 *
 	 * @param databasePopulator the {@link DatabasePopulator} to use during initialization
 	 * @see #setDatabaseCleaner
 	 */
@@ -70,6 +71,7 @@ public class ConnectionFactoryInitializer implements InitializingBean, Disposabl
 	/**
 	 * Set the {@link DatabasePopulator} to execute during the bean destruction
 	 * phase, cleaning up the database and leaving it in a known state for others.
+	 *
 	 * @param databaseCleaner the {@code DatabasePopulator} to use during destruction
 	 * @see #setDatabasePopulator
 	 */
@@ -80,8 +82,9 @@ public class ConnectionFactoryInitializer implements InitializingBean, Disposabl
 	/**
 	 * Flag to explicitly enable or disable the {@linkplain #setDatabasePopulator
 	 * database populator} and {@linkplain #setDatabaseCleaner database cleaner}.
+	 *
 	 * @param enabled {@code true} if the database populator and database cleaner
-	 * should be called on startup and shutdown, respectively
+	 *                should be called on startup and shutdown, respectively
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;

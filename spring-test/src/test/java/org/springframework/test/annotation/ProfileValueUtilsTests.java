@@ -16,12 +16,12 @@
 
 package org.springframework.test.annotation;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -155,6 +155,36 @@ class ProfileValueUtilsTests {
 
 	// -------------------------------------------------------------------
 
+	@IfProfileValue(name = NAME, value = VALUE + "X")
+	private interface IfProfileValueTestInterface {
+	}
+
+	@IfProfileValue(name = NAME, value = VALUE)
+	@Retention(RetentionPolicy.RUNTIME)
+	private static @interface MetaEnabled {
+	}
+
+	@IfProfileValue(name = NAME, value = VALUE + "X")
+	@Retention(RetentionPolicy.RUNTIME)
+	private static @interface MetaDisabled {
+	}
+
+	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
+	@IfProfileValue(name = NAME, value = "42")
+	@Retention(RetentionPolicy.RUNTIME)
+	private static @interface MetaEnabledWithCustomProfileValueSource {
+	}
+
+	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
+	@IfProfileValue(name = NAME, value = "13")
+	@Retention(RetentionPolicy.RUNTIME)
+	private static @interface MetaDisabledWithCustomProfileValueSource {
+	}
+
+	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
+	private interface CustomProfileValueSourceTestInterface {
+	}
+
 	@SuppressWarnings("unused")
 	private static class NonAnnotated {
 
@@ -178,10 +208,6 @@ class ProfileValueUtilsTests {
 		}
 	}
 
-	@IfProfileValue(name = NAME, value = VALUE + "X")
-	private interface IfProfileValueTestInterface {
-	}
-
 	@SuppressWarnings("unused")
 	private static class DisabledAnnotatedSingleValueOnTestInterface implements IfProfileValueTestInterface {
 
@@ -190,7 +216,7 @@ class ProfileValueUtilsTests {
 	}
 
 	@SuppressWarnings("unused")
-	@IfProfileValue(name = NAME, values = { "foo", VALUE, "bar" })
+	@IfProfileValue(name = NAME, values = {"foo", VALUE, "bar"})
 	private static class EnabledAnnotatedMultiValue {
 
 		public void nonAnnotatedMethod() {
@@ -222,7 +248,7 @@ class ProfileValueUtilsTests {
 	}
 
 	@SuppressWarnings("unused")
-	@IfProfileValue(name = NAME, values = { "foo", "bar" })
+	@IfProfileValue(name = NAME, values = {"foo", "bar"})
 	private static class DisabledAnnotatedMultiValue {
 
 		public void nonAnnotatedMethod() {
@@ -235,16 +261,6 @@ class ProfileValueUtilsTests {
 		@IfProfileValue(name = NAME, value = VALUE + "X")
 		public void disabledAnnotatedMethod() {
 		}
-	}
-
-	@IfProfileValue(name = NAME, value = VALUE)
-	@Retention(RetentionPolicy.RUNTIME)
-	private static @interface MetaEnabled {
-	}
-
-	@IfProfileValue(name = NAME, value = VALUE + "X")
-	@Retention(RetentionPolicy.RUNTIME)
-	private static @interface MetaDisabled {
 	}
 
 	@MetaEnabled
@@ -295,28 +311,12 @@ class ProfileValueUtilsTests {
 		}
 	}
 
-	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
-	@IfProfileValue(name = NAME, value = "42")
-	@Retention(RetentionPolicy.RUNTIME)
-	private static @interface MetaEnabledWithCustomProfileValueSource {
-	}
-
-	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
-	@IfProfileValue(name = NAME, value = "13")
-	@Retention(RetentionPolicy.RUNTIME)
-	private static @interface MetaDisabledWithCustomProfileValueSource {
-	}
-
 	@MetaEnabledWithCustomProfileValueSource
 	private static class MetaEnabledWithCustomProfileValueSourceClass {
 	}
 
 	@MetaDisabledWithCustomProfileValueSource
 	private static class MetaDisabledWithCustomProfileValueSourceClass {
-	}
-
-	@ProfileValueSourceConfiguration(HardCodedProfileValueSource.class)
-	private interface CustomProfileValueSourceTestInterface {
 	}
 
 	@IfProfileValue(name = NAME, value = "42")

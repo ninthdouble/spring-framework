@@ -35,9 +35,9 @@ import org.springframework.validation.BindingResult;
  * likely a {@code java.util.ConcurrentMap}, for a pre-determined model.
  *
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see BindingResult
  * @see BindingAwareModelMap
+ * @since 5.0
  */
 @SuppressWarnings("serial")
 public class BindingAwareConcurrentModel extends ConcurrentModel {

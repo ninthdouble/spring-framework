@@ -16,9 +16,6 @@
 
 package org.springframework.test.context.support;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -27,14 +24,17 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.TestContextAnnotationUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+
 /**
  * Utility methods for working with {@link TestConstructor @TestConstructor}.
  *
  * <p>Primarily intended for use within the framework.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see TestConstructor
+ * @since 5.2
  */
 public abstract class TestConstructorUtils {
 
@@ -49,7 +49,7 @@ public abstract class TestConstructorUtils {
 	 * will a value of {@code null} for the fallback {@link PropertyProvider}.
 	 *
 	 * @param executable an executable for the test class
-	 * @param testClass the test class
+	 * @param testClass  the test class
 	 * @return {@code true} if the executable is an autowirable constructor
 	 * @see #isAutowirableConstructor(Executable, Class, PropertyProvider)
 	 */
@@ -65,7 +65,7 @@ public abstract class TestConstructorUtils {
 	 * will a value of {@code null} for the fallback {@link PropertyProvider}.
 	 *
 	 * @param constructor a constructor for the test class
-	 * @param testClass the test class
+	 * @param testClass   the test class
 	 * @return {@code true} if the constructor is autowirable
 	 * @see #isAutowirableConstructor(Constructor, Class, PropertyProvider)
 	 */
@@ -80,17 +80,17 @@ public abstract class TestConstructorUtils {
 	 * <p>This method delegates to {@link #isAutowirableConstructor(Constructor, Class, PropertyProvider)}
 	 * if the supplied executable is a constructor and otherwise returns {@code false}.
 	 *
-	 * @param executable an executable for the test class
-	 * @param testClass the test class
+	 * @param executable               an executable for the test class
+	 * @param testClass                the test class
 	 * @param fallbackPropertyProvider fallback property provider used to look up
-	 * the value for {@link TestConstructor#TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME}
-	 * if no such value is found in {@link SpringProperties}
+	 *                                 the value for {@link TestConstructor#TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME}
+	 *                                 if no such value is found in {@link SpringProperties}
 	 * @return {@code true} if the executable is an autowirable constructor
-	 * @since 5.3
 	 * @see #isAutowirableConstructor(Constructor, Class, PropertyProvider)
+	 * @since 5.3
 	 */
 	public static boolean isAutowirableConstructor(Executable executable, Class<?> testClass,
-			@Nullable PropertyProvider fallbackPropertyProvider) {
+												   @Nullable PropertyProvider fallbackPropertyProvider) {
 
 		return (executable instanceof Constructor &&
 				isAutowirableConstructor((Constructor<?>) executable, testClass, fallbackPropertyProvider));
@@ -115,16 +115,16 @@ public abstract class TestConstructorUtils {
 	 * {@link TestConstructor#TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME}).</li>
 	 * </ol>
 	 *
-	 * @param constructor a constructor for the test class
-	 * @param testClass the test class
+	 * @param constructor              a constructor for the test class
+	 * @param testClass                the test class
 	 * @param fallbackPropertyProvider fallback property provider used to look up
-	 * the value for the default <em>test constructor autowire mode</em> if no
-	 * such value is found in {@link SpringProperties}
+	 *                                 the value for the default <em>test constructor autowire mode</em> if no
+	 *                                 such value is found in {@link SpringProperties}
 	 * @return {@code true} if the constructor is autowirable
 	 * @since 5.3
 	 */
 	public static boolean isAutowirableConstructor(Constructor<?> constructor, Class<?> testClass,
-			@Nullable PropertyProvider fallbackPropertyProvider) {
+												   @Nullable PropertyProvider fallbackPropertyProvider) {
 
 		// Is the constructor annotated with @Autowired?
 		if (AnnotatedElementUtils.hasAnnotation(constructor, Autowired.class)) {
@@ -137,8 +137,7 @@ public abstract class TestConstructorUtils {
 		TestConstructor testConstructor = TestContextAnnotationUtils.findMergedAnnotation(testClass, TestConstructor.class);
 		if (testConstructor != null) {
 			autowireMode = testConstructor.autowireMode();
-		}
-		else {
+		} else {
 			// Custom global default from SpringProperties?
 			String value = SpringProperties.getProperty(TestConstructor.TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME);
 			autowireMode = AutowireMode.from(value);

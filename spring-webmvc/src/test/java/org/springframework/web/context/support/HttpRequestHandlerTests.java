@@ -16,15 +16,7 @@
 
 package org.springframework.web.context.support;
 
-import java.io.IOException;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
@@ -32,9 +24,13 @@ import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockServletConfig;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIOException;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Juergen Hoeller
@@ -78,12 +74,12 @@ public class HttpRequestHandlerTests {
 		request.setParameter("exception", "ServletException");
 		assertThatExceptionOfType(ServletException.class).isThrownBy(() ->
 				servlet.service(request, response))
-			.withMessage("test");
+				.withMessage("test");
 
 		request.setParameter("exception", "IOException");
 		assertThatIOException().isThrownBy(() ->
 				servlet.service(request, response))
-			.withMessage("test");
+				.withMessage("test");
 	}
 
 }

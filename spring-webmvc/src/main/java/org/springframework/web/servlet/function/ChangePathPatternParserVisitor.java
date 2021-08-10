@@ -16,13 +16,13 @@
 
 package org.springframework.web.servlet.function;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Implementation of {@link RouterFunctions.Visitor} that changes the

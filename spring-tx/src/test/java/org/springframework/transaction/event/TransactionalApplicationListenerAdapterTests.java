@@ -17,7 +17,6 @@
 package org.springframework.transaction.event;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -30,13 +29,30 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 public class TransactionalApplicationListenerAdapterTests {
 
+	private static void runInTransaction(Runnable runnable) {
+		TransactionSynchronizationManager.setActualTransactionActive(true);
+		TransactionSynchronizationManager.initSynchronization();
+		try {
+			runnable.run();
+			TransactionSynchronizationManager.getSynchronizations().forEach(it -> {
+				it.beforeCommit(false);
+				it.afterCommit();
+				it.afterCompletion(TransactionSynchronization.STATUS_COMMITTED);
+			});
+		} finally {
+			TransactionSynchronizationManager.clearSynchronization();
+			TransactionSynchronizationManager.setActualTransactionActive(false);
+		}
+	}
+
 	@Test
 	public void invokesCompletionCallbackOnSuccess() {
 		CapturingSynchronizationCallback callback = new CapturingSynchronizationCallback();
 		PayloadApplicationEvent<Object> event = new PayloadApplicationEvent<>(this, new Object());
 
 		TransactionalApplicationListener<PayloadApplicationEvent<Object>> adapter =
-				TransactionalApplicationListener.forPayload(p -> {});
+				TransactionalApplicationListener.forPayload(p -> {
+				});
 		adapter.addCallback(callback);
 		runInTransaction(() -> adapter.onApplicationEvent(event));
 
@@ -55,7 +71,9 @@ public class TransactionalApplicationListenerAdapterTests {
 
 		TransactionalApplicationListener<PayloadApplicationEvent<String>> adapter =
 				TransactionalApplicationListener.forPayload(
-						TransactionPhase.BEFORE_COMMIT, p -> {throw ex;});
+						TransactionPhase.BEFORE_COMMIT, p -> {
+							throw ex;
+						});
 		adapter.addCallback(callback);
 
 		assertThatExceptionOfType(RuntimeException.class)
@@ -75,7 +93,8 @@ public class TransactionalApplicationListenerAdapterTests {
 		PayloadApplicationEvent<String> event = new PayloadApplicationEvent<>(this, "event");
 
 		TransactionalApplicationListenerAdapter<PayloadApplicationEvent<String>> adapter =
-				new TransactionalApplicationListenerAdapter<>(e -> {});
+				new TransactionalApplicationListenerAdapter<>(e -> {
+				});
 		adapter.setTransactionPhase(TransactionPhase.BEFORE_COMMIT);
 		adapter.setListenerId("identifier");
 		adapter.addCallback(callback);
@@ -86,24 +105,6 @@ public class TransactionalApplicationListenerAdapterTests {
 		assertThat(callback.ex).isNull();
 		assertThat(adapter.getTransactionPhase()).isEqualTo(TransactionPhase.BEFORE_COMMIT);
 		assertThat(adapter.getListenerId()).isEqualTo("identifier");
-	}
-
-
-	private static void runInTransaction(Runnable runnable) {
-		TransactionSynchronizationManager.setActualTransactionActive(true);
-		TransactionSynchronizationManager.initSynchronization();
-		try {
-			runnable.run();
-			TransactionSynchronizationManager.getSynchronizations().forEach(it -> {
-				it.beforeCommit(false);
-				it.afterCommit();
-				it.afterCompletion(TransactionSynchronization.STATUS_COMMITTED);
-			});
-		}
-		finally {
-			TransactionSynchronizationManager.clearSynchronization();
-			TransactionSynchronizationManager.setActualTransactionActive(false);
-		}
 	}
 
 }

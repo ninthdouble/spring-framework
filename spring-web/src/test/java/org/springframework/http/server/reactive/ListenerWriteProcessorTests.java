@@ -16,16 +16,15 @@
 
 package org.springframework.http.server.reactive;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
 import org.springframework.core.io.buffer.DataBuffer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -116,14 +115,9 @@ public class ListenerWriteProcessorTests {
 			return this.discardedBuffers;
 		}
 
-		public void setWritePossible(boolean writePossible) {
-			this.writePossible = writePossible;
-		}
-
 		public void setFailOnWrite(boolean failOnWrite) {
 			this.failOnWrite = failOnWrite;
 		}
-
 
 		@Override
 		protected boolean isDataEmpty(DataBuffer dataBuffer) {
@@ -133,6 +127,10 @@ public class ListenerWriteProcessorTests {
 		@Override
 		protected boolean isWritePossible() {
 			return this.writePossible;
+		}
+
+		public void setWritePossible(boolean writePossible) {
+			this.writePossible = writePossible;
 		}
 
 		@Override

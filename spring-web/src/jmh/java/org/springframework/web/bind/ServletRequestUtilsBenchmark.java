@@ -16,29 +16,17 @@
 
 package org.springframework.web.bind;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
-
+import org.openjdk.jmh.annotations.*;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
 
 /**
  * Benchmarks for extracting parameters from {@libnk ServletRequest}.
+ *
  * @author Brian Clozel
  */
 @BenchmarkMode(Mode.Throughput)
 public class ServletRequestUtilsBenchmark {
-
-	@State(Scope.Benchmark)
-	public static class BenchmarkData {
-
-		public MockHttpServletRequest request = new MockHttpServletRequest();
-
-		public String parameterName = "nonExistingParam";
-	}
 
 	@Benchmark
 	public int intParameterWithDefaultValue(BenchmarkData data) {
@@ -65,10 +53,17 @@ public class ServletRequestUtilsBenchmark {
 		return ServletRequestUtils.getBooleanParameter(data.request, data.parameterName, false);
 	}
 
-
 	@Benchmark
 	public String stringParameterWithDefaultValue(BenchmarkData data) {
 		return ServletRequestUtils.getStringParameter(data.request, data.parameterName, "defaultValue");
+	}
+
+	@State(Scope.Benchmark)
+	public static class BenchmarkData {
+
+		public MockHttpServletRequest request = new MockHttpServletRequest();
+
+		public String parameterName = "nonExistingParam";
 	}
 
 }

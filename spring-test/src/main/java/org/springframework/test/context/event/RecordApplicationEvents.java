@@ -16,12 +16,7 @@
 
 package org.springframework.test.context.event;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * {@code @RecordApplicationEvents} is a class-level annotation that is used to
@@ -37,9 +32,9 @@ import java.lang.annotation.Target;
  * <em>composed annotations</em>.
  *
  * @author Sam Brannen
- * @since 5.3.3
  * @see ApplicationEvents
  * @see ApplicationEventsTestExecutionListener
+ * @since 5.3.3
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

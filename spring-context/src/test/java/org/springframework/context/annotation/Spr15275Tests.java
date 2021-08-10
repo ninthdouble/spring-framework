@@ -73,6 +73,9 @@ public class Spr15275Tests {
 	}
 
 
+	protected interface FooInterface {
+	}
+
 	@Configuration
 	protected static class ConfigWithFactoryBean {
 
@@ -83,6 +86,7 @@ public class Spr15275Tests {
 				public Foo getObject() {
 					return new Foo("x");
 				}
+
 				@Override
 				public Class<?> getObjectType() {
 					return Foo.class;
@@ -96,7 +100,6 @@ public class Spr15275Tests {
 			return new Bar(foo().getObject());
 		}
 	}
-
 
 	@Configuration
 	protected static class ConfigWithAbstractFactoryBean {
@@ -108,6 +111,7 @@ public class Spr15275Tests {
 				public Foo createInstance() {
 					return new Foo("x");
 				}
+
 				@Override
 				public Class<?> getObjectType() {
 					return Foo.class;
@@ -122,7 +126,6 @@ public class Spr15275Tests {
 		}
 	}
 
-
 	@Configuration
 	protected static class ConfigWithAbstractFactoryBeanForInterface {
 
@@ -133,6 +136,7 @@ public class Spr15275Tests {
 				public FooInterface createInstance() {
 					return new Foo("x");
 				}
+
 				@Override
 				public Class<?> getObjectType() {
 					return FooInterface.class;
@@ -147,7 +151,6 @@ public class Spr15275Tests {
 		}
 	}
 
-
 	@Configuration
 	protected static class ConfigWithAbstractFactoryBeanAsReturnType {
 
@@ -158,6 +161,7 @@ public class Spr15275Tests {
 				public FooInterface createInstance() {
 					return new Foo("x");
 				}
+
 				@Override
 				public Class<?> getObjectType() {
 					return Foo.class;
@@ -171,7 +175,6 @@ public class Spr15275Tests {
 			return new Bar(foo().getObject());
 		}
 	}
-
 
 	@Configuration
 	protected static class ConfigWithFinalFactoryBean {
@@ -188,7 +191,6 @@ public class Spr15275Tests {
 		}
 	}
 
-
 	@Configuration
 	protected static class ConfigWithFinalFactoryBeanAsReturnType {
 
@@ -204,7 +206,6 @@ public class Spr15275Tests {
 		}
 	}
 
-
 	private static final class FinalFactoryBean implements FactoryBean<FooInterface> {
 
 		@Override
@@ -217,11 +218,6 @@ public class Spr15275Tests {
 			return FooInterface.class;
 		}
 	}
-
-
-	protected interface FooInterface {
-	}
-
 
 	protected static class Foo implements FooInterface {
 

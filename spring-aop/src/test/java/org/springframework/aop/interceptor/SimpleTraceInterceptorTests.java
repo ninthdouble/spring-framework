@@ -24,9 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link SimpleTraceInterceptor} class.
@@ -62,7 +60,7 @@ public class SimpleTraceInterceptorTests {
 
 		final SimpleTraceInterceptor interceptor = new SimpleTraceInterceptor(true);
 		assertThatIllegalArgumentException().isThrownBy(() ->
-			interceptor.invokeUnderTrace(mi, log));
+				interceptor.invokeUnderTrace(mi, log));
 
 		verify(log).trace(anyString());
 		verify(log).trace(anyString(), eq(exception));

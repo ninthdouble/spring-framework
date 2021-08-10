@@ -16,11 +16,11 @@
 
 package org.springframework.core.io;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.FileNotFoundException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -132,7 +132,7 @@ class ClassPathResourceTests {
 	private void assertExceptionContainsFullyQualifiedPath(ClassPathResource resource) {
 		assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(
 				resource::getInputStream)
-			.withMessageContaining(FQ_RESOURCE_PATH);
+				.withMessageContaining(FQ_RESOURCE_PATH);
 	}
 
 }

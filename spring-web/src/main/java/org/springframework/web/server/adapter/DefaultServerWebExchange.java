@@ -16,6 +16,24 @@
 
 package org.springframework.web.server.adapter;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.codec.Hints;
+import org.springframework.http.*;
+import org.springframework.http.codec.HttpMessageReader;
+import org.springframework.http.codec.ServerCodecConfigurer;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.lang.Nullable;
+import org.springframework.util.*;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebSession;
+import org.springframework.web.server.i18n.LocaleContextResolver;
+import org.springframework.web.server.session.WebSessionManager;
+import reactor.core.publisher.Mono;
+
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,33 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-
-import reactor.core.publisher.Mono;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.i18n.LocaleContext;
-import org.springframework.core.ResolvableType;
-import org.springframework.core.codec.Hints;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.InvalidMediaTypeException;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.HttpMessageReader;
-import org.springframework.http.codec.ServerCodecConfigurer;
-import org.springframework.http.codec.multipart.Part;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebSession;
-import org.springframework.web.server.i18n.LocaleContextResolver;
-import org.springframework.web.server.session.WebSessionManager;
 
 /**
  * Default implementation of {@link ServerWebExchange}.
@@ -105,15 +96,15 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 
 
 	public DefaultServerWebExchange(ServerHttpRequest request, ServerHttpResponse response,
-			WebSessionManager sessionManager, ServerCodecConfigurer codecConfigurer,
-			LocaleContextResolver localeContextResolver) {
+									WebSessionManager sessionManager, ServerCodecConfigurer codecConfigurer,
+									LocaleContextResolver localeContextResolver) {
 
 		this(request, response, sessionManager, codecConfigurer, localeContextResolver, null);
 	}
 
 	DefaultServerWebExchange(ServerHttpRequest request, ServerHttpResponse response,
-			WebSessionManager sessionManager, ServerCodecConfigurer codecConfigurer,
-			LocaleContextResolver localeContextResolver, @Nullable ApplicationContext applicationContext) {
+							 WebSessionManager sessionManager, ServerCodecConfigurer codecConfigurer,
+							 LocaleContextResolver localeContextResolver, @Nullable ApplicationContext applicationContext) {
 
 		Assert.notNull(request, "'request' is required");
 		Assert.notNull(response, "'response' is required");
@@ -135,7 +126,7 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 
 	@SuppressWarnings("unchecked")
 	private static Mono<MultiValueMap<String, String>> initFormData(ServerHttpRequest request,
-			ServerCodecConfigurer configurer, String logPrefix) {
+																	ServerCodecConfigurer configurer, String logPrefix) {
 
 		try {
 			MediaType contentType = request.getHeaders().getContentType();
@@ -148,8 +139,7 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 						.switchIfEmpty(EMPTY_FORM_DATA)
 						.cache();
 			}
-		}
-		catch (InvalidMediaTypeException ex) {
+		} catch (InvalidMediaTypeException ex) {
 			// Ignore
 		}
 		return EMPTY_FORM_DATA;
@@ -157,7 +147,7 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 
 	@SuppressWarnings("unchecked")
 	private static Mono<MultiValueMap<String, Part>> initMultipartData(ServerHttpRequest request,
-			ServerCodecConfigurer configurer, String logPrefix) {
+																	   ServerCodecConfigurer configurer, String logPrefix) {
 
 		try {
 			MediaType contentType = request.getHeaders().getContentType();
@@ -170,8 +160,7 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 						.switchIfEmpty(EMPTY_MULTIPART_DATA)
 						.cache();
 			}
-		}
-		catch (InvalidMediaTypeException ex) {
+		} catch (InvalidMediaTypeException ex) {
 			// Ignore
 		}
 		return EMPTY_MULTIPART_DATA;
@@ -309,8 +298,7 @@ public class DefaultServerWebExchange implements ServerWebExchange {
 		List<String> ifNoneMatch;
 		try {
 			ifNoneMatch = getRequestHeaders().getIfNoneMatch();
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			return false;
 		}
 		if (ifNoneMatch.isEmpty()) {

@@ -16,12 +16,12 @@
 
 package org.springframework.r2dbc.connection.init;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import io.r2dbc.spi.test.MockConnection;
 import io.r2dbc.spi.test.MockConnectionFactory;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.mock;
@@ -46,7 +46,7 @@ class ConnectionFactoryInitializerUnitTests {
 	@Test
 	void shouldInitializeConnectionFactory() {
 		when(populator.populate(connectionFactory)).thenReturn(
-				Mono.<Void> empty().doOnSubscribe(subscription -> called.set(true)));
+				Mono.<Void>empty().doOnSubscribe(subscription -> called.set(true)));
 
 		ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
 		initializer.setConnectionFactory(connectionFactory);
@@ -60,7 +60,7 @@ class ConnectionFactoryInitializerUnitTests {
 	@Test
 	void shouldCleanConnectionFactory() {
 		when(populator.populate(connectionFactory)).thenReturn(
-				Mono.<Void> empty().doOnSubscribe(subscription -> called.set(true)));
+				Mono.<Void>empty().doOnSubscribe(subscription -> called.set(true)));
 
 		ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
 		initializer.setConnectionFactory(connectionFactory);

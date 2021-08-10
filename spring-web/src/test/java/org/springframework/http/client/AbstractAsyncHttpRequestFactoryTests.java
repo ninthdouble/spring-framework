@@ -16,16 +16,9 @@
 
 package org.springframework.http.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.concurrent.Future;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpMethod;
@@ -36,9 +29,13 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.concurrent.Future;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractAsyncHttpRequestFactoryTests extends AbstractMockWebServerTests {
@@ -88,11 +85,11 @@ public abstract class AbstractAsyncHttpRequestFactoryTests extends AbstractMockW
 			public void onSuccess(ClientHttpResponse result) {
 				try {
 					assertThat(result.getStatusCode()).as("Invalid status code").isEqualTo(HttpStatus.NOT_FOUND);
-				}
-				catch (IOException ex) {
+				} catch (IOException ex) {
 					throw new AssertionError(ex.getMessage(), ex);
 				}
 			}
+
 			@Override
 			public void onFailure(Throwable ex) {
 				throw new AssertionError(ex.getMessage(), ex);
@@ -118,13 +115,12 @@ public abstract class AbstractAsyncHttpRequestFactoryTests extends AbstractMockW
 		if (request instanceof StreamingHttpOutputMessage) {
 			StreamingHttpOutputMessage streamingRequest = (StreamingHttpOutputMessage) request;
 			streamingRequest.setBody(outputStream -> StreamUtils.copy(body, outputStream));
-		}
-		else {
+		} else {
 			StreamUtils.copy(body, request.getBody());
 		}
 
 		Future<ClientHttpResponse> futureResponse = request.executeAsync();
-		try ( ClientHttpResponse response = futureResponse.get()) {
+		try (ClientHttpResponse response = futureResponse.get()) {
 			assertThat(response.getStatusCode()).as("Invalid status code").isEqualTo(HttpStatus.OK);
 			assertThat(response.getHeaders().containsKey(headerName)).as("Header not found").isTrue();
 			assertThat(response.getHeaders().get(headerName)).as("Header value not found").isEqualTo(Arrays.asList(headerValue1, headerValue2));
@@ -141,8 +137,7 @@ public abstract class AbstractAsyncHttpRequestFactoryTests extends AbstractMockW
 		if (request instanceof StreamingHttpOutputMessage) {
 			StreamingHttpOutputMessage streamingRequest = (StreamingHttpOutputMessage) request;
 			streamingRequest.setBody(outputStream -> StreamUtils.copy(body, outputStream));
-		}
-		else {
+		} else {
 			StreamUtils.copy(body, request.getBody());
 		}
 

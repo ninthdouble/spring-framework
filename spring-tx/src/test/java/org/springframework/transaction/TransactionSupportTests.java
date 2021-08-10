@@ -18,16 +18,9 @@ package org.springframework.transaction;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.support.*;
 
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.DefaultTransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Juergen Hoeller
@@ -189,7 +182,7 @@ public class TransactionSupportTests {
 						throw ex;
 					}
 				}))
-			.isSameAs(ex);
+				.isSameAs(ex);
 		assertThat(tm.begin).as("triggered begin").isTrue();
 		assertThat(tm.commit).as("no commit").isFalse();
 		assertThat(tm.rollback).as("triggered rollback").isTrue();
@@ -216,7 +209,7 @@ public class TransactionSupportTests {
 						throw ex;
 					}
 				}))
-			.isSameAs(tex);
+				.isSameAs(tex);
 		assertThat(tm.begin).as("triggered begin").isTrue();
 		assertThat(tm.commit).as("no commit").isFalse();
 		assertThat(tm.rollback).as("triggered rollback").isTrue();

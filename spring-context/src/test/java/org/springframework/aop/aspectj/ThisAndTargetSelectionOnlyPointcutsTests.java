@@ -23,6 +23,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface TestInterface {
+	public void doIt();
+}
+
 /**
  * @author Ramnivas Laddad
  * @author Chris Beams
@@ -106,12 +110,6 @@ public class ThisAndTargetSelectionOnlyPointcutsTests {
 	}
 
 }
-
-
-interface TestInterface {
-	public void doIt();
-}
-
 
 class TestImpl implements TestInterface {
 	@Override

@@ -49,6 +49,7 @@ public class BindException extends Exception implements BindingResult {
 
 	/**
 	 * Create a new BindException instance for a BindingResult.
+	 *
 	 * @param bindingResult the BindingResult instance to wrap
 	 */
 	public BindException(BindingResult bindingResult) {
@@ -58,7 +59,8 @@ public class BindException extends Exception implements BindingResult {
 
 	/**
 	 * Create a new BindException instance for a target bean.
-	 * @param target the target bean to bind onto
+	 *
+	 * @param target     the target bean to bind onto
 	 * @param objectName the name of the target object
 	 * @see BeanPropertyBindingResult
 	 */
@@ -82,13 +84,13 @@ public class BindException extends Exception implements BindingResult {
 	}
 
 	@Override
-	public void setNestedPath(String nestedPath) {
-		this.bindingResult.setNestedPath(nestedPath);
+	public String getNestedPath() {
+		return this.bindingResult.getNestedPath();
 	}
 
 	@Override
-	public String getNestedPath() {
-		return this.bindingResult.getNestedPath();
+	public void setNestedPath(String nestedPath) {
+		this.bindingResult.setNestedPath(nestedPath);
 	}
 
 	@Override

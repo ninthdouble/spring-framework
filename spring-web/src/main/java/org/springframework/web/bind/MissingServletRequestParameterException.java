@@ -32,6 +32,7 @@ public class MissingServletRequestParameterException extends MissingRequestValue
 
 	/**
 	 * Constructor for MissingServletRequestParameterException.
+	 *
 	 * @param parameterName the name of the missing parameter
 	 * @param parameterType the expected type of the missing parameter
 	 */
@@ -41,8 +42,9 @@ public class MissingServletRequestParameterException extends MissingRequestValue
 
 	/**
 	 * Constructor for use when a value was present but converted to {@code null}.
-	 * @param parameterName the name of the missing parameter
-	 * @param parameterType the expected type of the missing parameter
+	 *
+	 * @param parameterName          the name of the missing parameter
+	 * @param parameterType          the expected type of the missing parameter
 	 * @param missingAfterConversion whether the value became null after conversion
 	 * @since 5.3.6
 	 */

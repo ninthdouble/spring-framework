@@ -16,14 +16,13 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.OverridingClassLoader;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.OverridingClassLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,7 +60,7 @@ class MergedAnnotationClassLoaderTests {
 		assertThat(metaAnnotation.getClass().getClassLoader()).isEqualTo(parent);
 		assertThat(
 				getEnumAttribute(metaAnnotation).getClass().getClassLoader()).isEqualTo(
-						parent);
+				parent);
 		assertThat(getClassAttribute(metaAnnotation).getClassLoader()).isEqualTo(child);
 		// MergedAnnotation should follow the same class loader logic
 		MergedAnnotations mergedAnnotations = MergedAnnotations.from(source);
@@ -75,7 +74,7 @@ class MergedAnnotationClassLoaderTests {
 		assertThat(getClassAttribute(synthesizedMeta).getClassLoader()).isEqualTo(child);
 		assertThat(
 				getEnumAttribute(synthesizedMeta).getClass().getClassLoader()).isEqualTo(
-						parent);
+				parent);
 		assertThat(synthesized).isEqualTo(annotation);
 		assertThat(synthesizedMeta).isEqualTo(metaAnnotation);
 		// Also check utils version
@@ -112,18 +111,9 @@ class MergedAnnotationClassLoaderTests {
 		return null;
 	}
 
-	private static class TestClassLoader extends OverridingClassLoader {
+	static enum TestEnum {
 
-		public TestClassLoader(ClassLoader parent) {
-			super(parent);
-		}
-
-		@Override
-		protected boolean isEligibleForOverriding(String className) {
-			return WITH_TEST_ANNOTATION.equals(className)
-					|| TEST_ANNOTATION.equals(className)
-					|| TEST_REFERENCE.equals(className);
-		}
+		ONE, TWO, THREE
 
 	}
 
@@ -154,18 +144,27 @@ class MergedAnnotationClassLoaderTests {
 
 	}
 
+	private static class TestClassLoader extends OverridingClassLoader {
+
+		public TestClassLoader(ClassLoader parent) {
+			super(parent);
+		}
+
+		@Override
+		protected boolean isEligibleForOverriding(String className) {
+			return WITH_TEST_ANNOTATION.equals(className)
+					|| TEST_ANNOTATION.equals(className)
+					|| TEST_REFERENCE.equals(className);
+		}
+
+	}
+
 	@TestAnnotation
 	static class WithTestAnnotation {
 
 	}
 
 	static class TestReference {
-
-	}
-
-	static enum TestEnum {
-
-		ONE, TWO, THREE
 
 	}
 }

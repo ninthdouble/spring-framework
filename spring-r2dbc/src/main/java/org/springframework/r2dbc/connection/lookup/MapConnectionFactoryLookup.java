@@ -16,13 +16,12 @@
 
 package org.springframework.r2dbc.connection.lookup;
 
+import io.r2dbc.spi.ConnectionFactory;
+import org.springframework.util.Assert;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.r2dbc.spi.ConnectionFactory;
-
-import org.springframework.util.Assert;
 
 /**
  * Simple {@link ConnectionFactoryLookup} implementation that relies
@@ -43,12 +42,14 @@ public class MapConnectionFactoryLookup implements ConnectionFactoryLookup {
 	/**
 	 * Create a new instance of the {@link MapConnectionFactoryLookup} class.
 	 */
-	public MapConnectionFactoryLookup() {}
+	public MapConnectionFactoryLookup() {
+	}
 
 	/**
 	 * Create a new instance of the {@link MapConnectionFactoryLookup} class.
+	 *
 	 * @param connectionFactories the {@link Map} of {@link ConnectionFactory}.
-	 * The keys are {@link String Strings}, the values are actual {@link ConnectionFactory} instances.
+	 *                            The keys are {@link String Strings}, the values are actual {@link ConnectionFactory} instances.
 	 */
 	public MapConnectionFactoryLookup(Map<String, ConnectionFactory> connectionFactories) {
 		setConnectionFactories(connectionFactories);
@@ -56,18 +57,29 @@ public class MapConnectionFactoryLookup implements ConnectionFactoryLookup {
 
 	/**
 	 * Create a new instance of the {@link MapConnectionFactoryLookup} class.
+	 *
 	 * @param connectionFactoryName the name under which the supplied {@link ConnectionFactory} is to be added
-	 * @param connectionFactory the {@link ConnectionFactory} to be added
+	 * @param connectionFactory     the {@link ConnectionFactory} to be added
 	 */
 	public MapConnectionFactoryLookup(String connectionFactoryName, ConnectionFactory connectionFactory) {
 		addConnectionFactory(connectionFactoryName, connectionFactory);
 	}
 
+	/**
+	 * Get the {@link Map} of {@link ConnectionFactory ConnectionFactories} maintained by this object.
+	 * <p>The returned {@link Map} is {@link Collections#unmodifiableMap(Map) unmodifiable}.
+	 *
+	 * @return {@link Map} of {@link ConnectionFactory connectionFactory} (never {@code null})
+	 */
+	public Map<String, ConnectionFactory> getConnectionFactories() {
+		return Collections.unmodifiableMap(this.connectionFactories);
+	}
 
 	/**
 	 * Set the {@link Map} of {@link ConnectionFactory ConnectionFactories}.
 	 * The keys are {@link String Strings}, the values are actual {@link ConnectionFactory} instances.
 	 * <p>If the supplied {@link Map} is {@code null}, then this method call effectively has no effect.
+	 *
 	 * @param connectionFactories said {@link Map} of {@link ConnectionFactory connectionFactories}
 	 */
 	public void setConnectionFactories(Map<String, ConnectionFactory> connectionFactories) {
@@ -76,19 +88,11 @@ public class MapConnectionFactoryLookup implements ConnectionFactoryLookup {
 	}
 
 	/**
-	 * Get the {@link Map} of {@link ConnectionFactory ConnectionFactories} maintained by this object.
-	 * <p>The returned {@link Map} is {@link Collections#unmodifiableMap(Map) unmodifiable}.
-	 * @return {@link Map} of {@link ConnectionFactory connectionFactory} (never {@code null})
-	 */
-	public Map<String, ConnectionFactory> getConnectionFactories() {
-		return Collections.unmodifiableMap(this.connectionFactories);
-	}
-
-	/**
 	 * Add the supplied {@link ConnectionFactory} to the map of
 	 * {@link ConnectionFactory ConnectionFactory} instances maintained by this object.
+	 *
 	 * @param connectionFactoryName the name under which the supplied {@link ConnectionFactory} is to be added
-	 * @param connectionFactory the {@link ConnectionFactory} to be so added
+	 * @param connectionFactory     the {@link ConnectionFactory} to be so added
 	 */
 	public void addConnectionFactory(String connectionFactoryName, ConnectionFactory connectionFactory) {
 		Assert.notNull(connectionFactoryName, "ConnectionFactory name must not be null");

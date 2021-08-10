@@ -18,7 +18,6 @@ package org.springframework.aop.framework;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.AopInvocationException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -30,10 +29,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Dave Syer
  */
 public class NullPrimitiveTests {
-
-	interface Foo {
-		int getValue();
-	}
 
 	@Test
 	public void testNullPrimitiveWithJdkProxy() {
@@ -53,13 +48,7 @@ public class NullPrimitiveTests {
 
 		assertThatExceptionOfType(AopInvocationException.class).isThrownBy(() ->
 				foo.getValue())
-			.withMessageContaining("Foo.getValue()");
-	}
-
-	public static class Bar {
-		public int getValue() {
-			return 100;
-		}
+				.withMessageContaining("Foo.getValue()");
 	}
 
 	@Test
@@ -73,7 +62,17 @@ public class NullPrimitiveTests {
 
 		assertThatExceptionOfType(AopInvocationException.class).isThrownBy(() ->
 				bar.getValue())
-			.withMessageContaining("Bar.getValue()");
+				.withMessageContaining("Bar.getValue()");
+	}
+
+	interface Foo {
+		int getValue();
+	}
+
+	public static class Bar {
+		public int getValue() {
+			return 100;
+		}
 	}
 
 }

@@ -16,20 +16,14 @@
 
 package org.springframework.beans.factory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifiedResource;
 
@@ -42,6 +36,12 @@ import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifie
  */
 @BenchmarkMode(Mode.Throughput)
 public class ConcurrentBeanFactoryBenchmark {
+
+	@Benchmark
+	public void concurrentBeanCreation(BenchmarkState state, Blackhole bh) {
+		bh.consume(state.factory.getBean("bean1"));
+		bh.consume(state.factory.getBean("bean2"));
+	}
 
 	@State(Scope.Benchmark)
 	public static class BenchmarkState {
@@ -60,13 +60,6 @@ public class ConcurrentBeanFactoryBenchmark {
 		}
 
 	}
-
-	@Benchmark
-	public void concurrentBeanCreation(BenchmarkState state, Blackhole bh) {
-		bh.consume(state.factory.getBean("bean1"));
-		bh.consume(state.factory.getBean("bean2"));
-	}
-
 
 	public static class ConcurrentBean {
 

@@ -16,9 +16,9 @@
 
 package org.springframework.beans.factory.parsing;
 
-import java.util.ArrayDeque;
-
 import org.springframework.lang.Nullable;
+
+import java.util.ArrayDeque;
 
 /**
  * Simple {@link ArrayDeque}-based structure for tracking the logical position during

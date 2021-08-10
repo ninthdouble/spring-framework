@@ -60,6 +60,13 @@ class CacheAdviceParser extends AbstractSingleBeanDefinitionParser {
 
 	private static final String DEFS_ELEMENT = "caching";
 
+	private static String getAttributeValue(Element element, String attributeName, String defaultValue) {
+		String attribute = element.getAttribute(attributeName);
+		if (StringUtils.hasText(attribute)) {
+			return attribute.trim();
+		}
+		return defaultValue;
+	}
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
@@ -76,8 +83,7 @@ class CacheAdviceParser extends AbstractSingleBeanDefinitionParser {
 			// Using attributes source.
 			List<RootBeanDefinition> attributeSourceDefinitions = parseDefinitionsSources(cacheDefs, parserContext);
 			builder.addPropertyValue("cacheOperationSources", attributeSourceDefinitions);
-		}
-		else {
+		} else {
 			// Assume annotations source.
 			builder.addPropertyValue("cacheOperationSources",
 					new RootBeanDefinition("org.springframework.cache.annotation.AnnotationCacheOperationSource"));
@@ -160,16 +166,6 @@ class CacheAdviceParser extends AbstractSingleBeanDefinitionParser {
 		return attributeSourceDefinition;
 	}
 
-
-	private static String getAttributeValue(Element element, String attributeName, String defaultValue) {
-		String attribute = element.getAttribute(attributeName);
-		if (StringUtils.hasText(attribute)) {
-			return attribute.trim();
-		}
-		return defaultValue;
-	}
-
-
 	/**
 	 * Simple, reusable class used for overriding defaults.
 	 */
@@ -211,8 +207,7 @@ class CacheAdviceParser extends AbstractSingleBeanDefinitionParser {
 			}
 			if (localCaches != null) {
 				builder.setCacheNames(localCaches);
-			}
-			else {
+			} else {
 				readerCtx.error("No cache specified for " + element.getNodeName(), element);
 			}
 

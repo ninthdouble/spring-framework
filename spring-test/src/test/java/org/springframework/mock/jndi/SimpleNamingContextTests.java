@@ -16,6 +16,11 @@
 
 package org.springframework.mock.jndi;
 
+import org.junit.jupiter.api.Test;
+
+import javax.naming.*;
+import javax.naming.spi.InitialContextFactory;
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,18 +28,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -211,13 +204,13 @@ class SimpleNamingContextTests {
 		}
 
 		@Override
-		public int getLoginTimeout() throws SQLException {
-			return 0;
+		public void setLogWriter(PrintWriter arg0) throws SQLException {
+
 		}
 
 		@Override
-		public void setLogWriter(PrintWriter arg0) throws SQLException {
-
+		public int getLoginTimeout() throws SQLException {
+			return 0;
 		}
 
 		@Override

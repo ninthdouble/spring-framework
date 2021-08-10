@@ -16,32 +16,23 @@
 
 package org.springframework.jms.listener;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
-import javax.jms.Session;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.StubQueue;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ErrorHandler;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.fail;
+import javax.jms.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.lang.IllegalStateException;
 
 /**
  * @author Rick Evans
@@ -81,16 +72,16 @@ public class SimpleMessageListenerContainerTests {
 	@Test
 	public void testSettingConcurrentConsumersToZeroIsNotAllowed() {
 		assertThatIllegalArgumentException().isThrownBy(() -> {
-				this.container.setConcurrentConsumers(0);
-				this.container.afterPropertiesSet();
+			this.container.setConcurrentConsumers(0);
+			this.container.afterPropertiesSet();
 		});
 	}
 
 	@Test
 	public void testSettingConcurrentConsumersToANegativeValueIsNotAllowed() {
 		assertThatIllegalArgumentException().isThrownBy(() -> {
-				this.container.setConcurrentConsumers(-198);
-				this.container.afterPropertiesSet();
+			this.container.setConcurrentConsumers(-198);
+			this.container.afterPropertiesSet();
 		});
 	}
 
@@ -189,8 +180,7 @@ public class SimpleMessageListenerContainerTests {
 				try {
 					// Check correct Session passed into SessionAwareMessageListener.
 					assertThat(session).isSameAs(sess);
-				}
-				catch (Throwable ex) {
+				} catch (Throwable ex) {
 					failure.add("MessageListener execution failed: " + ex);
 				}
 			}

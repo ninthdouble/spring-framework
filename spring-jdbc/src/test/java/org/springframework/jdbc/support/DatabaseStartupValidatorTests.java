@@ -16,23 +16,19 @@
 
 package org.springframework.jdbc.support;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.sql.DataSource;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
-
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Mock object based tests for {@code DatabaseStartupValidator}.
@@ -59,7 +55,7 @@ class DatabaseStartupValidatorTests {
 	void exceededTimeoutThrowsException() {
 		validator.setTimeout(1);
 		assertThatExceptionOfType(CannotGetJdbcConnectionException.class)
-			.isThrownBy(validator::afterPropertiesSet);
+				.isThrownBy(validator::afterPropertiesSet);
 	}
 
 	@Test

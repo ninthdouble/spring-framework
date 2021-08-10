@@ -16,19 +16,18 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.time.Duration;
-import java.util.Locale;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,8 +53,8 @@ public class UrlBasedViewResolverTests {
 	@Test
 	public void urlBasedViewResolverOverridesCustomRequestContextAttributeWithNonNullValue() throws Exception {
 		assertThat(new TestView().getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated directly")
-			.isEqualTo("testRequestContext");
+				.as("requestContextAttribute when instantiated directly")
+				.isEqualTo("testRequestContext");
 
 		this.resolver.setViewClass(TestView.class);
 		this.resolver.setRequestContextAttribute("viewResolverRequestContext");
@@ -65,8 +64,8 @@ public class UrlBasedViewResolverTests {
 				.consumeNextWith(view -> {
 					assertThat(view).isInstanceOf(TestView.class);
 					assertThat(((TestView) view).getRequestContextAttribute())
-						.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
-						.isEqualTo("viewResolverRequestContext");
+							.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
+							.isEqualTo("viewResolverRequestContext");
 				})
 				.expectComplete()
 				.verify(Duration.ZERO);
@@ -75,8 +74,8 @@ public class UrlBasedViewResolverTests {
 	@Test
 	public void urlBasedViewResolverDoesNotOverrideCustomRequestContextAttributeWithNull() throws Exception {
 		assertThat(new TestView().getRequestContextAttribute())
-			.as("requestContextAttribute when instantiated directly")
-			.isEqualTo("testRequestContext");
+				.as("requestContextAttribute when instantiated directly")
+				.isEqualTo("testRequestContext");
 
 		this.resolver.setViewClass(TestView.class);
 
@@ -85,8 +84,8 @@ public class UrlBasedViewResolverTests {
 				.consumeNextWith(view -> {
 					assertThat(view).isInstanceOf(TestView.class);
 					assertThat(((TestView) view).getRequestContextAttribute())
-						.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
-						.isEqualTo("testRequestContext");
+							.as("requestContextAttribute when instantiated dynamically by UrlBasedViewResolver")
+							.isEqualTo("testRequestContext");
 				})
 				.expectComplete()
 				.verify(Duration.ZERO);
@@ -149,7 +148,7 @@ public class UrlBasedViewResolverTests {
 
 		@Override
 		protected Mono<Void> renderInternal(Map<String, Object> attributes, MediaType contentType,
-				ServerWebExchange exchange) {
+											ServerWebExchange exchange) {
 
 			return Mono.empty();
 		}

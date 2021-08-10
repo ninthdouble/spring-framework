@@ -16,12 +16,6 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.util.Collections;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -38,11 +32,17 @@ import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.pattern.PathPatternParser;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for CORS-related handling in {@link AbstractHandlerMapping}.
+ *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  */
@@ -85,7 +85,8 @@ class CorsAbstractHandlerMappingTests {
 		assertThat(mapping.getRequiredCorsConfig().getAllowedOrigins()).containsExactly("*");
 	}
 
-	@PathPatternsParameterizedTest // see gh-23843
+	@PathPatternsParameterizedTest
+		// see gh-23843
 	void actualRequestWithCorsConfigProviderForHandlerChain(TestHandlerMapping mapping) throws Exception {
 
 		HandlerExecutionChain chain = mapping.getHandler(getCorsRequest("/chain"));
@@ -230,8 +231,7 @@ class CorsAbstractHandlerMappingTests {
 			String lookupPath = initLookupPath(request);
 			if (lookupPath.equals("/cors")) {
 				return new CorsAwareHandler();
-			}
-			else if (lookupPath.equals("/chain")) {
+			} else if (lookupPath.equals("/chain")) {
 				return new HandlerExecutionChain(new CorsAwareHandler());
 			}
 			return new SimpleHandler();

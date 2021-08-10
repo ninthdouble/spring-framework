@@ -16,13 +16,8 @@
 
 package org.springframework.test.context.hierarchies.standard;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,8 +42,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextHierarchy({
-	@ContextConfiguration(classes = DirtiesContextWithContextHierarchyTests.ParentConfig.class),
-	@ContextConfiguration(classes = DirtiesContextWithContextHierarchyTests.ChildConfig.class)
+		@ContextConfiguration(classes = DirtiesContextWithContextHierarchyTests.ParentConfig.class),
+		@ContextConfiguration(classes = DirtiesContextWithContextHierarchyTests.ChildConfig.class)
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DirtiesContextWithContextHierarchyTests {

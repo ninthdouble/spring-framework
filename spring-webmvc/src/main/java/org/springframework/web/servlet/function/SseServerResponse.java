@@ -16,19 +16,6 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -42,6 +29,18 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Implementation of {@link ServerResponse} for sending
@@ -75,17 +74,21 @@ final class SseServerResponse extends AbstractServerResponse {
 		return CollectionUtils.toMultiValueMap(Collections.emptyMap());
 	}
 
+	public static ServerResponse create(Consumer<SseBuilder> sseConsumer, @Nullable Duration timeout) {
+		Assert.notNull(sseConsumer, "SseConsumer must not be null");
+
+		return new SseServerResponse(sseConsumer, timeout);
+	}
 
 	@Nullable
 	@Override
 	protected ModelAndView writeToInternal(HttpServletRequest request, HttpServletResponse response,
-			Context context) throws ServletException, IOException {
+										   Context context) throws ServletException, IOException {
 
 		DeferredResult<?> result;
 		if (this.timeout != null) {
 			result = new DeferredResult<>(this.timeout.toMillis());
-		}
-		else {
+		} else {
 			result = new DeferredResult<>();
 		}
 
@@ -93,14 +96,6 @@ final class SseServerResponse extends AbstractServerResponse {
 		this.sseConsumer.accept(new DefaultSseBuilder(response, context, result));
 		return null;
 	}
-
-
-	public static ServerResponse create(Consumer<SseBuilder> sseConsumer, @Nullable Duration timeout) {
-		Assert.notNull(sseConsumer, "SseConsumer must not be null");
-
-		return new SseServerResponse(sseConsumer, timeout);
-	}
-
 
 	private static final class DefaultSseBuilder implements SseBuilder {
 
@@ -169,8 +164,7 @@ final class SseServerResponse extends AbstractServerResponse {
 
 			if (object instanceof String) {
 				writeString((String) object);
-			}
-			else {
+			} else {
 				writeObject(object);
 			}
 		}
@@ -186,12 +180,10 @@ final class SseServerResponse extends AbstractServerResponse {
 				OutputStream body = this.outputMessage.getBody();
 				body.write(builderBytes());
 				body.flush();
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				this.sendFailed = true;
 				throw ex;
-			}
-			finally {
+			} finally {
 				this.builder.setLength(0);
 			}
 		}
@@ -213,12 +205,10 @@ final class SseServerResponse extends AbstractServerResponse {
 						return;
 					}
 				}
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				this.sendFailed = true;
 				throw ex;
-			}
-			finally {
+			} finally {
 				this.builder.setLength(0);
 			}
 		}
@@ -243,8 +233,7 @@ final class SseServerResponse extends AbstractServerResponse {
 			try {
 				this.outputMessage.flush();
 				this.deferredResult.setResult(null);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				this.deferredResult.setErrorResult(ex);
 			}
 		}

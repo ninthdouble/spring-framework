@@ -17,20 +17,13 @@
 package org.springframework.r2dbc.connection;
 
 import io.r2dbc.h2.H2Connection;
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactoryMetadata;
-import io.r2dbc.spi.IsolationLevel;
-import io.r2dbc.spi.R2dbcNonTransientResourceException;
-import io.r2dbc.spi.Wrapped;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.never;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for {@link SingleConnectionFactory}.
@@ -97,7 +90,7 @@ class SingleConnectionFactoryUnitTests {
 		StepVerifier.create(connection.close()).verifyComplete();
 
 		StepVerifier.create(connection.setTransactionIsolationLevel(IsolationLevel.READ_COMMITTED))
-			.verifyError(R2dbcNonTransientResourceException.class);
+				.verifyError(R2dbcNonTransientResourceException.class);
 		factory.destroy();
 	}
 

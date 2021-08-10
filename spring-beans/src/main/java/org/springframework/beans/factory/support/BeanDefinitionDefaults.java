@@ -24,8 +24,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Mark Fisher
  * @author Juergen Hoeller
- * @since 2.5
  * @see AbstractBeanDefinition#applyDefaults
+ * @since 2.5
  */
 public class BeanDefinitionDefaults {
 
@@ -42,20 +42,10 @@ public class BeanDefinitionDefaults {
 	@Nullable
 	private String destroyMethodName;
 
-
-	/**
-	 * Set whether beans should be lazily initialized by default.
-	 * <p>If {@code false}, the bean will get instantiated on startup by bean
-	 * factories that perform eager initialization of singletons.
-	 * @see AbstractBeanDefinition#setLazyInit
-	 */
-	public void setLazyInit(boolean lazyInit) {
-		this.lazyInit = lazyInit;
-	}
-
 	/**
 	 * Return whether beans should be lazily initialized by default, i.e. not
 	 * eagerly instantiated on startup. Only applicable to singleton beans.
+	 *
 	 * @return whether to apply lazy-init semantics ({@code false} by default)
 	 */
 	public boolean isLazyInit() {
@@ -65,6 +55,7 @@ public class BeanDefinitionDefaults {
 	/**
 	 * Return whether beans should be lazily initialized by default, i.e. not
 	 * eagerly instantiated on startup. Only applicable to singleton beans.
+	 *
 	 * @return the lazy-init flag if explicitly set, or {@code null} otherwise
 	 * @since 5.2
 	 */
@@ -74,16 +65,14 @@ public class BeanDefinitionDefaults {
 	}
 
 	/**
-	 * Set the autowire mode. This determines whether any automagical detection
-	 * and setting of bean references will happen. Default is AUTOWIRE_NO
-	 * which means there won't be convention-based autowiring by name or type
-	 * (however, there may still be explicit annotation-driven autowiring).
-	 * @param autowireMode the autowire mode to set.
-	 * Must be one of the constants defined in {@link AbstractBeanDefinition}.
-	 * @see AbstractBeanDefinition#setAutowireMode
+	 * Set whether beans should be lazily initialized by default.
+	 * <p>If {@code false}, the bean will get instantiated on startup by bean
+	 * factories that perform eager initialization of singletons.
+	 *
+	 * @see AbstractBeanDefinition#setLazyInit
 	 */
-	public void setAutowireMode(int autowireMode) {
-		this.autowireMode = autowireMode;
+	public void setLazyInit(boolean lazyInit) {
+		this.lazyInit = lazyInit;
 	}
 
 	/**
@@ -94,13 +83,17 @@ public class BeanDefinitionDefaults {
 	}
 
 	/**
-	 * Set the dependency check code.
-	 * @param dependencyCheck the code to set.
-	 * Must be one of the constants defined in {@link AbstractBeanDefinition}.
-	 * @see AbstractBeanDefinition#setDependencyCheck
+	 * Set the autowire mode. This determines whether any automagical detection
+	 * and setting of bean references will happen. Default is AUTOWIRE_NO
+	 * which means there won't be convention-based autowiring by name or type
+	 * (however, there may still be explicit annotation-driven autowiring).
+	 *
+	 * @param autowireMode the autowire mode to set.
+	 *                     Must be one of the constants defined in {@link AbstractBeanDefinition}.
+	 * @see AbstractBeanDefinition#setAutowireMode
 	 */
-	public void setDependencyCheck(int dependencyCheck) {
-		this.dependencyCheck = dependencyCheck;
+	public void setAutowireMode(int autowireMode) {
+		this.autowireMode = autowireMode;
 	}
 
 	/**
@@ -111,14 +104,14 @@ public class BeanDefinitionDefaults {
 	}
 
 	/**
-	 * Set the name of the default initializer method.
-	 * <p>Note that this method is not enforced on all affected bean definitions
-	 * but rather taken as an optional callback, to be invoked if actually present.
-	 * @see AbstractBeanDefinition#setInitMethodName
-	 * @see AbstractBeanDefinition#setEnforceInitMethod
+	 * Set the dependency check code.
+	 *
+	 * @param dependencyCheck the code to set.
+	 *                        Must be one of the constants defined in {@link AbstractBeanDefinition}.
+	 * @see AbstractBeanDefinition#setDependencyCheck
 	 */
-	public void setInitMethodName(@Nullable String initMethodName) {
-		this.initMethodName = (StringUtils.hasText(initMethodName) ? initMethodName : null);
+	public void setDependencyCheck(int dependencyCheck) {
+		this.dependencyCheck = dependencyCheck;
 	}
 
 	/**
@@ -130,14 +123,15 @@ public class BeanDefinitionDefaults {
 	}
 
 	/**
-	 * Set the name of the default destroy method.
+	 * Set the name of the default initializer method.
 	 * <p>Note that this method is not enforced on all affected bean definitions
 	 * but rather taken as an optional callback, to be invoked if actually present.
-	 * @see AbstractBeanDefinition#setDestroyMethodName
-	 * @see AbstractBeanDefinition#setEnforceDestroyMethod
+	 *
+	 * @see AbstractBeanDefinition#setInitMethodName
+	 * @see AbstractBeanDefinition#setEnforceInitMethod
 	 */
-	public void setDestroyMethodName(@Nullable String destroyMethodName) {
-		this.destroyMethodName = (StringUtils.hasText(destroyMethodName) ? destroyMethodName : null);
+	public void setInitMethodName(@Nullable String initMethodName) {
+		this.initMethodName = (StringUtils.hasText(initMethodName) ? initMethodName : null);
 	}
 
 	/**
@@ -146,6 +140,18 @@ public class BeanDefinitionDefaults {
 	@Nullable
 	public String getDestroyMethodName() {
 		return this.destroyMethodName;
+	}
+
+	/**
+	 * Set the name of the default destroy method.
+	 * <p>Note that this method is not enforced on all affected bean definitions
+	 * but rather taken as an optional callback, to be invoked if actually present.
+	 *
+	 * @see AbstractBeanDefinition#setDestroyMethodName
+	 * @see AbstractBeanDefinition#setEnforceDestroyMethod
+	 */
+	public void setDestroyMethodName(@Nullable String destroyMethodName) {
+		this.destroyMethodName = (StringUtils.hasText(destroyMethodName) ? destroyMethodName : null);
 	}
 
 }

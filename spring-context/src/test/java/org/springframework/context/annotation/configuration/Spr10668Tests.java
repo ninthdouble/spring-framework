@@ -41,13 +41,15 @@ public class Spr10668Tests {
 	}
 
 
+	public interface MyComponent {
+	}
+
 	@Configuration
 	public static class ParentConfig {
 
 		@Autowired(required = false)
 		MyComponent component;
 	}
-
 
 	@Configuration
 	public static class ChildConfig extends ParentConfig {
@@ -58,9 +60,7 @@ public class Spr10668Tests {
 		}
 	}
 
-
-	public interface MyComponent {}
-
-	public static class MyComponentImpl implements MyComponent {}
+	public static class MyComponentImpl implements MyComponent {
+	}
 
 }

@@ -17,12 +17,11 @@
 package org.springframework.beans.factory.xml;
 
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXParseException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.io.ClassPathResource;
+import org.xml.sax.SAXParseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -38,7 +37,7 @@ public class SchemaValidationTests {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(bf);
 		assertThatExceptionOfType(BeansException.class).isThrownBy(() ->
 				reader.loadBeanDefinitions(new ClassPathResource("invalidPerSchema.xml", getClass())))
-			.withCauseInstanceOf(SAXParseException.class);
+				.withCauseInstanceOf(SAXParseException.class);
 	}
 
 	@Test
@@ -48,7 +47,7 @@ public class SchemaValidationTests {
 		reader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
 		assertThatExceptionOfType(BeansException.class).isThrownBy(() ->
 				reader.loadBeanDefinitions(new ClassPathResource("invalidPerSchema.xml", getClass())))
-			.withCauseInstanceOf(SAXParseException.class);
+				.withCauseInstanceOf(SAXParseException.class);
 	}
 
 	@Test

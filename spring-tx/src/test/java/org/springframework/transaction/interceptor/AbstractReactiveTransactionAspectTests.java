@@ -16,28 +16,20 @@
 
 package org.springframework.transaction.interceptor;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.springframework.transaction.*;
+import org.springframework.transaction.reactive.TransactionContext;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.transaction.CannotCreateTransactionException;
-import org.springframework.transaction.ReactiveTransaction;
-import org.springframework.transaction.ReactiveTransactionManager;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.UnexpectedRollbackException;
-import org.springframework.transaction.reactive.TransactionContext;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 /**
  * Abstract support class to test {@link TransactionAspectSupport} with reactive methods.
@@ -127,7 +119,7 @@ public abstract class AbstractReactiveTransactionAspectTests {
 		given(rtm.commit(status)).willReturn(Mono.empty());
 
 		DefaultTestBean tb = new DefaultTestBean();
-		TestBean itb = (TestBean) advised(tb, rtm, new TransactionAttributeSource[] {tas1, tas2});
+		TestBean itb = (TestBean) advised(tb, rtm, new TransactionAttributeSource[]{tas1, tas2});
 
 		itb.getName()
 				.as(StepVerifier::create)
@@ -210,7 +202,8 @@ public abstract class AbstractReactiveTransactionAspectTests {
 	/**
 	 * Check that the when exception thrown by the target can produce the
 	 * desired behavior with the appropriate transaction attribute.
-	 * @param ex exception to be thrown by the target
+	 *
+	 * @param ex             exception to be thrown by the target
 	 * @param shouldRollback whether this should cause a transaction rollback
 	 */
 	@SuppressWarnings("serial")
@@ -239,12 +232,10 @@ public abstract class AbstractReactiveTransactionAspectTests {
 		if (rollbackException) {
 			if (shouldRollback) {
 				given(rtm.rollback(status)).willReturn(Mono.error(tex));
-			}
-			else {
+			} else {
 				given(rtm.commit(status)).willReturn(Mono.error(tex));
 			}
-		}
-		else {
+		} else {
 			given(rtm.commit(status)).willReturn(Mono.empty());
 			given(rtm.rollback(status)).willReturn(Mono.empty());
 		}
@@ -257,8 +248,7 @@ public abstract class AbstractReactiveTransactionAspectTests {
 				.expectErrorSatisfies(actual -> {
 					if (rollbackException) {
 						assertThat(actual).isEqualTo(tex);
-					}
-					else {
+					} else {
 						assertThat(actual).isEqualTo(ex);
 					}
 				}).verify();
@@ -266,8 +256,7 @@ public abstract class AbstractReactiveTransactionAspectTests {
 		if (!rollbackException) {
 			if (shouldRollback) {
 				verify(rtm).rollback(status);
-			}
-			else {
+			} else {
 				verify(rtm).commit(status);
 			}
 		}
@@ -371,8 +360,9 @@ public abstract class AbstractReactiveTransactionAspectTests {
 	 * have been created, as there's no distinction between target and proxy.
 	 * In the case of Spring's own AOP framework, a proxy must be created
 	 * using a suitably configured transaction interceptor
+	 *
 	 * @param target the target if there's a distinct target. If not (AspectJ),
-	 * return target.
+	 *               return target.
 	 * @return transactional advised object
 	 */
 	protected abstract Object advised(

@@ -15,14 +15,7 @@
  */
 package org.springframework.web.servlet.resource;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -30,6 +23,12 @@ import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.UrlPathHelper;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -125,8 +124,8 @@ public class PathResourceResolverTests {
 
 	@Test // SPR-12624
 	public void checkRelativeLocation() throws Exception {
-		String location= new UrlResource(getClass().getResource("./test/")).getURL().toExternalForm();
-		location = location.replace("/test/org/springframework","/test/org/../org/springframework");
+		String location = new UrlResource(getClass().getResource("./test/")).getURL().toExternalForm();
+		location = location.replace("/test/org/springframework", "/test/org/../org/springframework");
 
 		Resource actual = this.resolver.resolveResource(
 				null, "main.css", Collections.singletonList(new UrlResource(location)), null);

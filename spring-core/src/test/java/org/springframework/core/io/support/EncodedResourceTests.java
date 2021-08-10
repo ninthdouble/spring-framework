@@ -16,12 +16,11 @@
 
 package org.springframework.core.io.support;
 
-import java.nio.charset.Charset;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
+
+import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

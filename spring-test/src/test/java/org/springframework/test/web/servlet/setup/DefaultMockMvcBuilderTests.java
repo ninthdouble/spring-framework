@@ -17,7 +17,6 @@
 package org.springframework.test.web.servlet.setup;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockServletContext;
@@ -47,14 +46,14 @@ public class DefaultMockMvcBuilderTests {
 	public void webAppContextSetupWithNullWac() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				webAppContextSetup(null))
-			.withMessage("WebApplicationContext is required");
+				.withMessage("WebApplicationContext is required");
 	}
 
 	@Test
 	public void webAppContextSetupWithNullServletContext() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				webAppContextSetup(new StubWebApplicationContext(null)))
-			.withMessage("WebApplicationContext must have a ServletContext");
+				.withMessage("WebApplicationContext must have a ServletContext");
 	}
 
 	/**

@@ -16,9 +16,9 @@
 
 package org.springframework.core.annotation;
 
-import javax.annotation.Priority;
-
 import org.junit.jupiter.api.Test;
+
+import javax.annotation.Priority;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,15 +66,19 @@ class OrderUtilsTests {
 
 
 	@Order(50)
-	private static class SimpleOrder {}
+	private static class SimpleOrder {
+	}
 
 	@Priority(55)
-	private static class SimplePriority {}
+	private static class SimplePriority {
+	}
 
 	@Order(50)
 	@Priority(55)
-	private static class OrderAndPriority {}
+	private static class OrderAndPriority {
+	}
 
-	private static class NoOrder {}
+	private static class NoOrder {
+	}
 
 }

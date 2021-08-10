@@ -16,20 +16,19 @@
 
 package org.springframework.http.codec.cbor;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.testfixture.codec.AbstractDecoderTests;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.MimeType;
 import org.springframework.web.testfixture.xml.Pojo;
+import reactor.core.publisher.Flux;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -81,8 +80,7 @@ public class Jackson2CborDecoderTests extends AbstractDecoderTests<Jackson2CborD
 	private byte[] writeObject(Object o) {
 		try {
 			return this.mapper.writer().writeValueAsBytes(o);
-		}
-		catch (JsonProcessingException e) {
+		} catch (JsonProcessingException e) {
 			throw new AssertionError(e);
 		}
 

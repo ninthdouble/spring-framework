@@ -16,20 +16,19 @@
 
 package org.springframework.http.server;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 /**
  * {@link ServerHttpResponse} implementation that is based on a {@link HttpServletResponse}.
@@ -54,6 +53,7 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 
 	/**
 	 * Construct a new instance of the ServletServerHttpResponse based on the given {@link HttpServletResponse}.
+	 *
 	 * @param servletResponse the servlet response
 	 */
 	public ServletServerHttpResponse(HttpServletResponse servletResponse) {
@@ -80,12 +80,10 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 	public HttpHeaders getHeaders() {
 		if (this.readOnlyHeaders != null) {
 			return this.readOnlyHeaders;
-		}
-		else if (this.headersWritten) {
+		} else if (this.headersWritten) {
 			this.readOnlyHeaders = HttpHeaders.readOnlyHttpHeaders(this.headers);
 			return this.readOnlyHeaders;
-		}
-		else {
+		} else {
 			return this.headers;
 		}
 	}
@@ -161,8 +159,7 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 				// Content-Type is written as an override so check super first
 				String value = super.getFirst(headerName);
 				return (value != null ? value : servletResponse.getHeader(headerName));
-			}
-			else {
+			} else {
 				String value = servletResponse.getHeader(headerName);
 				return (value != null ? value : super.getFirst(headerName));
 			}

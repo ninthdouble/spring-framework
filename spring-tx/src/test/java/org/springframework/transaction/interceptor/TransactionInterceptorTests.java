@@ -16,28 +16,21 @@
 
 package org.springframework.transaction.interceptor;
 
-import java.io.Serializable;
-import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.TransactionManager;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.*;
+
+import java.io.Serializable;
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Mock object based tests for TransactionInterceptor.
@@ -160,7 +153,7 @@ public class TransactionInterceptorTests extends AbstractTransactionAspectTests 
 
 		assertThatExceptionOfType(NoSuchBeanDefinitionException.class).isThrownBy(() ->
 				ti.determineTransactionManager(attribute))
-			.withMessageContaining("'fooTransactionManager'");
+				.withMessageContaining("'fooTransactionManager'");
 	}
 
 	@Test
@@ -231,7 +224,7 @@ public class TransactionInterceptorTests extends AbstractTransactionAspectTests 
 		TransactionInterceptor ti = transactionInterceptorWithTransactionManagerName(
 				"fooTransactionManager", beanFactory);
 
-		PlatformTransactionManager txManager = 	associateTransactionManager(beanFactory, "fooTransactionManager");
+		PlatformTransactionManager txManager = associateTransactionManager(beanFactory, "fooTransactionManager");
 
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		TransactionManager actual = ti.determineTransactionManager(attribute);
@@ -263,7 +256,7 @@ public class TransactionInterceptorTests extends AbstractTransactionAspectTests 
 
 
 	private TransactionInterceptor createTransactionInterceptor(BeanFactory beanFactory,
-			String transactionManagerName, PlatformTransactionManager transactionManager) {
+																String transactionManagerName, PlatformTransactionManager transactionManager) {
 
 		TransactionInterceptor ti = new TransactionInterceptor();
 		if (beanFactory != null) {

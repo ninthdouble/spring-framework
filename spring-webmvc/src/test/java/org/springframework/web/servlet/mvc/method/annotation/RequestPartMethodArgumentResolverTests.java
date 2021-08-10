@@ -16,20 +16,8 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.Part;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
@@ -53,11 +41,17 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.testfixture.method.ResolvableMethod;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
-import org.springframework.web.testfixture.servlet.MockMultipartFile;
-import org.springframework.web.testfixture.servlet.MockMultipartHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockPart;
+import org.springframework.web.testfixture.servlet.*;
+
+import javax.servlet.http.Part;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -288,12 +282,12 @@ public class RequestPartMethodArgumentResolverTests {
 	public void resolveRequestPartNotValid() throws Exception {
 		assertThatExceptionOfType(MethodArgumentNotValidException.class).isThrownBy(() ->
 				testResolveArgument(new SimpleBean(null), paramValidRequestPart))
-			.satisfies(ex -> {
-				BindingResult bindingResult = ex.getBindingResult();
-				assertThat(bindingResult.getObjectName()).isEqualTo("requestPart");
-				assertThat(bindingResult.getErrorCount()).isEqualTo(1);
-				assertThat(bindingResult.getFieldError("name")).isNotNull();
-			});
+				.satisfies(ex -> {
+					BindingResult bindingResult = ex.getBindingResult();
+					assertThat(bindingResult.getObjectName()).isEqualTo("requestPart");
+					assertThat(bindingResult.getErrorCount()).isEqualTo(1);
+					assertThat(bindingResult.getFieldError("name")).isNotNull();
+				});
 	}
 
 	@Test
@@ -305,7 +299,7 @@ public class RequestPartMethodArgumentResolverTests {
 	public void resolveRequestPartRequired() throws Exception {
 		assertThatExceptionOfType(MissingServletRequestPartException.class).isThrownBy(() ->
 				testResolveArgument(null, paramValidRequestPart))
-			.satisfies(ex -> assertThat(ex.getRequestPartName()).isEqualTo("requestPart"));
+				.satisfies(ex -> assertThat(ex.getRequestPartName()).isEqualTo("requestPart"));
 	}
 
 	@Test
@@ -574,42 +568,10 @@ public class RequestPartMethodArgumentResolverTests {
 		assertThat(mavContainer.isRequestHandled()).as("The requestHandled flag shouldn't change").isFalse();
 	}
 
-
-	private static class SimpleBean {
-
-		@NotNull
-		private final String name;
-
-		public SimpleBean(String name) {
-			this.name = name;
-		}
-
-		@SuppressWarnings("unused")
-		public String getName() {
-			return name;
-		}
-	}
-
-
-	private final class ValidatingBinderFactory implements WebDataBinderFactory {
-
-		@Override
-		public WebDataBinder createBinder(NativeWebRequest webRequest, @Nullable Object target,
-				String objectName) throws Exception {
-
-			LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
-			validator.afterPropertiesSet();
-			WebDataBinder dataBinder = new WebDataBinder(target, objectName);
-			dataBinder.setValidator(validator);
-			return dataBinder;
-		}
-	}
-
-
 	@SuppressWarnings("unused")
 	public void handle(
 			@RequestPart SimpleBean requestPart,
-			@RequestPart(value="requestPart", required=false) SimpleBean namedRequestPart,
+			@RequestPart(value = "requestPart", required = false) SimpleBean namedRequestPart,
 			@Valid @RequestPart("requestPart") SimpleBean validRequestPart,
 			@RequestPart("requestPart") MultipartFile multipartFile,
 			@RequestPart("requestPart") List<MultipartFile> multipartFileList,
@@ -626,6 +588,35 @@ public class RequestPartMethodArgumentResolverTests {
 			@RequestPart("requestPart") Optional<List<Part>> optionalPartList,
 			@RequestPart("requestPart") Optional<SimpleBean> optionalRequestPart,
 			@RequestPart("requestPartString") String requestPartString) {
+	}
+
+	private static class SimpleBean {
+
+		@NotNull
+		private final String name;
+
+		public SimpleBean(String name) {
+			this.name = name;
+		}
+
+		@SuppressWarnings("unused")
+		public String getName() {
+			return name;
+		}
+	}
+
+	private final class ValidatingBinderFactory implements WebDataBinderFactory {
+
+		@Override
+		public WebDataBinder createBinder(NativeWebRequest webRequest, @Nullable Object target,
+										  String objectName) throws Exception {
+
+			LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+			validator.afterPropertiesSet();
+			WebDataBinder dataBinder = new WebDataBinder(target, objectName);
+			dataBinder.setValidator(validator);
+			return dataBinder;
+		}
 	}
 
 }

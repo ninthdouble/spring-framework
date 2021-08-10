@@ -16,12 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.security.Principal;
-
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.web.reactive.BindingContext;
@@ -29,6 +25,9 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

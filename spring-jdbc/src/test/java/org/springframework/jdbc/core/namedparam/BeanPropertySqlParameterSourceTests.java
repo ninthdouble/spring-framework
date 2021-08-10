@@ -16,12 +16,11 @@
 
 package org.springframework.jdbc.core.namedparam;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.testfixture.beans.TestBean;
+
 import java.sql.Types;
 import java.util.Arrays;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.testfixture.beans.TestBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -91,10 +90,10 @@ public class BeanPropertySqlParameterSourceTests {
 	public void toStringShowsParameterDetails() {
 		BeanPropertySqlParameterSource source = new BeanPropertySqlParameterSource(new TestBean("tb", 99));
 		assertThat(source.toString())
-			.startsWith("BeanPropertySqlParameterSource {")
-			.contains("name=tb (type:VARCHAR)")
-			.contains("age=99 (type:INTEGER)")
-			.endsWith("}");
+				.startsWith("BeanPropertySqlParameterSource {")
+				.contains("name=tb (type:VARCHAR)")
+				.contains("age=99 (type:INTEGER)")
+				.endsWith("}");
 	}
 
 	@Test

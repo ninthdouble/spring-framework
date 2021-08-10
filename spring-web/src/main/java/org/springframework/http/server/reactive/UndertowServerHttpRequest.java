@@ -16,31 +16,25 @@
 
 package org.springframework.http.server.reactive;
 
+import io.undertow.connector.ByteBufferPool;
+import io.undertow.connector.PooledByteBuffer;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.HttpCookie;
+import org.springframework.lang.Nullable;
+import org.springframework.util.*;
+import org.xnio.channels.StreamSourceChannel;
+import reactor.core.publisher.Flux;
+
+import javax.net.ssl.SSLSession;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.net.ssl.SSLSession;
-
-import io.undertow.connector.ByteBufferPool;
-import io.undertow.connector.PooledByteBuffer;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import org.xnio.channels.StreamSourceChannel;
-import reactor.core.publisher.Flux;
-
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.http.HttpCookie;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * Adapt {@link ServerHttpRequest} to the Undertow {@link HttpServerExchange}.
@@ -188,13 +182,11 @@ class UndertowServerHttpRequest extends AbstractServerHttpRequest {
 					DataBuffer dataBuffer = this.bufferFactory.allocateBuffer(read);
 					dataBuffer.write(byteBuffer);
 					return dataBuffer;
-				}
-				else if (read == -1) {
+				} else if (read == -1) {
 					onAllDataRead();
 				}
 				return null;
-			}
-			finally {
+			} finally {
 				pooledByteBuffer.close();
 			}
 		}

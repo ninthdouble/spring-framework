@@ -16,12 +16,12 @@
 
 package org.springframework.test.context.support;
 
-import java.util.Arrays;
-
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.Assert;
+
+import java.util.Arrays;
 
 /**
  * {@code MergedTestPropertySources} encapsulates the <em>merged</em>
@@ -29,8 +29,8 @@ import org.springframework.util.Assert;
  * via {@link TestPropertySource @TestPropertySource}.
  *
  * @author Sam Brannen
- * @since 4.1
  * @see TestPropertySource
+ * @since 4.1
  */
 class MergedTestPropertySources {
 
@@ -42,20 +42,13 @@ class MergedTestPropertySources {
 
 
 	/**
-	 * Factory for an <em>empty</em> {@code MergedTestPropertySources} instance.
-	 */
-	static MergedTestPropertySources empty() {
-		return empty;
-	}
-
-
-	/**
 	 * Create a {@code MergedTestPropertySources} instance with the supplied
 	 * {@code locations} and {@code properties}.
-	 * @param locations the resource locations of properties files; may be
-	 * empty but never {@code null}
+	 *
+	 * @param locations  the resource locations of properties files; may be
+	 *                   empty but never {@code null}
 	 * @param properties the properties in the form of {@code key=value} pairs;
-	 * may be empty but never {@code null}
+	 *                   may be empty but never {@code null}
 	 */
 	MergedTestPropertySources(String[] locations, String[] properties) {
 		Assert.notNull(locations, "The locations array must not be null");
@@ -65,7 +58,15 @@ class MergedTestPropertySources {
 	}
 
 	/**
+	 * Factory for an <em>empty</em> {@code MergedTestPropertySources} instance.
+	 */
+	static MergedTestPropertySources empty() {
+		return empty;
+	}
+
+	/**
 	 * Get the resource locations of properties files.
+	 *
 	 * @see TestPropertySource#locations()
 	 */
 	String[] getLocations() {
@@ -74,6 +75,7 @@ class MergedTestPropertySources {
 
 	/**
 	 * Get the properties in the form of <em>key-value</em> pairs.
+	 *
 	 * @see TestPropertySource#properties()
 	 */
 	String[] getProperties() {
@@ -84,6 +86,7 @@ class MergedTestPropertySources {
 	 * Determine if the supplied object is equal to this {@code MergedTestPropertySources}
 	 * instance by comparing both object's {@linkplain #getLocations() locations}
 	 * and {@linkplain #getProperties() properties}.
+	 *
 	 * @since 5.3
 	 */
 	@Override
@@ -109,6 +112,7 @@ class MergedTestPropertySources {
 	/**
 	 * Generate a unique hash code for all properties of this
 	 * {@code MergedTestPropertySources} instance.
+	 *
 	 * @since 5.3
 	 */
 	@Override
@@ -121,6 +125,7 @@ class MergedTestPropertySources {
 	/**
 	 * Provide a String representation of this {@code MergedTestPropertySources}
 	 * instance.
+	 *
 	 * @since 5.3
 	 */
 	@Override

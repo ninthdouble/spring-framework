@@ -16,14 +16,14 @@
 
 package org.springframework.jdbc.core;
 
+import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.lang.Nullable;
+import org.springframework.util.LinkedCaseInsensitiveMap;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
-
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.lang.Nullable;
-import org.springframework.util.LinkedCaseInsensitiveMap;
 
 /**
  * {@link RowMapper} implementation that creates a {@code java.util.Map}
@@ -39,9 +39,9 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
  * casing to be used for column names.
  *
  * @author Juergen Hoeller
- * @since 1.2
  * @see JdbcTemplate#queryForList(String)
  * @see JdbcTemplate#queryForMap(String)
+ * @since 1.2
  */
 public class ColumnMapRowMapper implements RowMapper<Map<String, Object>> {
 
@@ -60,8 +60,9 @@ public class ColumnMapRowMapper implements RowMapper<Map<String, Object>> {
 	/**
 	 * Create a Map instance to be used as column map.
 	 * <p>By default, a linked case-insensitive Map will be created.
+	 *
 	 * @param columnCount the column count, to be used as initial
-	 * capacity for the Map
+	 *                    capacity for the Map
 	 * @return the new Map instance
 	 * @see org.springframework.util.LinkedCaseInsensitiveMap
 	 */
@@ -72,6 +73,7 @@ public class ColumnMapRowMapper implements RowMapper<Map<String, Object>> {
 	/**
 	 * Determine the key to use for the given column in the column Map.
 	 * <p>By default, the supplied column name will be returned unmodified.
+	 *
 	 * @param columnName the column name as returned by the ResultSet
 	 * @return the column key to use
 	 * @see java.sql.ResultSetMetaData#getColumnName
@@ -85,7 +87,8 @@ public class ColumnMapRowMapper implements RowMapper<Map<String, Object>> {
 	 * <p>The default implementation uses the {@code getObject} method.
 	 * Additionally, this implementation includes a "hack" to get around Oracle
 	 * returning a non standard object for their TIMESTAMP data type.
-	 * @param rs the ResultSet holding the data
+	 *
+	 * @param rs    the ResultSet holding the data
 	 * @param index the column index
 	 * @return the Object returned
 	 * @see org.springframework.jdbc.support.JdbcUtils#getResultSetValue

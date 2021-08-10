@@ -16,35 +16,24 @@
 
 package org.springframework.jms.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.jms.JMSException;
-import javax.jms.MessageListener;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.jms.config.JmsListenerContainerTestFactory;
-import org.springframework.jms.config.JmsListenerEndpointRegistrar;
-import org.springframework.jms.config.JmsListenerEndpointRegistry;
-import org.springframework.jms.config.MessageListenerTestContainer;
-import org.springframework.jms.config.MethodJmsListenerEndpoint;
-import org.springframework.jms.config.SimpleJmsListenerEndpoint;
+import org.springframework.jms.config.*;
 import org.springframework.jms.listener.adapter.ListenerExecutionFailedException;
 import org.springframework.jms.listener.adapter.MessageListenerAdapter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.stereotype.Component;
+
+import javax.jms.JMSException;
+import javax.jms.MessageListener;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -138,7 +127,7 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 
 		assertThatExceptionOfType(ListenerExecutionFailedException.class).isThrownBy(() ->
 				testJmsHandlerMethodFactoryConfiguration(context))
-			.withCauseInstanceOf(MethodArgumentNotValidException.class);
+				.withCauseInstanceOf(MethodArgumentNotValidException.class);
 	}
 
 	@Override
@@ -160,19 +149,19 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 	@Test
 	void composedJmsListeners() {
 		try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(
-			EnableJmsDefaultContainerFactoryConfig.class, ComposedJmsListenersBean.class)) {
+				EnableJmsDefaultContainerFactoryConfig.class, ComposedJmsListenersBean.class)) {
 			JmsListenerContainerTestFactory simpleFactory = context.getBean("jmsListenerContainerFactory",
-				JmsListenerContainerTestFactory.class);
+					JmsListenerContainerTestFactory.class);
 			assertThat(simpleFactory.getListenerContainers().size()).isEqualTo(2);
 
 			MethodJmsListenerEndpoint first = (MethodJmsListenerEndpoint) simpleFactory.getListenerContainer(
-				"first").getEndpoint();
+					"first").getEndpoint();
 			assertThat(first.getId()).isEqualTo("first");
 			assertThat(first.getDestination()).isEqualTo("orderQueue");
 			assertThat(first.getConcurrency()).isNull();
 
 			MethodJmsListenerEndpoint second = (MethodJmsListenerEndpoint) simpleFactory.getListenerContainer(
-				"second").getEndpoint();
+					"second").getEndpoint();
 			assertThat(second.getId()).isEqualTo("second");
 			assertThat(second.getDestination()).isEqualTo("billingQueue");
 			assertThat(second.getConcurrency()).isEqualTo("2-10");
@@ -182,10 +171,10 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 	@Test
 	@SuppressWarnings("resource")
 	void unknownFactory() {
-		 // not found
+		// not found
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				new AnnotationConfigApplicationContext(EnableJmsSampleConfig.class, CustomBean.class))
-			.withMessageContaining("customFactory");
+				.withMessageContaining("customFactory");
 	}
 
 	@Test
@@ -205,6 +194,29 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 	}
 
 
+	@JmsListener(destination = "orderQueue")
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface OrderQueueListener {
+
+		@AliasFor(annotation = JmsListener.class)
+		String id() default "";
+
+		@AliasFor(annotation = JmsListener.class)
+		String concurrency() default "";
+	}
+
+
+	@JmsListener(destination = "billingQueue")
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface BillingQueueListener {
+
+		@AliasFor(annotation = JmsListener.class)
+		String id() default "";
+
+		@AliasFor(annotation = JmsListener.class)
+		String concurrency() default "";
+	}
+
 	@EnableJms
 	@Configuration
 	static class EnableJmsSampleConfig {
@@ -220,7 +232,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		}
 	}
 
-
 	@EnableJms
 	@Configuration
 	static class EnableJmsFullConfig {
@@ -230,7 +241,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 			return new JmsListenerContainerTestFactory();
 		}
 	}
-
 
 	@EnableJms
 	@Configuration
@@ -247,7 +257,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 			return new PropertySourcesPlaceholderConfigurer();
 		}
 	}
-
 
 	@Configuration
 	@EnableJms
@@ -286,7 +295,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		}
 	}
 
-
 	@Configuration
 	@EnableJms
 	static class EnableJmsCustomContainerFactoryConfig implements JmsListenerConfigurer {
@@ -302,7 +310,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		}
 	}
 
-
 	@Configuration
 	@EnableJms
 	static class EnableJmsDefaultContainerFactoryConfig {
@@ -312,7 +319,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 			return new JmsListenerContainerTestFactory();
 		}
 	}
-
 
 	@Configuration
 	@EnableJms
@@ -336,7 +342,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		}
 	}
 
-
 	@Configuration
 	@EnableJms
 	static class EnableJmsAutoStartupFalseConfig implements JmsListenerConfigurer {
@@ -354,7 +359,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		}
 	}
 
-
 	@Component
 	@Lazy
 	static class LazyBean {
@@ -363,31 +367,6 @@ class EnableJmsTests extends AbstractJmsAnnotationDrivenTests {
 		public void handle(String msg) {
 		}
 	}
-
-
-	@JmsListener(destination = "orderQueue")
-	@Retention(RetentionPolicy.RUNTIME)
-	private @interface OrderQueueListener {
-
-		@AliasFor(annotation = JmsListener.class)
-		String id() default "";
-
-		@AliasFor(annotation = JmsListener.class)
-		String concurrency() default "";
-	}
-
-
-	@JmsListener(destination = "billingQueue")
-	@Retention(RetentionPolicy.RUNTIME)
-	private @interface BillingQueueListener {
-
-		@AliasFor(annotation = JmsListener.class)
-		String id() default "";
-
-		@AliasFor(annotation = JmsListener.class)
-		String concurrency() default "";
-	}
-
 
 	@Component
 	static class ComposedJmsListenersBean {

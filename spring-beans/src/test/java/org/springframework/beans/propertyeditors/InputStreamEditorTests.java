@@ -16,11 +16,10 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.io.InputStream;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.ClassUtils;
+
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -53,8 +52,7 @@ public class InputStreamEditorTests {
 			assertThat(condition).isTrue();
 			stream = (InputStream) value;
 			assertThat(stream.available() > 0).isTrue();
-		}
-		finally {
+		} finally {
 			if (stream != null) {
 				stream.close();
 			}

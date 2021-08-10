@@ -18,7 +18,6 @@ package org.springframework.web.servlet.mvc.method.annotation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.ServletWebRequest;

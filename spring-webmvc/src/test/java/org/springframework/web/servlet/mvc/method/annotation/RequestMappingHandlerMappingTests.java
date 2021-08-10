@@ -16,6 +16,23 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.Arguments;
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.web.method.HandlerTypePredicate;
+import org.springframework.web.servlet.handler.PathPatternsParameterizedTest;
+import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import org.springframework.web.util.ServletRequestPathUtils;
+import org.springframework.web.util.pattern.PathPatternParser;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,32 +44,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.Arguments;
-
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.ClassUtils;
-import org.springframework.web.accept.ContentNegotiationManager;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.support.StaticWebApplicationContext;
-import org.springframework.web.method.HandlerTypePredicate;
-import org.springframework.web.servlet.handler.PathPatternsParameterizedTest;
-import org.springframework.web.servlet.mvc.condition.ConsumesRequestCondition;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.util.ServletRequestPathUtils;
-import org.springframework.web.util.pattern.PathPatternParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -155,10 +146,10 @@ public class RequestMappingHandlerMappingTests {
 				value -> "/${pattern}/bar".equals(value) ? "/foo/bar" : value
 		);
 
-		String[] patterns = new String[] { "/foo", "/${pattern}/bar" };
+		String[] patterns = new String[]{"/foo", "/${pattern}/bar"};
 		String[] result = mapping.resolveEmbeddedValuesInPatterns(patterns);
 
-		assertThat(result).isEqualTo(new String[] { "/foo", "/foo/bar" });
+		assertThat(result).isEqualTo(new String[]{"/foo", "/foo/bar"});
 	}
 
 	@PathPatternsParameterizedTest
@@ -176,7 +167,8 @@ public class RequestMappingHandlerMappingTests {
 		assertThat(info.getPatternValues()).isEqualTo(Collections.singleton("/api/user/{id}"));
 	}
 
-	@PathPatternsParameterizedTest // gh-23907
+	@PathPatternsParameterizedTest
+		// gh-23907
 	void pathPrefixPreservesPathMatchingSettings(RequestMappingHandlerMapping mapping) throws Exception {
 		mapping.setPathPrefixes(Collections.singletonMap("/api", HandlerTypePredicate.forAnyHandlerType()));
 		mapping.afterPropertiesSet();
@@ -200,8 +192,7 @@ public class RequestMappingHandlerMappingTests {
 		PathPatternParser parser = mapping.getPatternParser();
 		if (parser != null) {
 			ServletRequestPathUtils.parseAndCache(request);
-		}
-		else {
+		} else {
 			mapping.getUrlPathHelper().resolveAndCacheLookupPath(request);
 		}
 	}
@@ -218,7 +209,8 @@ public class RequestMappingHandlerMappingTests {
 				.isEqualTo(MediaType.APPLICATION_JSON_VALUE);
 	}
 
-	@Test // SPR-14988
+	@Test
+		// SPR-14988
 	void getMappingOverridesConsumesFromTypeLevelAnnotation() throws Exception {
 		RequestMappingInfo requestMappingInfo = assertComposedAnnotationMapping(RequestMethod.POST);
 
@@ -226,7 +218,8 @@ public class RequestMappingHandlerMappingTests {
 		assertThat(condition.getConsumableMediaTypes()).isEqualTo(Collections.singleton(MediaType.APPLICATION_XML));
 	}
 
-	@PathPatternsParameterizedTest // gh-22010
+	@PathPatternsParameterizedTest
+		// gh-22010
 	void consumesWithOptionalRequestBody(RequestMappingHandlerMapping mapping, StaticWebApplicationContext wac) {
 		wac.registerSingleton("testController", ComposedAnnotationController.class);
 		wac.refresh();
@@ -296,6 +289,17 @@ public class RequestMappingHandlerMappingTests {
 	}
 
 
+	@RequestMapping(method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface PostJson {
+
+		@AliasFor(annotation = RequestMapping.class)
+		String[] value() default {};
+	}
+
 	@Controller
 	@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	static class ComposedAnnotationController {
@@ -329,19 +333,6 @@ public class RequestMappingHandlerMappingTests {
 		}
 
 	}
-
-
-	@RequestMapping(method = RequestMethod.POST,
-			produces = MediaType.APPLICATION_JSON_VALUE,
-			consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface PostJson {
-
-		@AliasFor(annotation = RequestMapping.class)
-		String[] value() default {};
-	}
-
 
 	@RestController
 	@RequestMapping("/user")

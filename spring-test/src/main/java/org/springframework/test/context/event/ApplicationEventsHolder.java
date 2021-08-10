@@ -37,10 +37,10 @@ import org.springframework.util.Assert;
  *
  * @author Sam Brannen
  * @author Oliver Drotbohm
- * @since 5.3.3
  * @see ApplicationEvents
  * @see RecordApplicationEvents
  * @see ApplicationEventsTestExecutionListener
+ * @since 5.3.3
  */
 public abstract class ApplicationEventsHolder {
 
@@ -54,6 +54,7 @@ public abstract class ApplicationEventsHolder {
 
 	/**
 	 * Get the {@link ApplicationEvents} for the current thread.
+	 *
 	 * @return the current {@code ApplicationEvents}, or {@code null} if not registered
 	 */
 	@Nullable
@@ -63,9 +64,10 @@ public abstract class ApplicationEventsHolder {
 
 	/**
 	 * Get the {@link ApplicationEvents} for the current thread.
+	 *
 	 * @return the current {@code ApplicationEvents}
 	 * @throws IllegalStateException if an instance of {@code ApplicationEvents}
-	 * has not been registered for the current thread
+	 *                               has not been registered for the current thread
 	 */
 	public static ApplicationEvents getRequiredApplicationEvents() {
 		ApplicationEvents events = applicationEvents.get();

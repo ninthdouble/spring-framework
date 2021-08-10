@@ -16,11 +16,10 @@
 
 package org.springframework.test.web.servlet;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.util.concurrent.CountDownLatch;
 
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 

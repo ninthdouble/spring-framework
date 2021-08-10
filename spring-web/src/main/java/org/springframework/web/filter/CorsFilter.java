@@ -16,20 +16,14 @@
 
 package org.springframework.web.filter;
 
-import java.io.IOException;
+import org.springframework.util.Assert;
+import org.springframework.web.cors.*;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.util.Assert;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.CorsProcessor;
-import org.springframework.web.cors.CorsUtils;
-import org.springframework.web.cors.DefaultCorsProcessor;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.io.IOException;
 
 /**
  * {@link javax.servlet.Filter} to handle CORS pre-flight requests and intercept
@@ -46,9 +40,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * in order to help with its initialization.
  *
  * @author Sebastien Deleuze
- * @since 4.2
  * @see <a href="https://www.w3.org/TR/cors/">CORS W3C recommendation</a>
  * @see UrlBasedCorsConfigurationSource
+ * @since 4.2
  */
 public class CorsFilter extends OncePerRequestFilter {
 
@@ -60,6 +54,7 @@ public class CorsFilter extends OncePerRequestFilter {
 	/**
 	 * Constructor accepting a {@link CorsConfigurationSource} used by the filter
 	 * to find the {@link CorsConfiguration} to use for each incoming request.
+	 *
 	 * @see UrlBasedCorsConfigurationSource
 	 */
 	public CorsFilter(CorsConfigurationSource configSource) {
@@ -81,7 +76,7 @@ public class CorsFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-			FilterChain filterChain) throws ServletException, IOException {
+									FilterChain filterChain) throws ServletException, IOException {
 
 		CorsConfiguration corsConfiguration = this.configSource.getCorsConfiguration(request);
 		boolean isValid = this.processor.processRequest(corsConfiguration, request, response);

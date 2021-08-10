@@ -16,23 +16,15 @@
 
 package org.springframework.http;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.within;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Arjen Poutsma
@@ -462,7 +454,8 @@ public class MediaTypeTests {
 		assertThat(new MediaType("text", "*").isConcrete()).as("text/* concrete").isFalse();
 	}
 
-	@Test  // gh-26127
+	@Test
+		// gh-26127
 	void serialize() throws Exception {
 		MediaType original = new MediaType("text", "plain", StandardCharsets.UTF_8);
 		MediaType deserialized = SerializationTestUtils.serializeAndDeserialize(original);

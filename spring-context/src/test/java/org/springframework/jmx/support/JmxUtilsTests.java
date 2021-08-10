@@ -131,14 +131,40 @@ class JmxUtilsTests {
 		MBeanServer server = null;
 		try {
 			server = JmxUtils.locateMBeanServer();
-		}
-		finally {
+		} finally {
 			if (server != null) {
 				MBeanServerFactory.releaseMBeanServer(server);
 			}
 		}
 	}
 
+
+	public interface FooMBean {
+
+		String getName();
+	}
+
+
+	public interface FooMXBean {
+
+		String getName();
+	}
+
+
+	private interface JmxInterfaceMBean {
+	}
+
+
+	private interface JmxInterface extends JmxInterfaceMBean {
+	}
+
+
+	private interface SpecializedJmxInterface extends JmxInterface {
+	}
+
+
+	private interface JmxClassMBean {
+	}
 
 	public static class AttributeTestBean {
 
@@ -152,7 +178,6 @@ class JmxUtilsTests {
 			this.name = name;
 		}
 	}
-
 
 	public static class StandardMBeanImpl extends StandardMBean implements IJmxTestBean {
 
@@ -180,25 +205,18 @@ class JmxUtilsTests {
 		}
 
 		@Override
-		public void setName(String name) {
+		public String getName() {
+			return null;
 		}
 
 		@Override
-		public String getName() {
-			return null;
+		public void setName(String name) {
 		}
 
 		@Override
 		public void dontExposeMe() {
 		}
 	}
-
-
-	public interface FooMBean {
-
-		String getName();
-	}
-
 
 	public static class Foo implements FooMBean {
 
@@ -208,13 +226,6 @@ class JmxUtilsTests {
 		}
 	}
 
-
-	public interface FooMXBean {
-
-		String getName();
-	}
-
-
 	public static class FooX implements FooMXBean {
 
 		@Override
@@ -223,30 +234,11 @@ class JmxUtilsTests {
 		}
 	}
 
-
 	public static class Bar extends Foo {
 	}
 
-
 	public static class Abc extends Bar {
 	}
-
-
-	private interface JmxInterfaceMBean {
-	}
-
-
-	private interface JmxInterface extends JmxInterfaceMBean {
-	}
-
-
-	private interface SpecializedJmxInterface extends JmxInterface {
-	}
-
-
-	private interface JmxClassMBean {
-	}
-
 
 	private static class JmxClass implements JmxClassMBean {
 	}

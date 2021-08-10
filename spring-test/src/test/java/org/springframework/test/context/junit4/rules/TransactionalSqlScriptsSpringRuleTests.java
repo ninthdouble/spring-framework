@@ -16,8 +16,6 @@
 
 package org.springframework.test.context.junit4.rules;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.ClassRule;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -26,7 +24,6 @@ import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -34,6 +31,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.EmptyDatabaseConfig;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(JUnit4.class)
 @ContextConfiguration(classes = EmptyDatabaseConfig.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Sql({ "../../jdbc/schema.sql", "../../jdbc/data.sql" })
+@Sql({"../../jdbc/schema.sql", "../../jdbc/data.sql"})
 @DirtiesContext
 public class TransactionalSqlScriptsSpringRuleTests {
 
@@ -71,7 +70,7 @@ public class TransactionalSqlScriptsSpringRuleTests {
 	}
 
 	@Test
-	@Sql({ "../../jdbc/drop-schema.sql", "../../jdbc/schema.sql", "../../jdbc/data.sql", "../../jdbc/data-add-dogbert.sql" })
+	@Sql({"../../jdbc/drop-schema.sql", "../../jdbc/schema.sql", "../../jdbc/data.sql", "../../jdbc/data-add-dogbert.sql"})
 	public void methodLevelScripts() {
 		assertNumUsers(2);
 	}

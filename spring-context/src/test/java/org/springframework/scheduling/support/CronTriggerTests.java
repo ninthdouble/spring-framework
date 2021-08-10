@@ -49,12 +49,36 @@ class CronTriggerTests {
 
 	private final Calendar calendar = new GregorianCalendar();
 
+	private static void roundup(Calendar calendar) {
+		calendar.add(Calendar.SECOND, 1);
+		calendar.set(Calendar.MILLISECOND, 0);
+	}
+
+	private static void assertMatchesNextSecond(CronTrigger trigger, Calendar calendar) {
+		Date localDateTime = calendar.getTime();
+		roundup(calendar);
+		TriggerContext context = getTriggerContext(localDateTime);
+		assertThat(trigger.nextExecutionTime(context)).isEqualTo(calendar.getTime());
+	}
+
+	private static TriggerContext getTriggerContext(Date lastCompletionTime) {
+		SimpleTriggerContext context = new SimpleTriggerContext();
+		context.update(null, null, lastCompletionTime);
+		return context;
+	}
+
+	static Stream<Arguments> parameters() {
+		return Stream.of(
+				arguments(LocalDateTime.now(), TimeZone.getTimeZone("PST")),
+				arguments(LocalDateTime.now(), TimeZone.getTimeZone("CET"))
+		);
+	}
+
 	private void setUp(LocalDateTime localDateTime, TimeZone timeZone) {
 		this.calendar.setTimeZone(timeZone);
 		this.calendar.setTime(localDateTime.toDate());
 		roundup(this.calendar);
 	}
-
 
 	@ParameterizedCronTriggerTest
 	void matchAll(LocalDateTime localDateTime, TimeZone timeZone) {
@@ -848,37 +872,11 @@ class CronTriggerTests {
 		assertThat(nextExecutionTime).isEqualTo(this.calendar.getTime());
 	}
 
-	private static void roundup(Calendar calendar) {
-		calendar.add(Calendar.SECOND, 1);
-		calendar.set(Calendar.MILLISECOND, 0);
-	}
-
-	private static void assertMatchesNextSecond(CronTrigger trigger, Calendar calendar) {
-		Date localDateTime = calendar.getTime();
-		roundup(calendar);
-		TriggerContext context = getTriggerContext(localDateTime);
-		assertThat(trigger.nextExecutionTime(context)).isEqualTo(calendar.getTime());
-	}
-
-	private static TriggerContext getTriggerContext(Date lastCompletionTime) {
-		SimpleTriggerContext context = new SimpleTriggerContext();
-		context.update(null, null, lastCompletionTime);
-		return context;
-	}
-
-
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	@ParameterizedTest(name = "[{index}] localDateTime[{0}], time zone[{1}]")
 	@MethodSource("parameters")
 	@interface ParameterizedCronTriggerTest {
-	}
-
-	static Stream<Arguments> parameters() {
-		return Stream.of(
-			arguments(LocalDateTime.now(), TimeZone.getTimeZone("PST")),
-			arguments(LocalDateTime.now(), TimeZone.getTimeZone("CET"))
-		);
 	}
 
 }

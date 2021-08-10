@@ -16,22 +16,20 @@
 
 package org.springframework.mock.web;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.FilterRegistration;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRegistration;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.OS;
-
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.http.MediaType;
+
+import javax.servlet.FilterRegistration;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletRegistration;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -212,7 +210,7 @@ class MockServletContextTests {
 	class MockServletContextWithFileSystemResourceLoaderTests {
 
 		private final MockServletContext servletContext =
-				new MockServletContext( "org/springframework/mock", new FileSystemResourceLoader());
+				new MockServletContext("org/springframework/mock", new FileSystemResourceLoader());
 
 		@Test
 		void getResourcePathsWithRelativePathToWindowsCDrive() {
@@ -238,8 +236,7 @@ class MockServletContextTests {
 
 			if (OS.WINDOWS.isCurrentOs()) {
 				assertThat(realPath).isNull();
-			}
-			else {
+			} else {
 				assertThat(realPath).isNotNull();
 			}
 		}

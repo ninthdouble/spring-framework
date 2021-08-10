@@ -16,18 +16,14 @@
 
 package org.springframework.util.concurrent;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Arjen Poutsma
@@ -47,6 +43,7 @@ class ListenableFutureTaskTests {
 			public void onSuccess(String result) {
 				assertThat(result).isEqualTo(s);
 			}
+
 			@Override
 			public void onFailure(Throwable ex) {
 				throw new AssertionError(ex.getMessage(), ex);
@@ -72,6 +69,7 @@ class ListenableFutureTaskTests {
 			public void onSuccess(String result) {
 				fail("onSuccess not expected");
 			}
+
 			@Override
 			public void onFailure(Throwable ex) {
 				assertThat(ex.getMessage()).isEqualTo(s);
@@ -80,13 +78,13 @@ class ListenableFutureTaskTests {
 		task.run();
 
 		assertThatExceptionOfType(ExecutionException.class)
-			.isThrownBy(task::get)
-			.havingCause()
-			.withMessage(s);
+				.isThrownBy(task::get)
+				.havingCause()
+				.withMessage(s);
 		assertThatExceptionOfType(ExecutionException.class)
-			.isThrownBy(task.completable()::get)
-			.havingCause()
-			.withMessage(s);
+				.isThrownBy(task.completable()::get)
+				.havingCause()
+				.withMessage(s);
 	}
 
 	@Test
@@ -125,10 +123,10 @@ class ListenableFutureTaskTests {
 
 		assertThatExceptionOfType(ExecutionException.class).isThrownBy(
 				task::get)
-			.satisfies(e -> assertThat(e.getCause().getMessage()).isEqualTo(s));
+				.satisfies(e -> assertThat(e.getCause().getMessage()).isEqualTo(s));
 		assertThatExceptionOfType(ExecutionException.class).isThrownBy(
 				task.completable()::get)
-			.satisfies(e -> assertThat(e.getCause().getMessage()).isEqualTo(s));
+				.satisfies(e -> assertThat(e.getCause().getMessage()).isEqualTo(s));
 	}
 
 }

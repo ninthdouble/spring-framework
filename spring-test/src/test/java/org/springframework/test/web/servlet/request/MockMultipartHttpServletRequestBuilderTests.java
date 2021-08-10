@@ -16,28 +16,25 @@
 
 package org.springframework.test.web.servlet.request;
 
-import javax.servlet.http.Part;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockMultipartHttpServletRequest;
-import org.springframework.mock.web.MockPart;
-import org.springframework.mock.web.MockServletContext;
+import org.springframework.mock.web.*;
+
+import javax.servlet.http.Part;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link MockMultipartHttpServletRequestBuilder}.
+ *
  * @author Rossen Stoyanchev
  */
 public class MockMultipartHttpServletRequestBuilderTests {
 
-	@Test // gh-26166
+	@Test
+		// gh-26166
 	void addFileAndParts() throws Exception {
 		MockMultipartHttpServletRequest mockRequest =
 				(MockMultipartHttpServletRequest) new MockMultipartHttpServletRequestBuilder("/upload")
@@ -50,7 +47,8 @@ public class MockMultipartHttpServletRequestBuilderTests {
 		assertThat(mockRequest.getParts()).extracting(Part::getName).containsExactly("name");
 	}
 
-	@Test // gh-26261, gh-26400
+	@Test
+		// gh-26261, gh-26400
 	void addFileWithoutFilename() throws Exception {
 		MockPart jsonPart = new MockPart("data", "{\"node\":\"node\"}".getBytes(UTF_8));
 		jsonPart.getHeaders().setContentType(MediaType.APPLICATION_JSON);

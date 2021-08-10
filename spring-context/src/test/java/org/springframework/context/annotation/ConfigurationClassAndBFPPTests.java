@@ -56,6 +56,13 @@ public class ConfigurationClassAndBFPPTests {
 		assertThat(ctx.getBean(AutowiredConfigWithBFPPAsStaticMethod.class).autowiredTestBean).isNotNull();
 	}
 
+	@Test
+	public void staticBeanMethodsDoNotRespectScoping() {
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		ctx.register(ConfigWithStaticBeanMethod.class);
+		ctx.refresh();
+		assertThat(ConfigWithStaticBeanMethod.testBean()).isNotSameAs(ConfigWithStaticBeanMethod.testBean());
+	}
 
 	@Configuration
 	static class TestBeanConfig {
@@ -65,10 +72,10 @@ public class ConfigurationClassAndBFPPTests {
 		}
 	}
 
-
 	@Configuration
 	static class AutowiredConfigWithBFPPAsInstanceMethod {
-		@Autowired TestBean autowiredTestBean;
+		@Autowired
+		TestBean autowiredTestBean;
 
 		@Bean
 		public BeanFactoryPostProcessor bfpp() {
@@ -81,10 +88,10 @@ public class ConfigurationClassAndBFPPTests {
 		}
 	}
 
-
 	@Configuration
 	static class AutowiredConfigWithBFPPAsStaticMethod {
-		@Autowired TestBean autowiredTestBean;
+		@Autowired
+		TestBean autowiredTestBean;
 
 		@Bean
 		public static final BeanFactoryPostProcessor bfpp() {
@@ -96,16 +103,6 @@ public class ConfigurationClassAndBFPPTests {
 			};
 		}
 	}
-
-
-	@Test
-	public void staticBeanMethodsDoNotRespectScoping() {
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(ConfigWithStaticBeanMethod.class);
-		ctx.refresh();
-		assertThat(ConfigWithStaticBeanMethod.testBean()).isNotSameAs(ConfigWithStaticBeanMethod.testBean());
-	}
-
 
 	@Configuration
 	static class ConfigWithStaticBeanMethod {

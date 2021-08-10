@@ -16,22 +16,20 @@
 
 package org.springframework.web.servlet.view.feed;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.rometools.rome.feed.atom.Content;
 import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.atom.Feed;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.testfixture.xml.XmlContent;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,7 +61,7 @@ public class AtomFeedViewTests {
 	private static class MyAtomFeedView extends AbstractAtomFeedView {
 
 		@Override
-		protected void buildFeedMetadata(Map<String, Object>model, Feed feed, HttpServletRequest request) {
+		protected void buildFeedMetadata(Map<String, Object> model, Feed feed, HttpServletRequest request) {
 			feed.setTitle("Test Feed");
 		}
 

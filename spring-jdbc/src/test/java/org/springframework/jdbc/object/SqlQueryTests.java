@@ -16,23 +16,8 @@
 
 package org.springframework.jdbc.object;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.Customer;
@@ -40,21 +25,22 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Trevor Cook
  * @author Thomas Risberg
  * @author Juergen Hoeller
  */
-public class SqlQueryTests  {
+public class SqlQueryTests {
 
 	//FIXME inline?
 	private static final String SELECT_ID =
@@ -82,8 +68,8 @@ public class SqlQueryTests  {
 	private static final String SELECT_ID_FORENAME_WHERE_ID =
 			"select id, forename from custmr where id <= ?";
 
-	private static final String[] COLUMN_NAMES = new String[] {"id", "forename"};
-	private static final int[] COLUMN_TYPES = new int[] {Types.INTEGER, Types.VARCHAR};
+	private static final String[] COLUMN_NAMES = new String[]{"id", "forename"};
+	private static final int[] COLUMN_TYPES = new int[]{Types.INTEGER, Types.VARCHAR};
 
 	private Connection connection;
 	private DataSource dataSource;
@@ -109,7 +95,7 @@ public class SqlQueryTests  {
 
 		SqlQuery<Integer> query = new MappingSqlQueryWithParameters<Integer>() {
 			@Override
-			protected Integer mapRow(ResultSet rs, int rownum, @Nullable Object[] params, @Nullable Map<? ,?> context)
+			protected Integer mapRow(ResultSet rs, int rownum, @Nullable Object[] params, @Nullable Map<?, ?> context)
 					throws SQLException {
 				assertThat(params == null).as("params were null").isTrue();
 				assertThat(context == null).as("context was null").isTrue();
@@ -165,7 +151,7 @@ public class SqlQueryTests  {
 
 	@Test
 	public void testStringQueryWithResults() throws Exception {
-		String[] dbResults = new String[] { "alpha", "beta", "charlie" };
+		String[] dbResults = new String[]{"alpha", "beta", "charlie"};
 		given(resultSet.next()).willReturn(true, true, true, false);
 		given(resultSet.getString(1)).willReturn(dbResults[0], dbResults[1], dbResults[2]);
 		StringQuery query = new StringQuery(dataSource, SELECT_FORENAME);
@@ -300,7 +286,7 @@ public class SqlQueryTests  {
 			}
 
 			public Customer findCustomer(int id, String name) {
-				return findObject(new Object[] { id, name });
+				return findObject(new Object[]{id, name});
 			}
 		}
 
@@ -441,7 +427,7 @@ public class SqlQueryTests  {
 
 		given(connection.prepareStatement(SELECT_ID_FORENAME_WHERE,
 				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
-			).willReturn(preparedStatement);
+		).willReturn(preparedStatement);
 
 		class CustomerQuery extends MappingSqlQuery<Customer> {
 
@@ -527,7 +513,7 @@ public class SqlQueryTests  {
 		given(resultSet.getString("forename")).willReturn("rod");
 		given(connection.prepareStatement(SELECT_ID_FORENAME_NAMED_PARAMETERS_PARSED,
 				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
-			).willReturn(preparedStatement);
+		).willReturn(preparedStatement);
 
 		class CustomerQuery extends MappingSqlQuery<Customer> {
 
@@ -537,8 +523,7 @@ public class SqlQueryTests  {
 				if (namedDeclarations) {
 					declareParameter(new SqlParameter("country", Types.VARCHAR));
 					declareParameter(new SqlParameter("id", Types.NUMERIC));
-				}
-				else {
+				} else {
 					declareParameter(new SqlParameter(Types.NUMERIC));
 					declareParameter(new SqlParameter(Types.VARCHAR));
 				}
@@ -580,7 +565,7 @@ public class SqlQueryTests  {
 
 		given(connection.prepareStatement(SELECT_ID_FORENAME_WHERE_ID_IN_LIST_1,
 				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)
-			).willReturn(preparedStatement);
+		).willReturn(preparedStatement);
 
 		class CustomerQuery extends MappingSqlQuery<Customer> {
 
@@ -632,7 +617,7 @@ public class SqlQueryTests  {
 
 		given(connection.prepareStatement(SELECT_ID_FORENAME_WHERE_ID_REUSED_1,
 				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)).willReturn(preparedStatement)
-;
+		;
 
 		class CustomerQuery extends MappingSqlQuery<Customer> {
 
@@ -678,8 +663,8 @@ public class SqlQueryTests  {
 	public void testNamedParameterUsingInvalidQuestionMarkPlaceHolders()
 			throws SQLException {
 		given(
-		connection.prepareStatement(SELECT_ID_FORENAME_WHERE_ID_REUSED_1,
-				ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)).willReturn(preparedStatement);
+				connection.prepareStatement(SELECT_ID_FORENAME_WHERE_ID_REUSED_1,
+						ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)).willReturn(preparedStatement);
 
 		class CustomerQuery extends MappingSqlQuery<Customer> {
 
@@ -716,7 +701,7 @@ public class SqlQueryTests  {
 		given(resultSet.getInt("id")).willReturn(1, 2);
 		given(connection.prepareStatement(SELECT_ID_FORENAME_WHERE_ID,
 				ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)
-			).willReturn(preparedStatement);
+		).willReturn(preparedStatement);
 
 		class CustomerUpdateQuery extends UpdatableSqlQuery<Customer> {
 
@@ -727,7 +712,7 @@ public class SqlQueryTests  {
 			}
 
 			@Override
-			protected Customer updateRow(ResultSet rs, int rownum, @Nullable Map<? ,?> context)
+			protected Customer updateRow(ResultSet rs, int rownum, @Nullable Map<?, ?> context)
 					throws SQLException {
 				rs.updateString(2, "" + context.get(rs.getInt(COLUMN_NAMES[0])));
 				return null;

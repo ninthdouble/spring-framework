@@ -16,11 +16,11 @@
 
 package org.springframework.beans;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -36,12 +36,14 @@ public class BeanWrapperAutoGrowingTests {
 
 	private final BeanWrapperImpl wrapper = new BeanWrapperImpl(bean);
 
+	private static void assertNotNull(Object propertyValue) {
+		assertThat(propertyValue).isNotNull();
+	}
 
 	@BeforeEach
 	public void setUp() {
 		wrapper.setAutoGrowNestedPaths(true);
 	}
-
 
 	@Test
 	public void getPropertyValueNullValueInNestedPath() {
@@ -108,8 +110,8 @@ public class BeanWrapperAutoGrowingTests {
 		newBean.setProp("enigma");
 		wrapper.setPropertyValue("multiArray[2][3]", newBean);
 		assertThat(bean.getMultiArray()[2][3])
-			.isInstanceOf(Bean.class)
-			.extracting(Bean::getProp).isEqualTo("enigma");
+				.isInstanceOf(Bean.class)
+				.extracting(Bean::getProp).isEqualTo("enigma");
 	}
 
 	@Test
@@ -118,8 +120,8 @@ public class BeanWrapperAutoGrowingTests {
 		newBean.setProp("enigma");
 		wrapper.setPropertyValue("threeDimensionalArray[2][3][4]", newBean);
 		assertThat(bean.getThreeDimensionalArray()[2][3][4])
-			.isInstanceOf(Bean.class)
-			.extracting(Bean::getProp).isEqualTo("enigma");
+				.isInstanceOf(Bean.class)
+				.extracting(Bean::getProp).isEqualTo("enigma");
 	}
 
 	@Test
@@ -155,7 +157,7 @@ public class BeanWrapperAutoGrowingTests {
 		wrapper.setAutoGrowCollectionLimit(2);
 		assertThatExceptionOfType(InvalidPropertyException.class).isThrownBy(() ->
 				wrapper.getPropertyValue("list[4]"))
-			.withRootCauseInstanceOf(IndexOutOfBoundsException.class);
+				.withRootCauseInstanceOf(IndexOutOfBoundsException.class);
 	}
 
 	@Test
@@ -182,12 +184,6 @@ public class BeanWrapperAutoGrowingTests {
 		wrapper.setPropertyValue("map[A].nested", new Bean());
 		assertThat(bean.getMap().get("A").getNested()).isInstanceOf(Bean.class);
 	}
-
-
-	private static void assertNotNull(Object propertyValue) {
-		assertThat(propertyValue).isNotNull();
-	}
-
 
 	@SuppressWarnings("rawtypes")
 	public static class Bean {

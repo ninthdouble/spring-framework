@@ -16,17 +16,16 @@
 
 package org.springframework.http.server;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,7 +89,8 @@ public class ServletServerHttpResponseTests {
 		assertThat(this.response.getHeaders().getAccessControlAllowOrigin()).isEqualTo(headerValue);
 	}
 
-	@Test // gh-25490
+	@Test
+		// gh-25490
 	void preExistingContentTypeIsOverriddenImmediately() {
 		this.mockResponse.setContentType("text/csv");
 		this.response = new ServletServerHttpResponse(this.mockResponse);

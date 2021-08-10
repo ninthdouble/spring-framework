@@ -16,15 +16,7 @@
 
 package org.springframework.mock.http.client.reactive;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -36,6 +28,13 @@ import org.springframework.http.client.reactive.ClientHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 /**
  * Mock implementation of {@link ClientHttpResponse}.
@@ -90,14 +89,6 @@ public class MockClientHttpResponse implements ClientHttpResponse {
 		return this.cookies;
 	}
 
-	public void setBody(Publisher<DataBuffer> body) {
-		this.body = Flux.from(body);
-	}
-
-	public void setBody(String body) {
-		setBody(body, StandardCharsets.UTF_8);
-	}
-
 	public void setBody(String body, Charset charset) {
 		DataBuffer buffer = toDataBuffer(body, charset);
 		this.body = Flux.just(buffer);
@@ -112,6 +103,14 @@ public class MockClientHttpResponse implements ClientHttpResponse {
 	@Override
 	public Flux<DataBuffer> getBody() {
 		return this.body;
+	}
+
+	public void setBody(Publisher<DataBuffer> body) {
+		this.body = Flux.from(body);
+	}
+
+	public void setBody(String body) {
+		setBody(body, StandardCharsets.UTF_8);
 	}
 
 	/**

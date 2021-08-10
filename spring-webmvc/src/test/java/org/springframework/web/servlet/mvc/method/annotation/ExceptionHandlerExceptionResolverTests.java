@@ -16,15 +16,9 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.util.Collections;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -56,6 +50,11 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.util.NestedServletException;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -190,7 +189,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("IllegalArgumentException");
 	}
 
-	@Test  // gh-26317
+	@Test
+		// gh-26317
 	void resolveExceptionResponseBodyMatchingCauseLevel2() throws UnsupportedEncodingException, NoSuchMethodException {
 		Exception ex = new Exception(new Exception(new IllegalArgumentException()));
 		HandlerMethod handlerMethod = new HandlerMethod(new ResponseBodyController(), "handle");
@@ -214,7 +214,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("IllegalArgumentException");
 	}
 
-	@Test  // SPR-13546
+	@Test
+		// SPR-13546
 	void resolveExceptionModelAtArgument() throws Exception {
 		IllegalArgumentException ex = new IllegalArgumentException();
 		HandlerMethod handlerMethod = new HandlerMethod(new ModelArgumentController(), "handle");
@@ -226,7 +227,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(mav.getModelMap().get("exceptionClassName")).isEqualTo("IllegalArgumentException");
 	}
 
-	@Test  // SPR-14651
+	@Test
+		// SPR-14651
 	void resolveRedirectAttributesAtArgument() throws Exception {
 		IllegalArgumentException ex = new IllegalArgumentException();
 		HandlerMethod handlerMethod = new HandlerMethod(new RedirectAttributesController(), "handle");
@@ -270,7 +272,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("TestExceptionResolver: IllegalStateException");
 	}
 
-	@Test  // gh-26317
+	@Test
+		// gh-26317
 	void resolveExceptionGlobalHandlerOrderedMatchingCauseLevel2() throws Exception {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyConfig.class);
 		this.resolver.setApplicationContext(ctx);
@@ -285,7 +288,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("TestExceptionResolver: IllegalStateException");
 	}
 
-	@Test  // SPR-12605
+	@Test
+		// SPR-12605
 	void resolveExceptionWithHandlerMethodArg() throws Exception {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyConfig.class);
 		this.resolver.setApplicationContext(ctx);
@@ -348,7 +352,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("BasePackageTestExceptionResolver: IllegalStateException");
 	}
 
-	@Test  // gh-26317
+	@Test
+		// gh-26317
 	void resolveExceptionControllerAdviceHandlerMatchingCauseLevel2() throws Exception {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyControllerAdviceConfig.class);
 		this.resolver.setApplicationContext(ctx);
@@ -377,7 +382,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("DefaultTestExceptionResolver: IllegalStateException");
 	}
 
-	@Test  // SPR-16496
+	@Test
+		// SPR-16496
 	void resolveExceptionControllerAdviceAgainstProxy() throws Exception {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyControllerAdviceConfig.class);
 		this.resolver.setApplicationContext(ctx);
@@ -392,7 +398,8 @@ public class ExceptionHandlerExceptionResolverTests {
 		assertThat(this.response.getContentAsString()).isEqualTo("BasePackageTestExceptionResolver: IllegalStateException");
 	}
 
-	@Test // gh-22619
+	@Test
+		// gh-22619
 	void resolveExceptionViaMappedHandler() throws Exception {
 		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyControllerAdviceConfig.class);
 		this.resolver.setMappedHandlerClasses(HttpRequestHandler.class);
@@ -415,30 +422,6 @@ public class ExceptionHandlerExceptionResolverTests {
 	}
 
 
-	@Controller
-	static class ModelAndViewController {
-
-		public void handle() {}
-
-		@ExceptionHandler
-		public ModelAndView handle(Exception ex) throws IOException {
-			return new ModelAndView("errorView", "detail", ex.getMessage());
-		}
-	}
-
-
-	@Controller
-	static class ResponseWriterController {
-
-		public void handle() {}
-
-		@ExceptionHandler
-		public void handleException(Exception ex, Writer writer) throws IOException {
-			writer.write(ClassUtils.getShortName(ex.getClass()));
-		}
-	}
-
-
 	interface ResponseBodyInterface {
 
 		void handle();
@@ -448,12 +431,36 @@ public class ExceptionHandlerExceptionResolverTests {
 		String handleException(IllegalArgumentException ex);
 	}
 
+	@Controller
+	static class ModelAndViewController {
+
+		public void handle() {
+		}
+
+		@ExceptionHandler
+		public ModelAndView handle(Exception ex) throws IOException {
+			return new ModelAndView("errorView", "detail", ex.getMessage());
+		}
+	}
+
+	@Controller
+	static class ResponseWriterController {
+
+		public void handle() {
+		}
+
+		@ExceptionHandler
+		public void handleException(Exception ex, Writer writer) throws IOException {
+			writer.write(ClassUtils.getShortName(ex.getClass()));
+		}
+	}
 
 	@Controller
 	static class ResponseBodyController extends WebApplicationObjectSupport implements ResponseBodyInterface {
 
 		@Override
-		public void handle() {}
+		public void handle() {
+		}
 
 		@Override
 		@ExceptionHandler
@@ -467,7 +474,8 @@ public class ExceptionHandlerExceptionResolverTests {
 	@Controller
 	static class IoExceptionController {
 
-		public void handle() {}
+		public void handle() {
+		}
 
 		@ExceptionHandler(value = IOException.class)
 		public void handleException() {
@@ -478,7 +486,8 @@ public class ExceptionHandlerExceptionResolverTests {
 	@Controller
 	static class ModelArgumentController {
 
-		public void handle() {}
+		public void handle() {
+		}
 
 		@ExceptionHandler
 		public void handleException(Exception ex, Model model) {
@@ -489,7 +498,8 @@ public class ExceptionHandlerExceptionResolverTests {
 	@Controller
 	static class RedirectAttributesController {
 
-		public void handle() {}
+		public void handle() {
+		}
 
 		@ExceptionHandler
 		public String handleException(Exception ex, RedirectAttributes redirectAttributes) {
@@ -607,7 +617,7 @@ public class ExceptionHandlerExceptionResolverTests {
 
 		@Override
 		public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-				Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+									  Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
 			return null;
 		}
 	}

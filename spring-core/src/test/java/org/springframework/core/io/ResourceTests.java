@@ -16,12 +16,10 @@
 
 package org.springframework.core.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.FileCopyUtils;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -29,10 +27,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.FileCopyUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -246,8 +240,7 @@ class ResourceTests {
 			connection.setRequestMethod("HEAD");
 			connection.setReadTimeout(5_000);
 			return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
@@ -261,6 +254,7 @@ class ResourceTests {
 			public String getDescription() {
 				return name;
 			}
+
 			@Override
 			public InputStream getInputStream() throws IOException {
 				throw new FileNotFoundException();
@@ -269,13 +263,13 @@ class ResourceTests {
 
 		assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(
 				resource::getURL)
-			.withMessageContaining(name);
+				.withMessageContaining(name);
 		assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(
 				resource::getFile)
-			.withMessageContaining(name);
+				.withMessageContaining(name);
 		assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(() ->
 				resource.createRelative("/testing"))
-			.withMessageContaining(name);
+				.withMessageContaining(name);
 
 		assertThat(resource.getFilename()).isNull();
 	}
@@ -285,8 +279,9 @@ class ResourceTests {
 		AbstractResource resource = new AbstractResource() {
 			@Override
 			public InputStream getInputStream() {
-				return new ByteArrayInputStream(new byte[] { 'a', 'b', 'c' });
+				return new ByteArrayInputStream(new byte[]{'a', 'b', 'c'});
 			}
+
 			@Override
 			public String getDescription() {
 				return "";

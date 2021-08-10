@@ -16,10 +16,10 @@
 
 package org.springframework.http.server;
 
-import java.util.List;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Default implementation of {@link RequestPath}.
@@ -131,7 +131,7 @@ class DefaultRequestPath implements RequestPath {
 		if (other == null || getClass() != other.getClass()) {
 			return false;
 		}
-		DefaultRequestPath otherPath= (DefaultRequestPath) other;
+		DefaultRequestPath otherPath = (DefaultRequestPath) other;
 		return (this.fullPath.equals(otherPath.fullPath) &&
 				this.contextPath.equals(otherPath.contextPath) &&
 				this.pathWithinApplication.equals(otherPath.pathWithinApplication));

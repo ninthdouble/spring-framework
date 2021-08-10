@@ -16,12 +16,12 @@
 
 package org.springframework.http.client.reactive;
 
-import java.net.URI;
-
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.util.MultiValueMap;
+
+import java.net.URI;
 
 /**
  * Represents a client-side reactive HTTP request.
@@ -49,6 +49,7 @@ public interface ClientHttpRequest extends ReactiveHttpOutputMessage {
 
 	/**
 	 * Return the request from the underlying HTTP library.
+	 *
 	 * @param <T> the expected type of the request to cast to
 	 * @since 5.3
 	 */

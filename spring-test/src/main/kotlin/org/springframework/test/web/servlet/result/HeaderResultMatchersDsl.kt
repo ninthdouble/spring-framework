@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.ResultActions
  * @author Sebastien Deleuze
  * @since 5.3
  */
-class HeaderResultMatchersDsl internal constructor (private val actions: ResultActions) {
+class HeaderResultMatchersDsl internal constructor(private val actions: ResultActions) {
 
 	private val matchers = MockMvcResultMatchers.header()
 
@@ -77,6 +77,7 @@ class HeaderResultMatchersDsl internal constructor (private val actions: ResultA
 	fun longValue(name: String, value: Long) {
 		actions.andExpect(matchers.longValue(name, value))
 	}
+
 	/**
 	 * @see HeaderResultMatchersDsl.dateValue
 	 */

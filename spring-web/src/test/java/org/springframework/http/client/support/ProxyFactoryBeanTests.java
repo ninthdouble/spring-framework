@@ -16,11 +16,11 @@
 
 package org.springframework.http.client.support;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

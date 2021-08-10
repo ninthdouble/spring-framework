@@ -16,16 +16,15 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.util.Assert;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.beans.SimpleBeanInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,9 +76,8 @@ public class BeanInfoTests {
 			try {
 				PropertyDescriptor pd = new PropertyDescriptor("value", ValueBean.class);
 				pd.setPropertyEditorClass(MyNumberEditor.class);
-				return new PropertyDescriptor[] {pd};
-			}
-			catch (IntrospectionException ex) {
+				return new PropertyDescriptor[]{pd};
+			} catch (IntrospectionException ex) {
 				throw new FatalBeanException("Couldn't create PropertyDescriptor", ex);
 			}
 		}

@@ -16,22 +16,16 @@
 
 package org.springframework.test.context.junit4;
 
-import javax.sql.DataSource;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.transaction.TransactionAssert.assertThatTransaction;
@@ -51,18 +45,9 @@ public class BeforeAndAfterTransactionAnnotationTests extends AbstractTransactio
 
 	protected static int numBeforeTransactionCalls = 0;
 	protected static int numAfterTransactionCalls = 0;
-
-	protected boolean inTransaction = false;
-
 	@Rule
 	public final TestName testName = new TestName();
-
-
-	@Autowired
-	public void setDataSource(DataSource dataSource) {
-		jdbcTemplate = new JdbcTemplate(dataSource);
-	}
-
+	protected boolean inTransaction = false;
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -75,6 +60,11 @@ public class BeforeAndAfterTransactionAnnotationTests extends AbstractTransactio
 		assertThat(countRowsInPersonTable(jdbcTemplate)).as("Verifying the final number of rows in the person table after all tests.").isEqualTo(3);
 		assertThat(BeforeAndAfterTransactionAnnotationTests.numBeforeTransactionCalls).as("Verifying the total number of calls to beforeTransaction().").isEqualTo(2);
 		assertThat(BeforeAndAfterTransactionAnnotationTests.numAfterTransactionCalls).as("Verifying the total number of calls to afterTransaction().").isEqualTo(2);
+	}
+
+	@Autowired
+	public void setDataSource(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	@BeforeTransaction

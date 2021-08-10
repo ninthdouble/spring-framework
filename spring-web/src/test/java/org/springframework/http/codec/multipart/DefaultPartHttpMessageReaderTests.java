@@ -16,6 +16,28 @@
 
 package org.springframework.http.codec.multipart;
 
+import io.netty.buffer.PooledByteBufAllocator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.reactivestreams.Subscription;
+import org.springframework.core.codec.DecodingException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
+import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
+import reactor.core.Exceptions;
+import reactor.core.publisher.BaseSubscriber;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
 import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,29 +50,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import io.netty.buffer.PooledByteBufAllocator;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.reactivestreams.Subscription;
-import reactor.core.Exceptions;
-import reactor.core.publisher.BaseSubscriber;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import org.springframework.core.codec.DecodingException;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.NettyDataBufferFactory;
-import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
-import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
@@ -62,7 +61,7 @@ import static org.springframework.core.io.buffer.DataBufferUtils.release;
 /**
  * @author Arjen Poutsma
  */
-public class DefaultPartHttpMessageReaderTests  {
+public class DefaultPartHttpMessageReaderTests {
 
 	private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer iaculis metus id vestibulum nullam.";
 
@@ -71,6 +70,68 @@ public class DefaultPartHttpMessageReaderTests  {
 	private static final int BUFFER_SIZE = 64;
 
 	private static final DataBufferFactory bufferFactory = new NettyDataBufferFactory(new PooledByteBufAllocator());
+
+	private static void testBrowserFormField(Part part, String name, String value) {
+		assertThat(part).isInstanceOf(FormFieldPart.class);
+		assertThat(part.name()).isEqualTo(name);
+		FormFieldPart formField = (FormFieldPart) part;
+		assertThat(formField.value()).isEqualTo(value);
+	}
+
+	private static void testBrowserFile(Part part, String name, String filename, String contents, CountDownLatch latch) {
+		try {
+			assertThat(part).isInstanceOf(FilePart.class);
+			assertThat(part.name()).isEqualTo(name);
+			FilePart filePart = (FilePart) part;
+			assertThat(filePart.filename()).isEqualTo(filename);
+
+			Path tempFile = Files.createTempFile("DefaultMultipartMessageReaderTests", null);
+
+			filePart.transferTo(tempFile)
+					.subscribe(null,
+							throwable -> {
+								throw Exceptions.bubble(throwable);
+							},
+							() -> {
+								try {
+									verifyContents(tempFile, contents);
+								} finally {
+									latch.countDown();
+								}
+
+							});
+		} catch (Exception ex) {
+			throw new AssertionError(ex);
+		}
+	}
+
+	private static void verifyContents(Path tempFile, String contents) {
+		try {
+			String result = String.join("", Files.readAllLines(tempFile));
+			assertThat(result).isEqualTo(contents);
+		} catch (IOException ex) {
+			throw new AssertionError(ex);
+		}
+	}
+
+	public static Stream<Arguments> messageReaders() {
+		DefaultPartHttpMessageReader streaming = new DefaultPartHttpMessageReader();
+		streaming.setStreaming(true);
+
+		DefaultPartHttpMessageReader inMemory = new DefaultPartHttpMessageReader();
+		inMemory.setStreaming(false);
+		inMemory.setMaxInMemorySize(1000);
+
+		DefaultPartHttpMessageReader onDisk = new DefaultPartHttpMessageReader();
+		onDisk.setStreaming(false);
+		onDisk.setMaxInMemorySize(100);
+
+		return Stream.of(
+				arguments("streaming", streaming),
+				arguments("in-memory", inMemory),
+				arguments("on-disk", onDisk)
+		);
+	}
 
 	@ParameterizedDefaultPartHttpMessageReaderTest
 	public void canRead(String displayName, DefaultPartHttpMessageReader reader) {
@@ -101,13 +162,13 @@ public class DefaultPartHttpMessageReaderTests  {
 				new ClassPathResource("no-header.multipart", getClass()), "boundary");
 		Flux<Part> result = reader.read(forClass(Part.class), request, emptyMap());
 
-			StepVerifier.create(result)
-					.consumeNextWith(part -> {
-						assertThat(part.headers()).isEmpty();
-						part.content().subscribe(DataBufferUtils::release);
-					})
-					.verifyComplete();
-		}
+		StepVerifier.create(result)
+				.consumeNextWith(part -> {
+					assertThat(part.headers()).isEmpty();
+					part.content().subscribe(DataBufferUtils::release);
+				})
+				.verifyComplete();
+	}
 
 	@ParameterizedDefaultPartHttpMessageReaderTest
 	public void noEndBoundary(String displayName, DefaultPartHttpMessageReader reader) {
@@ -134,7 +195,7 @@ public class DefaultPartHttpMessageReaderTests  {
 	}
 
 	@ParameterizedDefaultPartHttpMessageReaderTest
-	public void noEndHeader(String displayName, DefaultPartHttpMessageReader reader)  {
+	public void noEndHeader(String displayName, DefaultPartHttpMessageReader reader) {
 		MockServerHttpRequest request = createRequest(
 				new ClassPathResource("no-end-header.multipart", getClass()), "boundary");
 		Flux<Part> result = reader.read(forClass(Part.class), request, emptyMap());
@@ -270,7 +331,6 @@ public class DefaultPartHttpMessageReaderTests  {
 		latch.await();
 	}
 
-
 	private void testBrowser(DefaultPartHttpMessageReader reader, Resource resource, String boundary)
 			throws InterruptedException {
 
@@ -318,53 +378,12 @@ public class DefaultPartHttpMessageReaderTests  {
 				latch::countDown);
 	}
 
-
-	private static void testBrowserFormField(Part part, String name, String value) {
-		assertThat(part).isInstanceOf(FormFieldPart.class);
-		assertThat(part.name()).isEqualTo(name);
-		FormFieldPart formField = (FormFieldPart) part;
-		assertThat(formField.value()).isEqualTo(value);
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	@ParameterizedTest(name = "[{index}] {0}")
+	@MethodSource("org.springframework.http.codec.multipart.DefaultPartHttpMessageReaderTests#messageReaders()")
+	public @interface ParameterizedDefaultPartHttpMessageReaderTest {
 	}
-
-	private static void testBrowserFile(Part part, String name, String filename, String contents, CountDownLatch latch) {
-		try {
-			assertThat(part).isInstanceOf(FilePart.class);
-			assertThat(part.name()).isEqualTo(name);
-			FilePart filePart = (FilePart) part;
-			assertThat(filePart.filename()).isEqualTo(filename);
-
-			Path tempFile = Files.createTempFile("DefaultMultipartMessageReaderTests", null);
-
-			filePart.transferTo(tempFile)
-					.subscribe(null,
-							throwable -> {
-								throw Exceptions.bubble(throwable);
-							},
-							() -> {
-								try {
-									verifyContents(tempFile, contents);
-								}
-								finally {
-									latch.countDown();
-								}
-
-							});
-		}
-		catch (Exception ex) {
-			throw new AssertionError(ex);
-		}
-	}
-
-	private static void verifyContents(Path tempFile, String contents) {
-		try {
-			String result = String.join("", Files.readAllLines(tempFile));
-			assertThat(result).isEqualTo(contents);
-		}
-		catch (IOException ex) {
-			throw new AssertionError(ex);
-		}
-	}
-
 
 	private static class CancelSubscriber extends BaseSubscriber<DataBuffer> {
 
@@ -379,32 +398,6 @@ public class DefaultPartHttpMessageReaderTests  {
 			cancel();
 		}
 
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	@ParameterizedTest(name = "[{index}] {0}")
-	@MethodSource("org.springframework.http.codec.multipart.DefaultPartHttpMessageReaderTests#messageReaders()")
-	public @interface ParameterizedDefaultPartHttpMessageReaderTest {
-	}
-
-	public static Stream<Arguments> messageReaders() {
-		DefaultPartHttpMessageReader streaming = new DefaultPartHttpMessageReader();
-		streaming.setStreaming(true);
-
-		DefaultPartHttpMessageReader inMemory = new DefaultPartHttpMessageReader();
-		inMemory.setStreaming(false);
-		inMemory.setMaxInMemorySize(1000);
-
-		DefaultPartHttpMessageReader onDisk = new DefaultPartHttpMessageReader();
-		onDisk.setStreaming(false);
-		onDisk.setMaxInMemorySize(100);
-
-		return Stream.of(
-				arguments("streaming", streaming),
-				arguments("in-memory", inMemory),
-				arguments("on-disk", onDisk)
-				);
 	}
 
 

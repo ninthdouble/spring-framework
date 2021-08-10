@@ -16,16 +16,15 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.BiFunction;
-
 import io.r2dbc.spi.ColumnMetadata;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedCaseInsensitiveMap;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * {@link BiFunction Mapping function} implementation that creates a
@@ -48,7 +47,9 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
  */
 public class ColumnMapRowMapper implements BiFunction<Row, RowMetadata, Map<String, Object>> {
 
-	/** A default {@code ColumnMapRowMapper} instance. */
+	/**
+	 * A default {@code ColumnMapRowMapper} instance.
+	 */
 	public final static ColumnMapRowMapper INSTANCE = new ColumnMapRowMapper();
 
 
@@ -69,6 +70,7 @@ public class ColumnMapRowMapper implements BiFunction<Row, RowMetadata, Map<Stri
 	/**
 	 * Create a {@link Map} instance to be used as column map.
 	 * <p>By default, a linked case-insensitive Map will be created.
+	 *
 	 * @param columnCount the column count, to be used as initial capacity for the Map
 	 * @return the new {@link Map} instance
 	 * @see LinkedCaseInsensitiveMap
@@ -79,6 +81,7 @@ public class ColumnMapRowMapper implements BiFunction<Row, RowMetadata, Map<Stri
 
 	/**
 	 * Determine the key to use for the given column in the column {@link Map}.
+	 *
 	 * @param columnName the column name as returned by the {@link Row}
 	 * @return the column key to use
 	 * @see ColumnMetadata#getName()
@@ -90,7 +93,8 @@ public class ColumnMapRowMapper implements BiFunction<Row, RowMetadata, Map<Stri
 	/**
 	 * Retrieve a R2DBC object value for the specified column.
 	 * <p>The default implementation uses the {@link Row#get(int)} method.
-	 * @param row is the {@link Row} holding the data
+	 *
+	 * @param row   is the {@link Row} holding the data
 	 * @param index is the column index
 	 * @return the Object returned
 	 */

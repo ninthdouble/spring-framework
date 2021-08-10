@@ -16,23 +16,7 @@
 
 package org.springframework.core.convert.support;
 
-import java.awt.Color;
-import java.awt.SystemColor;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.ConverterNotFoundException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -45,12 +29,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import java.awt.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.List;
+import java.util.*;
+
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link GenericConversionService}.
@@ -66,7 +53,18 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 class GenericConversionServiceTests {
 
 	private final GenericConversionService conversionService = new GenericConversionService();
-
+	@ExampleAnnotation(active = true)
+	public String annotatedString;
+	@ExampleAnnotation(active = true)
+	public Color activeColor;
+	@ExampleAnnotation(active = false)
+	public Color inactiveColor;
+	public Map<String, ?> wildcardMap;
+	@SuppressWarnings("rawtypes")
+	public Collection rawCollection;
+	public Collection<?> genericCollection;
+	public Collection<String> stringCollection;
+	public Collection<Integer> integerCollection;
 
 	@Test
 	void canConvert() {
@@ -275,7 +273,7 @@ class GenericConversionServiceTests {
 	void interfaceArrayToStringArray() {
 		conversionService.addConverter(new MyBaseInterfaceToStringConverter());
 		conversionService.addConverter(new ArrayToArrayConverter(conversionService));
-		String[] converted = conversionService.convert(new MyInterface[] {new MyInterfaceImplementer()}, String[].class);
+		String[] converted = conversionService.convert(new MyInterface[]{new MyInterfaceImplementer()}, String[].class);
 		assertThat(converted[0]).isEqualTo("RESULT");
 	}
 
@@ -283,14 +281,14 @@ class GenericConversionServiceTests {
 	void objectArrayToStringArray() {
 		conversionService.addConverter(new MyBaseInterfaceToStringConverter());
 		conversionService.addConverter(new ArrayToArrayConverter(conversionService));
-		String[] converted = conversionService.convert(new MyInterfaceImplementer[] {new MyInterfaceImplementer()}, String[].class);
+		String[] converted = conversionService.convert(new MyInterfaceImplementer[]{new MyInterfaceImplementer()}, String[].class);
 		assertThat(converted[0]).isEqualTo("RESULT");
 	}
 
 	@Test
 	void stringArrayToResourceArray() {
 		conversionService.addConverter(new MyStringArrayToResourceArrayConverter());
-		Resource[] converted = conversionService.convert(new String[] { "x1", "z3" }, Resource[].class);
+		Resource[] converted = conversionService.convert(new String[]{"x1", "z3"}, Resource[].class);
 		List<String> descriptions = Arrays.stream(converted).map(Resource::getDescription).sorted(naturalOrder()).collect(toList());
 		assertThat(descriptions).isEqualTo(Arrays.asList("1", "3"));
 	}
@@ -298,15 +296,15 @@ class GenericConversionServiceTests {
 	@Test
 	void stringArrayToIntegerArray() {
 		conversionService.addConverter(new MyStringArrayToIntegerArrayConverter());
-		Integer[] converted = conversionService.convert(new String[] {"x1", "z3"}, Integer[].class);
-		assertThat(converted).isEqualTo(new Integer[] { 1, 3 });
+		Integer[] converted = conversionService.convert(new String[]{"x1", "z3"}, Integer[].class);
+		assertThat(converted).isEqualTo(new Integer[]{1, 3});
 	}
 
 	@Test
 	void stringToIntegerArray() {
 		conversionService.addConverter(new MyStringToIntegerArrayConverter());
 		Integer[] converted = conversionService.convert("x1,z3", Integer[].class);
-		assertThat(converted).isEqualTo(new Integer[] { 1, 3 });
+		assertThat(converted).isEqualTo(new Integer[]{1, 3});
 	}
 
 	@Test
@@ -460,7 +458,7 @@ class GenericConversionServiceTests {
 		GenericConverter converter = new NonConditionalGenericConverter();
 		assertThatIllegalStateException().isThrownBy(() ->
 				conversionService.addConverter(converter))
-			.withMessage("Only conditional converters may return null convertible types");
+				.withMessage("Only conditional converters may return null convertible types");
 	}
 
 	@Test
@@ -475,7 +473,7 @@ class GenericConversionServiceTests {
 	@Test
 	void convertOptimizeArray() {
 		// SPR-9566
-		byte[] byteArray = new byte[] { 1, 2, 3 };
+		byte[] byteArray = new byte[]{1, 2, 3};
 		byte[] converted = conversionService.convert(byteArray, byte[].class);
 		assertThat(converted).isSameAs(byteArray);
 	}
@@ -577,192 +575,6 @@ class GenericConversionServiceTests {
 	}
 
 
-	@ExampleAnnotation(active = true)
-	public String annotatedString;
-
-	@ExampleAnnotation(active = true)
-	public Color activeColor;
-
-	@ExampleAnnotation(active = false)
-	public Color inactiveColor;
-
-	public Map<String, ?> wildcardMap;
-
-	@SuppressWarnings("rawtypes")
-	public Collection rawCollection;
-
-	public Collection<?> genericCollection;
-
-	public Collection<String> stringCollection;
-
-	public Collection<Integer> integerCollection;
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	private @interface ExampleAnnotation {
-
-		boolean active();
-	}
-
-
-	private interface MyBaseInterface {
-	}
-
-
-	private interface MyInterface extends MyBaseInterface {
-	}
-
-
-	private static class MyInterfaceImplementer implements MyInterface {
-	}
-
-
-	private static class MyBaseInterfaceToStringConverter implements Converter<MyBaseInterface, String> {
-
-		@Override
-		public String convert(MyBaseInterface source) {
-			return "RESULT";
-		}
-	}
-
-
-	private static class MyStringArrayToResourceArrayConverter implements Converter<String[], Resource[]> {
-
-		@Override
-		public Resource[] convert(String[] source) {
-			return Arrays.stream(source).map(s -> s.substring(1)).map(DescriptiveResource::new).toArray(Resource[]::new);
-		}
-	}
-
-
-	private static class MyStringArrayToIntegerArrayConverter implements Converter<String[], Integer[]> {
-
-		@Override
-		public Integer[] convert(String[] source) {
-			return Arrays.stream(source).map(s -> s.substring(1)).map(Integer::valueOf).toArray(Integer[]::new);
-		}
-	}
-
-
-	private static class MyStringToIntegerArrayConverter implements Converter<String, Integer[]>	{
-
-		@Override
-		public Integer[] convert(String source) {
-			String[] srcArray = StringUtils.commaDelimitedListToStringArray(source);
-			return Arrays.stream(srcArray).map(s -> s.substring(1)).map(Integer::valueOf).toArray(Integer[]::new);
-		}
-	}
-
-
-	private static class WithCopyConstructor {
-
-		WithCopyConstructor() {}
-
-		@SuppressWarnings("unused")
-		WithCopyConstructor(WithCopyConstructor value) {}
-	}
-
-
-	private static class MyConditionalConverter implements Converter<String, Color>, ConditionalConverter {
-
-		private int matchAttempts = 0;
-
-		@Override
-		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
-			matchAttempts++;
-			return false;
-		}
-
-		@Override
-		public Color convert(String source) {
-			throw new IllegalStateException();
-		}
-
-		public int getMatchAttempts() {
-			return matchAttempts;
-		}
-	}
-
-
-	private static class NonConditionalGenericConverter implements GenericConverter {
-
-		@Override
-		public Set<ConvertiblePair> getConvertibleTypes() {
-			return null;
-		}
-
-		@Override
-		@Nullable
-		public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-			return null;
-		}
-	}
-
-
-	private static class MyConditionalGenericConverter implements GenericConverter, ConditionalConverter {
-
-		private final List<TypeDescriptor> sourceTypes = new ArrayList<>();
-
-		@Override
-		public Set<ConvertiblePair> getConvertibleTypes() {
-			return null;
-		}
-
-		@Override
-		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
-			sourceTypes.add(sourceType);
-			return false;
-		}
-
-		@Override
-		@Nullable
-		public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-			return null;
-		}
-
-		public List<TypeDescriptor> getSourceTypes() {
-			return sourceTypes;
-		}
-	}
-
-
-	private static class MyConditionalConverterFactory implements ConverterFactory<String, Color>, ConditionalConverter {
-
-		private MyConditionalConverter converter = new MyConditionalConverter();
-
-		private int matchAttempts = 0;
-
-		@Override
-		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
-			matchAttempts++;
-			return true;
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		public <T extends Color> Converter<String, T> getConverter(Class<T> targetType) {
-			return (Converter<String, T>) converter;
-		}
-
-		public int getMatchAttempts() {
-			return matchAttempts;
-		}
-
-		public int getNestedMatchAttempts() {
-			return converter.getMatchAttempts();
-		}
-	}
-
-	private static interface MyEnumBaseInterface {
-		String getBaseCode();
-	}
-
-
-	private interface MyEnumInterface extends MyEnumBaseInterface {
-		String getCode();
-	}
-
-
 	private enum MyEnum implements MyEnumInterface {
 
 		A("1"),
@@ -797,6 +609,163 @@ class GenericConversionServiceTests {
 		}
 	}
 
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface ExampleAnnotation {
+
+		boolean active();
+	}
+
+
+	private interface MyBaseInterface {
+	}
+
+
+	private interface MyInterface extends MyBaseInterface {
+	}
+
+
+	private static interface MyEnumBaseInterface {
+		String getBaseCode();
+	}
+
+
+	private interface MyEnumInterface extends MyEnumBaseInterface {
+		String getCode();
+	}
+
+	private static class MyInterfaceImplementer implements MyInterface {
+	}
+
+	private static class MyBaseInterfaceToStringConverter implements Converter<MyBaseInterface, String> {
+
+		@Override
+		public String convert(MyBaseInterface source) {
+			return "RESULT";
+		}
+	}
+
+	private static class MyStringArrayToResourceArrayConverter implements Converter<String[], Resource[]> {
+
+		@Override
+		public Resource[] convert(String[] source) {
+			return Arrays.stream(source).map(s -> s.substring(1)).map(DescriptiveResource::new).toArray(Resource[]::new);
+		}
+	}
+
+	private static class MyStringArrayToIntegerArrayConverter implements Converter<String[], Integer[]> {
+
+		@Override
+		public Integer[] convert(String[] source) {
+			return Arrays.stream(source).map(s -> s.substring(1)).map(Integer::valueOf).toArray(Integer[]::new);
+		}
+	}
+
+	private static class MyStringToIntegerArrayConverter implements Converter<String, Integer[]> {
+
+		@Override
+		public Integer[] convert(String source) {
+			String[] srcArray = StringUtils.commaDelimitedListToStringArray(source);
+			return Arrays.stream(srcArray).map(s -> s.substring(1)).map(Integer::valueOf).toArray(Integer[]::new);
+		}
+	}
+
+	private static class WithCopyConstructor {
+
+		WithCopyConstructor() {
+		}
+
+		@SuppressWarnings("unused")
+		WithCopyConstructor(WithCopyConstructor value) {
+		}
+	}
+
+	private static class MyConditionalConverter implements Converter<String, Color>, ConditionalConverter {
+
+		private int matchAttempts = 0;
+
+		@Override
+		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+			matchAttempts++;
+			return false;
+		}
+
+		@Override
+		public Color convert(String source) {
+			throw new IllegalStateException();
+		}
+
+		public int getMatchAttempts() {
+			return matchAttempts;
+		}
+	}
+
+	private static class NonConditionalGenericConverter implements GenericConverter {
+
+		@Override
+		public Set<ConvertiblePair> getConvertibleTypes() {
+			return null;
+		}
+
+		@Override
+		@Nullable
+		public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+			return null;
+		}
+	}
+
+	private static class MyConditionalGenericConverter implements GenericConverter, ConditionalConverter {
+
+		private final List<TypeDescriptor> sourceTypes = new ArrayList<>();
+
+		@Override
+		public Set<ConvertiblePair> getConvertibleTypes() {
+			return null;
+		}
+
+		@Override
+		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+			sourceTypes.add(sourceType);
+			return false;
+		}
+
+		@Override
+		@Nullable
+		public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+			return null;
+		}
+
+		public List<TypeDescriptor> getSourceTypes() {
+			return sourceTypes;
+		}
+	}
+
+	private static class MyConditionalConverterFactory implements ConverterFactory<String, Color>, ConditionalConverter {
+
+		private MyConditionalConverter converter = new MyConditionalConverter();
+
+		private int matchAttempts = 0;
+
+		@Override
+		public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) {
+			matchAttempts++;
+			return true;
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public <T extends Color> Converter<String, T> getConverter(Class<T> targetType) {
+			return (Converter<String, T>) converter;
+		}
+
+		public int getMatchAttempts() {
+			return matchAttempts;
+		}
+
+		public int getNestedMatchAttempts() {
+			return converter.getMatchAttempts();
+		}
+	}
 
 	@SuppressWarnings("rawtypes")
 	private static class MyStringToRawCollectionConverter implements Converter<String, Collection> {

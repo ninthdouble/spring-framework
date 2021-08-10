@@ -17,7 +17,6 @@
 package org.springframework.test.context.jdbc;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -30,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @ContextConfiguration(classes = EmptyDatabaseConfig.class)
 @DirtiesContext
-@SqlConfig(commentPrefixes = { "`", "%%" }, blockCommentStartDelimiter = "#$", blockCommentEndDelimiter = "$#", separator = "@@")
+@SqlConfig(commentPrefixes = {"`", "%%"}, blockCommentStartDelimiter = "#$", blockCommentEndDelimiter = "$#", separator = "@@")
 class GlobalCustomScriptSyntaxSqlScriptsTests extends AbstractTransactionalTests {
 
 	@Test

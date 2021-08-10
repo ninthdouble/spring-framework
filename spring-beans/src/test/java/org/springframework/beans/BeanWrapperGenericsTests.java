@@ -16,20 +16,7 @@
 
 package org.springframework.beans;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.beans.testfixture.beans.GenericBean;
@@ -37,6 +24,9 @@ import org.springframework.beans.testfixture.beans.GenericIntegerBean;
 import org.springframework.beans.testfixture.beans.GenericSetOfIntegerBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.io.UrlResource;
+
+import java.net.MalformedURLException;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -81,7 +71,7 @@ public class BeanWrapperGenericsTests {
 		input.add(new TestBean());
 		assertThatExceptionOfType(TypeMismatchException.class).isThrownBy(() ->
 				bw.setPropertyValue("integerSet", input))
-			.withMessageContaining("java.lang.Integer");
+				.withMessageContaining("java.lang.Integer");
 	}
 
 	@Test
@@ -221,7 +211,7 @@ public class BeanWrapperGenericsTests {
 	public void testGenericListOfArrays() throws MalformedURLException {
 		GenericBean<String> gb = new GenericBean<>();
 		ArrayList<String[]> list = new ArrayList<>();
-		list.add(new String[] {"str1", "str2"});
+		list.add(new String[]{"str1", "str2"});
 		gb.setListOfArrays(list);
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.setPropertyValue("listOfArrays[0][1]", "str3 ");
@@ -233,7 +223,7 @@ public class BeanWrapperGenericsTests {
 	public void testGenericListOfArraysWithElementConversion() throws MalformedURLException {
 		GenericBean<String> gb = new GenericBean<>();
 		ArrayList<String[]> list = new ArrayList<>();
-		list.add(new String[] {"str1", "str2"});
+		list.add(new String[]{"str1", "str2"});
 		gb.setListOfArrays(list);
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.registerCustomEditor(String.class, new StringTrimmerEditor(false));
@@ -331,7 +321,7 @@ public class BeanWrapperGenericsTests {
 	@Test
 	public void testGenericTypeNestingMapOfListOfInteger() throws Exception {
 		Map<String, List<String>> map = new HashMap<>();
-		List<String> list = Arrays.asList(new String[] {"1", "2", "3"});
+		List<String> list = Arrays.asList(new String[]{"1", "2", "3"});
 		map.put("testKey", list);
 
 		NestedGenericCollectionBean gb = new NestedGenericCollectionBean();
@@ -364,7 +354,7 @@ public class BeanWrapperGenericsTests {
 	@Test
 	public void testGenericTypeNestingMapOfListOfListOfInteger() throws Exception {
 		Map<String, List<List<String>>> map = new HashMap<>();
-		List<String> list = Arrays.asList(new String[] {"1", "2", "3"});
+		List<String> list = Arrays.asList(new String[]{"1", "2", "3"});
 		map.put("testKey", Collections.singletonList(list));
 
 		NestedGenericCollectionBean gb = new NestedGenericCollectionBean();
@@ -401,7 +391,7 @@ public class BeanWrapperGenericsTests {
 		inputKey.add("1");
 		Set<String> inputValue = new HashSet<>();
 		inputValue.add("10");
-			inputMap.put(inputKey, inputValue);
+		inputMap.put(inputKey, inputValue);
 
 		ComplexMapHolder holder = new ComplexMapHolder();
 		BeanWrapper bw = new BeanWrapperImpl(holder);
@@ -468,7 +458,7 @@ public class BeanWrapperGenericsTests {
 		GenericIntegerBean gb = new GenericIntegerBean();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.setPropertyValue("genericProperty", "10");
-		bw.setPropertyValue("genericListProperty", new String[] {"20", "30"});
+		bw.setPropertyValue("genericListProperty", new String[]{"20", "30"});
 		assertThat(gb.getGenericProperty()).isEqualTo(10);
 		assertThat(gb.getGenericListProperty().get(0)).isEqualTo(20);
 		assertThat(gb.getGenericListProperty().get(1)).isEqualTo(30);
@@ -479,7 +469,7 @@ public class BeanWrapperGenericsTests {
 		GenericSetOfIntegerBean gb = new GenericSetOfIntegerBean();
 		BeanWrapper bw = new BeanWrapperImpl(gb);
 		bw.setPropertyValue("genericProperty", "10");
-		bw.setPropertyValue("genericListProperty", new String[] {"20", "30"});
+		bw.setPropertyValue("genericListProperty", new String[]{"20", "30"});
 		assertThat(gb.getGenericProperty().iterator().next()).isEqualTo(10);
 		assertThat(gb.getGenericListProperty().get(0).iterator().next()).isEqualTo(20);
 		assertThat(gb.getGenericListProperty().get(1).iterator().next()).isEqualTo(30);
@@ -505,9 +495,11 @@ public class BeanWrapperGenericsTests {
 	public void testUntypedPropertyWithMapAtRuntime() {
 		class Holder<D> {
 			private final D data;
+
 			public Holder(D data) {
 				this.data = data;
 			}
+
 			@SuppressWarnings("unused")
 			public D getData() {
 				return this.data;
@@ -526,6 +518,19 @@ public class BeanWrapperGenericsTests {
 	}
 
 
+	public interface Foo {
+
+		Number getVersion();
+	}
+
+
+	public interface ObjectWithId<T extends Comparable<T>> {
+
+		T getId();
+
+		void setId(T aId);
+	}
+
 	private static abstract class BaseGenericCollectionBean {
 
 		public abstract Object getMapOfInteger();
@@ -534,7 +539,6 @@ public class BeanWrapperGenericsTests {
 
 		public abstract void setMapOfListOfInteger(Map<String, List<Integer>> mapOfListOfInteger);
 	}
-
 
 	@SuppressWarnings("unused")
 	private static class NestedGenericCollectionBean extends BaseGenericCollectionBean {
@@ -583,7 +587,6 @@ public class BeanWrapperGenericsTests {
 		}
 	}
 
-
 	@SuppressWarnings("unused")
 	private static class ComplexMapHolder {
 
@@ -593,43 +596,35 @@ public class BeanWrapperGenericsTests {
 
 		private DerivedMap derivedIndexedMap = new DerivedMap();
 
-		public void setGenericMap(Map<List<Integer>, List<Long>> genericMap) {
-			this.genericMap = genericMap;
-		}
-
 		public Map<List<Integer>, List<Long>> getGenericMap() {
 			return genericMap;
 		}
 
-		public void setGenericIndexedMap(Map<Integer, List<Long>> genericIndexedMap) {
-			this.genericIndexedMap = genericIndexedMap;
+		public void setGenericMap(Map<List<Integer>, List<Long>> genericMap) {
+			this.genericMap = genericMap;
 		}
 
 		public Map<Integer, List<Long>> getGenericIndexedMap() {
 			return genericIndexedMap;
 		}
 
-		public void setDerivedIndexedMap(DerivedMap derivedIndexedMap) {
-			this.derivedIndexedMap = derivedIndexedMap;
+		public void setGenericIndexedMap(Map<Integer, List<Long>> genericIndexedMap) {
+			this.genericIndexedMap = genericIndexedMap;
 		}
 
 		public DerivedMap getDerivedIndexedMap() {
 			return derivedIndexedMap;
 		}
-	}
 
+		public void setDerivedIndexedMap(DerivedMap derivedIndexedMap) {
+			this.derivedIndexedMap = derivedIndexedMap;
+		}
+	}
 
 	@SuppressWarnings("serial")
 	private static class DerivedMap extends HashMap<Integer, List<Long>> {
 
 	}
-
-
-	public interface Foo {
-
-		Number getVersion();
-	}
-
 
 	public class Bar implements Foo {
 
@@ -644,15 +639,6 @@ public class BeanWrapperGenericsTests {
 			this.version = theDouble;
 		}
 	}
-
-
-	public interface ObjectWithId<T extends Comparable<T>> {
-
-		T getId();
-
-		void setId(T aId);
-	}
-
 
 	public class Promotion implements ObjectWithId<Long> {
 

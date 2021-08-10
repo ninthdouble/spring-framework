@@ -16,18 +16,17 @@
 
 package org.springframework.http.client.reactive;
 
-import java.time.Duration;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import reactor.netty.http.HttpResources;
-import reactor.netty.resources.ConnectionProvider;
-import reactor.netty.resources.LoopResources;
-
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import reactor.netty.http.HttpResources;
+import reactor.netty.resources.ConnectionProvider;
+import reactor.netty.resources.LoopResources;
+
+import java.time.Duration;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Factory to manage Reactor Netty resources, i.e. {@link LoopResources} for
@@ -66,20 +65,6 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 
 	private Duration shutdownTimeout = Duration.ofSeconds(LoopResources.DEFAULT_SHUTDOWN_TIMEOUT);
 
-
-	/**
-	 * Whether to use global Reactor Netty resources via {@link HttpResources}.
-	 * <p>Default is "true" in which case this factory initializes and stops the
-	 * global Reactor Netty resources within Spring's {@code ApplicationContext}
-	 * lifecycle. If set to "false" the factory manages its resources independent
-	 * of the global ones.
-	 * @param useGlobalResources whether to expose and manage the global resources
-	 * @see #addGlobalResourcesConsumer(Consumer)
-	 */
-	public void setUseGlobalResources(boolean useGlobalResources) {
-		this.useGlobalResources = useGlobalResources;
-	}
-
 	/**
 	 * Whether this factory exposes the global
 	 * {@link reactor.netty.http.HttpResources HttpResources} holder.
@@ -89,9 +74,24 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	}
 
 	/**
+	 * Whether to use global Reactor Netty resources via {@link HttpResources}.
+	 * <p>Default is "true" in which case this factory initializes and stops the
+	 * global Reactor Netty resources within Spring's {@code ApplicationContext}
+	 * lifecycle. If set to "false" the factory manages its resources independent
+	 * of the global ones.
+	 *
+	 * @param useGlobalResources whether to expose and manage the global resources
+	 * @see #addGlobalResourcesConsumer(Consumer)
+	 */
+	public void setUseGlobalResources(boolean useGlobalResources) {
+		this.useGlobalResources = useGlobalResources;
+	}
+
+	/**
 	 * Add a Consumer for configuring the global Reactor Netty resources on
 	 * startup. When this option is used, {@link #setUseGlobalResources} is also
 	 * enabled.
+	 *
 	 * @param consumer the consumer to apply
 	 * @see #setUseGlobalResources(boolean)
 	 */
@@ -107,19 +107,11 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	 * <p>By default, {@code ConnectionProvider.elastic("http")} is used.
 	 * <p>Note that this option is ignored if {@code userGlobalResources=false} or
 	 * {@link #setConnectionProvider(ConnectionProvider)} is set.
+	 *
 	 * @param supplier the supplier to use
 	 */
 	public void setConnectionProviderSupplier(Supplier<ConnectionProvider> supplier) {
 		this.connectionProviderSupplier = supplier;
-	}
-
-	/**
-	 * Use this when you want to provide an externally managed
-	 * {@link ConnectionProvider} instance.
-	 * @param connectionProvider the connection provider to use as is
-	 */
-	public void setConnectionProvider(ConnectionProvider connectionProvider) {
-		this.connectionProvider = connectionProvider;
 	}
 
 	/**
@@ -131,24 +123,26 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	}
 
 	/**
+	 * Use this when you want to provide an externally managed
+	 * {@link ConnectionProvider} instance.
+	 *
+	 * @param connectionProvider the connection provider to use as is
+	 */
+	public void setConnectionProvider(ConnectionProvider connectionProvider) {
+		this.connectionProvider = connectionProvider;
+	}
+
+	/**
 	 * Use this when you don't want to participate in global resources and
 	 * you want to customize the creation of the managed {@code LoopResources}.
 	 * <p>By default, {@code LoopResources.create("reactor-http")} is used.
 	 * <p>Note that this option is ignored if {@code userGlobalResources=false} or
 	 * {@link #setLoopResources(LoopResources)} is set.
+	 *
 	 * @param supplier the supplier to use
 	 */
 	public void setLoopResourcesSupplier(Supplier<LoopResources> supplier) {
 		this.loopResourcesSupplier = supplier;
-	}
-
-	/**
-	 * Use this option when you want to provide an externally managed
-	 * {@link LoopResources} instance.
-	 * @param loopResources the loop resources to use as is
-	 */
-	public void setLoopResources(LoopResources loopResources) {
-		this.loopResources = loopResources;
 	}
 
 	/**
@@ -160,6 +154,16 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	}
 
 	/**
+	 * Use this option when you want to provide an externally managed
+	 * {@link LoopResources} instance.
+	 *
+	 * @param loopResources the loop resources to use as is
+	 */
+	public void setLoopResources(LoopResources loopResources) {
+		this.loopResources = loopResources;
+	}
+
+	/**
 	 * Configure the amount of time we'll wait before shutting down resources.
 	 * If a task is submitted during the {@code shutdownQuietPeriod}, it is guaranteed
 	 * to be accepted and the {@code shutdownQuietPeriod} will start over.
@@ -168,8 +172,9 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	 * can also be overridden with the system property
 	 * {@link reactor.netty.ReactorNetty#SHUTDOWN_QUIET_PERIOD
 	 * ReactorNetty.SHUTDOWN_QUIET_PERIOD}.
-	 * @since 5.2.4
+	 *
 	 * @see #setShutdownTimeout(Duration)
+	 * @since 5.2.4
 	 */
 	public void setShutdownQuietPeriod(Duration shutdownQuietPeriod) {
 		Assert.notNull(shutdownQuietPeriod, "shutdownQuietPeriod should not be null");
@@ -185,8 +190,9 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	 * can also be overridden with the system property
 	 * {@link reactor.netty.ReactorNetty#SHUTDOWN_TIMEOUT
 	 * ReactorNetty.SHUTDOWN_TIMEOUT}.
-	 * @since 5.2.4
+	 *
 	 * @see #setShutdownQuietPeriod(Duration)
+	 * @since 5.2.4
 	 */
 	public void setShutdownTimeout(Duration shutdownTimeout) {
 		Assert.notNull(shutdownTimeout, "shutdownTimeout should not be null");
@@ -205,8 +211,7 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 			}
 			this.connectionProvider = httpResources;
 			this.loopResources = httpResources;
-		}
-		else {
+		} else {
 			if (this.loopResources == null) {
 				this.manageLoopResources = true;
 				this.loopResources = this.loopResourcesSupplier.get();
@@ -222,15 +227,13 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 	public void destroy() {
 		if (this.useGlobalResources) {
 			HttpResources.disposeLoopsAndConnectionsLater(this.shutdownQuietPeriod, this.shutdownTimeout).block();
-		}
-		else {
+		} else {
 			try {
 				ConnectionProvider provider = this.connectionProvider;
 				if (provider != null && this.manageConnectionProvider) {
 					provider.disposeLater().block();
 				}
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				// ignore
 			}
 
@@ -239,8 +242,7 @@ public class ReactorResourceFactory implements InitializingBean, DisposableBean 
 				if (resources != null && this.manageLoopResources) {
 					resources.disposeLater(this.shutdownQuietPeriod, this.shutdownTimeout).block();
 				}
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				// ignore
 			}
 		}

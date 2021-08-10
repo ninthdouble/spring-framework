@@ -16,8 +16,6 @@
 
 package org.springframework.http.codec.support;
 
-import java.util.List;
-
 import org.springframework.core.codec.Encoder;
 import org.springframework.http.codec.HttpMessageReader;
 import org.springframework.http.codec.HttpMessageWriter;
@@ -27,6 +25,8 @@ import org.springframework.http.codec.multipart.DefaultPartHttpMessageReader;
 import org.springframework.http.codec.multipart.MultipartHttpMessageReader;
 import org.springframework.http.codec.multipart.PartHttpMessageWriter;
 import org.springframework.lang.Nullable;
+
+import java.util.List;
 
 /**
  * Default implementation of {@link ServerCodecConfigurer.ServerDefaultCodecs}.
@@ -90,8 +90,8 @@ class ServerDefaultCodecsImpl extends BaseDefaultCodecs implements ServerCodecCo
 	private Encoder<?> getSseEncoder() {
 		return this.sseEncoder != null ? this.sseEncoder :
 				jackson2Present ? getJackson2JsonEncoder() :
-				kotlinSerializationJsonPresent ? getKotlinSerializationJsonEncoder() :
-				null;
+						kotlinSerializationJsonPresent ? getKotlinSerializationJsonEncoder() :
+								null;
 	}
 
 }

@@ -65,10 +65,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 
 /**
- * @since 13.03.2003
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Chris Beams
+ * @since 13.03.2003
  */
 public class ProxyFactoryBeanTests {
 
@@ -139,10 +139,10 @@ public class ProxyFactoryBeanTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new ClassPathResource(DBL_TARGETSOURCE_CONTEXT, CLASS));
 		assertThatExceptionOfType(BeanCreationException.class).as("Should not allow TargetSource to be specified in interceptorNames as well as targetSource property")
-			.isThrownBy(() -> bf.getBean(name))
-			.havingCause()
-			.isInstanceOf(AopConfigException.class)
-			.withMessageContaining("TargetSource");
+				.isThrownBy(() -> bf.getBean(name))
+				.havingCause()
+				.isInstanceOf(AopConfigException.class)
+				.withMessageContaining("TargetSource");
 	}
 
 	@Test
@@ -150,10 +150,10 @@ public class ProxyFactoryBeanTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new ClassPathResource(NOTLAST_TARGETSOURCE_CONTEXT, CLASS));
 		assertThatExceptionOfType(BeanCreationException.class).as("TargetSource or non-advised object must be last in interceptorNames")
-			.isThrownBy(() -> bf.getBean("targetSourceNotLast"))
-			.havingCause()
-			.isInstanceOf(AopConfigException.class)
-			.withMessageContaining("interceptorNames");
+				.isThrownBy(() -> bf.getBean("targetSourceNotLast"))
+				.havingCause()
+				.isInstanceOf(AopConfigException.class)
+				.withMessageContaining("interceptorNames");
 	}
 
 	@Test
@@ -191,7 +191,7 @@ public class ProxyFactoryBeanTests {
 		ITestBean tb = (ITestBean) bf.getBean("noTarget");
 		assertThatExceptionOfType(UnsupportedOperationException.class).isThrownBy(() ->
 				tb.getName())
-			.withMessage("getName");
+				.withMessage("getName");
 		FactoryBean<?> pfb = (ProxyFactoryBean) bf.getBean("&noTarget");
 		assertThat(ITestBean.class.isAssignableFrom(pfb.getObjectType())).as("Has correct object type").isTrue();
 	}
@@ -236,8 +236,9 @@ public class ProxyFactoryBeanTests {
 
 	/**
 	 * Uses its own bean factory XML for clarity
+	 *
 	 * @param beanName name of the ProxyFactoryBean definition that should
-	 * be a prototype
+	 *                 be a prototype
 	 */
 	private Object testPrototypeInstancesAreIndependent(String beanName) {
 		// Initial count value set in bean factory XML
@@ -250,7 +251,7 @@ public class ProxyFactoryBeanTests {
 		SideEffectBean raw = (SideEffectBean) bf.getBean("prototypeTarget");
 		assertThat(raw.getCount()).isEqualTo(INITIAL_COUNT);
 		raw.doWork();
-		assertThat(raw.getCount()).isEqualTo(INITIAL_COUNT+1);
+		assertThat(raw.getCount()).isEqualTo(INITIAL_COUNT + 1);
 		raw = (SideEffectBean) bf.getBean("prototypeTarget");
 		assertThat(raw.getCount()).isEqualTo(INITIAL_COUNT);
 
@@ -314,8 +315,8 @@ public class ProxyFactoryBeanTests {
 
 		ITestBean tb1 = (ITestBean) factory.getBean("test1");
 		assertThatExceptionOfType(Exception.class)
-			.isThrownBy(tb1::toString)
-			.isSameAs(ex);
+				.isThrownBy(tb1::toString)
+				.isSameAs(ex);
 	}
 
 	/**
@@ -443,7 +444,7 @@ public class ProxyFactoryBeanTests {
 		Exception expected = new Exception();
 		assertThatExceptionOfType(Exception.class).isThrownBy(() ->
 				echo.echoException(1, expected))
-			.matches(expected::equals);
+				.matches(expected::equals);
 		// No throws handler method: count should still be 0
 		assertThat(th.getCalls()).isEqualTo(0);
 
@@ -451,7 +452,7 @@ public class ProxyFactoryBeanTests {
 		FileNotFoundException expectedFileNotFound = new FileNotFoundException();
 		assertThatIOException().isThrownBy(() ->
 				echo.echoException(1, expectedFileNotFound))
-			.matches(expectedFileNotFound::equals);
+				.matches(expectedFileNotFound::equals);
 
 		// One match
 		assertThat(th.getCalls("ioException")).isEqualTo(1);
@@ -489,7 +490,7 @@ public class ProxyFactoryBeanTests {
 		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new ClassPathResource(INVALID_CONTEXT, CLASS));
 		assertThatExceptionOfType(BeanCreationException.class).as("Should require target name").isThrownBy(() ->
 				bf.getBean("globalsWithoutTarget"))
-			.withCauseInstanceOf(AopConfigException.class);
+				.withCauseInstanceOf(AopConfigException.class);
 	}
 
 	/**
@@ -633,7 +634,7 @@ public class ProxyFactoryBeanTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		new XmlBeanDefinitionReader(bf).loadBeanDefinitions(new ClassPathResource(FROZEN_CONTEXT, CLASS));
 
-		Advised advised = (Advised)bf.getBean("frozen");
+		Advised advised = (Advised) bf.getBean("frozen");
 		assertThat(advised.isFrozen()).as("The proxy should be frozen").isTrue();
 	}
 
@@ -649,16 +650,20 @@ public class ProxyFactoryBeanTests {
 
 
 	/**
+	 * Aspect interface
+	 */
+	public interface AddedGlobalInterface {
+
+		int globalsAdded();
+	}
+
+	/**
 	 * Fires only on void methods. Saves list of methods intercepted.
 	 */
 	@SuppressWarnings("serial")
 	public static class PointcutForVoid extends DefaultPointcutAdvisor {
 
 		public static List<String> methodNames = new ArrayList<>();
-
-		public static void reset() {
-			methodNames.clear();
-		}
 
 		public PointcutForVoid() {
 			setAdvice(new MethodInterceptor() {
@@ -675,8 +680,11 @@ public class ProxyFactoryBeanTests {
 				}
 			});
 		}
-	}
 
+		public static void reset() {
+			methodNames.clear();
+		}
+	}
 
 	public static class DependsOnITestBean {
 
@@ -686,15 +694,6 @@ public class ProxyFactoryBeanTests {
 			this.tb = tb;
 		}
 	}
-
-	/**
-	 * Aspect interface
-	 */
-	public interface AddedGlobalInterface {
-
-		int globalsAdded();
-	}
-
 
 	/**
 	 * Use as a global interceptor. Checks that
@@ -734,7 +733,7 @@ public class ProxyFactoryBeanTests {
 
 		@Override
 		public Class<?>[] getInterfaces() {
-			return new Class<?>[] { AddedGlobalInterface.class };
+			return new Class<?>[]{AddedGlobalInterface.class};
 		}
 
 		@Override

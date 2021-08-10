@@ -20,11 +20,10 @@ import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -89,9 +88,9 @@ public abstract class AbstractDatabaseClientIntegrationTests {
 				.first()
 				.as(StepVerifier::create)
 				.assertNext(actual -> {
-							assertThat(actual).isInstanceOf(Number.class);
-							assertThat(((Number) actual).intValue()).isEqualTo(42055);
-						}).verifyComplete();
+					assertThat(actual).isInstanceOf(Number.class);
+					assertThat(((Number) actual).intValue()).isEqualTo(42055);
+				}).verifyComplete();
 	}
 
 	@Test
@@ -139,7 +138,7 @@ public abstract class AbstractDatabaseClientIntegrationTests {
 
 		databaseClient.sql(
 				"INSERT INTO legoset ( name, manual) VALUES(:name, :manual)")
-				.bind("name","SCHAUFELRADBAGGER")
+				.bind("name", "SCHAUFELRADBAGGER")
 				.bindNull("manual", Integer.class)
 				.filter(statement -> statement.returnGeneratedValues("id"))
 				.map(row -> (Number) row.get("id"))

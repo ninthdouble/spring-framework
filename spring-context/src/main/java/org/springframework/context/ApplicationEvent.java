@@ -30,18 +30,23 @@ import java.util.EventObject;
  */
 public abstract class ApplicationEvent extends EventObject {
 
-	/** use serialVersionUID from Spring 1.2 for interoperability. */
+	/**
+	 * use serialVersionUID from Spring 1.2 for interoperability.
+	 */
 	private static final long serialVersionUID = 7099057708183571937L;
 
-	/** System time when the event happened. */
+	/**
+	 * System time when the event happened.
+	 */
 	private final long timestamp;
 
 
 	/**
 	 * Create a new {@code ApplicationEvent} with its {@link #getTimestamp() timestamp}
 	 * set to {@link System#currentTimeMillis()}.
+	 *
 	 * @param source the object on which the event initially occurred or with
-	 * which the event is associated (never {@code null})
+	 *               which the event is associated (never {@code null})
 	 * @see #ApplicationEvent(Object, Clock)
 	 */
 	public ApplicationEvent(Object source) {
@@ -53,11 +58,12 @@ public abstract class ApplicationEvent extends EventObject {
 	 * Create a new {@code ApplicationEvent} with its {@link #getTimestamp() timestamp}
 	 * set to the value returned by {@link Clock#millis()} in the provided {@link Clock}.
 	 * <p>This constructor is typically used in testing scenarios.
+	 *
 	 * @param source the object on which the event initially occurred or with
-	 * which the event is associated (never {@code null})
-	 * @param clock a clock which will provide the timestamp
-	 * @since 5.3.8
+	 *               which the event is associated (never {@code null})
+	 * @param clock  a clock which will provide the timestamp
 	 * @see #ApplicationEvent(Object)
+	 * @since 5.3.8
 	 */
 	public ApplicationEvent(Object source, Clock clock) {
 		super(source);
@@ -67,6 +73,7 @@ public abstract class ApplicationEvent extends EventObject {
 
 	/**
 	 * Return the time in milliseconds when the event occurred.
+	 *
 	 * @see #ApplicationEvent(Object)
 	 * @see #ApplicationEvent(Object, Clock)
 	 */

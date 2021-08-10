@@ -16,20 +16,15 @@
 
 package org.springframework.web.util.pattern;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.http.server.PathContainer;
+import org.springframework.web.util.pattern.PatternParseException.PatternMessage;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import org.springframework.http.server.PathContainer;
-import org.springframework.web.util.pattern.PatternParseException.PatternMessage;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Exercise the {@link PathPatternParser}.
@@ -448,6 +443,7 @@ public class PathPatternParserTests {
 	/**
 	 * Delegates to {@link #checkError(String, int, PatternMessage, String...)},
 	 * passing {@code -1} as the {@code expectedPos}.
+	 *
 	 * @since 5.2
 	 */
 	private void checkError(String pattern, PatternMessage expectedMessage, String... expectedInserts) {
@@ -458,7 +454,7 @@ public class PathPatternParserTests {
 	 * @param expectedPos the expected position, or {@code -1} if the position should not be checked
 	 */
 	private void checkError(String pattern, int expectedPos, PatternMessage expectedMessage,
-			String... expectedInserts) {
+							String... expectedInserts) {
 
 		assertThatExceptionOfType(PatternParseException.class)
 				.isThrownBy(() -> pathPattern = parse(pattern))

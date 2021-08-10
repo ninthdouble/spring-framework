@@ -16,10 +16,10 @@
 
 package org.springframework.http;
 
+import org.junit.jupiter.api.Test;
+
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

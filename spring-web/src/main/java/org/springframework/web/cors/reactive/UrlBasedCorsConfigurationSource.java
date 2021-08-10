@@ -16,9 +16,6 @@
 
 package org.springframework.web.cors.reactive;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.Nullable;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,14 +23,17 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * {@code CorsConfigurationSource} that uses URL patterns to select the
  * {@code CorsConfiguration} for a request.
  *
  * @author Sebastien Deleuze
  * @author Brian Clozel
- * @since 5.0
  * @see PathPattern
+ * @since 5.0
  */
 public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource {
 
@@ -45,6 +45,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	/**
 	 * Construct a new {@code UrlBasedCorsConfigurationSource} instance with default
 	 * {@code PathPatternParser}.
+	 *
 	 * @since 5.0.6
 	 */
 	public UrlBasedCorsConfigurationSource() {

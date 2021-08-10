@@ -16,12 +16,12 @@
 
 package org.springframework.core;
 
+import org.springframework.lang.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
-
-import org.springframework.lang.Nullable;
 
 /**
  * Static holder for local Spring properties, i.e. defined at the Spring library level.
@@ -37,7 +37,6 @@ import org.springframework.lang.Nullable;
  * See {@link #setFlag} for a convenient way to locally set such flags to "true".
  *
  * @author Juergen Hoeller
- * @since 3.2.7
  * @see org.springframework.beans.CachedIntrospectionResults#IGNORE_BEANINFO_PROPERTY_NAME
  * @see org.springframework.context.index.CandidateComponentsIndexLoader#IGNORE_INDEX
  * @see org.springframework.core.env.AbstractEnvironment#IGNORE_GETENV_PROPERTY_NAME
@@ -48,6 +47,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.test.context.NestedTestConfiguration#ENCLOSING_CONFIGURATION_PROPERTY_NAME
  * @see org.springframework.test.context.TestConstructor#TEST_CONSTRUCTOR_AUTOWIRE_MODE_PROPERTY_NAME
  * @see org.springframework.test.context.cache.ContextCache#MAX_CONTEXT_CACHE_SIZE_PROPERTY_NAME
+ * @since 3.2.7
  */
 public final class SpringProperties {
 
@@ -66,8 +66,7 @@ public final class SpringProperties {
 					localProperties.load(is);
 				}
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			System.err.println("Could not load 'spring.properties' file from local classpath: " + ex);
 		}
 	}
@@ -80,14 +79,14 @@ public final class SpringProperties {
 	/**
 	 * Programmatically set a local property, overriding an entry in the
 	 * {@code spring.properties} file (if any).
-	 * @param key the property key
+	 *
+	 * @param key   the property key
 	 * @param value the associated property value, or {@code null} to reset it
 	 */
 	public static void setProperty(String key, @Nullable String value) {
 		if (value != null) {
 			localProperties.setProperty(key, value);
-		}
-		else {
+		} else {
 			localProperties.remove(key);
 		}
 	}
@@ -95,6 +94,7 @@ public final class SpringProperties {
 	/**
 	 * Retrieve the property value for the given key, checking local Spring
 	 * properties first and falling back to JVM-level system properties.
+	 *
 	 * @param key the property key
 	 * @return the associated property value, or {@code null} if none found
 	 */
@@ -104,8 +104,7 @@ public final class SpringProperties {
 		if (value == null) {
 			try {
 				value = System.getProperty(key);
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				System.err.println("Could not retrieve system property '" + key + "': " + ex);
 			}
 		}
@@ -115,6 +114,7 @@ public final class SpringProperties {
 	/**
 	 * Programmatically set a local flag to "true", overriding an
 	 * entry in the {@code spring.properties} file (if any).
+	 *
 	 * @param key the property key
 	 */
 	public static void setFlag(String key) {
@@ -123,6 +123,7 @@ public final class SpringProperties {
 
 	/**
 	 * Retrieve the flag for the given property key.
+	 *
 	 * @param key the property key
 	 * @return {@code true} if the property is set to "true",
 	 * {@code} false otherwise

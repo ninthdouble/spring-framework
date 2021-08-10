@@ -16,17 +16,16 @@
 
 package org.springframework.core.convert.converter;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.util.comparator.ComparableComparator;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.util.comparator.ComparableComparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -140,7 +139,9 @@ class ConvertingComparatorTests {
 			assertThat(o2).isInstanceOf(Integer.class);
 			this.called = true;
 			return super.compare(o1, o2);
-		};
+		}
+
+		;
 
 		public void assertCalled() {
 			assertThat(this.called).isTrue();

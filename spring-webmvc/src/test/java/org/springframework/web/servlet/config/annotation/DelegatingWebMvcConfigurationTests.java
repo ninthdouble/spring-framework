@@ -16,17 +16,12 @@
 
 package org.springframework.web.servlet.config.annotation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.BiConsumer;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -50,6 +45,10 @@ import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPatternParser;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -63,32 +62,23 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class DelegatingWebMvcConfigurationTests {
 
+	private final DelegatingWebMvcConfiguration webMvcConfig = new DelegatingWebMvcConfiguration();
 	@Mock
 	private WebMvcConfigurer webMvcConfigurer;
-
 	@Captor
 	private ArgumentCaptor<List<HttpMessageConverter<?>>> converters;
-
 	@Captor
 	private ArgumentCaptor<ContentNegotiationConfigurer> contentNegotiationConfigurer;
-
 	@Captor
 	private ArgumentCaptor<FormattingConversionService> conversionService;
-
 	@Captor
 	private ArgumentCaptor<List<HandlerMethodArgumentResolver>> resolvers;
-
 	@Captor
 	private ArgumentCaptor<List<HandlerMethodReturnValueHandler>> handlers;
-
 	@Captor
 	private ArgumentCaptor<AsyncSupportConfigurer> asyncConfigurer;
-
 	@Captor
 	private ArgumentCaptor<List<HandlerExceptionResolver>> exceptionResolvers;
-
-	private final DelegatingWebMvcConfiguration webMvcConfig = new DelegatingWebMvcConfiguration();
-
 
 	@Test
 	public void requestMappingHandlerAdapter() {
@@ -218,10 +208,12 @@ public class DelegatingWebMvcConfigurationTests {
 						.setUrlPathHelper(pathHelper)
 						.setPathMatcher(pathMatcher);
 			}
+
 			@Override
 			public void addViewControllers(ViewControllerRegistry registry) {
 				registry.addViewController("/").setViewName("home");
 			}
+
 			@Override
 			public void addResourceHandlers(ResourceHandlerRegistry registry) {
 				registry.addResourceHandler("/resources/**").addResourceLocations("/");
@@ -285,10 +277,12 @@ public class DelegatingWebMvcConfigurationTests {
 						.setUrlPathHelper(pathHelper)
 						.setPathMatcher(pathMatcher);
 			}
+
 			@Override
 			public void addViewControllers(ViewControllerRegistry registry) {
 				registry.addViewController("/").setViewName("home");
 			}
+
 			@Override
 			public void addResourceHandlers(ResourceHandlerRegistry registry) {
 				registry.addResourceHandler("/resources/**").addResourceLocations("/");

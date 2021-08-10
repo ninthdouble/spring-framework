@@ -16,14 +16,7 @@
 
 package org.springframework.beans;
 
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-
+import org.openjdk.jmh.annotations.*;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 
@@ -34,6 +27,12 @@ import org.springframework.beans.propertyeditors.StringTrimmerEditor;
  */
 @BenchmarkMode(Mode.Throughput)
 public class AbstractPropertyAccessorBenchmark {
+
+	@Benchmark
+	public PrimitiveArrayBean setPropertyValue(BenchmarkState state) {
+		state.propertyAccessor.setPropertyValue("array", state.input);
+		return state.target;
+	}
 
 	@State(Scope.Benchmark)
 	public static class BenchmarkState {
@@ -56,8 +55,7 @@ public class AbstractPropertyAccessorBenchmark {
 			this.input = new int[1024];
 			if (this.accessor.equals("DirectFieldAccessor")) {
 				this.propertyAccessor = new DirectFieldAccessor(this.target);
-			}
-			else {
+			} else {
 				this.propertyAccessor = new BeanWrapperImpl(this.target);
 			}
 			switch (this.customEditor) {
@@ -77,12 +75,6 @@ public class AbstractPropertyAccessorBenchmark {
 
 		}
 
-	}
-
-	@Benchmark
-	public PrimitiveArrayBean setPropertyValue(BenchmarkState state) {
-		state.propertyAccessor.setPropertyValue("array", state.input);
-		return state.target;
 	}
 
 	@SuppressWarnings("unused")

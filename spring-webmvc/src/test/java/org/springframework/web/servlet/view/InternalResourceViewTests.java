@@ -16,20 +16,18 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.servlet.View;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockRequestDispatcher;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -90,7 +88,7 @@ public class InternalResourceViewTests {
 		assertThat(response.getForwardedUrl()).isEqualTo(url);
 
 		model.forEach((key, value) -> assertThat(request.getAttribute(key)).as("Values for model key '" + key
-						+ "' must match").isEqualTo(value));
+				+ "' must match").isEqualTo(value));
 	}
 
 	@Test

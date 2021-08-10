@@ -16,14 +16,13 @@
 
 package org.springframework.web.reactive.function.server;
 
-import java.util.Map;
-import java.util.function.Function;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.util.pattern.PathPatternParser;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Implementation of {@link RouterFunctions.Visitor} that changes the

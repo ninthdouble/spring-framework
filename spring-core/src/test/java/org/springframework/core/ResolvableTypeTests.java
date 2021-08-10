@@ -16,49 +16,25 @@
 
 package org.springframework.core;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.AbstractCollection;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.Callable;
-
 import org.assertj.core.api.AbstractAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.core.ResolvableType.VariableResolver;
 import org.springframework.util.MultiValueMap;
+
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link ResolvableType}.
@@ -73,7 +49,12 @@ class ResolvableTypeTests {
 
 	@Captor
 	private ArgumentCaptor<TypeVariable<?>> typeVariableCaptor;
+	@SuppressWarnings("unused")
+	private HashMap<Integer, List<String>> myMap;
 
+	private static ResolvableTypeAssert assertThatResolvableType(ResolvableType type) {
+		return new ResolvableTypeAssert(type);
+	}
 
 	@Test
 	void noneReturnValues() throws Exception {
@@ -134,7 +115,8 @@ class ResolvableTypeTests {
 		assertThat(type.isAssignableFrom(String.class)).isTrue();
 	}
 
-	@Test  // gh-23321
+	@Test
+		// gh-23321
 	void forRawClassAssignableFromTypeVariable() throws Exception {
 		ResolvableType typeVariable = ResolvableType.forClass(ExtendsList.class).as(List.class).getGeneric();
 		ResolvableType raw = ResolvableType.forRawClass(CharSequence.class);
@@ -150,7 +132,7 @@ class ResolvableTypeTests {
 	void forInstanceMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forInstance(null))
-			.withMessageContaining("Instance must not be null");
+				.withMessageContaining("Instance must not be null");
 	}
 
 	@Test
@@ -203,7 +185,7 @@ class ResolvableTypeTests {
 	void forFieldMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forField(null))
-			.withMessageContaining("Field must not be null");
+				.withMessageContaining("Field must not be null");
 	}
 
 	@Test
@@ -217,7 +199,7 @@ class ResolvableTypeTests {
 	void forConstructorParameterMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forConstructorParameter(null, 0))
-			.withMessageContaining("Constructor must not be null");
+				.withMessageContaining("Constructor must not be null");
 	}
 
 	@Test
@@ -231,7 +213,7 @@ class ResolvableTypeTests {
 	void forMethodParameterByIndexMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forMethodParameter(null, 0))
-			.withMessageContaining("Method must not be null");
+				.withMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -271,20 +253,21 @@ class ResolvableTypeTests {
 	void forMethodParameterMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forMethodParameter(null))
-			.withMessageContaining("MethodParameter must not be null");
+				.withMessageContaining("MethodParameter must not be null");
 	}
 
-	@Test  // SPR-16210
+	@Test
+		// SPR-16210
 	void forMethodParameterWithSameSignatureAndGenerics() throws Exception {
 		Method method = Methods.class.getMethod("list1");
 		MethodParameter methodParameter = MethodParameter.forExecutable(method, -1);
 		ResolvableType type = ResolvableType.forMethodParameter(methodParameter);
-		assertThat(((MethodParameter)type.getSource()).getMethod()).isEqualTo(method);
+		assertThat(((MethodParameter) type.getSource()).getMethod()).isEqualTo(method);
 
 		method = Methods.class.getMethod("list2");
 		methodParameter = MethodParameter.forExecutable(method, -1);
 		type = ResolvableType.forMethodParameter(methodParameter);
-		assertThat(((MethodParameter)type.getSource()).getMethod()).isEqualTo(method);
+		assertThat(((MethodParameter) type.getSource()).getMethod()).isEqualTo(method);
 	}
 
 	@Test
@@ -298,7 +281,7 @@ class ResolvableTypeTests {
 	void forMethodReturnMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forMethodReturnType(null))
-			.withMessageContaining("Method must not be null");
+				.withMessageContaining("Method must not be null");
 	}
 
 	@Test
@@ -345,7 +328,7 @@ class ResolvableTypeTests {
 		ResolvableType type = ResolvableType.forField(field);
 		assertThat(type.isArray()).isEqualTo(true);
 		assertThat(type.getComponentType().getType())
-			.isEqualTo(((Class) field.getGenericType()).getComponentType());
+				.isEqualTo(((Class) field.getGenericType()).getComponentType());
 	}
 
 	@Test
@@ -445,7 +428,7 @@ class ResolvableTypeTests {
 		}
 		assertThat(interfaces.toString()).isEqualTo(
 				"[java.io.Serializable, java.lang.Cloneable, " +
-				"java.util.List<java.lang.CharSequence>, java.util.RandomAccess]");
+						"java.util.List<java.lang.CharSequence>, java.util.RandomAccess]");
 	}
 
 	@Test
@@ -688,7 +671,6 @@ class ResolvableTypeTests {
 		assertThat(type.resolve()).isEqualTo(CharSequence.class);
 	}
 
-
 	@Test
 	void resolveBoundedTypeVariableWildcardResult() throws Exception {
 		ResolvableType type = ResolvableType.forMethodReturnType(Methods.class.getMethod("boundedTypeVariableWildcardResult"));
@@ -754,7 +736,7 @@ class ResolvableTypeTests {
 		ResolvableType type = ResolvableType.forClass(ExtendsList.class);
 		assertThat(type.resolve()).isEqualTo(ExtendsList.class);
 		assertThat(type.asCollection().resolveGeneric())
-			.isEqualTo(CharSequence.class);
+				.isEqualTo(CharSequence.class);
 	}
 
 	@Test
@@ -900,7 +882,8 @@ class ResolvableTypeTests {
 	void resolveTypeVariableFromDeclaredParameterizedTypeReference() throws Exception {
 		Type sourceType = Methods.class.getMethod("charSequenceReturn").getGenericReturnType();
 		ResolvableType reflectiveType = ResolvableType.forType(sourceType);
-		ResolvableType declaredType = ResolvableType.forType(new ParameterizedTypeReference<List<CharSequence>>() {});
+		ResolvableType declaredType = ResolvableType.forType(new ParameterizedTypeReference<List<CharSequence>>() {
+		});
 		assertThat(declaredType).isEqualTo(reflectiveType);
 	}
 
@@ -967,7 +950,7 @@ class ResolvableTypeTests {
 	void isAssignableFromMustNotBeNull() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forClass(Object.class).isAssignableFrom((ResolvableType) null))
-			.withMessageContaining("Type must not be null");
+				.withMessageContaining("Type must not be null");
 	}
 
 	@Test
@@ -1209,7 +1192,7 @@ class ResolvableTypeTests {
 	void forClassWithMismatchedGenerics() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				ResolvableType.forClassWithGenerics(Map.class, Integer.class))
-			.withMessageContaining("Mismatched number of generics specified");
+				.withMessageContaining("Mismatched number of generics specified");
 	}
 
 	@Test
@@ -1315,7 +1298,6 @@ class ResolvableTypeTests {
 		assertThat(type.resolveGeneric()).isEqualTo(Integer.class);
 	}
 
-
 	private ResolvableType testSerialization(ResolvableType type) throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -1337,14 +1319,60 @@ class ResolvableTypeTests {
 		return ResolvableType.forField(Fields.class.getField(field), TypedFields.class);
 	}
 
-	private static ResolvableTypeAssert assertThatResolvableType(ResolvableType type) {
-		return new ResolvableTypeAssert(type);
+
+	interface Methods<T> {
+
+		List<CharSequence> charSequenceReturn();
+
+		void charSequenceParameter(List<CharSequence> cs);
+
+		<R extends CharSequence & Serializable> R boundedTypeVariableResult();
+
+		Map<String, ? extends List<? extends CharSequence>> boundedTypeVariableWildcardResult();
+
+		void nested(Map<Map<String, Integer>, Map<Byte, Long>> p);
+
+		void typedParameter(T p);
+
+		T typedReturn();
+
+		Set<?> wildcardSet();
+
+		List<String> list1();
+
+		List<String> list2();
+	}
+
+	interface TypedMethods extends Methods<String> {
 	}
 
 
-	@SuppressWarnings("unused")
-	private HashMap<Integer, List<String>> myMap;
+	public interface MyInterfaceType<T> {
+	}
 
+
+	interface Wildcard<T extends Number> extends List<T> {
+	}
+
+
+	interface RawExtendsWildcard extends Wildcard {
+	}
+
+
+	interface VariableNameSwitch<V, K> extends MultiValueMap<K, V> {
+	}
+
+
+	interface ListOfGenericArray extends List<List<String>[]> {
+	}
+
+
+	public interface IProvider<P> {
+	}
+
+
+	public interface IBase<BT extends IBase<BT>> {
+	}
 
 	@SuppressWarnings("serial")
 	static class ExtendsList extends ArrayList<CharSequence> {
@@ -1353,7 +1381,6 @@ class ResolvableTypeTests {
 	@SuppressWarnings("serial")
 	static class ExtendsMap extends HashMap<String, Integer> {
 	}
-
 
 	static class Fields<T> {
 
@@ -1386,46 +1413,16 @@ class ResolvableTypeTests {
 		public VariableNameSwitch<Integer, String> stringIntegerMultiValueMapSwitched;
 
 		public List<List> listOfListOfUnknown;
-
+		public Map<Map<String, Integer>, Map<Byte, Long>> nested;
+		public T[] variableTypeGenericArray;
 		@SuppressWarnings("unused")
 		private List<String> privateField;
-
 		@SuppressWarnings("unused")
 		private List<String> otherPrivateField;
-
-		public Map<Map<String, Integer>, Map<Byte, Long>> nested;
-
-		public T[] variableTypeGenericArray;
 	}
-
 
 	static class TypedFields extends Fields<String> {
 	}
-
-
-	interface Methods<T> {
-
-		List<CharSequence> charSequenceReturn();
-
-		void charSequenceParameter(List<CharSequence> cs);
-
-		<R extends CharSequence & Serializable> R boundedTypeVariableResult();
-
-		Map<String, ? extends List<? extends CharSequence>> boundedTypeVariableWildcardResult();
-
-		void nested(Map<Map<String, Integer>, Map<Byte, Long>> p);
-
-		void typedParameter(T p);
-
-		T typedReturn();
-
-		Set<?> wildcardSet();
-
-		List<String> list1();
-
-		List<String> list2();
-	}
-
 
 	static class AssignmentBase<O, C, S> {
 
@@ -1474,14 +1471,8 @@ class ResolvableTypeTests {
 		public List<List<String>> complexWildcard4;
 	}
 
-
 	static class Assignment extends AssignmentBase<Object, CharSequence, String> {
 	}
-
-
-	interface TypedMethods extends Methods<String> {
-	}
-
 
 	static class Constructors<T> {
 
@@ -1491,7 +1482,6 @@ class ResolvableTypeTests {
 		public Constructors(Map<T, Long> p) {
 		}
 	}
-
 
 	static class TypedConstructors extends Constructors<String> {
 
@@ -1504,70 +1494,6 @@ class ResolvableTypeTests {
 		}
 	}
 
-
-	public interface MyInterfaceType<T> {
-	}
-
-	public class MyGenericInterfaceType<T> implements MyInterfaceType<T>, ResolvableTypeProvider {
-
-		private final Class<T> type;
-
-		public MyGenericInterfaceType(Class<T> type) {
-			this.type = type;
-		}
-
-		@Override
-		public ResolvableType getResolvableType() {
-			if (this.type == null) {
-				return null;
-			}
-			return ResolvableType.forClassWithGenerics(getClass(), this.type);
-		}
-	}
-
-
-	public class MySimpleInterfaceType implements MyInterfaceType<String> {
-	}
-
-	public abstract class MySimpleInterfaceTypeWithImplementsRaw implements MyInterfaceType<String>, List {
-	}
-
-	public abstract class ExtendsMySimpleInterfaceTypeWithImplementsRaw extends MySimpleInterfaceTypeWithImplementsRaw {
-	}
-
-
-	public class MyCollectionInterfaceType implements MyInterfaceType<Collection<String>> {
-	}
-
-
-	public abstract class MySuperclassType<T> {
-	}
-
-
-	public class MySimpleSuperclassType extends MySuperclassType<String> {
-	}
-
-
-	public class MyCollectionSuperclassType extends MySuperclassType<Collection<String>> {
-	}
-
-
-	interface Wildcard<T extends Number> extends List<T> {
-	}
-
-
-	interface RawExtendsWildcard extends Wildcard {
-	}
-
-
-	interface VariableNameSwitch<V, K> extends MultiValueMap<K, V> {
-	}
-
-
-	interface ListOfGenericArray extends List<List<String>[]> {
-	}
-
-
 	static class EnclosedInParameterizedType<T> {
 
 		static class InnerRaw {
@@ -1579,39 +1505,13 @@ class ResolvableTypeTests {
 		}
 	}
 
-
 	static class TypedEnclosedInParameterizedType extends EnclosedInParameterizedType<Integer> {
 
 		class TypedInnerTyped extends InnerTyped<Long> {
 		}
 	}
 
-
-	public interface IProvider<P> {
-	}
-
-	public interface IBase<BT extends IBase<BT>> {
-	}
-
-	public abstract class AbstractBase<BT extends IBase<BT>> implements IBase<BT> {
-	}
-
-	public class BaseImplementation extends AbstractBase<BaseImplementation> {
-	}
-
-	public class BaseProvider<BT extends IBase<BT>> implements IProvider<IBase<BT>> {
-
-		public Collection<IBase<BT>> stuff;
-	}
-
-
-	public abstract class UnresolvedWithGenerics {
-
-		Set<Integer> set;
-	}
-
-
-	private static class ResolvableTypeAssert extends AbstractAssert<ResolvableTypeAssert, ResolvableType>{
+	private static class ResolvableTypeAssert extends AbstractAssert<ResolvableTypeAssert, ResolvableType> {
 
 		public ResolvableTypeAssert(ResolvableType actual) {
 			super(actual, ResolvableTypeAssert.class);
@@ -1644,6 +1544,60 @@ class ResolvableTypeTests {
 			}
 			return type.getType() + ":" + type;
 		}
+	}
+
+	public class MyGenericInterfaceType<T> implements MyInterfaceType<T>, ResolvableTypeProvider {
+
+		private final Class<T> type;
+
+		public MyGenericInterfaceType(Class<T> type) {
+			this.type = type;
+		}
+
+		@Override
+		public ResolvableType getResolvableType() {
+			if (this.type == null) {
+				return null;
+			}
+			return ResolvableType.forClassWithGenerics(getClass(), this.type);
+		}
+	}
+
+	public class MySimpleInterfaceType implements MyInterfaceType<String> {
+	}
+
+	public abstract class MySimpleInterfaceTypeWithImplementsRaw implements MyInterfaceType<String>, List {
+	}
+
+	public abstract class ExtendsMySimpleInterfaceTypeWithImplementsRaw extends MySimpleInterfaceTypeWithImplementsRaw {
+	}
+
+	public class MyCollectionInterfaceType implements MyInterfaceType<Collection<String>> {
+	}
+
+	public abstract class MySuperclassType<T> {
+	}
+
+	public class MySimpleSuperclassType extends MySuperclassType<String> {
+	}
+
+	public class MyCollectionSuperclassType extends MySuperclassType<Collection<String>> {
+	}
+
+	public abstract class AbstractBase<BT extends IBase<BT>> implements IBase<BT> {
+	}
+
+	public class BaseImplementation extends AbstractBase<BaseImplementation> {
+	}
+
+	public class BaseProvider<BT extends IBase<BT>> implements IProvider<IBase<BT>> {
+
+		public Collection<IBase<BT>> stuff;
+	}
+
+	public abstract class UnresolvedWithGenerics {
+
+		Set<Integer> set;
 	}
 
 }

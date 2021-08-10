@@ -18,7 +18,6 @@ package org.springframework.r2dbc.connection;
 
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
-
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.util.Assert;
@@ -36,9 +35,9 @@ import org.springframework.util.Assert;
  *
  * @author Mark Paluch
  * @author Christoph Strobl
- * @since 5.3
  * @see R2dbcTransactionManager
  * @see ConnectionFactoryUtils
+ * @since 5.3
  */
 public class ConnectionHolder extends ResourceHolderSupport {
 
@@ -51,6 +50,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	/**
 	 * Create a new ConnectionHolder for the given R2DBC {@link Connection},
 	 * assuming that there is no ongoing transaction.
+	 *
 	 * @param connection the R2DBC {@link Connection} to hold
 	 * @see #ConnectionHolder(Connection, boolean)
 	 */
@@ -60,9 +60,10 @@ public class ConnectionHolder extends ResourceHolderSupport {
 
 	/**
 	 * Create a new ConnectionHolder for the given R2DBC {@link Connection}.
-	 * @param connection the R2DBC {@link Connection} to hold
+	 *
+	 * @param connection        the R2DBC {@link Connection} to hold
 	 * @param transactionActive whether the given {@link Connection} is involved
-	 * in an ongoing transaction
+	 *                          in an ongoing transaction
 	 */
 	public ConnectionHolder(Connection connection, boolean transactionActive) {
 		this.currentConnection = connection;
@@ -78,7 +79,15 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	}
 
 	/**
+	 * Return whether this holder represents an active, R2DBC-managed transaction.
+	 */
+	protected boolean isTransactionActive() {
+		return this.transactionActive;
+	}
+
+	/**
 	 * Set whether this holder represents an active, R2DBC-managed transaction.
+	 *
 	 * @see R2dbcTransactionManager
 	 */
 	protected void setTransactionActive(boolean transactionActive) {
@@ -86,10 +95,16 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	}
 
 	/**
-	 * Return whether this holder represents an active, R2DBC-managed transaction.
+	 * Return the current {@link Connection} held by this {@link ConnectionHolder}.
+	 * <p>This will be the same {@link Connection} until {@code released} gets called
+	 * on the {@link ConnectionHolder}, which will reset the held {@link Connection},
+	 * fetching a new {@link Connection} on demand.
+	 *
+	 * @see #released()
 	 */
-	protected boolean isTransactionActive() {
-		return this.transactionActive;
+	public Connection getConnection() {
+		Assert.notNull(this.currentConnection, "Active Connection is required");
+		return this.currentConnection;
 	}
 
 	/**
@@ -99,18 +114,6 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	 */
 	protected void setConnection(@Nullable Connection connection) {
 		this.currentConnection = connection;
-	}
-
-	/**
-	 * Return the current {@link Connection} held by this {@link ConnectionHolder}.
-	 * <p>This will be the same {@link Connection} until {@code released} gets called
-	 * on the {@link ConnectionHolder}, which will reset the held {@link Connection},
-	 * fetching a new {@link Connection} on demand.
-	 * @see #released()
-	 */
-	public Connection getConnection() {
-		Assert.notNull(this.currentConnection, "Active Connection is required");
-		return this.currentConnection;
 	}
 
 	/**

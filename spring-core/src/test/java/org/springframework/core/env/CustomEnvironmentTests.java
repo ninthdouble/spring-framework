@@ -16,15 +16,10 @@
 
 package org.springframework.core.env;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.lang.Nullable;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +33,8 @@ class CustomEnvironmentTests {
 
 	@Test
 	void control() {
-		Environment env = new AbstractEnvironment() { };
+		Environment env = new AbstractEnvironment() {
+		};
 		assertThat(env.acceptsProfiles(defaultProfile())).isTrue();
 	}
 
@@ -76,8 +72,8 @@ class CustomEnvironmentTests {
 			@SuppressWarnings("serial")
 			protected Set<String> getReservedDefaultProfiles() {
 				return new HashSet<String>() {{
-						add("rd1");
-						add("rd2");
+					add("rd1");
+					add("rd2");
 				}};
 			}
 		}
@@ -115,6 +111,7 @@ class CustomEnvironmentTests {
 			protected String doGetActiveProfilesProperty() {
 				return null;
 			}
+
 			@Override
 			@Nullable
 			protected String doGetDefaultProfilesProperty() {
@@ -132,9 +129,11 @@ class CustomEnvironmentTests {
 
 	@Test
 	void withCustomMutablePropertySources() {
-		class CustomMutablePropertySources extends MutablePropertySources {}
+		class CustomMutablePropertySources extends MutablePropertySources {
+		}
 		MutablePropertySources propertySources = new CustomMutablePropertySources();
-		ConfigurableEnvironment env = new AbstractEnvironment(propertySources) {};
+		ConfigurableEnvironment env = new AbstractEnvironment(propertySources) {
+		};
 		assertThat(env.getPropertySources()).isInstanceOf(CustomMutablePropertySources.class);
 	}
 
@@ -144,10 +143,11 @@ class CustomEnvironmentTests {
 			public CustomPropertySourcesPropertyResolver(PropertySources propertySources) {
 				super(propertySources);
 			}
+
 			@Override
 			@Nullable
 			public String getProperty(String key) {
-				return super.getProperty(key)+"-test";
+				return super.getProperty(key) + "-test";
 			}
 		}
 

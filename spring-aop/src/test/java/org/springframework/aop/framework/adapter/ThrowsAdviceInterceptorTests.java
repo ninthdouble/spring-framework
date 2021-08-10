@@ -16,18 +16,15 @@
 
 package org.springframework.aop.framework.adapter;
 
+import org.aopalliance.intercept.MethodInvocation;
+import org.junit.jupiter.api.Test;
+import org.springframework.aop.testfixture.advice.MyThrowsHandler;
+
 import java.io.FileNotFoundException;
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 
-import org.aopalliance.intercept.MethodInvocation;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.aop.testfixture.advice.MyThrowsHandler;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -65,7 +62,7 @@ public class ThrowsAdviceInterceptorTests {
 		given(mi.proceed()).willThrow(ex);
 		assertThatExceptionOfType(Exception.class).isThrownBy(() ->
 				ti.invoke(mi))
-			.isSameAs(ex);
+				.isSameAs(ex);
 		assertThat(th.getCalls()).isEqualTo(0);
 	}
 
@@ -80,7 +77,7 @@ public class ThrowsAdviceInterceptorTests {
 		given(mi.proceed()).willThrow(ex);
 		assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(() ->
 				ti.invoke(mi))
-			.isSameAs(ex);
+				.isSameAs(ex);
 		assertThat(th.getCalls()).isEqualTo(1);
 		assertThat(th.getCalls("ioException")).isEqualTo(1);
 	}
@@ -95,7 +92,7 @@ public class ThrowsAdviceInterceptorTests {
 		given(mi.proceed()).willThrow(ex);
 		assertThatExceptionOfType(ConnectException.class).isThrownBy(() ->
 				ti.invoke(mi))
-			.isSameAs(ex);
+				.isSameAs(ex);
 		assertThat(th.getCalls()).isEqualTo(1);
 		assertThat(th.getCalls("remoteException")).isEqualTo(1);
 	}
@@ -120,7 +117,7 @@ public class ThrowsAdviceInterceptorTests {
 		given(mi.proceed()).willThrow(ex);
 		assertThatExceptionOfType(Throwable.class).isThrownBy(() ->
 				ti.invoke(mi))
-			.isSameAs(t);
+				.isSameAs(t);
 		assertThat(th.getCalls()).isEqualTo(1);
 		assertThat(th.getCalls("remoteException")).isEqualTo(1);
 	}

@@ -2,4 +2,7 @@
 drop table T_TEST;
 
 -- Create the test table
-create table T_TEST (NAME varchar(50) not null);
+create table T_TEST
+(
+    NAME varchar(50) not null
+);

@@ -16,16 +16,11 @@
 
 package org.springframework.beans;
 
-import java.beans.BeanInfo;
-import java.beans.IndexedPropertyDescriptor;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
+
+import java.beans.*;
+import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,8 +34,11 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadMethodOnly() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public String getFoo() { return null; }
+		@SuppressWarnings("unused")
+		class C {
+			public String getFoo() {
+				return null;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -55,8 +53,10 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardWriteMethodOnly() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public void setFoo(String f) { }
+		@SuppressWarnings("unused")
+		class C {
+			public void setFoo(String f) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -71,9 +71,14 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadAndWriteMethods() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public void setFoo(String f) { }
-			public String getFoo() { return null; }
+		@SuppressWarnings("unused")
+		class C {
+			public String getFoo() {
+				return null;
+			}			public void setFoo(String f) {
+			}
+
+
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -88,8 +93,11 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void nonStandardWriteMethodOnly() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public C setFoo(String foo) { return this; }
+		@SuppressWarnings("unused")
+		class C {
+			public C setFoo(String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -104,9 +112,15 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadAndNonStandardWriteMethods() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public String getFoo() { return null; }
-			public C setFoo(String foo) { return this; }
+		@SuppressWarnings("unused")
+		class C {
+			public String getFoo() {
+				return null;
+			}
+
+			public C setFoo(String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -125,9 +139,15 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadAndNonStandardIndexedWriteMethod() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public String[] getFoo() { return null; }
-			public C setFoo(int i, String foo) { return this; }
+		@SuppressWarnings("unused")
+		class C {
+			public String[] getFoo() {
+				return null;
+			}
+
+			public C setFoo(int i, String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -145,10 +165,19 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadMethodsAndOverloadedNonStandardWriteMethods() throws Exception {
-		@SuppressWarnings("unused") class C {
-			public String getFoo() { return null; }
-			public C setFoo(String foo) { return this; }
-			public C setFoo(Number foo) { return this; }
+		@SuppressWarnings("unused")
+		class C {
+			public String getFoo() {
+				return null;
+			}
+
+			public C setFoo(String foo) {
+				return this;
+			}
+
+			public C setFoo(Number foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -175,7 +204,8 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void cornerSpr9414() throws IntrospectionException {
-		@SuppressWarnings("unused") class Parent {
+		@SuppressWarnings("unused")
+		class Parent {
 			public Number getProperty1() {
 				return 1;
 			}
@@ -216,11 +246,17 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void standardReadMethodInSuperclassAndNonStandardWriteMethodInSubclass() throws Exception {
-		@SuppressWarnings("unused") class B {
-			public String getFoo() { return null; }
+		@SuppressWarnings("unused")
+		class B {
+			public String getFoo() {
+				return null;
+			}
 		}
-		@SuppressWarnings("unused") class C extends B {
-			public C setFoo(String foo) { return this; }
+		@SuppressWarnings("unused")
+		class C extends B {
+			public C setFoo(String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -243,7 +279,11 @@ public class ExtendedBeanInfoTests {
 			@SuppressWarnings("unchecked")
 			protected final This instance = (This) this;
 			private String foo;
-			public String getFoo() { return foo; }
+
+			public String getFoo() {
+				return foo;
+			}
+
 			public This setFoo(String foo) {
 				this.foo = foo;
 				return this.instance;
@@ -252,7 +292,11 @@ public class ExtendedBeanInfoTests {
 
 		class C extends B<C> {
 			private int bar = -1;
-			public int getBar() { return bar; }
+
+			public int getBar() {
+				return bar;
+			}
+
 			public C setBar(int bar) {
 				this.bar = bar;
 				return this.instance;
@@ -260,8 +304,8 @@ public class ExtendedBeanInfoTests {
 		}
 
 		C c = new C()
-			.setFoo("blue")
-			.setBar(42);
+				.setFoo("blue")
+				.setBar(42);
 
 		assertThat(c.getFoo()).isEqualTo("blue");
 		assertThat(c.getBar()).isEqualTo(42);
@@ -291,9 +335,15 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void nonPublicStandardReadAndWriteMethods() throws Exception {
-		@SuppressWarnings("unused") class C {
-			String getFoo() { return null; }
-			C setFoo(String foo) { return this; }
+		@SuppressWarnings("unused")
+		class C {
+			String getFoo() {
+				return null;
+			}
+
+			C setFoo(String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -312,9 +362,14 @@ public class ExtendedBeanInfoTests {
 	 */
 	@Test
 	public void readMethodReturnsSupertypeOfWriteMethodParameter() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Number getFoo() { return null; }
-			public void setFoo(Integer foo) { }
+		@SuppressWarnings("unused")
+		class C {
+			public Number getFoo() {
+				return null;
+			}
+
+			public void setFoo(Integer foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -327,9 +382,14 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void indexedReadMethodReturnsSupertypeOfIndexedWriteMethodParameter() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Number getFoos(int index) { return null; }
-			public void setFoos(int index, Integer foo) { }
+		@SuppressWarnings("unused")
+		class C {
+			public Number getFoos(int index) {
+				return null;
+			}
+
+			public void setFoos(int index, Integer foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -346,9 +406,14 @@ public class ExtendedBeanInfoTests {
 	 */
 	@Test
 	public void readMethodReturnsSubtypeOfWriteMethodParameter() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Integer getFoo() { return null; }
-			public void setFoo(Number foo) { }
+		@SuppressWarnings("unused")
+		class C {
+			public Integer getFoo() {
+				return null;
+			}
+
+			public void setFoo(Number foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -363,9 +428,14 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void indexedReadMethodReturnsSubtypeOfIndexedWriteMethodParameter() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Integer getFoos(int index) { return null; }
-			public void setFoo(int index, Number foo) { }
+		@SuppressWarnings("unused")
+		class C {
+			public Integer getFoos(int index) {
+				return null;
+			}
+
+			public void setFoo(int index, Number foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -383,7 +453,9 @@ public class ExtendedBeanInfoTests {
 		@SuppressWarnings("unused")
 		class C {
 			// indexed read method
-			public String getFoos(int i) { return null; }
+			public String getFoos(int i) {
+				return null;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -401,7 +473,8 @@ public class ExtendedBeanInfoTests {
 		@SuppressWarnings("unused")
 		class C {
 			// indexed write method
-			public void setFoos(int i, String foo) { }
+			public void setFoos(int i, String foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -419,9 +492,13 @@ public class ExtendedBeanInfoTests {
 		@SuppressWarnings("unused")
 		class C {
 			// indexed read method
-			public String getFoos(int i) { return null; }
+			public String getFoos(int i) {
+				return null;
+			}
+
 			// indexed write method
-			public void setFoos(int i, String foo) { }
+			public void setFoos(int i, String foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -443,13 +520,22 @@ public class ExtendedBeanInfoTests {
 		@SuppressWarnings("unused")
 		class C {
 			// read method
-			public String[] getFoos() { return null; }
-			// indexed read method
-			public String getFoos(int i) { return null; }
+			public String[] getFoos() {
+				return null;
+			}
+
 			// write method
-			public void setFoos(String[] foos) { }
+			public void setFoos(String[] foos) {
+			}
+
+			// indexed read method
+			public String getFoos(int i) {
+				return null;
+			}
+
 			// indexed write method
-			public void setFoos(int i, String foo) { }
+			public void setFoos(int i, String foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -471,9 +557,14 @@ public class ExtendedBeanInfoTests {
 		@SuppressWarnings("unused")
 		class C {
 			// indexed read method
-			public String getFoos(int i) { return null; }
+			public String getFoos(int i) {
+				return null;
+			}
+
 			// non-standard indexed write method
-			public C setFoos(int i, String foo) { return this; }
+			public C setFoos(int i, String foo) {
+				return this;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -492,12 +583,20 @@ public class ExtendedBeanInfoTests {
 	public void indexedReadAndNonStandardWriteAndNonStandardIndexedWrite() throws IntrospectionException {
 		@SuppressWarnings("unused")
 		class C {
-			// non-standard write method
-			public C setFoos(String[] foos) { return this; }
 			// indexed read method
-			public String getFoos(int i) { return null; }
+			public String getFoos(int i) {
+				return null;
+			}			// non-standard write method
+			public C setFoos(String[] foos) {
+				return this;
+			}
+
 			// non-standard indexed write method
-			public C setFoos(int i, String foo) { return this; }
+			public C setFoos(int i, String foo) {
+				return this;
+			}
+
+
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -523,10 +622,14 @@ public class ExtendedBeanInfoTests {
 		{ // baseline with standard write method
 			@SuppressWarnings("unused")
 			class C {
-				// VOID-RETURNING, NON-INDEXED write method
-				public void setFoos(String[] foos) { }
 				// indexed read method
-				public String getFoos(int i) { return null; }
+				public String getFoos(int i) {
+					return null;
+				}				// VOID-RETURNING, NON-INDEXED write method
+				public void setFoos(String[] foos) {
+				}
+
+
 			}
 
 			BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -544,10 +647,15 @@ public class ExtendedBeanInfoTests {
 		{ // variant with non-standard write method
 			@SuppressWarnings("unused")
 			class C {
-				// NON-VOID-RETURNING, NON-INDEXED write method
-				public C setFoos(String[] foos) { return this; }
 				// indexed read method
-				public String getFoos(int i) { return null; }
+				public String getFoos(int i) {
+					return null;
+				}				// NON-VOID-RETURNING, NON-INDEXED write method
+				public C setFoos(String[] foos) {
+					return this;
+				}
+
+
 			}
 
 			BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -570,6 +678,7 @@ public class ExtendedBeanInfoTests {
 	 * methods" intermittently (approximately one out of every four times) under JDK 7
 	 * due to non-deterministic results from {@link Class#getDeclaredMethods()}.
 	 * See https://bugs.java.com/view_bug.do?bug_id=7023180
+	 *
 	 * @see #cornerSpr9702()
 	 */
 	@Test
@@ -579,15 +688,26 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void subclassWriteMethodWithCovariantReturnType() throws IntrospectionException {
-		@SuppressWarnings("unused") class B {
-			public String getFoo() { return null; }
-			public Number setFoo(String foo) { return null; }
+		@SuppressWarnings("unused")
+		class B {
+			public String getFoo() {
+				return null;
+			}
+
+			public Number setFoo(String foo) {
+				return null;
+			}
 		}
 		class C extends B {
 			@Override
-			public String getFoo() { return null; }
+			public String getFoo() {
+				return null;
+			}
+
 			@Override
-			public Integer setFoo(String foo) { return null; }
+			public Integer setFoo(String foo) {
+				return null;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -608,9 +728,13 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void nonStandardReadMethodAndStandardWriteMethod() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public void getFoo() { }
-			public void setFoo(String foo) { }
+		@SuppressWarnings("unused")
+		class C {
+			public void getFoo() {
+			}
+
+			public void setFoo(String foo) {
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -629,9 +753,15 @@ public class ExtendedBeanInfoTests {
 	 */
 	@Test
 	public void emptyPropertiesIgnored() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Object set(Object o) { return null; }
-			public Object set(int i, Object o) { return null; }
+		@SuppressWarnings("unused")
+		class C {
+			public Object set(Object o) {
+				return null;
+			}
+
+			public Object set(int i, Object o) {
+				return null;
+			}
 		}
 
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
@@ -642,9 +772,15 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void overloadedNonStandardWriteMethodsOnly_orderA() throws IntrospectionException, SecurityException, NoSuchMethodException {
-		@SuppressWarnings("unused") class C {
-			public Object setFoo(String p) { return new Object(); }
-			public Object setFoo(int p) { return new Object(); }
+		@SuppressWarnings("unused")
+		class C {
+			public Object setFoo(String p) {
+				return new Object();
+			}
+
+			public Object setFoo(int p) {
+				return new Object();
+			}
 		}
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
 
@@ -670,9 +806,15 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void overloadedNonStandardWriteMethodsOnly_orderB() throws IntrospectionException, SecurityException, NoSuchMethodException {
-		@SuppressWarnings("unused") class C {
-			public Object setFoo(int p) { return new Object(); }
-			public Object setFoo(String p) { return new Object(); }
+		@SuppressWarnings("unused")
+		class C {
+			public Object setFoo(int p) {
+				return new Object();
+			}
+
+			public Object setFoo(String p) {
+				return new Object();
+			}
 		}
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
 
@@ -705,10 +847,19 @@ public class ExtendedBeanInfoTests {
 	 */
 	@Test
 	public void reproSpr8522() throws IntrospectionException {
-		@SuppressWarnings("unused") class C {
-			public Object setDateFormat(String pattern) { return new Object(); }
-			public Object setDateFormat(int style) { return new Object(); }
-			public Object setDateFormat(int dateStyle, int timeStyle) { return new Object(); }
+		@SuppressWarnings("unused")
+		class C {
+			public Object setDateFormat(String pattern) {
+				return new Object();
+			}
+
+			public Object setDateFormat(int style) {
+				return new Object();
+			}
+
+			public Object setDateFormat(int dateStyle, int timeStyle) {
+				return new Object();
+			}
 		}
 		BeanInfo bi = Introspector.getBeanInfo(C.class);
 
@@ -742,7 +893,9 @@ public class ExtendedBeanInfoTests {
 	public void propertyCountsWithNonStandardWriteMethod() throws IntrospectionException {
 		class ExtendedTestBean extends TestBean {
 			@SuppressWarnings("unused")
-			public ExtendedTestBean setFoo(String s) { return this; }
+			public ExtendedTestBean setFoo(String s) {
+				return this;
+			}
 		}
 		BeanInfo bi = Introspector.getBeanInfo(ExtendedTestBean.class);
 		BeanInfo ebi = new ExtendedBeanInfo(bi);
@@ -755,7 +908,7 @@ public class ExtendedBeanInfoTests {
 			}
 		}
 		assertThat(found).isTrue();
-		assertThat(ebi.getPropertyDescriptors().length).isEqualTo(bi.getPropertyDescriptors().length+1);
+		assertThat(ebi.getPropertyDescriptors().length).isEqualTo(bi.getPropertyDescriptors().length + 1);
 	}
 
 	/**
@@ -833,10 +986,17 @@ public class ExtendedBeanInfoTests {
 
 	@Test
 	public void cornerSpr8937AndSpr12582() throws IntrospectionException {
-		@SuppressWarnings("unused") class A {
-			public void setAddress(String addr){ }
-			public void setAddress(int index, String addr) { }
-			public String getAddress(int index){ return null; }
+		@SuppressWarnings("unused")
+		class A {
+			public void setAddress(String addr) {
+			}
+
+			public void setAddress(int index, String addr) {
+			}
+
+			public String getAddress(int index) {
+				return null;
+			}
 		}
 
 		// Baseline:
@@ -906,7 +1066,7 @@ public class ExtendedBeanInfoTests {
 				if (!(pd instanceof IndexedPropertyDescriptor)) {
 					return false;
 				}
-				return ((IndexedPropertyDescriptor)pd).getIndexedWriteMethod() != null;
+				return ((IndexedPropertyDescriptor) pd).getIndexedWriteMethod() != null;
 			}
 		}
 		return false;
@@ -918,7 +1078,7 @@ public class ExtendedBeanInfoTests {
 				if (!(pd instanceof IndexedPropertyDescriptor)) {
 					return false;
 				}
-				return ((IndexedPropertyDescriptor)pd).getIndexedReadMethod() != null;
+				return ((IndexedPropertyDescriptor) pd).getIndexedReadMethod() != null;
 			}
 		}
 		return false;
@@ -957,6 +1117,11 @@ public class ExtendedBeanInfoTests {
 		TextBook getBook();
 	}
 
+	static class WithStaticWriteMethod {
+
+		public static void setProp1(String prop1) {
+		}
+	}
 
 	abstract class Library {
 
@@ -968,19 +1133,11 @@ public class ExtendedBeanInfoTests {
 		}
 	}
 
-
 	class LawLibrary extends Library implements TextBookOperations {
 
 		@Override
 		public LawBook getBook() {
 			return null;
-		}
-	}
-
-
-	static class WithStaticWriteMethod {
-
-		public static void setProp1(String prop1) {
 		}
 	}
 

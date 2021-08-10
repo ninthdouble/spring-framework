@@ -17,7 +17,6 @@
 package org.springframework.web.util;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.NestedExceptionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;

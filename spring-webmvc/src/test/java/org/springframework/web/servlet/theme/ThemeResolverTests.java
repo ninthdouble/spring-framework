@@ -17,7 +17,6 @@
 package org.springframework.web.servlet.theme;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
@@ -53,8 +52,7 @@ public class ThemeResolverTests {
 			themeResolver.setThemeName(request, response, null);
 			themeName = themeResolver.resolveThemeName(request);
 			assertThat(defaultName).isEqualTo(themeName);
-		}
-		catch (UnsupportedOperationException ex) {
+		} catch (UnsupportedOperationException ex) {
 			assertThat(shouldSet).as("able to set theme name").isFalse();
 		}
 	}
@@ -71,7 +69,7 @@ public class ThemeResolverTests {
 
 	@Test
 	public void sessionThemeResolver() {
-		internalTest(new SessionThemeResolver(), true,AbstractThemeResolver.ORIGINAL_DEFAULT_THEME_NAME);
+		internalTest(new SessionThemeResolver(), true, AbstractThemeResolver.ORIGINAL_DEFAULT_THEME_NAME);
 	}
 
 	@Test

@@ -16,19 +16,17 @@
 
 package org.springframework.test.web.servlet.htmlunit;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import javax.servlet.http.Cookie;
-
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.Cookie;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

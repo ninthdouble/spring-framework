@@ -16,6 +16,26 @@
 
 package org.springframework.http.converter.json;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import org.springframework.core.GenericTypeResolver;
+import org.springframework.http.HttpInputMessage;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.*;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StreamUtils;
+import org.springframework.util.TypeUtils;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,45 +43,9 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-
-import org.springframework.core.GenericTypeResolver;
-import org.springframework.http.HttpInputMessage;
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConversionException;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StreamUtils;
-import org.springframework.util.TypeUtils;
 
 /**
  * Abstract base class for Jackson based and content type independent
@@ -74,11 +58,17 @@ import org.springframework.util.TypeUtils;
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller
  * @author Sebastien Deleuze
- * @since 4.1
  * @see MappingJackson2HttpMessageConverter
+ * @since 4.1
  */
 public abstract class AbstractJackson2HttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
 
+	/**
+	 * The default charset used by the converter.
+	 */
+	@Nullable
+	@Deprecated
+	public static final Charset DEFAULT_CHARSET = null;
 	private static final Map<String, JsonEncoding> ENCODINGS;
 
 	static {
@@ -88,15 +78,6 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 		}
 		ENCODINGS.put("US-ASCII", JsonEncoding.UTF8);
 	}
-
-
-	/**
-	 * The default charset used by the converter.
-	 */
-	@Nullable
-	@Deprecated
-	public static final Charset DEFAULT_CHARSET = null;
-
 
 	protected ObjectMapper defaultObjectMapper;
 
@@ -127,6 +108,12 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 		setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
 	}
 
+	/**
+	 * Return the main {@code ObjectMapper} in use.
+	 */
+	public ObjectMapper getObjectMapper() {
+		return this.defaultObjectMapper;
+	}
 
 	/**
 	 * Configure the main {@code ObjectMapper} to use for Object conversion.
@@ -138,19 +125,13 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 	 * Another option for refining the serialization process is to use Jackson's
 	 * provided annotations on the types to be serialized, in which case a
 	 * custom-configured ObjectMapper is unnecessary.
+	 *
 	 * @see #registerObjectMappersForType(Class, Consumer)
 	 */
 	public void setObjectMapper(ObjectMapper objectMapper) {
 		Assert.notNull(objectMapper, "ObjectMapper must not be null");
 		this.defaultObjectMapper = objectMapper;
 		configurePrettyPrint();
-	}
-
-	/**
-	 * Return the main {@code ObjectMapper} in use.
-	 */
-	public ObjectMapper getObjectMapper() {
-		return this.defaultObjectMapper;
 	}
 
 	/**
@@ -164,9 +145,10 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 	 * class. Therefore it is important for the mappings configured here to
 	 * {@link MediaType#includes(MediaType) include} every MediaType that must
 	 * be supported for the given class.
-	 * @param clazz the type of Object to register ObjectMapper instances for
+	 *
+	 * @param clazz     the type of Object to register ObjectMapper instances for
 	 * @param registrar a consumer to populate or otherwise update the
-	 * MediaType-to-ObjectMapper associations for the given Class
+	 *                  MediaType-to-ObjectMapper associations for the given Class
 	 * @since 5.3.4
 	 */
 	public void registerObjectMappersForType(Class<?> clazz, Consumer<Map<MediaType, ObjectMapper>> registrar) {
@@ -180,6 +162,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 
 	/**
 	 * Return ObjectMapper registrations for the given class, if any.
+	 *
 	 * @param clazz the class to look up for registrations for
 	 * @return a map with registered MediaType-to-ObjectMapper registrations,
 	 * or empty if in case of no registrations for the given class.
@@ -306,9 +289,10 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 	/**
 	 * Determine whether to log the given exception coming from a
 	 * {@link ObjectMapper#canDeserialize} / {@link ObjectMapper#canSerialize} check.
-	 * @param type the class that Jackson tested for (de-)serializability
+	 *
+	 * @param type  the class that Jackson tested for (de-)serializability
 	 * @param cause the Jackson-thrown exception to evaluate
-	 * (typically a {@link JsonMappingException})
+	 *              (typically a {@link JsonMappingException})
 	 * @since 4.3
 	 */
 	protected void logWarningIfNecessary(Type type, @Nullable Throwable cause) {
@@ -324,11 +308,9 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 					"serialization for type [" + type + "]";
 			if (debugLevel) {
 				logger.debug(msg, cause);
-			}
-			else if (logger.isDebugEnabled()) {
+			} else if (logger.isDebugEnabled()) {
 				logger.warn(msg, cause);
-			}
-			else {
+			} else {
 				logger.warn(msg + ": " + cause);
 			}
 		}
@@ -367,8 +349,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 					ObjectReader objectReader = objectMapper.readerWithView(deserializationView).forType(javaType);
 					if (isUnicode) {
 						return objectReader.readValue(inputMessage.getBody());
-					}
-					else {
+					} else {
 						Reader reader = new InputStreamReader(inputMessage.getBody(), charset);
 						return objectReader.readValue(reader);
 					}
@@ -376,16 +357,13 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 			}
 			if (isUnicode) {
 				return objectMapper.readValue(inputMessage.getBody(), javaType);
-			}
-			else {
+			} else {
 				Reader reader = new InputStreamReader(inputMessage.getBody(), charset);
 				return objectMapper.readValue(reader, javaType);
 			}
-		}
-		catch (InvalidDefinitionException ex) {
+		} catch (InvalidDefinitionException ex) {
 			throw new HttpMessageConversionException("Type definition error: " + ex.getType(), ex);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new HttpMessageNotReadableException("JSON parse error: " + ex.getOriginalMessage(), ex, inputMessage);
 		}
 	}
@@ -394,6 +372,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 	 * Determine the charset to use for JSON input.
 	 * <p>By default this is either the charset from the input {@code MediaType}
 	 * or otherwise falling back on {@code UTF-8}. Can be overridden in subclasses.
+	 *
 	 * @param contentType the content type of the HTTP input message
 	 * @return the charset to use
 	 * @since 5.1.18
@@ -401,8 +380,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 	protected Charset getCharset(@Nullable MediaType contentType) {
 		if (contentType != null && contentType.getCharset() != null) {
 			return contentType.getCharset();
-		}
-		else {
+		} else {
 			return StandardCharsets.UTF_8;
 		}
 	}
@@ -455,36 +433,37 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 
 			writeSuffix(generator, object);
 			generator.flush();
-		}
-		catch (InvalidDefinitionException ex) {
+		} catch (InvalidDefinitionException ex) {
 			throw new HttpMessageConversionException("Type definition error: " + ex.getType(), ex);
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new HttpMessageNotWritableException("Could not write JSON: " + ex.getOriginalMessage(), ex);
 		}
 	}
 
 	/**
 	 * Write a prefix before the main content.
+	 *
 	 * @param generator the generator to use for writing content.
-	 * @param object the object to write to the output message.
+	 * @param object    the object to write to the output message.
 	 */
 	protected void writePrefix(JsonGenerator generator, Object object) throws IOException {
 	}
 
 	/**
 	 * Write a suffix after the main content.
+	 *
 	 * @param generator the generator to use for writing content.
-	 * @param object the object to write to the output message.
+	 * @param object    the object to write to the output message.
 	 */
 	protected void writeSuffix(JsonGenerator generator, Object object) throws IOException {
 	}
 
 	/**
 	 * Return the Jackson {@link JavaType} for the specified type and context class.
-	 * @param type the generic type to return the Jackson JavaType for
+	 *
+	 * @param type         the generic type to return the Jackson JavaType for
 	 * @param contextClass a context class for the target type, for example a class
-	 * in which the target type appears in a method signature (can be {@code null})
+	 *                     in which the target type appears in a method signature (can be {@code null})
 	 * @return the Jackson JavaType
 	 */
 	protected JavaType getJavaType(Type type, @Nullable Class<?> contextClass) {
@@ -493,6 +472,7 @@ public abstract class AbstractJackson2HttpMessageConverter extends AbstractGener
 
 	/**
 	 * Determine the JSON encoding to use for the given content type.
+	 *
 	 * @param contentType the media type as requested by the caller
 	 * @return the JSON encoding to use (never {@code null})
 	 */

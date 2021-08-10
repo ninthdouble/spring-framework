@@ -17,7 +17,6 @@
 package org.springframework.web.util;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
@@ -74,7 +73,7 @@ public class ContentCachingRequestWrapperTests {
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				FileCopyUtils.copyToByteArray(wrapper.getInputStream()))
-			.withMessage("3");
+				.withMessage("3");
 	}
 
 	@Test

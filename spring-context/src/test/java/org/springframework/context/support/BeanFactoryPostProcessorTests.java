@@ -162,12 +162,11 @@ public class BeanFactoryPostProcessorTests {
 	public static class TestBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
 
 		public String initValue;
+		public boolean wasCalled = false;
 
 		public void setInitValue(String initValue) {
 			this.initValue = initValue;
 		}
-
-		public boolean wasCalled = false;
 
 		@Override
 		public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
@@ -267,12 +266,12 @@ public class BeanFactoryPostProcessorTests {
 
 		private ListeningBean listeningBean;
 
-		public void setListeningBean(ListeningBean listeningBean) {
-			this.listeningBean = listeningBean;
-		}
-
 		public ListeningBean getListeningBean() {
 			return listeningBean;
+		}
+
+		public void setListeningBean(ListeningBean listeningBean) {
+			this.listeningBean = listeningBean;
 		}
 
 		@Override

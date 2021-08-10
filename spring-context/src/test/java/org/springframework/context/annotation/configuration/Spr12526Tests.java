@@ -52,6 +52,11 @@ class Spr12526Tests {
 	}
 
 
+	public interface Service {
+
+		void doStuff();
+	}
+
 	@Configuration
 	static class TestContext {
 
@@ -78,7 +83,6 @@ class Spr12526Tests {
 		}
 	}
 
-
 	public static class CustomCondition {
 
 		private boolean condition;
@@ -92,13 +96,6 @@ class Spr12526Tests {
 		}
 	}
 
-
-	public interface Service {
-
-		void doStuff();
-	}
-
-
 	public static class FirstService implements Service {
 
 		private DependencyOne dependency;
@@ -111,14 +108,13 @@ class Spr12526Tests {
 			}
 		}
 
+		public DependencyOne getDependency() {
+			return dependency;
+		}
+
 		@Resource(name = "dependencyOne")
 		public void setDependency(DependencyOne dependency) {
 			this.dependency = dependency;
-		}
-
-
-		public DependencyOne getDependency() {
-			return dependency;
 		}
 	}
 
@@ -134,14 +130,13 @@ class Spr12526Tests {
 			}
 		}
 
+		public DependencyTwo getDependency() {
+			return dependency;
+		}
+
 		@Resource(name = "dependencyTwo")
 		public void setDependency(DependencyTwo dependency) {
 			this.dependency = dependency;
-		}
-
-
-		public DependencyTwo getDependency() {
-			return dependency;
 		}
 	}
 

@@ -152,7 +152,7 @@ class BeanNameAutoProxyCreatorTests {
 	@Test
 	void withFrozenProxy() {
 		ITestBean testBean = (ITestBean) beanFactory.getBean("frozenBean");
-		assertThat(((Advised)testBean).isFrozen()).isTrue();
+		assertThat(((Advised) testBean).isFrozen()).isTrue();
 	}
 
 	@Test
@@ -166,7 +166,7 @@ class BeanNameAutoProxyCreatorTests {
 	}
 
 
-	private void jdkAssertions(ITestBean tb, int nopInterceptorCount)  {
+	private void jdkAssertions(ITestBean tb, int nopInterceptorCount) {
 		NopInterceptor nop = (NopInterceptor) beanFactory.getBean("nopInterceptor");
 		assertThat(nop.getCount()).isEqualTo(0);
 		assertThat(AopUtils.isJdkDynamicProxy(tb)).isTrue();

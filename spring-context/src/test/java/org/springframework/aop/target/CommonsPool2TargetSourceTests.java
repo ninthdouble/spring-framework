@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * Tests for pooling invoker interceptor.
- *
+ * <p>
  * TODO: need to make these tests stronger: it's hard to
  * make too many assumptions about a pool.
  *

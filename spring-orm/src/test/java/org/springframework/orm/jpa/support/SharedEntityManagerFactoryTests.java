@@ -16,14 +16,13 @@
 
 package org.springframework.orm.jpa.support;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.EntityManagerProxy;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -68,8 +67,7 @@ public class SharedEntityManagerFactoryTests {
 		TransactionSynchronizationManager.bindResource(mockEmf, new EntityManagerHolder(mockEm));
 		try {
 			assertThat(emProxy.getTargetEntityManager()).isSameAs(mockEm);
-		}
-		finally {
+		} finally {
 			TransactionSynchronizationManager.unbindResource(mockEmf);
 		}
 

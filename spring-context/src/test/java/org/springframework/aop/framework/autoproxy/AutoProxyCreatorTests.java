@@ -377,11 +377,9 @@ public class AutoProxyCreatorTests {
 	@SuppressWarnings("serial")
 	public static class TestAutoProxyCreator extends AbstractAutoProxyCreator {
 
-		private boolean proxyFactoryBean = true;
-
-		private boolean proxyObject = true;
-
 		public TestInterceptor testInterceptor = new TestInterceptor();
+		private boolean proxyFactoryBean = true;
+		private boolean proxyObject = true;
 
 		public TestAutoProxyCreator() {
 			setProxyTargetClass(true);
@@ -401,23 +399,20 @@ public class AutoProxyCreatorTests {
 		protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String name, @Nullable TargetSource customTargetSource) {
 			if (StaticMessageSource.class.equals(beanClass)) {
 				return DO_NOT_PROXY;
-			}
-			else if (name.endsWith("ToBeProxied")) {
+			} else if (name.endsWith("ToBeProxied")) {
 				boolean isFactoryBean = FactoryBean.class.isAssignableFrom(beanClass);
 				if ((this.proxyFactoryBean && isFactoryBean) || (this.proxyObject && !isFactoryBean)) {
 					return getAdvicesAndAdvisors();
-				}
-				else {
+				} else {
 					return DO_NOT_PROXY;
 				}
-			}
-			else {
+			} else {
 				return PROXY_WITHOUT_ADDITIONAL_INTERCEPTORS;
 			}
 		}
 
 		protected Object[] getAdvicesAndAdvisors() {
-			return new Object[] {this.testInterceptor};
+			return new Object[]{this.testInterceptor};
 		}
 	}
 
@@ -437,7 +432,7 @@ public class AutoProxyCreatorTests {
 		protected Object[] getAdvicesAndAdvisors() {
 			DefaultIntroductionAdvisor advisor = new DefaultIntroductionAdvisor(this.testInterceptor);
 			advisor.addInterface(Serializable.class);
-			return new Object[] {this.testInterceptor, advisor};
+			return new Object[]{this.testInterceptor, advisor};
 		}
 	}
 

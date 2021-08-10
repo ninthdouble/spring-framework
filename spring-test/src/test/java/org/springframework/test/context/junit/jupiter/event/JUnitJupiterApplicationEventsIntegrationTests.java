@@ -16,15 +16,7 @@
 
 package org.springframework.test.context.junit.jupiter.event;
 
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestInstance;
-
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -32,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
@@ -53,6 +47,38 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 	@Autowired
 	ApplicationEvents applicationEvents;
 
+	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
+		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
+				.containsExactly(types);
+	}
+
+	private static void assertPayloads(Stream<String> events, String... values) {
+		assertThat(events).extracting(Object::toString).containsExactly(values);
+	}
+
+	private static void assertCustomEvents(ApplicationEvents events, String... messages) {
+		assertThat(events.stream(CustomEvent.class)).extracting(CustomEvent::getMessage).containsExactly(messages);
+	}
+
+	@Configuration
+	static class Config {
+	}
+
+	@SuppressWarnings("serial")
+	static class CustomEvent extends ApplicationEvent {
+
+		private final String message;
+
+
+		CustomEvent(String message) {
+			super(message);
+			this.message = message;
+		}
+
+		String getMessage() {
+			return message;
+		}
+	}
 
 	@Nested
 	@TestInstance(PER_METHOD)
@@ -156,8 +182,7 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 			if (!testAlreadyExecuted) {
 				assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestClassEvent",
 						"BeforeTestMethodEvent");
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent");
 			}
 
@@ -167,8 +192,7 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 			if (!testAlreadyExecuted) {
 				assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestClassEvent",
 						"BeforeTestMethodEvent", "CustomEvent");
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent");
 			}
 		}
@@ -189,8 +213,7 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 			if (!testAlreadyExecuted) {
 				assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestClassEvent",
 						"BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent");
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent");
 			}
 
@@ -200,8 +223,7 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 			if (!testAlreadyExecuted) {
 				assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestClassEvent",
 						"BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent", "CustomEvent");
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 						"CustomEvent");
 			}
@@ -215,8 +237,7 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 				assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestClassEvent",
 						"BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent", "CustomEvent",
 						"AfterTestExecutionEvent");
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 						"CustomEvent", "AfterTestExecutionEvent");
 			}
@@ -229,46 +250,10 @@ class JUnitJupiterApplicationEventsIntegrationTests {
 						"BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent", "CustomEvent",
 						"AfterTestExecutionEvent", "CustomEvent");
 				testAlreadyExecuted = true;
-			}
-			else {
+			} else {
 				assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 						"CustomEvent", "AfterTestExecutionEvent", "CustomEvent");
 			}
-		}
-	}
-
-
-	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
-		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
-			.containsExactly(types);
-	}
-
-	private static void assertPayloads(Stream<String> events, String... values) {
-		assertThat(events).extracting(Object::toString).containsExactly(values);
-	}
-
-	private static void assertCustomEvents(ApplicationEvents events, String... messages) {
-		assertThat(events.stream(CustomEvent.class)).extracting(CustomEvent::getMessage).containsExactly(messages);
-	}
-
-
-	@Configuration
-	static class Config {
-	}
-
-	@SuppressWarnings("serial")
-	static class CustomEvent extends ApplicationEvent {
-
-		private final String message;
-
-
-		CustomEvent(String message) {
-			super(message);
-			this.message = message;
-		}
-
-		String getMessage() {
-			return message;
 		}
 	}
 

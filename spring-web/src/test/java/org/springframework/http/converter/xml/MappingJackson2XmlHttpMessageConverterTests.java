@@ -16,14 +16,9 @@
 
 package org.springframework.http.converter.xml;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.MockHttpInputMessage;
@@ -31,9 +26,11 @@ import org.springframework.http.MockHttpOutputMessage;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.within;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Jackson 2.x XML converter tests.
@@ -205,6 +202,14 @@ public class MappingJackson2XmlHttpMessageConverterTests {
 	}
 
 
+	private interface MyJacksonView1 {
+	}
+
+
+	private interface MyJacksonView2 {
+	}
+
+	;
 
 	public static class MyBean {
 
@@ -269,11 +274,7 @@ public class MappingJackson2XmlHttpMessageConverterTests {
 		}
 	}
 
-
-	private interface MyJacksonView1 {};
-
-	private interface MyJacksonView2 {};
-
+	;
 
 	@SuppressWarnings("unused")
 	private static class JacksonViewBean {

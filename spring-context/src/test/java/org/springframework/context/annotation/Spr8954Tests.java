@@ -85,13 +85,20 @@ public class Spr8954Tests {
 	}
 
 
+	interface AnInterface {
+	}
+
+
+	interface PredictedType {
+	}
+
 	static class FooConfig {
 
-		@Bean FooFactoryBean foo() {
+		@Bean
+		FooFactoryBean foo() {
 			return new FooFactoryBean();
 		}
 	}
-
 
 	static class FooFactoryBean implements FactoryBean<Foo>, AnInterface {
 
@@ -111,18 +118,8 @@ public class Spr8954Tests {
 		}
 	}
 
-
-	interface AnInterface {
-	}
-
-
 	static class Foo {
 	}
-
-
-	interface PredictedType {
-	}
-
 
 	static class PredictingBPP implements SmartInstantiationAwareBeanPostProcessor {
 

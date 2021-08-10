@@ -34,16 +34,16 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @deprecated as of 5.3.9 in favor of using the {@code checkNotModified} methods
- * in {@link org.springframework.web.context.request.WebRequest}, or from an
- * annotated controller method, returning a
- * {@link org.springframework.http.ResponseEntity} with an "ETag" and/or
- * "Last-Modified" headers set.
  * @see javax.servlet.http.HttpServlet#getLastModified
  * @see Controller
  * @see SimpleControllerHandlerAdapter
  * @see org.springframework.web.HttpRequestHandler
  * @see HttpRequestHandlerAdapter
+ * @deprecated as of 5.3.9 in favor of using the {@code checkNotModified} methods
+ * in {@link org.springframework.web.context.request.WebRequest}, or from an
+ * annotated controller method, returning a
+ * {@link org.springframework.http.ResponseEntity} with an "ETag" and/or
+ * "Last-Modified" headers set.
  */
 @Deprecated
 public interface LastModified {
@@ -54,6 +54,7 @@ public interface LastModified {
 	 * <p>The return value will be sent to the HTTP client as Last-Modified header,
 	 * and compared with If-Modified-Since headers that the client sends back.
 	 * The content will only get regenerated if there has been a modification.
+	 *
 	 * @param request current HTTP request
 	 * @return the time the underlying resource was last modified, or -1
 	 * meaning that the content must always be regenerated

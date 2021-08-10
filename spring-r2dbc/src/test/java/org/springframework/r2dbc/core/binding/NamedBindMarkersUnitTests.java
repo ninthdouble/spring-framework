@@ -43,7 +43,7 @@ class NamedBindMarkersUnitTests {
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "$", "?" })
+	@ValueSource(strings = {"$", "?"})
 	void nextShouldIncrementBindMarker(String prefix) {
 		BindMarkers bindMarkers = BindMarkersFactory.named(prefix, "p", 32).create();
 
@@ -69,7 +69,7 @@ class NamedBindMarkersUnitTests {
 	void nextShouldConsiderFilteredNameHint() {
 		BindMarkers bindMarkers = BindMarkersFactory.named("@", "p", 32,
 				s -> s.chars().filter(Character::isAlphabetic).collect(StringBuilder::new,
-				StringBuilder::appendCodePoint, StringBuilder::append).toString()).create();
+						StringBuilder::appendCodePoint, StringBuilder::append).toString()).create();
 
 		BindMarker marker1 = bindMarkers.next("foo1.bar?");
 		BindMarker marker2 = bindMarkers.next();

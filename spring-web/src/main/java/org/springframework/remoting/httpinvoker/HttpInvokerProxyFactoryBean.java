@@ -45,7 +45,6 @@ import org.springframework.util.Assert;
  * In general, we strongly recommend any other message format (e.g. JSON) instead.
  *
  * @author Juergen Hoeller
- * @since 1.1
  * @see #setServiceInterface
  * @see #setServiceUrl
  * @see #setCodebaseUrl
@@ -53,6 +52,7 @@ import org.springframework.util.Assert;
  * @see HttpInvokerServiceExporter
  * @see org.springframework.remoting.rmi.RmiProxyFactoryBean
  * @see org.springframework.remoting.caucho.HessianProxyFactoryBean
+ * @since 1.1
  * @deprecated as of 5.3 (phasing out serialization-based remoting)
  */
 @Deprecated

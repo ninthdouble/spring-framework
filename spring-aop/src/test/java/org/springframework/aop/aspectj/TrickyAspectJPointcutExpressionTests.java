@@ -16,16 +16,7 @@
 
 package org.springframework.aop.aspectj;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.ThrowsAdvice;
@@ -33,6 +24,9 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.core.OverridingClassLoader;
 import org.springframework.lang.Nullable;
+
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -101,7 +95,7 @@ public class TrickyAspectJPointcutExpressionTests {
 	}
 
 	private void testAdvice(Advisor advisor, LogUserAdvice logAdvice, TestService target, String message,
-			boolean proxyTargetClass) throws Exception {
+							boolean proxyTargetClass) throws Exception {
 
 		logAdvice.reset();
 
@@ -117,28 +111,7 @@ public class TrickyAspectJPointcutExpressionTests {
 	}
 
 
-	public static class SimpleThrowawayClassLoader extends OverridingClassLoader {
-
-		/**
-		 * Create a new SimpleThrowawayClassLoader for the given class loader.
-		 * @param parent the ClassLoader to build a throwaway ClassLoader for
-		 */
-		public SimpleThrowawayClassLoader(ClassLoader parent) {
-			super(parent);
-		}
-	}
-
-
-	@SuppressWarnings("serial")
-	public static class TestException extends RuntimeException {
-
-		public TestException(String string) {
-			super(string);
-		}
-	}
-
-
-	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Documented
 	@Inherited
@@ -151,6 +124,25 @@ public class TrickyAspectJPointcutExpressionTests {
 		public String sayHello();
 	}
 
+	public static class SimpleThrowawayClassLoader extends OverridingClassLoader {
+
+		/**
+		 * Create a new SimpleThrowawayClassLoader for the given class loader.
+		 *
+		 * @param parent the ClassLoader to build a throwaway ClassLoader for
+		 */
+		public SimpleThrowawayClassLoader(ClassLoader parent) {
+			super(parent);
+		}
+	}
+
+	@SuppressWarnings("serial")
+	public static class TestException extends RuntimeException {
+
+		public TestException(String string) {
+			super(string);
+		}
+	}
 
 	@Log
 	public static class TestServiceImpl implements TestService {

@@ -16,10 +16,7 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -30,6 +27,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.method.ControllerAdviceBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -42,7 +41,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  */
 class RequestScopedControllerAdviceIntegrationTests {
 
-	@Test // gh-23985
+	@Test
+		// gh-23985
 	void loadContextWithRequestScopedControllerAdvice() {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 		context.setServletContext(new MockServletContext());

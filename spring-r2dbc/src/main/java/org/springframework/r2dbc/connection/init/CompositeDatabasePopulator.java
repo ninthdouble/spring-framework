@@ -16,16 +16,15 @@
 
 package org.springframework.r2dbc.connection.init;
 
+import io.r2dbc.spi.Connection;
+import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import io.r2dbc.spi.Connection;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import org.springframework.util.Assert;
 
 /**
  * Composite {@link DatabasePopulator} that delegates to a list of given
@@ -45,6 +44,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create an empty {@code CompositeDatabasePopulator}.
+	 *
 	 * @see #setPopulators
 	 * @see #addPopulators
 	 */
@@ -53,6 +53,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create a {@code CompositeDatabasePopulator}. with the given populators.
+	 *
 	 * @param populators one or more populators to delegate to.
 	 */
 	public CompositeDatabasePopulator(Collection<DatabasePopulator> populators) {
@@ -62,6 +63,7 @@ public class CompositeDatabasePopulator implements DatabasePopulator {
 
 	/**
 	 * Create a {@code CompositeDatabasePopulator} with the given populators.
+	 *
 	 * @param populators one or more populators to delegate to.
 	 */
 	public CompositeDatabasePopulator(DatabasePopulator... populators) {

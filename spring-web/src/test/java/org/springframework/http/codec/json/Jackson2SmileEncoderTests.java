@@ -16,18 +16,9 @@
 
 package org.springframework.http.codec.json;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -36,6 +27,14 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.MimeType;
 import org.springframework.web.testfixture.xml.Pojo;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.io.buffer.DataBufferUtils.release;
@@ -97,11 +96,9 @@ public class Jackson2SmileEncoderTests extends AbstractEncoderTests<Jackson2Smil
 						Object actual = this.mapper.reader().forType(List.class)
 								.readValue(dataBuffer.asInputStream());
 						assertThat(actual).isEqualTo(list);
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						throw new UncheckedIOException(e);
-					}
-					finally {
+					} finally {
 						release(dataBuffer);
 					}
 				}));
@@ -132,8 +129,7 @@ public class Jackson2SmileEncoderTests extends AbstractEncoderTests<Jackson2Smil
 				.map(buffer -> {
 					try {
 						return this.mapper.reader().forType(Pojo.class).readValues(buffer.asInputStream(true));
-					}
-					catch (IOException ex) {
+					} catch (IOException ex) {
 						throw new UncheckedIOException(ex);
 					}
 				});

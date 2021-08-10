@@ -16,11 +16,8 @@
 
 package org.springframework.web.method.annotation;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +27,8 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,15 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class MapMethodProcessorTests {
 
-	private MapMethodProcessor processor;
-
-	private ModelAndViewContainer mavContainer;
-
-	private NativeWebRequest webRequest;
-
 	private final ResolvableMethod resolvable =
 			ResolvableMethod.on(getClass()).annotPresent(RequestMapping.class).build();
-
+	private MapMethodProcessor processor;
+	private ModelAndViewContainer mavContainer;
+	private NativeWebRequest webRequest;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -84,7 +79,7 @@ public class MapMethodProcessorTests {
 		Map<String, Object> returnValue = new ModelMap("attr2", "value2");
 
 		this.processor.handleReturnValue(
-				returnValue , this.resolvable.returnType(), this.mavContainer, this.webRequest);
+				returnValue, this.resolvable.returnType(), this.mavContainer, this.webRequest);
 
 		assertThat(mavContainer.getModel().get("attr1")).isEqualTo("value1");
 		assertThat(mavContainer.getModel().get("attr2")).isEqualTo("value2");

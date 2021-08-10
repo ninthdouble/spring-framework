@@ -16,15 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.util.ReflectionUtils;
@@ -33,6 +26,12 @@ import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -44,10 +43,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
  */
 public class PathVariableMapMethodArgumentResolverTests {
 
+	private final MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
 	private PathVariableMapMethodArgumentResolver resolver;
-
-	private final MockServerWebExchange exchange= MockServerWebExchange.from(MockServerHttpRequest.get("/"));
-
 	private MethodParameter paramMap;
 	private MethodParameter paramNamedMap;
 	private MethodParameter paramMapNoAnnot;
@@ -73,7 +70,7 @@ public class PathVariableMapMethodArgumentResolverTests {
 		assertThat(resolver.supportsParameter(paramMapNoAnnot)).isFalse();
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.paramMonoMap))
-			.withMessageStartingWith("PathVariableMapMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("PathVariableMapMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test

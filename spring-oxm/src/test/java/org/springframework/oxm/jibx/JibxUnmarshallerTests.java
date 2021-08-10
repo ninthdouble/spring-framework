@@ -16,14 +16,12 @@
 
 package org.springframework.oxm.jibx;
 
-import java.io.ByteArrayInputStream;
-
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnJre;
-
 import org.springframework.oxm.AbstractUnmarshallerTests;
+
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.condition.JRE.JAVA_8;
@@ -83,7 +81,7 @@ public class JibxUnmarshallerTests extends AbstractUnmarshallerTests<JibxMarshal
 		Object flights = unmarshaller.unmarshal(source);
 		testFlights(flights);
 
-		FlightType flight = ((Flights)flights).getFlight(0);
+		FlightType flight = ((Flights) flights).getFlight(0);
 		assertThat(flight.getAirline()).as("Airline is invalid").isEqualTo("Air Libert\u00e9");
 	}
 

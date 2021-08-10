@@ -16,13 +16,12 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.function.Function;
-
 import io.r2dbc.spi.Connection;
+import org.springframework.dao.DataAccessException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.dao.DataAccessException;
+import java.util.function.Function;
 
 /**
  * Interface declaring methods that accept callback {@link Function}
@@ -47,6 +46,7 @@ public interface ConnectionAccessor {
 	 * is released after the {@link Mono} terminates (or the subscription
 	 * is cancelled). Connection resources must not be passed outside of the
 	 * {@link Function} closure, otherwise resources may get defunct.
+	 *
 	 * @param action the callback object that specifies the connection action
 	 * @return the resulting {@link Mono}
 	 */
@@ -58,6 +58,7 @@ public interface ConnectionAccessor {
 	 * is released after the {@link Flux} terminates (or the subscription
 	 * is cancelled). Connection resources must not be passed outside of the
 	 * {@link Function} closure, otherwise resources may get defunct.
+	 *
 	 * @param action the callback object that specifies the connection action
 	 * @return the resulting {@link Flux}
 	 */

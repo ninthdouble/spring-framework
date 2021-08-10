@@ -16,10 +16,6 @@
 
 package org.springframework.jdbc.core;
 
-import java.lang.reflect.Constructor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.TypeConverter;
 import org.springframework.core.MethodParameter;
@@ -27,6 +23,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Constructor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * {@link RowMapper} implementation that converts a row into a new instance
@@ -39,9 +39,9 @@ import org.springframework.util.Assert;
  * therefore serve as a common choice for any mapped target class, flexibly
  * adapting to constructor style versus setter methods in the mapped class.
  *
+ * @param <T> the result type
  * @author Juergen Hoeller
  * @since 5.3
- * @param <T> the result type
  */
 public class DataClassRowMapper<T> extends BeanPropertyRowMapper<T> {
 
@@ -57,6 +57,7 @@ public class DataClassRowMapper<T> extends BeanPropertyRowMapper<T> {
 
 	/**
 	 * Create a new {@code DataClassRowMapper} for bean-style configuration.
+	 *
 	 * @see #setMappedClass
 	 * @see #setConversionService
 	 */
@@ -65,12 +66,39 @@ public class DataClassRowMapper<T> extends BeanPropertyRowMapper<T> {
 
 	/**
 	 * Create a new {@code DataClassRowMapper}.
+	 *
 	 * @param mappedClass the class that each row should be mapped to
 	 */
 	public DataClassRowMapper(Class<T> mappedClass) {
 		super(mappedClass);
 	}
 
+	/**
+	 * Static factory method to create a new {@code DataClassRowMapper}.
+	 *
+	 * @param mappedClass the class that each row should be mapped to
+	 * @see #newInstance(Class, ConversionService)
+	 */
+	public static <T> DataClassRowMapper<T> newInstance(Class<T> mappedClass) {
+		return new DataClassRowMapper<>(mappedClass);
+	}
+
+	/**
+	 * Static factory method to create a new {@code DataClassRowMapper}.
+	 *
+	 * @param mappedClass       the class that each row should be mapped to
+	 * @param conversionService the {@link ConversionService} for binding
+	 *                          JDBC values to bean properties, or {@code null} for none
+	 * @see #newInstance(Class)
+	 * @see #setConversionService
+	 */
+	public static <T> DataClassRowMapper<T> newInstance(
+			Class<T> mappedClass, @Nullable ConversionService conversionService) {
+
+		DataClassRowMapper<T> rowMapper = newInstance(mappedClass);
+		rowMapper.setConversionService(conversionService);
+		return rowMapper;
+	}
 
 	@Override
 	protected void initialize(Class<T> mappedClass) {
@@ -91,7 +119,7 @@ public class DataClassRowMapper<T> extends BeanPropertyRowMapper<T> {
 	}
 
 	@Override
-	protected T constructMappedInstance(ResultSet rs, TypeConverter tc) throws SQLException  {
+	protected T constructMappedInstance(ResultSet rs, TypeConverter tc) throws SQLException {
 		Assert.state(this.mappedConstructor != null, "Mapped constructor was not initialized");
 
 		Object[] args;
@@ -103,38 +131,11 @@ public class DataClassRowMapper<T> extends BeanPropertyRowMapper<T> {
 				Object value = getColumnValue(rs, rs.findColumn(name), td.getType());
 				args[i] = tc.convertIfNecessary(value, td.getType(), td);
 			}
-		}
-		else {
+		} else {
 			args = new Object[0];
 		}
 
 		return BeanUtils.instantiateClass(this.mappedConstructor, args);
-	}
-
-
-	/**
-	 * Static factory method to create a new {@code DataClassRowMapper}.
-	 * @param mappedClass the class that each row should be mapped to
-	 * @see #newInstance(Class, ConversionService)
-	 */
-	public static <T> DataClassRowMapper<T> newInstance(Class<T> mappedClass) {
-		return new DataClassRowMapper<>(mappedClass);
-	}
-
-	/**
-	 * Static factory method to create a new {@code DataClassRowMapper}.
-	 * @param mappedClass the class that each row should be mapped to
-	 * @param conversionService the {@link ConversionService} for binding
-	 * JDBC values to bean properties, or {@code null} for none
-	 * @see #newInstance(Class)
-	 * @see #setConversionService
-	 */
-	public static <T> DataClassRowMapper<T> newInstance(
-			Class<T> mappedClass, @Nullable ConversionService conversionService) {
-
-		DataClassRowMapper<T> rowMapper = newInstance(mappedClass);
-		rowMapper.setConversionService(conversionService);
-		return rowMapper;
 	}
 
 }

@@ -16,14 +16,10 @@
 
 package org.springframework.web.util;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.net.URI;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -52,7 +48,7 @@ public class UriTemplateTests {
 	@Test  // SPR-9712
 	public void expandVarArgsWithArrayValue() throws Exception {
 		UriTemplate template = new UriTemplate("/sum?numbers={numbers}");
-		URI result = template.expand(new int[] {1, 2, 3});
+		URI result = template.expand(new int[]{1, 2, 3});
 		assertThat(result).isEqualTo(new URI("/sum?numbers=1,2,3"));
 	}
 

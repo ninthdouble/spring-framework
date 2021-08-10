@@ -16,17 +16,9 @@
 
 package org.springframework.test.web.reactive.server;
 
-import java.net.URI;
-import java.util.function.Function;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
@@ -44,6 +36,13 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.http.server.reactive.MockServerHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+import reactor.core.scheduler.Schedulers;
+
+import java.net.URI;
+import java.util.function.Function;
 
 /**
  * Connector that handles requests by invoking an {@link HttpHandler} rather
@@ -74,7 +73,7 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 
 	@Override
 	public Mono<ClientHttpResponse> connect(HttpMethod httpMethod, URI uri,
-			Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
+											Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
 
 		return Mono.defer(() -> doConnect(httpMethod, uri, requestCallback))
 				.subscribeOn(Schedulers.parallel());
@@ -96,7 +95,8 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 			ServerHttpRequest mockServerRequest = adaptRequest(mockClientRequest, requestBody);
 			ServerHttpResponse responseToUse = prepareResponse(mockServerResponse, mockServerRequest);
 			this.handler.handle(mockServerRequest, responseToUse).subscribe(
-					aVoid -> {},
+					aVoid -> {
+					},
 					handlerSink::tryEmitError,  // Ignore result: signals cannot compete
 					handlerSink::tryEmitEmpty);
 			return Mono.empty();
@@ -110,7 +110,8 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 
 		log("Writing client request for ", httpMethod, uri);
 		requestCallback.apply(mockClientRequest).subscribe(
-				aVoid -> {},
+				aVoid -> {
+				},
 				requestWriteSink::tryEmitError,  // Ignore result: signals cannot compete
 				requestWriteSink::tryEmitEmpty);
 
@@ -160,6 +161,7 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 	 * commits the response and the error may or may not change the response.
 	 * Therefore in tests without a server the exception is wrapped and allowed
 	 * to propagate so the application is alerted.
+	 *
 	 * @since 5.2.2
 	 */
 	@SuppressWarnings("serial")

@@ -16,12 +16,8 @@
 
 package org.springframework.core.codec;
 
-import java.util.Map;
-
 import io.netty.buffer.ByteBuf;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -29,6 +25,9 @@ import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.Map;
 
 /**
  * Encoder for {@link ByteBuf ByteBufs}.
@@ -51,8 +50,8 @@ public class NettyByteBufEncoder extends AbstractEncoder<ByteBuf> {
 
 	@Override
 	public Flux<DataBuffer> encode(Publisher<? extends ByteBuf> inputStream,
-			DataBufferFactory bufferFactory, ResolvableType elementType, @Nullable MimeType mimeType,
-			@Nullable Map<String, Object> hints) {
+								   DataBufferFactory bufferFactory, ResolvableType elementType, @Nullable MimeType mimeType,
+								   @Nullable Map<String, Object> hints) {
 
 		return Flux.from(inputStream).map(byteBuffer ->
 				encodeValue(byteBuffer, bufferFactory, elementType, mimeType, hints));
@@ -60,7 +59,7 @@ public class NettyByteBufEncoder extends AbstractEncoder<ByteBuf> {
 
 	@Override
 	public DataBuffer encodeValue(ByteBuf byteBuf, DataBufferFactory bufferFactory,
-			ResolvableType valueType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+								  ResolvableType valueType, @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		if (logger.isDebugEnabled() && !Hints.isLoggingSuppressed(hints)) {
 			String logPrefix = Hints.getLogPrefix(hints);

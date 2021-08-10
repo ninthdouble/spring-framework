@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,12 +34,7 @@ import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.test.web.servlet.samples.context.PersonController;
 import org.springframework.test.web.servlet.samples.context.PersonDao;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 
 import static org.mockito.BDDMockito.given;
@@ -54,8 +48,8 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration("classpath:META-INF/web-resources")
 @ContextHierarchy({
-	@ContextConfiguration(classes = JavaConfigTests.RootConfig.class),
-	@ContextConfiguration(classes = JavaConfigTests.WebConfig.class)
+		@ContextConfiguration(classes = JavaConfigTests.RootConfig.class),
+		@ContextConfiguration(classes = JavaConfigTests.WebConfig.class)
 })
 class JavaConfigTests {
 

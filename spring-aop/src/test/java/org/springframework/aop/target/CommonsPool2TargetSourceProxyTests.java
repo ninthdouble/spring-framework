@@ -17,7 +17,6 @@
 package org.springframework.aop.target;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -33,7 +32,7 @@ import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifie
 public class CommonsPool2TargetSourceProxyTests {
 
 	private static final Resource CONTEXT =
-		qualifiedResource(CommonsPool2TargetSourceProxyTests.class, "context.xml");
+			qualifiedResource(CommonsPool2TargetSourceProxyTests.class, "context.xml");
 
 	@Test
 	public void testProxy() throws Exception {
@@ -41,7 +40,7 @@ public class CommonsPool2TargetSourceProxyTests {
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
 		reader.loadBeanDefinitions(CONTEXT);
 		beanFactory.preInstantiateSingletons();
-		ITestBean bean = (ITestBean)beanFactory.getBean("testBean");
+		ITestBean bean = (ITestBean) beanFactory.getBean("testBean");
 		assertThat(AopUtils.isAopProxy(bean)).isTrue();
 	}
 }

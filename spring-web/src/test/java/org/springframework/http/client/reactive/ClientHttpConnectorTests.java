@@ -16,21 +16,6 @@
 
 package org.springframework.http.client.reactive;
 
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
-
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -40,10 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -51,6 +32,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.lang.NonNull;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -66,6 +61,24 @@ public class ClientHttpConnectorTests {
 			EnumSet.of(HttpMethod.PUT, HttpMethod.POST, HttpMethod.PATCH);
 
 	private final MockWebServer server = new MockWebServer();
+
+	static List<ClientHttpConnector> connectors() {
+		return Arrays.asList(
+				new ReactorClientHttpConnector(),
+				new JettyClientHttpConnector(),
+				new HttpComponentsClientHttpConnector()
+		);
+	}
+
+	static List<Arguments> methodsWithConnectors() {
+		List<Arguments> result = new ArrayList<>();
+		for (ClientHttpConnector connector : connectors()) {
+			for (HttpMethod method : HttpMethod.values()) {
+				result.add(Arguments.of(connector, method));
+			}
+		}
+		return result;
+	}
 
 	@BeforeEach
 	void startServer() throws IOException {
@@ -102,8 +115,7 @@ public class ClientHttpConnectorTests {
 					return DefaultDataBufferFactory.sharedInstance.wrap(bytes);
 				});
 				return request.writeWith(body);
-			}
-			else {
+			} else {
 				return request.setComplete();
 			}
 		});
@@ -190,36 +202,9 @@ public class ClientHttpConnectorTests {
 	private void expectRequest(Consumer<RecordedRequest> consumer) {
 		try {
 			consumer.accept(this.server.takeRequest());
-		}
-		catch (InterruptedException ex) {
+		} catch (InterruptedException ex) {
 			throw new IllegalStateException(ex);
 		}
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	@ParameterizedTest
-	@MethodSource("org.springframework.http.client.reactive.ClientHttpConnectorTests#connectors")
-	public @interface ParameterizedConnectorTest {
-
-	}
-
-	static List<ClientHttpConnector> connectors() {
-		return Arrays.asList(
-				new ReactorClientHttpConnector(),
-				new JettyClientHttpConnector(),
-				new HttpComponentsClientHttpConnector()
-		);
-	}
-
-	static List<Arguments> methodsWithConnectors() {
-		List<Arguments> result = new ArrayList<>();
-		for (ClientHttpConnector connector : connectors()) {
-			for (HttpMethod method : HttpMethod.values()) {
-				result.add(Arguments.of(connector, method));
-			}
-		}
-		return result;
 	}
 
 	private Mono<DataBuffer> stringBuffer(String value) {
@@ -229,6 +214,14 @@ public class ClientHttpConnectorTests {
 			buffer.write(bytes);
 			return buffer;
 		});
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	@ParameterizedTest
+	@MethodSource("org.springframework.http.client.reactive.ClientHttpConnectorTests#connectors")
+	public @interface ParameterizedConnectorTest {
+
 	}
 
 }

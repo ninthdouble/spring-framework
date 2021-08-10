@@ -16,18 +16,18 @@
 
 package org.springframework.transaction.event;
 
-import java.util.List;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.transaction.support.TransactionSynchronization;
+
+import java.util.List;
 
 /**
  * {@link TransactionSynchronization} implementation for event processing with a
  * {@link TransactionalApplicationListener}.
  *
+ * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  * @author Juergen Hoeller
  * @since 5.3
- * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  */
 class TransactionalApplicationListenerSynchronization<E extends ApplicationEvent>
 		implements TransactionSynchronization {
@@ -40,7 +40,7 @@ class TransactionalApplicationListenerSynchronization<E extends ApplicationEvent
 
 
 	public TransactionalApplicationListenerSynchronization(E event, TransactionalApplicationListener<E> listener,
-			List<TransactionalApplicationListener.SynchronizationCallback> callbacks) {
+														   List<TransactionalApplicationListener.SynchronizationCallback> callbacks) {
 
 		this.event = event;
 		this.listener = listener;
@@ -65,11 +65,9 @@ class TransactionalApplicationListenerSynchronization<E extends ApplicationEvent
 		TransactionPhase phase = this.listener.getTransactionPhase();
 		if (phase == TransactionPhase.AFTER_COMMIT && status == STATUS_COMMITTED) {
 			processEventWithCallbacks();
-		}
-		else if (phase == TransactionPhase.AFTER_ROLLBACK && status == STATUS_ROLLED_BACK) {
+		} else if (phase == TransactionPhase.AFTER_ROLLBACK && status == STATUS_ROLLED_BACK) {
 			processEventWithCallbacks();
-		}
-		else if (phase == TransactionPhase.AFTER_COMPLETION) {
+		} else if (phase == TransactionPhase.AFTER_COMPLETION) {
 			processEventWithCallbacks();
 		}
 	}
@@ -78,8 +76,7 @@ class TransactionalApplicationListenerSynchronization<E extends ApplicationEvent
 		this.callbacks.forEach(callback -> callback.preProcessEvent(this.event));
 		try {
 			this.listener.processEvent(this.event);
-		}
-		catch (RuntimeException | Error ex) {
+		} catch (RuntimeException | Error ex) {
 			this.callbacks.forEach(callback -> callback.postProcessEvent(this.event, ex));
 			throw ex;
 		}

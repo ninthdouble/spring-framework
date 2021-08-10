@@ -15,14 +15,14 @@
  */
 package org.springframework.web.servlet.handler;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.springframework.lang.Nullable;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Utility methods to help with parameterized tests for URL pattern matching
@@ -89,8 +89,7 @@ public abstract class PathPatternsTestUtils {
 		// At runtime this is done by the DispatcherServlet and AbstractHandlerMapping
 		if (parsedPatterns) {
 			ServletRequestPathUtils.parseAndCache(request);
-		}
-		else {
+		} else {
 			UrlPathHelper.defaultInstance.resolveAndCacheLookupPath(request);
 		}
 		return request;
@@ -102,8 +101,7 @@ public abstract class PathPatternsTestUtils {
 			MockHttpServletRequest request = new MockHttpServletRequest(method, requestUri);
 			request.setContextPath(contextPath);
 			return request;
-		}
-		else {
+		} else {
 			return new MockHttpServletRequest(method, path);
 		}
 	}

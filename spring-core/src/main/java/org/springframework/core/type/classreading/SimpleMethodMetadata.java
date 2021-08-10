@@ -45,7 +45,7 @@ final class SimpleMethodMetadata implements MethodMetadata {
 
 
 	SimpleMethodMetadata(String methodName, int access, String declaringClassName,
-			String returnTypeName, Object source, MergedAnnotations annotations) {
+						 String returnTypeName, Object source, MergedAnnotations annotations) {
 
 		this.methodName = methodName;
 		this.access = access;

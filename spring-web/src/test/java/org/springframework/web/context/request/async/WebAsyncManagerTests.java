@@ -16,29 +16,22 @@
 
 package org.springframework.web.context.request.async;
 
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Test fixture with an {@link WebAsyncManager} with a mock AsyncWebRequest.
@@ -72,11 +65,11 @@ public class WebAsyncManagerTests {
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				manager.startCallableProcessing(new StubCallable(1)))
-			.withMessage("AsyncWebRequest must not be null");
+				.withMessage("AsyncWebRequest must not be null");
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				manager.startDeferredResultProcessing(new DeferredResult<String>()))
-			.withMessage("AsyncWebRequest must not be null");
+				.withMessage("AsyncWebRequest must not be null");
 	}
 
 	@Test
@@ -154,7 +147,7 @@ public class WebAsyncManagerTests {
 
 		assertThatExceptionOfType(Exception.class).isThrownBy(() ->
 				this.asyncManager.startCallableProcessing(task))
-			.isEqualTo(exception);
+				.isEqualTo(exception);
 
 		assertThat(this.asyncManager.hasConcurrentResult()).isFalse();
 
@@ -250,7 +243,7 @@ public class WebAsyncManagerTests {
 	public void startCallableProcessingNullInput() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				this.asyncManager.startCallableProcessing((Callable<?>) null))
-			.withMessage("Callable must not be null");
+				.withMessage("Callable must not be null");
 	}
 
 	@Test
@@ -287,7 +280,7 @@ public class WebAsyncManagerTests {
 
 		assertThatExceptionOfType(Exception.class).isThrownBy(() ->
 				this.asyncManager.startDeferredResultProcessing(deferredResult))
-			.isEqualTo(exception);
+				.isEqualTo(exception);
 
 		assertThat(this.asyncManager.hasConcurrentResult()).isFalse();
 
@@ -342,7 +335,7 @@ public class WebAsyncManagerTests {
 	public void startDeferredResultProcessingNullInput() throws Exception {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				this.asyncManager.startDeferredResultProcessing(null))
-			.withMessage("DeferredResult must not be null");
+				.withMessage("DeferredResult must not be null");
 	}
 
 	private void setupDefaultAsyncScenario() {
@@ -358,6 +351,14 @@ public class WebAsyncManagerTests {
 		verify(this.asyncWebRequest).dispatch();
 	}
 
+	@SuppressWarnings("serial")
+	private static class SyncTaskExecutor extends SimpleAsyncTaskExecutor {
+
+		@Override
+		public void execute(Runnable task, long startTimeout) {
+			task.run();
+		}
+	}
 
 	private final class StubCallable implements Callable<Object> {
 
@@ -373,16 +374,6 @@ public class WebAsyncManagerTests {
 				throw ((Exception) this.value);
 			}
 			return this.value;
-		}
-	}
-
-
-	@SuppressWarnings("serial")
-	private static class SyncTaskExecutor extends SimpleAsyncTaskExecutor {
-
-		@Override
-		public void execute(Runnable task, long startTimeout) {
-			task.run();
 		}
 	}
 

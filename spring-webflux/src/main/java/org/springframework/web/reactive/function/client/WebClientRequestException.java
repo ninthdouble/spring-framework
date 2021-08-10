@@ -16,10 +16,10 @@
 
 package org.springframework.web.reactive.function.client;
 
-import java.net.URI;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+
+import java.net.URI;
 
 /**
  * Exceptions that contain actual HTTP request data.

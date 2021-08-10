@@ -16,22 +16,17 @@
 
 package org.springframework.test.web.reactive.server;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.http.*;
+import org.springframework.mock.http.client.reactive.MockClientHttpRequest;
+import org.springframework.mock.http.client.reactive.MockClientHttpResponse;
+import reactor.core.publisher.Mono;
+
 import java.net.URI;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.mock.http.client.reactive.MockClientHttpRequest;
-import org.springframework.mock.http.client.reactive.MockClientHttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -158,7 +153,7 @@ class HeaderAssertionTests {
 		// Header should not exist
 		assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
 				assertions.exists("Framework"))
-			.satisfies(ex -> assertThat(ex).hasMessage("Response header 'Framework' does not exist"));
+				.satisfies(ex -> assertThat(ex).hasMessage("Response header 'Framework' does not exist"));
 	}
 
 	@Test
@@ -173,8 +168,8 @@ class HeaderAssertionTests {
 		// Existing header
 		assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
 				assertions.doesNotExist("Content-Type"))
-			.satisfies(ex -> assertThat(ex).hasMessage("Response header " +
-					"'Content-Type' exists with value=[application/json;charset=UTF-8]"));
+				.satisfies(ex -> assertThat(ex).hasMessage("Response header " +
+						"'Content-Type' exists with value=[application/json;charset=UTF-8]"));
 	}
 
 	@Test
@@ -188,8 +183,8 @@ class HeaderAssertionTests {
 
 		// MediaTypes not compatible
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> assertions.contentTypeCompatibleWith(MediaType.TEXT_XML))
-			.withMessage("Response header 'Content-Type'=[application/xml] is not compatible with [text/xml]");
+				.isThrownBy(() -> assertions.contentTypeCompatibleWith(MediaType.TEXT_XML))
+				.withMessage("Response header 'Content-Type'=[application/xml] is not compatible with [text/xml]");
 	}
 
 	@Test

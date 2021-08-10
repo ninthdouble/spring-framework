@@ -16,18 +16,16 @@
 
 package org.springframework.web.servlet.tags.form;
 
-import java.io.Writer;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.servlet.support.BindStatus;
 import org.springframework.web.servlet.tags.BindTag;
 import org.springframework.web.servlet.tags.NestedPathTag;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
+import java.io.Writer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -362,14 +360,14 @@ public class InputTagTests extends AbstractFormTagTests {
 	public void dynamicTypeRadioAttribute() throws JspException {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				this.tag.setDynamicAttribute(null, "type", "radio"))
-			.withMessage("Attribute type=\"radio\" is not allowed");
+				.withMessage("Attribute type=\"radio\" is not allowed");
 	}
 
 	@Test
 	public void dynamicTypeCheckboxAttribute() throws JspException {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				this.tag.setDynamicAttribute(null, "type", "checkbox"))
-			.withMessage("Attribute type=\"checkbox\" is not allowed");
+				.withMessage("Attribute type=\"checkbox\" is not allowed");
 	}
 
 	protected final void assertTagClosed(String output) {

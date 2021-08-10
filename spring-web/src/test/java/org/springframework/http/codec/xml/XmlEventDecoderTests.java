@@ -16,19 +16,17 @@
 
 package org.springframework.http.codec.xml;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-
-import javax.xml.stream.events.XMLEvent;
-
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferLimitException;
+import org.springframework.core.testfixture.io.buffer.AbstractLeakCheckingTests;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferLimitException;
-import org.springframework.core.testfixture.io.buffer.AbstractLeakCheckingTests;
+import javax.xml.stream.events.XMLEvent;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,6 +43,20 @@ public class XmlEventDecoderTests extends AbstractLeakCheckingTests {
 
 	private XmlEventDecoder decoder = new XmlEventDecoder();
 
+	private static void assertStartElement(XMLEvent event, String expectedLocalName) {
+		assertThat(event.isStartElement()).isTrue();
+		assertThat(event.asStartElement().getName().getLocalPart()).isEqualTo(expectedLocalName);
+	}
+
+	private static void assertEndElement(XMLEvent event, String expectedLocalName) {
+		assertThat(event.isEndElement()).as(event + " is no end element").isTrue();
+		assertThat(event.asEndElement().getName().getLocalPart()).isEqualTo(expectedLocalName);
+	}
+
+	private static void assertCharacters(XMLEvent event, String expectedData) {
+		assertThat(event.isCharacters()).isTrue();
+		assertThat(event.asCharacters().getData()).isEqualTo(expectedData);
+	}
 
 	@Test
 	public void toXMLEventsAalto() {
@@ -140,21 +152,6 @@ public class XmlEventDecoderTests extends AbstractLeakCheckingTests {
 		StepVerifier.create(events)
 				.expectError(RuntimeException.class)
 				.verify();
-	}
-
-	private static void assertStartElement(XMLEvent event, String expectedLocalName) {
-		assertThat(event.isStartElement()).isTrue();
-		assertThat(event.asStartElement().getName().getLocalPart()).isEqualTo(expectedLocalName);
-	}
-
-	private static void assertEndElement(XMLEvent event, String expectedLocalName) {
-		assertThat(event.isEndElement()).as(event + " is no end element").isTrue();
-		assertThat(event.asEndElement().getName().getLocalPart()).isEqualTo(expectedLocalName);
-	}
-
-	private static void assertCharacters(XMLEvent event, String expectedData) {
-		assertThat(event.isCharacters()).isTrue();
-		assertThat(event.asCharacters().getData()).isEqualTo(expectedData);
 	}
 
 	private DataBuffer stringBuffer(String value) {

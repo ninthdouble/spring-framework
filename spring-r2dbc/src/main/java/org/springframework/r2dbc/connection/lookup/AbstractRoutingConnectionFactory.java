@@ -16,17 +16,16 @@
 
 package org.springframework.r2dbc.connection.lookup;
 
-import java.util.Map;
-
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryMetadata;
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 /**
  * Abstract {@link ConnectionFactory} implementation that routes
@@ -44,10 +43,10 @@ import org.springframework.util.CollectionUtils;
  *
  * @author Mark Paluch
  * @author Jens Schauder
- * @since 5.3
  * @see #setTargetConnectionFactories
  * @see #setDefaultTargetConnectionFactory
  * @see #determineCurrentLookupKey()
+ * @since 5.3
  */
 public abstract class AbstractRoutingConnectionFactory implements ConnectionFactory, InitializingBean {
 
@@ -106,6 +105,7 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 	 * <p>Switch this flag to {@code false} if you would prefer the fallback to only
 	 * apply when no lookup key was emitted. Lookup keys without a {@link ConnectionFactory}
 	 * entry will then lead to an {@link IllegalStateException}.
+	 *
 	 * @see #setTargetConnectionFactories
 	 * @see #setDefaultTargetConnectionFactory
 	 * @see #determineCurrentLookupKey()
@@ -147,6 +147,7 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 	 * into the actual lookup key to be used for matching with the
 	 * {@link #determineCurrentLookupKey() current lookup key}.
 	 * <p>The default implementation simply returns the given key as-is.
+	 *
 	 * @param lookupKey the lookup key object as specified by the user
 	 * @return the lookup key as needed for matching.
 	 */
@@ -160,8 +161,9 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 	 * <p>The default implementation handles {@link ConnectionFactory} instances
 	 * and connection factory names (to be resolved via a
 	 * {@link #setConnectionFactoryLookup ConnectionFactoryLookup}).
+	 *
 	 * @param connectionFactory the connection factory value object as specified in the
-	 * {@link #setTargetConnectionFactories targetConnectionFactories} map
+	 *                          {@link #setTargetConnectionFactories targetConnectionFactories} map
 	 * @return the resolved {@link ConnectionFactory} (never {@code null})
 	 * @throws IllegalArgumentException in case of an unsupported value type
 	 */
@@ -170,11 +172,9 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 
 		if (connectionFactory instanceof ConnectionFactory) {
 			return (ConnectionFactory) connectionFactory;
-		}
-		else if (connectionFactory instanceof String) {
+		} else if (connectionFactory instanceof String) {
 			return this.connectionFactoryLookup.getConnectionFactory((String) connectionFactory);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Illegal connection factory value - " +
 					"only 'io.r2dbc.spi.ConnectionFactory' and 'String' supported: " + connectionFactory);
 		}
@@ -200,6 +200,7 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 	 * in the {@link #setTargetConnectionFactories targetConnectionFactories} map,
 	 * falls back to the specified {@link #setDefaultTargetConnectionFactory default
 	 * target ConnectionFactory} if necessary.
+	 *
 	 * @return {@link Mono} emitting the current {@link ConnectionFactory} as
 	 * per {@link #determineCurrentLookupKey()}
 	 * @see #determineCurrentLookupKey()
@@ -227,6 +228,7 @@ public abstract class AbstractRoutingConnectionFactory implements ConnectionFact
 	 * Determine the current lookup key. This will typically be implemented to check a
 	 * subscriber context. Allows for arbitrary keys. The returned key needs to match the
 	 * stored lookup key type, as resolved by the {@link #resolveSpecifiedLookupKey} method.
+	 *
 	 * @return {@link Mono} emitting the lookup key. May complete without emitting a value
 	 * if no lookup key available
 	 */

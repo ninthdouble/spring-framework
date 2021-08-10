@@ -16,14 +16,13 @@
 
 package org.springframework.test.context.junit4;
 
-import java.util.ArrayList;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
 import org.springframework.test.context.TestExecutionListeners;
+
+import java.util.ArrayList;
 
 import static org.springframework.test.context.junit4.JUnitTestingUtils.runTestsAndAssertCounters;
 

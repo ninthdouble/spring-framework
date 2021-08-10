@@ -17,7 +17,6 @@
 package org.springframework.aop.support.annotation;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -16,12 +16,11 @@
 
 package org.springframework.web.testfixture.http.server.reactive.bootstrap;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicReference;
-
+import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import reactor.netty.DisposableServer;
 
-import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
+import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Stephane Maldini

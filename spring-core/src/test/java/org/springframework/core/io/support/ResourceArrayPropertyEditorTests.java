@@ -16,12 +16,11 @@
 
 package org.springframework.core.io.support;
 
-import java.beans.PropertyEditor;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.Resource;
+
+import java.beans.PropertyEditor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -62,8 +61,7 @@ class ResourceArrayPropertyEditorTests {
 			editor.setAsText("${test.prop}");
 			Resource[] resources = (Resource[]) editor.getValue();
 			assertThat(resources[0].getFilename()).isEqualTo("foo");
-		}
-		finally {
+		} finally {
 			System.getProperties().remove("test.prop");
 		}
 	}
@@ -77,8 +75,7 @@ class ResourceArrayPropertyEditorTests {
 		try {
 			assertThatIllegalArgumentException().isThrownBy(() ->
 					editor.setAsText("${test.prop}-${bar}"));
-		}
-		finally {
+		} finally {
 			System.getProperties().remove("test.prop");
 		}
 	}

@@ -16,8 +16,6 @@
 
 package org.springframework.jms.config;
 
-import javax.jms.MessageListener;
-
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.MessageListenerContainer;
 import org.springframework.jms.listener.endpoint.JmsActivationSpecConfig;
@@ -25,14 +23,16 @@ import org.springframework.jms.listener.endpoint.JmsMessageEndpointManager;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import javax.jms.MessageListener;
+
 /**
  * Base model for a JMS listener endpoint.
  *
  * @author Stephane Nicoll
  * @author Juergen Hoeller
- * @since 4.1
  * @see MethodJmsListenerEndpoint
  * @see SimpleJmsListenerEndpoint
+ * @since 4.1
  */
 public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint {
 
@@ -50,14 +50,6 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 	@Nullable
 	private String concurrency;
 
-
-	/**
-	 * Set a custom id for this endpoint.
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	/**
 	 * Return the id of this endpoint (possibly generated).
 	 */
@@ -67,10 +59,10 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 	}
 
 	/**
-	 * Set the name of the destination for this endpoint.
+	 * Set a custom id for this endpoint.
 	 */
-	public void setDestination(@Nullable String destination) {
-		this.destination = destination;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -82,10 +74,10 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 	}
 
 	/**
-	 * Set the name for the durable subscription.
+	 * Set the name of the destination for this endpoint.
 	 */
-	public void setSubscription(@Nullable String subscription) {
-		this.subscription = subscription;
+	public void setDestination(@Nullable String destination) {
+		this.destination = destination;
 	}
 
 	/**
@@ -97,11 +89,10 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 	}
 
 	/**
-	 * Set the JMS message selector expression.
-	 * <p>See the JMS specification for a detailed definition of selector expressions.
+	 * Set the name for the durable subscription.
 	 */
-	public void setSelector(@Nullable String selector) {
-		this.selector = selector;
+	public void setSubscription(@Nullable String subscription) {
+		this.subscription = subscription;
 	}
 
 	/**
@@ -110,6 +101,22 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 	@Nullable
 	public String getSelector() {
 		return this.selector;
+	}
+
+	/**
+	 * Set the JMS message selector expression.
+	 * <p>See the JMS specification for a detailed definition of selector expressions.
+	 */
+	public void setSelector(@Nullable String selector) {
+		this.selector = selector;
+	}
+
+	/**
+	 * Return the concurrency for the listener, if any.
+	 */
+	@Nullable
+	public String getConcurrency() {
+		return this.concurrency;
 	}
 
 	/**
@@ -123,21 +130,11 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 		this.concurrency = concurrency;
 	}
 
-	/**
-	 * Return the concurrency for the listener, if any.
-	 */
-	@Nullable
-	public String getConcurrency() {
-		return this.concurrency;
-	}
-
-
 	@Override
 	public void setupListenerContainer(MessageListenerContainer listenerContainer) {
 		if (listenerContainer instanceof AbstractMessageListenerContainer) {
 			setupJmsListenerContainer((AbstractMessageListenerContainer) listenerContainer);
-		}
-		else {
+		} else {
 			new JcaEndpointConfigurer().configureEndpoint(listenerContainer);
 		}
 	}
@@ -196,8 +193,7 @@ public abstract class AbstractJmsListenerEndpoint implements JmsListenerEndpoint
 		public void configureEndpoint(Object listenerContainer) {
 			if (listenerContainer instanceof JmsMessageEndpointManager) {
 				setupJcaMessageContainer((JmsMessageEndpointManager) listenerContainer);
-			}
-			else {
+			} else {
 				throw new IllegalArgumentException("Could not configure endpoint with the specified container '" +
 						listenerContainer + "' Only JMS (" + AbstractMessageListenerContainer.class.getName() +
 						" subclass) or JCA (" + JmsMessageEndpointManager.class.getName() + ") are supported.");

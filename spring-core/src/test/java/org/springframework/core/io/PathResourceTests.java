@@ -16,6 +16,10 @@
 
 package org.springframework.core.io;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.util.FileCopyUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,14 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import org.springframework.util.FileCopyUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -72,21 +69,21 @@ class PathResourceTests {
 	void nullPath() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new PathResource((Path) null))
-			.withMessageContaining("Path must not be null");
+				.withMessageContaining("Path must not be null");
 	}
 
 	@Test
 	void nullPathString() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new PathResource((String) null))
-			.withMessageContaining("Path must not be null");
+				.withMessageContaining("Path must not be null");
 	}
 
 	@Test
 	void nullUri() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				new PathResource((URI) null))
-			.withMessageContaining("URI must not be null");
+				.withMessageContaining("URI must not be null");
 	}
 
 	@Test
@@ -304,8 +301,7 @@ class PathResourceTests {
 		PathResource resource = new PathResource(TEST_DIR);
 		try {
 			resource.readableChannel();
-		}
-		catch (AccessDeniedException ex) {
+		} catch (AccessDeniedException ex) {
 			// on Windows
 		}
 	}

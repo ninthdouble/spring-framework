@@ -16,16 +16,8 @@
 
 package org.springframework.test.context.jdbc;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +28,12 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,6 +49,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DirtiesContext
 class InfrastructureProxyTransactionalSqlScriptsTests extends AbstractTransactionalTests {
 
+	private static DataSource wrapDataSource(DataSource dataSource) {
+		return (DataSource) Proxy.newProxyInstance(
+				InfrastructureProxyTransactionalSqlScriptsTests.class.getClassLoader(),
+				new Class<?>[]{DataSource.class, InfrastructureProxy.class},
+				new DataSourceInvocationHandler(dataSource));
+	}
+
 	@BeforeEach
 	void preconditions(@Autowired DataSource dataSource, @Autowired DataSourceTransactionManager transactionManager) {
 		assertThat(dataSource).isNotEqualTo(transactionManager.getDataSource());
@@ -59,11 +64,10 @@ class InfrastructureProxyTransactionalSqlScriptsTests extends AbstractTransactio
 	}
 
 	@Test
-	@Sql({ "schema.sql", "data.sql", "data-add-dogbert.sql" })
+	@Sql({"schema.sql", "data.sql", "data-add-dogbert.sql"})
 	void methodLevelScripts() {
 		assertNumUsers(2);
 	}
-
 
 	@Configuration
 	static class DatabaseConfig {
@@ -87,15 +91,6 @@ class InfrastructureProxyTransactionalSqlScriptsTests extends AbstractTransactio
 
 	}
 
-
-	private static DataSource wrapDataSource(DataSource dataSource) {
-		return (DataSource) Proxy.newProxyInstance(
-			InfrastructureProxyTransactionalSqlScriptsTests.class.getClassLoader(),
-			new Class<?>[] { DataSource.class, InfrastructureProxy.class },
-			new DataSourceInvocationHandler(dataSource));
-	}
-
-
 	private static class DataSourceInvocationHandler implements InvocationHandler {
 
 		private final DataSource dataSource;
@@ -117,8 +112,7 @@ class InfrastructureProxyTransactionalSqlScriptsTests extends AbstractTransactio
 				default:
 					try {
 						return method.invoke(this.dataSource, args);
-					}
-					catch (InvocationTargetException ex) {
+					} catch (InvocationTargetException ex) {
 						throw ex.getTargetException();
 					}
 			}

@@ -16,20 +16,18 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
-
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -58,9 +56,9 @@ class HandlerMappingTests {
 			TestHandlerMapping mapping, Function<String, MockHttpServletRequest> requestFactory)
 			throws Exception {
 
-		MappedInterceptor i1 = new MappedInterceptor(new String[] {"/**"}, mock(HandlerInterceptor.class));
+		MappedInterceptor i1 = new MappedInterceptor(new String[]{"/**"}, mock(HandlerInterceptor.class));
 		HandlerInterceptor i2 = mock(HandlerInterceptor.class);
-		MappedInterceptor i3 = new MappedInterceptor(new String[] {"/**"}, mock(HandlerInterceptor.class));
+		MappedInterceptor i3 = new MappedInterceptor(new String[]{"/**"}, mock(HandlerInterceptor.class));
 		HandlerInterceptor i4 = mock(HandlerInterceptor.class);
 
 		mapping.setInterceptors(i1, i2, i3, i4);
@@ -72,9 +70,10 @@ class HandlerMappingTests {
 		assertThat(chain.getInterceptorList()).contains(i1.getInterceptor(), i2, i3.getInterceptor(), i4);
 	}
 
-	@Test // gh-26546
+	@Test
+		// gh-26546
 	void abstractHandlerMappingEnsuresCachedLookupPath() throws Exception {
-		MappedInterceptor interceptor = new MappedInterceptor(new String[] {"/**"}, mock(HandlerInterceptor.class));
+		MappedInterceptor interceptor = new MappedInterceptor(new String[]{"/**"}, mock(HandlerInterceptor.class));
 		TestHandlerMapping mapping = new TestHandlerMapping();
 		mapping.setInterceptors(interceptor);
 		mapping.setApplicationContext(new StaticWebApplicationContext());

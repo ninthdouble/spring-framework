@@ -17,7 +17,6 @@
 package org.springframework.jdbc.datasource.init;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.assertj.core.api.Assertions.assertThat;

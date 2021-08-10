@@ -16,14 +16,13 @@
 
 package org.springframework.core.testfixture;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
 import org.springframework.util.Assert;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.extension.ConditionEvaluationResult.disabled;
 import static org.junit.jupiter.api.extension.ConditionEvaluationResult.enabled;
@@ -33,8 +32,8 @@ import static org.junit.platform.commons.support.AnnotationSupport.findAnnotatio
  * {@link ExecutionCondition} for Spring's {@link TestGroup} support.
  *
  * @author Sam Brannen
- * @since 5.2
  * @see EnabledForTestGroups @EnabledForTestGroups
+ * @since 5.2
  */
 class TestGroupsCondition implements ExecutionCondition {
 

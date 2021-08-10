@@ -16,11 +16,7 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Method-level annotation for integration tests that need to add properties with
@@ -84,12 +80,12 @@ import java.lang.annotation.Target;
  *
  * @author Phillip Webb
  * @author Sam Brannen
- * @since 5.2.5
  * @see DynamicPropertyRegistry
  * @see ContextConfiguration
  * @see TestPropertySource
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.test.annotation.DirtiesContext
+ * @since 5.2.5
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

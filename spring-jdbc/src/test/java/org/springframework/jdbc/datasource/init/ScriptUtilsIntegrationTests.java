@@ -16,12 +16,11 @@
 
 package org.springframework.jdbc.datasource.init;
 
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import java.sql.SQLException;
 
 import static org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript;
 
@@ -29,8 +28,8 @@ import static org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScr
  * Integration tests for {@link ScriptUtils}.
  *
  * @author Sam Brannen
- * @since 4.0.3
  * @see ScriptUtilsUnitTests
+ * @since 4.0.3
  */
 public class ScriptUtilsIntegrationTests extends AbstractDatabaseInitializationTests {
 

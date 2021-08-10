@@ -17,7 +17,6 @@
 package org.springframework.test.context.groovy;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.testfixture.beans.Employee;
 import org.springframework.beans.testfixture.beans.Pet;
@@ -30,8 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Groovy script (as opposed to a default XML config file).
  *
  * @author Sam Brannen
- * @since 4.1
  * @see DefaultScriptDetectionGroovySpringContextTestsContext
+ * @since 4.1
  */
 @SpringJUnitConfig
 // Config loaded from DefaultScriptDetectionGroovySpringContextTestsContext.groovy

@@ -17,7 +17,6 @@
 package org.springframework.aop.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.testfixture.beans.ITestBean;
 

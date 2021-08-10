@@ -16,17 +16,8 @@
 
 package org.springframework.web.reactive.socket.server.upgrade;
 
-import java.lang.reflect.Method;
-import java.util.function.Supplier;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import reactor.core.publisher.Mono;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -45,6 +36,13 @@ import org.springframework.web.reactive.socket.adapter.Jetty10WebSocketHandlerAd
 import org.springframework.web.reactive.socket.adapter.JettyWebSocketSession;
 import org.springframework.web.reactive.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.function.Supplier;
 
 /**
  * A {@link RequestUpgradeStrategy} for use with Jetty 10.
@@ -75,12 +73,19 @@ public class Jetty10RequestUpgradeStrategy implements RequestUpgradeStrategy {
 
 			type = loader.loadClass("org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse");
 			setAcceptedSubProtocol = type.getMethod("setAcceptedSubProtocol", String.class);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException("No compatible Jetty version found", ex);
 		}
 	}
 
+	private static Object createJettyWebSocketCreator(
+			Jetty10WebSocketHandlerAdapter adapter, @Nullable String protocol) {
+
+		ProxyFactory factory = new ProxyFactory(EmptyTargetSource.INSTANCE);
+		factory.addInterface(webSocketCreatorClass);
+		factory.addAdvice(new WebSocketCreatorInterceptor(adapter, protocol));
+		return factory.getProxy();
+	}
 
 	@Override
 	public Mono<Void> upgrade(
@@ -108,23 +113,12 @@ public class Jetty10RequestUpgradeStrategy implements RequestUpgradeStrategy {
 						Object creator = createJettyWebSocketCreator(adapter, subProtocol);
 						Object container = ReflectionUtils.invokeMethod(getContainerMethod, null, servletContext);
 						ReflectionUtils.invokeMethod(upgradeMethod, container, creator, servletRequest, servletResponse);
-					}
-					catch (Exception ex) {
+					} catch (Exception ex) {
 						return Mono.error(ex);
 					}
 					return Mono.empty();
 				}));
 	}
-
-	private static Object createJettyWebSocketCreator(
-			Jetty10WebSocketHandlerAdapter adapter, @Nullable String protocol) {
-
-		ProxyFactory factory = new ProxyFactory(EmptyTargetSource.INSTANCE);
-		factory.addInterface(webSocketCreatorClass);
-		factory.addAdvice(new WebSocketCreatorInterceptor(adapter, protocol));
-		return factory.getProxy();
-	}
-
 
 	/**
 	 * Proxy for a JettyWebSocketCreator to supply the WebSocket handler and set the sub-protocol.

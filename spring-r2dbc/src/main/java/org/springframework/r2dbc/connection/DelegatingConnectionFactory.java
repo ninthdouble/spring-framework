@@ -20,9 +20,8 @@ import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryMetadata;
 import io.r2dbc.spi.Wrapped;
-import reactor.core.publisher.Mono;
-
 import org.springframework.util.Assert;
+import reactor.core.publisher.Mono;
 
 /**
  * R2DBC {@link ConnectionFactory} implementation that delegates
@@ -33,8 +32,8 @@ import org.springframework.util.Assert;
  * delegate to the target {@link ConnectionFactory}.
  *
  * @author Mark Paluch
- * @since 5.3
  * @see #create()
+ * @since 5.3
  */
 public class DelegatingConnectionFactory implements ConnectionFactory, Wrapped<ConnectionFactory> {
 
@@ -43,6 +42,7 @@ public class DelegatingConnectionFactory implements ConnectionFactory, Wrapped<C
 
 	/**
 	 * Create a new DelegatingConnectionFactory.
+	 *
 	 * @param targetConnectionFactory the target ConnectionFactory
 	 */
 	public DelegatingConnectionFactory(ConnectionFactory targetConnectionFactory) {

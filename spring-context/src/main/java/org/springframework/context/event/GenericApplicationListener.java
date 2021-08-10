@@ -32,9 +32,9 @@ import org.springframework.core.ResolvableType;
  *
  * @author Stephane Nicoll
  * @author Juergen Hoeller
- * @since 4.2
  * @see SmartApplicationListener
  * @see GenericApplicationListenerAdapter
+ * @since 4.2
  */
 public interface GenericApplicationListener extends SmartApplicationListener {
 
@@ -49,6 +49,7 @@ public interface GenericApplicationListener extends SmartApplicationListener {
 
 	/**
 	 * Determine whether this listener actually supports the given event type.
+	 *
 	 * @param eventType the event type (never {@code null})
 	 */
 	boolean supportsEventType(ResolvableType eventType);

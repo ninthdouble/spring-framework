@@ -16,21 +16,14 @@
 
 package org.springframework.core;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ReflectionUtils;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -160,8 +153,7 @@ class BridgeMethodResolverTests {
 			if ("getFor".equals(method.getName()) && !method.getParameterTypes()[0].equals(Integer.class)) {
 				if (method.getReturnType().equals(Object.class)) {
 					bridgeMethod = method;
-				}
-				else {
+				} else {
 					bridgedMethod = method;
 				}
 			}
@@ -252,7 +244,7 @@ class BridgeMethodResolverTests {
 		Method bridgedMethod = MegaMessageProducerImpl.class.getDeclaredMethod("receive", MegaMessageEvent.class);
 		assertThat(bridgedMethod.isBridge()).isFalse();
 
-		Method bridgeMethod  = MegaMessageProducerImpl.class.getDeclaredMethod("receive", MegaEvent.class);
+		Method bridgeMethod = MegaMessageProducerImpl.class.getDeclaredMethod("receive", MegaEvent.class);
 		assertThat(bridgeMethod.isBridge()).isTrue();
 
 		assertThat(BridgeMethodResolver.findBridgedMethod(bridgeMethod)).isEqualTo(bridgedMethod);
@@ -304,18 +296,20 @@ class BridgeMethodResolverTests {
 		assertThat(bridgedMethod.getName()).isEqualTo("findBy");
 	}
 
-	@Test  // SPR-16103
+	@Test
+		// SPR-16103
 	void testClassHierarchy() throws Exception {
 		doTestHierarchyResolution(FooClass.class);
 	}
 
-	@Test  // SPR-16103
+	@Test
+		// SPR-16103
 	void testInterfaceHierarchy() throws Exception {
 		doTestHierarchyResolution(FooInterface.class);
 	}
 
 	private void doTestHierarchyResolution(Class<?> clazz) throws Exception {
-		for (Method method : clazz.getDeclaredMethods()){
+		for (Method method : clazz.getDeclaredMethods()) {
 			Method bridged = BridgeMethodResolver.findBridgedMethod(method);
 			Method expected = clazz.getMethod("test", FooEntity.class);
 			assertThat(bridged).isEqualTo(expected);
@@ -331,95 +325,9 @@ class BridgeMethodResolverTests {
 	}
 
 
-	public static class MyFoo implements Foo<String> {
-
-		public void someMethod(Integer theArg, Object otherArg) {
-		}
-
-		@Override
-		public void someMethod(String theArg, Object otherArg) {
-		}
-
-		@Override
-		public void someVarargMethod(String theArg, Object... otherArgs) {
-		}
-	}
-
-
-	public static abstract class Bar<T> {
-
-		void someMethod(Map<?, ?> m, Object otherArg) {
-		}
-
-		void someMethod(T theArg, Map<?, ?> m) {
-		}
-
-		abstract void someMethod(T theArg, Object otherArg);
-	}
-
-
-	public static abstract class InterBar<T> extends Bar<T> {
-
-	}
-
-
-	public static class MyBar extends InterBar<String> {
-
-		@Override
-		public void someMethod(String theArg, Object otherArg) {
-		}
-
-		public void someMethod(Integer theArg, Object otherArg) {
-		}
-	}
-
-
 	public interface Adder<T> {
 
 		void add(T item);
-	}
-
-
-	public static abstract class AbstractDateAdder implements Adder<Date> {
-
-		@Override
-		public abstract void add(Date date);
-	}
-
-
-	public static class DateAdder extends AbstractDateAdder {
-
-		@Override
-		public void add(Date date) {
-		}
-	}
-
-
-	public static class Enclosing<T> {
-
-		public class Enclosed<S> {
-
-			public class ReallyDeepNow<R> {
-
-				void someMethod(S s, T t, R r) {
-				}
-			}
-		}
-	}
-
-
-	public static class ExtendsEnclosing extends Enclosing<String> {
-
-		public class ExtendsEnclosed extends Enclosed<Integer> {
-
-			public class ExtendsReallyDeepNow extends ReallyDeepNow<Long> {
-
-				@Override
-				void someMethod(Integer s, String t, Long r) {
-					throw new UnsupportedOperationException();
-				}
-			}
-		}
 	}
 
 
@@ -428,20 +336,6 @@ class BridgeMethodResolverTests {
 		void foo(E e);
 
 		void foo(T t);
-	}
-
-
-	public static class MyBoo implements Boo<String, Integer> {
-
-		@Override
-		public void foo(String e) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void foo(Integer t) {
-			throw new UnsupportedOperationException();
-		}
 	}
 
 
@@ -475,6 +369,272 @@ class BridgeMethodResolverTests {
 	}
 
 
+	public interface Bounded<E> {
+
+		boolean boundedOperation(E e);
+	}
+
+
+	public interface GenericParameter<T> {
+
+		T getFor(Class<T> cls);
+	}
+
+
+	public interface Event {
+
+		int getPriority();
+	}
+
+
+	public interface UserInitiatedEvent {
+	}
+
+
+	public interface Channel<E extends Event> {
+
+		void send(E event);
+
+		void subscribe(final Receiver<E> receiver, Class<E> event);
+
+		void unsubscribe(final Receiver<E> receiver, Class<E> event);
+	}
+
+
+	public interface Broadcaster {
+	}
+
+
+	public interface EventBroadcaster extends Broadcaster {
+
+		void subscribe();
+
+		void unsubscribe();
+
+		void setChannel(Channel<?> channel);
+	}
+
+
+	public interface Receiver<E extends Event> {
+
+		void receive(E event);
+	}
+
+
+	public interface MessageBroadcaster extends Receiver<MessageEvent> {
+
+	}
+
+
+	public interface SimpleGenericRepository<T> {
+
+		public Class<T> getPersistentClass();
+
+		List<T> findByQuery();
+
+		List<T> findAll();
+
+		T refresh(T entity);
+
+		T saveOrUpdate(T entity);
+
+		void delete(Collection<T> entities);
+	}
+
+
+	public interface RepositoryRegistry {
+
+		<T> SimpleGenericRepository<T> getFor(Class<T> entityType);
+	}
+
+
+	public interface ConvenientGenericRepository<T, ID extends Serializable>
+			extends SimpleGenericRepository<T> {
+
+		T findById(ID id, boolean lock);
+
+		List<T> findByExample(T exampleInstance);
+
+		void delete(ID id);
+
+		void delete(T entity);
+	}
+
+
+	public interface Homer<E> {
+
+		void foo(E e);
+	}
+
+
+	public interface GenericDao<T> {
+
+		void saveOrUpdate(T t);
+	}
+
+
+	public interface ConvenienceGenericDao<T> extends GenericDao<T> {
+	}
+
+
+	public interface UserDao {
+
+		// @Transactional
+		void save(User user);
+
+		// @Transactional
+		void save(Permission perm);
+	}
+
+
+	public interface DaoInterface<T, P> {
+
+		T get(P id);
+	}
+
+
+	public interface MegaReceiver<E extends MegaEvent> {
+
+		void receive(E event);
+	}
+
+
+	public interface MegaMessageProducer extends MegaReceiver<MegaMessageEvent> {
+	}
+
+
+	public interface IGenericInterface<D extends DomainObjectSuper> {
+
+		<T> void doSomething(final D domainObject, final T value);
+	}
+
+
+	public interface SearchProvider<RETURN_TYPE, CONDITIONS_TYPE> {
+
+		Collection<RETURN_TYPE> findBy(CONDITIONS_TYPE conditions);
+	}
+
+
+	public interface IExternalMessageProvider<S extends ExternalMessage, T extends ExternalMessageSearchConditions<?>>
+			extends SearchProvider<S, T> {
+	}
+
+
+	public interface BaseInterface<T> {
+
+		<S extends T> S test(S T);
+	}
+
+
+	public interface EntityInterface<T extends BaseEntity> extends BaseInterface<T> {
+
+		@Override
+		<S extends T> S test(S T);
+	}
+
+
+	public interface FooInterface extends EntityInterface<FooEntity> {
+
+		@Override
+		<S extends FooEntity> S test(S T);
+	}
+
+	public static class MyFoo implements Foo<String> {
+
+		public void someMethod(Integer theArg, Object otherArg) {
+		}
+
+		@Override
+		public void someMethod(String theArg, Object otherArg) {
+		}
+
+		@Override
+		public void someVarargMethod(String theArg, Object... otherArgs) {
+		}
+	}
+
+	public static abstract class Bar<T> {
+
+		void someMethod(Map<?, ?> m, Object otherArg) {
+		}
+
+		void someMethod(T theArg, Map<?, ?> m) {
+		}
+
+		abstract void someMethod(T theArg, Object otherArg);
+	}
+
+	public static abstract class InterBar<T> extends Bar<T> {
+
+	}
+
+	public static class MyBar extends InterBar<String> {
+
+		@Override
+		public void someMethod(String theArg, Object otherArg) {
+		}
+
+		public void someMethod(Integer theArg, Object otherArg) {
+		}
+	}
+
+	public static abstract class AbstractDateAdder implements Adder<Date> {
+
+		@Override
+		public abstract void add(Date date);
+	}
+
+	public static class DateAdder extends AbstractDateAdder {
+
+		@Override
+		public void add(Date date) {
+		}
+	}
+
+	public static class Enclosing<T> {
+
+		public class Enclosed<S> {
+
+			public class ReallyDeepNow<R> {
+
+				void someMethod(S s, T t, R r) {
+				}
+			}
+		}
+	}
+
+	public static class ExtendsEnclosing extends Enclosing<String> {
+
+		public class ExtendsEnclosed extends Enclosed<Integer> {
+
+			public class ExtendsReallyDeepNow extends ReallyDeepNow<Long> {
+
+				@Override
+				void someMethod(Integer s, String t, Long r) {
+					throw new UnsupportedOperationException();
+				}
+			}
+		}
+	}
+
+
+	//-----------------------------
+	// SPR-2454 Test Classes
+	//-----------------------------
+
+	public static class MyBoo implements Boo<String, Integer> {
+
+		@Override
+		public void foo(String e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void foo(Integer t) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
 	static abstract class AbstractDaoImpl<T, S> implements Dao<T, S> {
 
 		protected T object;
@@ -493,7 +653,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	static class SettingsDaoImpl extends AbstractDaoImpl<ConcreteSettings, String>
 			implements ConcreteSettingsDao {
 
@@ -508,13 +667,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	public interface Bounded<E> {
-
-		boolean boundedOperation(E e);
-	}
-
-
 	private static class AbstractBounded<E> implements Bounded<E> {
 
 		@Override
@@ -523,7 +675,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	private static class SerializableBounded<E extends HashMap & Delayed> extends AbstractBounded<E> {
 
 		@Override
@@ -531,13 +682,6 @@ class BridgeMethodResolverTests {
 			return false;
 		}
 	}
-
-
-	public interface GenericParameter<T> {
-
-		T getFor(Class<T> cls);
-	}
-
 
 	@SuppressWarnings("unused")
 	private static class StringGenericParameter implements GenericParameter<String> {
@@ -552,6 +696,10 @@ class BridgeMethodResolverTests {
 		}
 	}
 
+
+	//-------------------
+	// SPR-2603 classes
+	//-------------------
 
 	private static class StringList implements List<String> {
 
@@ -671,21 +819,9 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	public interface Event {
-
-		int getPriority();
-	}
-
-
 	public static class GenericEvent implements Event {
 
 		private int priority;
-
-		@Override
-		public int getPriority() {
-			return priority;
-		}
 
 		/**
 		 * Constructor that takes an event priority
@@ -699,48 +835,21 @@ class BridgeMethodResolverTests {
 		 */
 		public GenericEvent() {
 		}
+
+		@Override
+		public int getPriority() {
+			return priority;
+		}
 	}
-
-
-	public interface UserInitiatedEvent {
-	}
-
 
 	public static abstract class BaseUserInitiatedEvent extends GenericEvent implements UserInitiatedEvent {
 	}
 
-
 	public static class MessageEvent extends BaseUserInitiatedEvent {
 	}
 
-
-	public interface Channel<E extends Event> {
-
-		void send(E event);
-
-		void subscribe(final Receiver<E> receiver, Class<E> event);
-
-		void unsubscribe(final Receiver<E> receiver, Class<E> event);
-	}
-
-
-	public interface Broadcaster {
-	}
-
-
-	public interface EventBroadcaster extends Broadcaster {
-
-		void subscribe();
-
-		void unsubscribe();
-
-		void setChannel(Channel<?> channel);
-	}
-
-
 	public static class GenericBroadcasterImpl implements Broadcaster {
 	}
-
 
 	@SuppressWarnings({"unused", "unchecked"})
 	public static abstract class GenericEventBroadcasterImpl<T extends Event>
@@ -749,6 +858,10 @@ class BridgeMethodResolverTests {
 		private Class<T>[] subscribingEvents;
 
 		private Channel<T> channel;
+		private String beanName;
+
+		public GenericEventBroadcasterImpl(Class<? extends T>... events) {
+		}
 
 		/**
 		 * Abstract method to retrieve instance of subclass
@@ -762,8 +875,6 @@ class BridgeMethodResolverTests {
 			this.channel = channel;
 		}
 
-		private String beanName;
-
 		public void setBeanName(String name) {
 			this.beanName = name;
 		}
@@ -775,37 +886,19 @@ class BridgeMethodResolverTests {
 		@Override
 		public void unsubscribe() {
 		}
-
-		public GenericEventBroadcasterImpl(Class<? extends T>... events) {
-		}
 	}
-
-
-	public interface Receiver<E extends Event> {
-
-		void receive(E event);
-	}
-
-
-	public interface MessageBroadcaster extends Receiver<MessageEvent> {
-
-	}
-
 
 	public static class RemovedMessageEvent extends MessageEvent {
 
 	}
 
-
 	public static class NewMessageEvent extends MessageEvent {
 
 	}
 
-
 	public static class ModifiedMessageEvent extends MessageEvent {
 
 	}
-
 
 	@SuppressWarnings({"serial", "unchecked"})
 	public static class MessageBroadcasterImpl extends GenericEventBroadcasterImpl<MessageEvent>
@@ -836,33 +929,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	//-----------------------------
-	// SPR-2454 Test Classes
-	//-----------------------------
-
-	public interface SimpleGenericRepository<T> {
-
-		public Class<T> getPersistentClass();
-
-		List<T> findByQuery();
-
-		List<T> findAll();
-
-		T refresh(T entity);
-
-		T saveOrUpdate(T entity);
-
-		void delete(Collection<T> entities);
-	}
-
-
-	public interface RepositoryRegistry {
-
-		<T> SimpleGenericRepository<T> getFor(Class<T> entityType);
-	}
-
-
 	@SuppressWarnings("unchecked")
 	public static class SettableRepositoryRegistry<R extends SimpleGenericRepository<?>>
 			implements RepositoryRegistry {
@@ -888,22 +954,13 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	public interface ConvenientGenericRepository<T, ID extends Serializable>
-			extends SimpleGenericRepository<T> {
-
-		T findById(ID id, boolean lock);
-
-		List<T> findByExample(T exampleInstance);
-
-		void delete(ID id);
-
-		void delete(T entity);
-	}
-
-
 	public static class GenericHibernateRepository<T, ID extends Serializable>
 			implements ConvenientGenericRepository<T, ID> {
+
+		@Override
+		public Class<T> getPersistentClass() {
+			return null;
+		}
 
 		/**
 		 * @param c Mandatory. The domain class this repository is responsible for.
@@ -914,11 +971,6 @@ class BridgeMethodResolverTests {
 		// Not set in a constructor to enable easy CGLIB-proxying (passing
 		// constructor arguments to Spring AOP proxies is quite cumbersome).
 		public void setPersistentClass(Class<T> c) {
-		}
-
-		@Override
-		public Class<T> getPersistentClass() {
-			return null;
 		}
 
 		@Override
@@ -964,7 +1016,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	public static class HibernateRepositoryRegistry
 			extends SettableRepositoryRegistry<GenericHibernateRepository<?, ?>> {
 
@@ -978,17 +1029,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	//-------------------
-	// SPR-2603 classes
-	//-------------------
-
-	public interface Homer<E> {
-
-		void foo(E e);
-	}
-
-
 	public static class MyHomer<T extends Bounded<T>, L extends T> implements Homer<L> {
 
 		@Override
@@ -996,7 +1036,6 @@ class BridgeMethodResolverTests {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 
 	public static class YourHomer<T extends AbstractBounded<T>, L extends T> extends
 			MyHomer<T, L> {
@@ -1007,17 +1046,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	public interface GenericDao<T> {
-
-		void saveOrUpdate(T t);
-	}
-
-
-	public interface ConvenienceGenericDao<T> extends GenericDao<T> {
-	}
-
-
 	public static class GenericSqlMapDao<T extends Serializable> implements ConvenienceGenericDao<T> {
 
 		@Override
@@ -1027,6 +1055,10 @@ class BridgeMethodResolverTests {
 	}
 
 
+	//-------------------
+	// SPR-3304 classes
+	//-------------------
+
 	public static class GenericSqlMapIntegerDao<T extends Number> extends GenericSqlMapDao<T> {
 
 		@Override
@@ -1034,24 +1066,11 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	public static class Permission {
 	}
 
-
 	public static class User {
 	}
-
-
-	public interface UserDao {
-
-		// @Transactional
-		void save(User user);
-
-		// @Transactional
-		void save(Permission perm);
-	}
-
 
 	public static abstract class AbstractDao<T> {
 
@@ -1061,7 +1080,6 @@ class BridgeMethodResolverTests {
 		public void saveVararg(T t, Object... args) {
 		}
 	}
-
 
 	public static class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
@@ -1074,13 +1092,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	public interface DaoInterface<T, P> {
-
-		T get(P id);
-	}
-
-
 	public static abstract class BusinessGenericDao<T, PK extends Serializable>
 			implements DaoInterface<T, PK> {
 
@@ -1088,10 +1099,8 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	public static class Business<T> {
 	}
-
 
 	public static class BusinessDao extends BusinessGenericDao<Business<?>, Long> {
 
@@ -1111,38 +1120,28 @@ class BridgeMethodResolverTests {
 
 
 	//-------------------
-	// SPR-3304 classes
+	// SPR-3357 classes
 	//-------------------
 
 	private static class MegaEvent {
 	}
 
-
 	private static class MegaMessageEvent extends MegaEvent {
 	}
-
 
 	private static class NewMegaMessageEvent extends MegaEvent {
 	}
 
-
 	private static class ModifiedMegaMessageEvent extends MegaEvent {
 	}
 
-
-	public interface MegaReceiver<E extends MegaEvent> {
-
-		void receive(E event);
+	private static class Other<S, E> {
 	}
 
 
-	public interface MegaMessageProducer extends MegaReceiver<MegaMessageEvent> {
-	}
-
-
-	private static class Other<S,E> {
-	}
-
+	//-------------------
+	// SPR-3485 classes
+	//-------------------
 
 	@SuppressWarnings("unused")
 	private static class MegaMessageProducerImpl extends Other<Long, String> implements MegaMessageProducer {
@@ -1161,24 +1160,16 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	//-------------------
-	// SPR-3357 classes
-	//-------------------
-
 	private static class DomainObjectSuper {
 	}
-
 
 	private static class DomainObjectExtendsSuper extends DomainObjectSuper {
 	}
 
 
-	public interface IGenericInterface<D extends DomainObjectSuper> {
-
-		<T> void doSomething(final D domainObject, final T value);
-	}
-
+	//-------------------
+	// SPR-3534 classes
+	//-------------------
 
 	@SuppressWarnings("unused")
 	private static abstract class AbstractImplementsInterface<D extends DomainObjectSuper> implements IGenericInterface<D> {
@@ -1191,7 +1182,6 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	private static class ExtendsAbstractImplementsInterface extends AbstractImplementsInterface<DomainObjectExtendsSuper> {
 
 		@Override
@@ -1200,15 +1190,9 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	//-------------------
-	// SPR-3485 classes
-	//-------------------
-
 	@SuppressWarnings("serial")
 	private static class ParameterType implements Serializable {
 	}
-
 
 	private static class AbstractDomainObject<P extends Serializable, R> {
 
@@ -1219,7 +1203,6 @@ class BridgeMethodResolverTests {
 		public void method2(P p, R r) {
 		}
 	}
-
 
 	private static class DomainObject extends AbstractDomainObject<ParameterType, byte[]> {
 
@@ -1234,33 +1217,14 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
-	//-------------------
-	// SPR-3534 classes
-	//-------------------
-
-	public interface SearchProvider<RETURN_TYPE, CONDITIONS_TYPE> {
-
-		Collection<RETURN_TYPE> findBy(CONDITIONS_TYPE conditions);
-	}
-
-
 	public static class SearchConditions {
 	}
-
-
-	public interface IExternalMessageProvider<S extends ExternalMessage, T extends ExternalMessageSearchConditions<?>>
-			extends SearchProvider<S, T> {
-	}
-
 
 	public static class ExternalMessage {
 	}
 
-
 	public static class ExternalMessageSearchConditions<T extends ExternalMessage> extends SearchConditions {
 	}
-
 
 	public static class ExternalMessageProvider<S extends ExternalMessage, T extends ExternalMessageSearchConditions<S>>
 			implements IExternalMessageProvider<S, T> {
@@ -1271,18 +1235,19 @@ class BridgeMethodResolverTests {
 		}
 	}
 
-
 	public static class EmailMessage extends ExternalMessage {
 	}
 
 
+	//-------------------
+	// SPR-16103 classes
+	//-------------------
+
 	public static class EmailSearchConditions extends ExternalMessageSearchConditions<EmailMessage> {
 	}
 
-
 	public static class EmailMessageProvider extends ExternalMessageProvider<EmailMessage, EmailSearchConditions> {
 	}
-
 
 	public static class TestEmailProvider extends EmailMessageProvider {
 
@@ -1291,11 +1256,6 @@ class BridgeMethodResolverTests {
 			return null;
 		}
 	}
-
-
-	//-------------------
-	// SPR-16103 classes
-	//-------------------
 
 	public static abstract class BaseEntity {
 	}
@@ -1324,23 +1284,6 @@ class BridgeMethodResolverTests {
 		public <S extends FooEntity> S test(S T) {
 			return null;
 		}
-	}
-
-	public interface BaseInterface<T> {
-
-		<S extends T> S test(S T);
-	}
-
-	public interface EntityInterface<T extends BaseEntity> extends BaseInterface<T> {
-
-		@Override
-		<S extends T> S test(S T);
-	}
-
-	public interface FooInterface extends EntityInterface<FooEntity> {
-
-		@Override
-		<S extends FooEntity> S test(S T);
 	}
 
 }

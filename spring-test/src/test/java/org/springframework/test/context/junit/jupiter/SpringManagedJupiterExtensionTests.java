@@ -16,24 +16,17 @@
 
 package org.springframework.test.context.junit.jupiter;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestTemplate;
-import org.junit.jupiter.api.extension.Extension;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolver;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
-import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
-
+import org.junit.jupiter.api.extension.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -112,13 +105,13 @@ class SpringManagedJupiterExtensionTests {
 
 						@Override
 						public boolean supportsParameter(ParameterContext parameterContext,
-								ExtensionContext extensionContext) {
+														 ExtensionContext extensionContext) {
 							return parameterContext.getParameter().getType() == String.class;
 						}
 
 						@Override
 						public Object resolveParameter(ParameterContext parameterContext,
-								ExtensionContext extensionContext) {
+													   ExtensionContext extensionContext) {
 							return parameter;
 						}
 					});

@@ -29,12 +29,12 @@ import java.util.function.Function;
  * the cached values and a {@code ConcurrentLinkedDeque} for ordering the keys
  * and choosing the least recently used key when the cache is at full capacity.
  *
- * @author Brian Clozel
- * @author Juergen Hoeller
- * @since 5.3
  * @param <K> the type of the key used for cache retrieval
  * @param <V> the type of the cached values
+ * @author Brian Clozel
+ * @author Juergen Hoeller
  * @see #get
+ * @since 5.3
  */
 public class ConcurrentLruCache<K, V> {
 
@@ -53,8 +53,9 @@ public class ConcurrentLruCache<K, V> {
 
 	/**
 	 * Create a new cache instance with the given limit and generator function.
+	 *
 	 * @param sizeLimit the maximum number of entries in the cache
-	 * (0 indicates no caching, always generating a new value)
+	 *                  (0 indicates no caching, always generating a new value)
 	 * @param generator a function to generate a new value for a given key
 	 */
 	public ConcurrentLruCache(int sizeLimit, Function<K, V> generator) {
@@ -68,6 +69,7 @@ public class ConcurrentLruCache<K, V> {
 	/**
 	 * Retrieve an entry from the cache, potentially triggering generation
 	 * of the value.
+	 *
 	 * @param key the key to retrieve the entry for
 	 * @return the cached or newly generated value
 	 */
@@ -87,8 +89,7 @@ public class ConcurrentLruCache<K, V> {
 					this.queue.offer(key);
 				}
 				return cached;
-			}
-			finally {
+			} finally {
 				this.lock.readLock().unlock();
 			}
 		}
@@ -115,14 +116,14 @@ public class ConcurrentLruCache<K, V> {
 			this.cache.put(key, value);
 			this.size = this.cache.size();
 			return value;
-		}
-		finally {
+		} finally {
 			this.lock.writeLock().unlock();
 		}
 	}
 
 	/**
 	 * Determine whether the given key is present in this cache.
+	 *
 	 * @param key the key to check for
 	 * @return {@code true} if the key is present,
 	 * {@code false} if there was no matching key
@@ -133,6 +134,7 @@ public class ConcurrentLruCache<K, V> {
 
 	/**
 	 * Immediately remove the given key and any associated value.
+	 *
 	 * @param key the key to evict the entry for
 	 * @return {@code true} if the key was present before,
 	 * {@code false} if there was no matching key
@@ -144,8 +146,7 @@ public class ConcurrentLruCache<K, V> {
 			this.queue.remove(key);
 			this.size = this.cache.size();
 			return wasPresent;
-		}
-		finally {
+		} finally {
 			this.lock.writeLock().unlock();
 		}
 	}
@@ -159,14 +160,14 @@ public class ConcurrentLruCache<K, V> {
 			this.cache.clear();
 			this.queue.clear();
 			this.size = 0;
-		}
-		finally {
+		} finally {
 			this.lock.writeLock().unlock();
 		}
 	}
 
 	/**
 	 * Return the current size of the cache.
+	 *
 	 * @see #sizeLimit()
 	 */
 	public int size() {
@@ -176,6 +177,7 @@ public class ConcurrentLruCache<K, V> {
 	/**
 	 * Return the the maximum number of entries in the cache
 	 * (0 indicates no caching, always generating a new value).
+	 *
 	 * @see #size()
 	 */
 	public int sizeLimit() {

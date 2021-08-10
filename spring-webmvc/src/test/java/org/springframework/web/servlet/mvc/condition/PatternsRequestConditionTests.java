@@ -16,14 +16,12 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.util.UrlPathHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -120,7 +118,7 @@ class PatternsRequestConditionTests {
 
 		boolean useSuffixPatternMatch = true;
 		PatternsRequestCondition condition =
-				new PatternsRequestCondition(new String[] {"/{foo}"}, null, null, useSuffixPatternMatch, true);
+				new PatternsRequestCondition(new String[]{"/{foo}"}, null, null, useSuffixPatternMatch, true);
 		PatternsRequestCondition match = condition.getMatchingCondition(request);
 
 		assertThat(match).isNotNull();
@@ -128,7 +126,7 @@ class PatternsRequestConditionTests {
 
 		useSuffixPatternMatch = false;
 		condition = new PatternsRequestCondition(
-				new String[] {"/{foo}"}, null, null, useSuffixPatternMatch, false);
+				new String[]{"/{foo}"}, null, null, useSuffixPatternMatch, false);
 		match = condition.getMatchingCondition(request);
 
 		assertThat(match).isNotNull();
@@ -139,7 +137,7 @@ class PatternsRequestConditionTests {
 	@SuppressWarnings("deprecation")
 	void matchSuffixPatternUsingFileExtensions() {
 		PatternsRequestCondition condition = new PatternsRequestCondition(
-				new String[] {"/jobs/{jobName}"}, null, null, true, false, Collections.singletonList("json"));
+				new String[]{"/jobs/{jobName}"}, null, null, true, false, Collections.singletonList("json"));
 
 		MockHttpServletRequest request = initRequest("/jobs/my.job");
 		PatternsRequestCondition match = condition.getMatchingCondition(request);
@@ -158,10 +156,10 @@ class PatternsRequestConditionTests {
 	@SuppressWarnings("deprecation")
 	void matchSuffixPatternUsingFileExtensions2() {
 		PatternsRequestCondition condition1 = new PatternsRequestCondition(
-				new String[] {"/prefix"}, null, null, true, false, Collections.singletonList("json"));
+				new String[]{"/prefix"}, null, null, true, false, Collections.singletonList("json"));
 
 		PatternsRequestCondition condition2 = new PatternsRequestCondition(
-				new String[] {"/suffix"}, null, null, true, false, null);
+				new String[]{"/suffix"}, null, null, true, false, null);
 
 		PatternsRequestCondition combined = condition1.combine(condition2);
 
@@ -181,7 +179,7 @@ class PatternsRequestConditionTests {
 		assertThat(match).isNotNull();
 		assertThat(match.getPatterns().iterator().next()).as("Should match by default").isEqualTo("/foo/");
 
-		condition = new PatternsRequestCondition(new String[] {"/foo"}, true, null);
+		condition = new PatternsRequestCondition(new String[]{"/foo"}, true, null);
 		match = condition.getMatchingCondition(request);
 
 		assertThat(match).isNotNull();
@@ -189,7 +187,7 @@ class PatternsRequestConditionTests {
 				.as("Trailing slash should be insensitive to useSuffixPatternMatch settings (SPR-6164, SPR-5636)")
 				.isEqualTo("/foo/");
 
-		condition = new PatternsRequestCondition(new String[] {"/foo"}, false, null);
+		condition = new PatternsRequestCondition(new String[]{"/foo"}, false, null);
 		match = condition.getMatchingCondition(request);
 
 		assertThat(match).isNull();
@@ -203,7 +201,8 @@ class PatternsRequestConditionTests {
 		assertThat(match).isNull();
 	}
 
-	@Test // gh-22543
+	@Test
+		// gh-22543
 	void matchWithEmptyPatterns() {
 		PatternsRequestCondition condition = new PatternsRequestCondition();
 		assertThat(condition.getMatchingCondition(initRequest(""))).isNotNull();

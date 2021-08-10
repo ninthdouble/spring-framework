@@ -16,47 +16,12 @@
 
 package org.springframework.beans.factory.annotation;
 
-import java.io.Serializable;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InjectionPoint;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.UnsatisfiedDependencyException;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.TypedStringValue;
@@ -75,6 +40,20 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -90,7 +69,8 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 	private DefaultListableBeanFactory bf;
 
 	private AutowiredAnnotationBeanPostProcessor bpp;
-
+	@Qualifier("integerRepo")
+	private Repository<?> integerRepositoryQualifierProvider;
 
 	@BeforeEach
 	public void setup() {
@@ -108,13 +88,12 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.destroySingletons();
 	}
 
-
 	@Test
 	public void testIncompleteBeanDefinition() {
 		bf.registerBeanDefinition("testBean", new GenericBeanDefinition());
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				bf.getBean("testBean"))
-			.withRootCauseInstanceOf(IllegalStateException.class);
+				.withRootCauseInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -182,7 +161,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		assertThat(bean.getNestedTestBean()).isSameAs(ntb);
 		assertThat(bean.getBeanFactory()).isSameAs(bf);
 
-		assertThat(bf.getDependenciesForBean("annotatedBean")).isEqualTo(new String[] {"testBean", "nestedTestBean"});
+		assertThat(bf.getDependenciesForBean("annotatedBean")).isEqualTo(new String[]{"testBean", "nestedTestBean"});
 		bf.destroySingleton("testBean");
 		assertThat(bf.containsSingleton("testBean")).isFalse();
 		assertThat(bf.containsSingleton("annotatedBean")).isFalse();
@@ -805,7 +784,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerBeanDefinition("annotatedBean", new RootBeanDefinition(ConstructorWithoutFallbackBean.class));
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("annotatedBean"))
-			.satisfies(methodParameterDeclaredOn(ConstructorWithoutFallbackBean.class));
+				.satisfies(methodParameterDeclaredOn(ConstructorWithoutFallbackBean.class));
 	}
 
 	@Test
@@ -1082,7 +1061,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerBeanDefinition("testBean2", new RootBeanDefinition(TestBean.class));
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).as("should have failed, more than one bean of type").isThrownBy(() ->
 				bf.getBean("annotatedBean"))
-			.satisfies(methodParameterDeclaredOn(MapMethodInjectionBean.class));
+				.satisfies(methodParameterDeclaredOn(MapMethodInjectionBean.class));
 	}
 
 	@Test
@@ -1526,7 +1505,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 				CustomAnnotationRequiredFieldResourceInjectionBean.class));
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(fieldDeclaredOn(CustomAnnotationRequiredFieldResourceInjectionBean.class));
+				.satisfies(fieldDeclaredOn(CustomAnnotationRequiredFieldResourceInjectionBean.class));
 	}
 
 	@Test
@@ -1542,7 +1521,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerSingleton("testBean2", tb2);
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(fieldDeclaredOn(CustomAnnotationRequiredFieldResourceInjectionBean.class));
+				.satisfies(fieldDeclaredOn(CustomAnnotationRequiredFieldResourceInjectionBean.class));
 	}
 
 	@Test
@@ -1569,7 +1548,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 				CustomAnnotationRequiredMethodResourceInjectionBean.class));
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(methodParameterDeclaredOn(CustomAnnotationRequiredMethodResourceInjectionBean.class));
+				.satisfies(methodParameterDeclaredOn(CustomAnnotationRequiredMethodResourceInjectionBean.class));
 	}
 
 	@Test
@@ -1585,7 +1564,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerSingleton("testBean2", tb2);
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(methodParameterDeclaredOn(CustomAnnotationRequiredMethodResourceInjectionBean.class));
+				.satisfies(methodParameterDeclaredOn(CustomAnnotationRequiredMethodResourceInjectionBean.class));
 	}
 
 	@Test
@@ -1633,7 +1612,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerSingleton("testBean2", tb2);
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(fieldDeclaredOn(CustomAnnotationOptionalFieldResourceInjectionBean.class));
+				.satisfies(fieldDeclaredOn(CustomAnnotationOptionalFieldResourceInjectionBean.class));
 	}
 
 	@Test
@@ -1681,7 +1660,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		bf.registerSingleton("testBean2", tb2);
 		assertThatExceptionOfType(UnsatisfiedDependencyException.class).isThrownBy(() ->
 				bf.getBean("customBean"))
-			.satisfies(methodParameterDeclaredOn(CustomAnnotationOptionalMethodResourceInjectionBean.class));
+				.satisfies(methodParameterDeclaredOn(CustomAnnotationOptionalMethodResourceInjectionBean.class));
 	}
 
 	/**
@@ -1885,7 +1864,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		assertThat(bean.repositoryMap.get("repo")).isSameAs(repo);
 		assertThat(bean.stringRepositoryMap.get("repo")).isSameAs(repo);
 
-		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(Repository.class, String.class))).isEqualTo(new String[] {"repo"});
+		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(Repository.class, String.class))).isEqualTo(new String[]{"repo"});
 	}
 
 	@Test
@@ -2239,8 +2218,8 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		GenericInterface1Impl bean1 = (GenericInterface1Impl) bf.getBean("bean1");
 		GenericInterface2Impl bean2 = (GenericInterface2Impl) bf.getBean("bean2");
 		assertThat(bean1.gi2).isSameAs(bean2);
-		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(GenericInterface1.class, String.class))).isEqualTo(new String[] {"bean1"});
-		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(GenericInterface2.class, String.class))).isEqualTo(new String[] {"bean2"});
+		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(GenericInterface1.class, String.class))).isEqualTo(new String[]{"bean1"});
+		assertThat(bf.getBeanNamesForType(ResolvableType.forClassWithGenerics(GenericInterface2.class, String.class))).isEqualTo(new String[]{"bean2"});
 	}
 
 	@Test
@@ -2350,13 +2329,70 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		};
 	}
 
-
 	@Qualifier("testBean")
-	private void testBeanQualifierProvider() {}
+	private void testBeanQualifierProvider() {
+	}
 
-	@Qualifier("integerRepo")
-	private Repository<?> integerRepositoryQualifierProvider;
 
+	public interface InterfaceWithDefaultMethod {
+
+		@Autowired
+		void setTestBean2(TestBean testBean2);
+
+		@Autowired
+		default void injectDefault(ITestBean testBean4) {
+			markSubInjected();
+		}
+
+		void markSubInjected();
+	}
+
+
+	@Target({ElementType.METHOD, ElementType.FIELD})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface MyAutowired {
+
+		boolean optional() default false;
+	}
+
+
+	public interface Repository<T> {
+	}
+
+
+	public interface GenericInterface1<T> {
+
+		String doSomethingGeneric(T o);
+	}
+
+
+	public interface GenericInterface2<K> {
+
+		String doSomethingMoreGeneric(K o);
+	}
+
+
+	@SuppressWarnings("rawtypes")
+	public interface StockMovement<P extends StockMovementInstruction> {
+	}
+
+
+	@SuppressWarnings("rawtypes")
+	public interface StockMovementInstruction<C extends StockMovement> {
+	}
+
+
+	@SuppressWarnings("rawtypes")
+	public interface StockMovementDao<S extends StockMovement> {
+	}
+
+
+	public interface CustomMap<K, V> extends Map<K, V> {
+	}
+
+
+	public interface CustomSet<E> extends Set<E> {
+	}
 
 	public static class ResourceInjectionBean {
 
@@ -2365,14 +2401,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 
 		private TestBean testBean2;
 
-		@Autowired
-		public void setTestBean2(TestBean testBean2) {
-			if (this.testBean2 != null) {
-				throw new IllegalStateException("Already called");
-			}
-			this.testBean2 = testBean2;
-		}
-
 		public TestBean getTestBean() {
 			return this.testBean;
 		}
@@ -2380,21 +2408,24 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public TestBean getTestBean2() {
 			return this.testBean2;
 		}
-	}
 
+		@Autowired
+		public void setTestBean2(TestBean testBean2) {
+			if (this.testBean2 != null) {
+				throw new IllegalStateException("Already called");
+			}
+			this.testBean2 = testBean2;
+		}
+	}
 
 	static class NonPublicResourceInjectionBean<T> extends ResourceInjectionBean {
 
 		@Autowired
 		public final ITestBean testBean3 = null;
-
-		private T nestedTestBean;
-
-		private ITestBean testBean4;
-
-		protected BeanFactory beanFactory;
-
 		public boolean baseInjected = false;
+		protected BeanFactory beanFactory;
+		private T nestedTestBean;
+		private ITestBean testBean4;
 
 		public NonPublicResourceInjectionBean() {
 		}
@@ -2440,7 +2471,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class TypedExtendedResourceInjectionBean extends NonPublicResourceInjectionBean<NestedTestBean>
 			implements DisposableBean {
 
@@ -2451,7 +2481,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			this.destroyed = true;
 		}
 	}
-
 
 	public static class OverriddenExtendedResourceInjectionBean extends NonPublicResourceInjectionBean<NestedTestBean> {
 
@@ -2472,21 +2501,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			this.subInjected = true;
 		}
 	}
-
-
-	public interface InterfaceWithDefaultMethod {
-
-		@Autowired
-		void setTestBean2(TestBean testBean2);
-
-		@Autowired
-		default void injectDefault(ITestBean testBean4) {
-			markSubInjected();
-		}
-
-		void markSubInjected();
-	}
-
 
 	public static class DefaultMethodResourceInjectionBean extends NonPublicResourceInjectionBean<NestedTestBean>
 			implements InterfaceWithDefaultMethod {
@@ -2509,19 +2523,14 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class OptionalResourceInjectionBean extends ResourceInjectionBean {
 
 		@Autowired(required = false)
-		protected ITestBean testBean3;
-
-		private IndexedTestBean indexedTestBean;
-
-		private NestedTestBean[] nestedTestBeans;
-
-		@Autowired(required = false)
 		public NestedTestBean[] nestedTestBeansField;
-
+		@Autowired(required = false)
+		protected ITestBean testBean3;
+		private IndexedTestBean indexedTestBean;
+		private NestedTestBean[] nestedTestBeans;
 		private ITestBean testBean4;
 
 		@Override
@@ -2554,21 +2563,15 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class OptionalCollectionResourceInjectionBean extends ResourceInjectionBean {
 
-		@Autowired(required = false)
-		protected ITestBean testBean3;
-
-		private IndexedTestBean indexedTestBean;
-
-		private List<NestedTestBean> nestedTestBeans;
-
 		public List<NestedTestBean> nestedTestBeansSetter;
-
 		@Autowired(required = false)
 		public List<NestedTestBean> nestedTestBeansField;
-
+		@Autowired(required = false)
+		protected ITestBean testBean3;
+		private IndexedTestBean indexedTestBean;
+		private List<NestedTestBean> nestedTestBeans;
 		private ITestBean testBean4;
 
 		@Override
@@ -2582,11 +2585,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			this.testBean4 = testBean4;
 			this.indexedTestBean = indexedTestBean;
 			this.nestedTestBeans = nestedTestBeans;
-		}
-
-		@Autowired(required = false)
-		public void setNestedTestBeans(List<NestedTestBean> nestedTestBeans) {
-			this.nestedTestBeansSetter = nestedTestBeans;
 		}
 
 		public ITestBean getTestBean3() {
@@ -2604,8 +2602,12 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public List<NestedTestBean> getNestedTestBeans() {
 			return this.nestedTestBeans;
 		}
-	}
 
+		@Autowired(required = false)
+		public void setNestedTestBeans(List<NestedTestBean> nestedTestBeans) {
+			this.nestedTestBeansSetter = nestedTestBeans;
+		}
+	}
 
 	public static class ConstructorResourceInjectionBean extends ResourceInjectionBean {
 
@@ -2628,8 +2630,8 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 
 		@Autowired
 		public ConstructorResourceInjectionBean(@Autowired(required = false) ITestBean testBean4,
-				@Autowired(required = false) NestedTestBean nestedTestBean,
-				ConfigurableListableBeanFactory beanFactory) {
+												@Autowired(required = false) NestedTestBean nestedTestBean,
+												ConfigurableListableBeanFactory beanFactory) {
 			this.testBean4 = testBean4;
 			this.nestedTestBean = nestedTestBean;
 			this.beanFactory = beanFactory;
@@ -2665,7 +2667,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.beanFactory;
 		}
 	}
-
 
 	public static class ConstructorsResourceInjectionBean {
 
@@ -2710,7 +2711,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ConstructorWithoutFallbackBean {
 
 		protected ITestBean testBean3;
@@ -2724,7 +2724,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.testBean3;
 		}
 	}
-
 
 	public static class ConstructorsCollectionResourceInjectionBean {
 
@@ -2753,7 +2752,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 
 		public ConstructorsCollectionResourceInjectionBean(ITestBean testBean3, ITestBean testBean4,
-				NestedTestBean nestedTestBean) {
+														   NestedTestBean nestedTestBean) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -2769,7 +2768,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.nestedTestBeans;
 		}
 	}
-
 
 	public static class SingleConstructorVarargBean {
 
@@ -2791,7 +2789,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class SingleConstructorRequiredCollectionBean {
 
 		private ITestBean testBean;
@@ -2812,7 +2809,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class SingleConstructorOptionalCollectionBean {
 
 		private ITestBean testBean;
@@ -2820,7 +2816,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		private List<NestedTestBean> nestedTestBeans;
 
 		public SingleConstructorOptionalCollectionBean(ITestBean testBean,
-				@Autowired(required = false) List<NestedTestBean> nestedTestBeans) {
+													   @Autowired(required = false) List<NestedTestBean> nestedTestBeans) {
 			this.testBean = testBean;
 			this.nestedTestBeans = nestedTestBeans;
 		}
@@ -2834,16 +2830,13 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class MyTestBeanMap extends LinkedHashMap<String, TestBean> {
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class MyTestBeanSet extends LinkedHashSet<TestBean> {
 	}
-
 
 	public static class MapConstructorInjectionBean {
 
@@ -2859,7 +2852,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class QualifiedMapConstructorInjectionBean {
 
 		private Map<String, TestBean> testBeanMap;
@@ -2873,7 +2865,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.testBeanMap;
 		}
 	}
-
 
 	public static class SetConstructorInjectionBean {
 
@@ -2889,7 +2880,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class SelfInjectionBean {
 
 		@Autowired
@@ -2898,7 +2888,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		@Autowired(required = false)
 		public List<SelfInjectionBean> referenceCollection;
 	}
-
 
 	@SuppressWarnings("serial")
 	public static class SelfInjectionCollectionBean extends ArrayList<SelfInjectionCollectionBean> {
@@ -2910,7 +2899,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public List<SelfInjectionCollectionBean> referenceCollection;
 	}
 
-
 	public static class MapFieldInjectionBean {
 
 		@Autowired
@@ -2920,7 +2908,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.testBeanMap;
 		}
 	}
-
 
 	public static class MapMethodInjectionBean {
 
@@ -2943,7 +2930,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryFieldInjectionBean implements Serializable {
 
@@ -2954,7 +2940,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.testBeanFactory.getObject();
 		}
 	}
-
 
 	@SuppressWarnings("serial")
 	public static class ObjectFactoryConstructorInjectionBean implements Serializable {
@@ -2970,7 +2955,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ObjectFactoryQualifierInjectionBean {
 
 		@Autowired
@@ -2981,7 +2965,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return (TestBean) this.testBeanFactory.getObject();
 		}
 	}
-
 
 	public static class ObjectProviderInjectionBean {
 
@@ -3047,7 +3030,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class CustomAnnotationRequiredFieldResourceInjectionBean {
 
 		@MyAutowired(optional = false)
@@ -3058,21 +3040,19 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class CustomAnnotationRequiredMethodResourceInjectionBean {
 
 		private TestBean testBean;
+
+		public TestBean getTestBean() {
+			return this.testBean;
+		}
 
 		@MyAutowired(optional = false)
 		public void setTestBean(TestBean testBean) {
 			this.testBean = testBean;
 		}
-
-		public TestBean getTestBean() {
-			return this.testBean;
-		}
 	}
-
 
 	public static class CustomAnnotationOptionalFieldResourceInjectionBean extends ResourceInjectionBean {
 
@@ -3084,29 +3064,19 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class CustomAnnotationOptionalMethodResourceInjectionBean extends ResourceInjectionBean {
 
 		private TestBean testBean3;
+
+		public TestBean getTestBean3() {
+			return this.testBean3;
+		}
 
 		@MyAutowired(optional = true)
 		protected void setTestBean3(TestBean testBean3) {
 			this.testBean3 = testBean3;
 		}
-
-		public TestBean getTestBean3() {
-			return this.testBean3;
-		}
 	}
-
-
-	@Target({ElementType.METHOD, ElementType.FIELD})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface MyAutowired {
-
-		boolean optional() default false;
-	}
-
 
 	/**
 	 * Bean with a dependency on a {@link FactoryBean}.
@@ -3120,7 +3090,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.factoryBean;
 		}
 	}
-
 
 	public static class StringFactoryBean implements FactoryBean<String> {
 
@@ -3140,21 +3109,19 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class OrderedNestedTestBean extends NestedTestBean implements Ordered {
 
 		private int order;
-
-		public void setOrder(int order) {
-			this.order = order;
-		}
 
 		@Override
 		public int getOrder() {
 			return this.order;
 		}
-	}
 
+		public void setOrder(int order) {
+			this.order = order;
+		}
+	}
 
 	@Order(1)
 	public static class FixedOrder1NestedTestBean extends NestedTestBean {
@@ -3162,10 +3129,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 
 	@Order(2)
 	public static class FixedOrder2NestedTestBean extends NestedTestBean {
-	}
-
-
-	public interface Repository<T> {
 	}
 
 	public static class StringRepository implements Repository<String> {
@@ -3188,7 +3151,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 	public static class SimpleRepositorySubclass extends SimpleRepository {
 	}
 
-
 	public static class RepositoryFactoryBean<T> implements FactoryBean<T> {
 
 		@Override
@@ -3206,7 +3168,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return false;
 		}
 	}
-
 
 	public static class RepositoryFieldInjectionBean {
 
@@ -3259,7 +3220,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public Map<String, Repository<Integer>> integerRepositoryMap;
 	}
 
-
 	public static class RepositoryFieldInjectionBeanWithVariables<S, I> {
 
 		@Autowired
@@ -3311,39 +3271,44 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public Map<String, Repository<I>> integerRepositoryMap;
 	}
 
-
 	public static class RepositoryFieldInjectionBeanWithSubstitutedVariables
 			extends RepositoryFieldInjectionBeanWithVariables<String, Integer> {
 	}
 
-
 	public static class RepositoryFieldInjectionBeanWithQualifiers {
 
-		@Autowired @Qualifier("stringRepo")
+		@Autowired
+		@Qualifier("stringRepo")
 		public Repository<?> stringRepository;
 
-		@Autowired @Qualifier("integerRepo")
+		@Autowired
+		@Qualifier("integerRepo")
 		public Repository<?> integerRepository;
 
-		@Autowired @Qualifier("stringRepo")
+		@Autowired
+		@Qualifier("stringRepo")
 		public Repository<?>[] stringRepositoryArray;
 
-		@Autowired @Qualifier("integerRepo")
+		@Autowired
+		@Qualifier("integerRepo")
 		public Repository<?>[] integerRepositoryArray;
 
-		@Autowired @Qualifier("stringRepo")
+		@Autowired
+		@Qualifier("stringRepo")
 		public List<Repository<?>> stringRepositoryList;
 
-		@Autowired @Qualifier("integerRepo")
+		@Autowired
+		@Qualifier("integerRepo")
 		public List<Repository<?>> integerRepositoryList;
 
-		@Autowired @Qualifier("stringRepo")
+		@Autowired
+		@Qualifier("stringRepo")
 		public Map<String, Repository<?>> stringRepositoryMap;
 
-		@Autowired @Qualifier("integerRepo")
+		@Autowired
+		@Qualifier("integerRepo")
 		public Map<String, Repository<?>> integerRepositoryMap;
 	}
-
 
 	public static class RepositoryFieldInjectionBeanWithSimpleMatch {
 
@@ -3372,13 +3337,11 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public Map<String, Repository<String>> stringRepositoryMap;
 	}
 
-
 	public static class RepositoryFactoryBeanInjectionBean {
 
 		@Autowired
 		public RepositoryFactoryBean<?> repositoryFactoryBean;
 	}
-
 
 	public static class RepositoryMethodInjectionBean {
 
@@ -3495,7 +3458,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class RepositoryMethodInjectionBeanWithVariables<S, I> {
 
 		public S string;
@@ -3611,11 +3573,9 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class RepositoryMethodInjectionBeanWithSubstitutedVariables
 			extends RepositoryMethodInjectionBeanWithVariables<String, Integer> {
 	}
-
 
 	public static class RepositoryConstructorInjectionBean {
 
@@ -3637,9 +3597,9 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 
 		@Autowired
 		public RepositoryConstructorInjectionBean(Repository<String> stringRepository, Repository<Integer> integerRepository,
-				Repository<String>[] stringRepositoryArray, Repository<Integer>[] integerRepositoryArray,
-				List<Repository<String>> stringRepositoryList, List<Repository<Integer>> integerRepositoryList,
-				Map<String, Repository<String>> stringRepositoryMap, Map<String, Repository<Integer>> integerRepositoryMap) {
+												  Repository<String>[] stringRepositoryArray, Repository<Integer>[] integerRepositoryArray,
+												  List<Repository<String>> stringRepositoryList, List<Repository<Integer>> integerRepositoryList,
+												  Map<String, Repository<String>> stringRepositoryMap, Map<String, Repository<Integer>> integerRepositoryMap) {
 			this.stringRepository = stringRepository;
 			this.integerRepository = integerRepository;
 			this.stringRepositoryArray = stringRepositoryArray;
@@ -3651,7 +3611,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	/**
 	 * Pseudo-implementation of EasyMock's {@code MocksControl} class.
 	 */
@@ -3659,7 +3618,7 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 
 		@SuppressWarnings("unchecked")
 		public <T> T createMock(Class<T> toMock) {
-			return (T) Proxy.newProxyInstance(AutowiredAnnotationBeanPostProcessorTests.class.getClassLoader(), new Class<?>[] {toMock},
+			return (T) Proxy.newProxyInstance(AutowiredAnnotationBeanPostProcessorTests.class.getClassLoader(), new Class<?>[]{toMock},
 					new InvocationHandler() {
 						@Override
 						public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -3669,22 +3628,10 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
-	public interface GenericInterface1<T> {
-
-		String doSomethingGeneric(T o);
-	}
-
-
 	public static class GenericInterface1Impl<T> implements GenericInterface1<T> {
 
 		@Autowired
 		private GenericInterface2<T> gi2;
-
-		@Override
-		public String doSomethingGeneric(T o) {
-			return gi2.doSomethingMoreGeneric(o) + "_somethingGeneric_" + o;
-		}
 
 		public static GenericInterface1<String> create() {
 			return new StringGenericInterface1Impl();
@@ -3698,18 +3645,15 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		public static GenericInterface1 createPlain() {
 			return new GenericInterface1Impl();
 		}
-	}
 
+		@Override
+		public String doSomethingGeneric(T o) {
+			return gi2.doSomethingMoreGeneric(o) + "_somethingGeneric_" + o;
+		}
+	}
 
 	public static class StringGenericInterface1Impl extends GenericInterface1Impl<String> {
 	}
-
-
-	public interface GenericInterface2<K> {
-
-		String doSomethingMoreGeneric(K o);
-	}
-
 
 	public static class GenericInterface2Impl implements GenericInterface2<String> {
 
@@ -3719,7 +3663,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ReallyGenericInterface2Impl implements GenericInterface2<Object> {
 
 		@Override
@@ -3727,7 +3670,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return "somethingMoreGeneric_" + o;
 		}
 	}
-
 
 	public static class GenericInterface2Bean<K> implements GenericInterface2<K>, BeanNameAware {
 
@@ -3744,7 +3686,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class MultiGenericFieldInjection {
 
 		@Autowired
@@ -3759,7 +3700,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	@SuppressWarnings("rawtypes")
 	public static class PlainGenericInterface2Impl implements GenericInterface2 {
 
@@ -3769,36 +3709,17 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
-	@SuppressWarnings("rawtypes")
-	public interface StockMovement<P extends StockMovementInstruction> {
-	}
-
-
-	@SuppressWarnings("rawtypes")
-	public interface StockMovementInstruction<C extends StockMovement> {
-	}
-
-
-	@SuppressWarnings("rawtypes")
-	public interface StockMovementDao<S extends StockMovement> {
-	}
-
-
 	@SuppressWarnings("rawtypes")
 	public static class StockMovementImpl<P extends StockMovementInstruction> implements StockMovement<P> {
 	}
-
 
 	@SuppressWarnings("rawtypes")
 	public static class StockMovementInstructionImpl<C extends StockMovement> implements StockMovementInstruction<C> {
 	}
 
-
 	@SuppressWarnings("rawtypes")
 	public static class StockMovementDaoImpl<E extends StockMovement> implements StockMovementDao<E> {
 	}
-
 
 	public static class StockServiceImpl {
 
@@ -3806,7 +3727,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		@SuppressWarnings("rawtypes")
 		private StockMovementDao<StockMovement> stockMovementDao;
 	}
-
 
 	public static class MyCallable implements Callable<Thread> {
 
@@ -3816,15 +3736,13 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
-	public static class SecondCallable implements Callable<Thread>{
+	public static class SecondCallable implements Callable<Thread> {
 
 		@Override
 		public Thread call() throws Exception {
 			return null;
 		}
 	}
-
 
 	public static abstract class Foo<T extends Runnable, RT extends Callable<T>> {
 
@@ -3838,7 +3756,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class FooBar extends Foo<Thread, MyCallable> {
 
 		@Override
@@ -3847,7 +3764,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			super.setObj(obj);
 		}
 	}
-
 
 	public static class NullNestedTestBeanFactoryBean implements FactoryBean<NestedTestBean> {
 
@@ -3867,7 +3783,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class NullFactoryMethods {
 
 		public static TestBean createTestBean() {
@@ -3879,13 +3794,11 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ProvidedArgumentBean {
 
 		public ProvidedArgumentBean(String[] args) {
 		}
 	}
-
 
 	public static class CollectionFactoryMethods {
 
@@ -3904,7 +3817,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class CustomCollectionFactoryMethods {
 
 		public static CustomMap<String, TestBean> testBeanMap() {
@@ -3922,7 +3834,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class CustomMapConstructorInjectionBean {
 
 		private CustomMap<String, TestBean> testBeanMap;
@@ -3936,7 +3847,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 			return this.testBeanMap;
 		}
 	}
-
 
 	public static class CustomSetConstructorInjectionBean {
 
@@ -3952,19 +3862,9 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
-	public interface CustomMap<K, V> extends Map<K, V> {
-	}
-
-
 	@SuppressWarnings("serial")
 	public static class CustomHashMap<K, V> extends LinkedHashMap<K, V> implements CustomMap<K, V> {
 	}
-
-
-	public interface CustomSet<E> extends Set<E> {
-	}
-
 
 	@SuppressWarnings("serial")
 	public static class CustomHashSet<E> extends LinkedHashSet<E> implements CustomSet<E> {
@@ -3986,6 +3886,10 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		@Autowired
 		TestBean testBean;
 
+		public static SelfInjectingFactoryBean create() {
+			return new SelfInjectingFactoryBean();
+		}
+
 		@Override
 		public TestBean getObject() {
 			return exposedTestBean;
@@ -3999,10 +3903,6 @@ public class AutowiredAnnotationBeanPostProcessorTests {
 		@Override
 		public boolean isSingleton() {
 			return true;
-		}
-
-		public static SelfInjectingFactoryBean create() {
-			return new SelfInjectingFactoryBean();
 		}
 	}
 

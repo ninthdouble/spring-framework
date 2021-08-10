@@ -17,7 +17,6 @@
 package org.springframework.test.context.jdbc;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -35,7 +34,7 @@ class CustomScriptSyntaxSqlScriptsTests extends AbstractTransactionalTests {
 	@Test
 	@Sql("schema.sql")
 	@Sql(scripts = "data-add-users-with-custom-script-syntax.sql",//
-	config = @SqlConfig(commentPrefixes = { "`", "%%" }, blockCommentStartDelimiter = "#$", blockCommentEndDelimiter = "$#", separator = "@@"))
+			config = @SqlConfig(commentPrefixes = {"`", "%%"}, blockCommentStartDelimiter = "#$", blockCommentEndDelimiter = "$#", separator = "@@"))
 	void methodLevelScripts() {
 		assertNumUsers(3);
 	}

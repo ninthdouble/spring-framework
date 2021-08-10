@@ -22,14 +22,15 @@ import reactor.core.publisher.Mono;
 /**
  * Contract for fetching tabular results.
  *
+ * @param <T> the row result type
  * @author Mark Paluch
  * @since 5.3
- * @param <T> the row result type
  */
 public interface RowsFetchSpec<T> {
 
 	/**
 	 * Get exactly zero or one result.
+	 *
 	 * @return a Mono emitting one element, or {@link Mono#empty()} if no match found.
 	 * Completes with {@code IncorrectResultSizeDataAccessException} if more than one match found
 	 */
@@ -37,12 +38,14 @@ public interface RowsFetchSpec<T> {
 
 	/**
 	 * Get the first or no result.
+	 *
 	 * @return a Mono emitting the first element, or {@link Mono#empty()} if no match found
 	 */
 	Mono<T> first();
 
 	/**
 	 * Get all matching elements.
+	 *
 	 * @return a Flux emitting all results
 	 */
 	Flux<T> all();

@@ -18,7 +18,6 @@ package org.springframework.test.context.junit4.annotation.meta;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +38,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ConfigClassesAndProfilesMetaConfig(profiles = "dev")
 public class ConfigClassesAndProfilesMetaConfigTests {
 
+	@Autowired
+	private String foo;
+
+	@Test
+	public void foo() {
+		assertThat(foo).isEqualTo("Local Dev Foo");
+	}
+
 	@Configuration
 	@Profile("dev")
 	static class DevConfig {
@@ -57,15 +64,5 @@ public class ConfigClassesAndProfilesMetaConfigTests {
 		public String foo() {
 			return "Local Production Foo";
 		}
-	}
-
-
-	@Autowired
-	private String foo;
-
-
-	@Test
-	public void foo() {
-		assertThat(foo).isEqualTo("Local Dev Foo");
 	}
 }

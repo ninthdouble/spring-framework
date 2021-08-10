@@ -16,27 +16,38 @@
 
 package org.springframework.mock.http.server.reactive;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link MockServerHttpRequest}.
+ *
  * @author Rossen Stoyanchev
  */
 class MockServerHttpRequestTests {
+
+	static Stream<Executable> httpMethodNotNullOrEmpty() {
+		String uriTemplate = "/foo bar?a=b";
+		return Stream.of(
+				() -> MockServerHttpRequest.method(null, UriComponentsBuilder.fromUriString(uriTemplate).build("")).build(),
+				() -> MockServerHttpRequest.method((HttpMethod) null, uriTemplate).build(),
+				() -> MockServerHttpRequest.method((String) null, uriTemplate).build(),
+				() -> MockServerHttpRequest.method("", uriTemplate).build(),
+				() -> MockServerHttpRequest.method("   ", uriTemplate).build()
+		);
+	}
 
 	@Test
 	void cookieHeaderSet() {
@@ -68,16 +79,5 @@ class MockServerHttpRequestTests {
 	void httpMethodNotNullOrEmpty(Executable executable) {
 		Exception ex = Assertions.assertThrows(IllegalArgumentException.class, executable);
 		assertThat(ex.getMessage()).contains("HTTP method is required.");
-	}
-
-	static Stream<Executable> httpMethodNotNullOrEmpty() {
-		String uriTemplate = "/foo bar?a=b";
-		return Stream.of(
-				() -> MockServerHttpRequest.method(null, UriComponentsBuilder.fromUriString(uriTemplate).build("")).build(),
-				() -> MockServerHttpRequest.method((HttpMethod) null, uriTemplate).build(),
-				() -> MockServerHttpRequest.method((String) null, uriTemplate).build(),
-				() -> MockServerHttpRequest.method("", uriTemplate).build(),
-				() -> MockServerHttpRequest.method("   ", uriTemplate).build()
-		);
 	}
 }

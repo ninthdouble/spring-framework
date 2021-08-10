@@ -49,6 +49,11 @@ public class ExpressionCachingIntegrationTests {
 	}
 
 
+	private interface BaseDao<T> {
+
+		T persist(T t);
+	}
+
 	@Configuration
 	static class Spr11692Config {
 
@@ -62,13 +67,6 @@ public class ExpressionCachingIntegrationTests {
 			return new OrderDaoImpl();
 		}
 	}
-
-
-	private interface BaseDao<T> {
-
-		T persist(T t);
-	}
-
 
 	private static class UserDaoImpl implements BaseDao<User> {
 

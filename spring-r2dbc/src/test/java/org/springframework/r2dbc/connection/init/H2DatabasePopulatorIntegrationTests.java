@@ -16,10 +16,10 @@
 
 package org.springframework.r2dbc.connection.init;
 
-import java.util.UUID;
-
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
+
+import java.util.UUID;
 
 /**
  * Integration tests for {@link DatabasePopulator} using H2.

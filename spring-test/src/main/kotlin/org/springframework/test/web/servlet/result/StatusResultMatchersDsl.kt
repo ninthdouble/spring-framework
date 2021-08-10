@@ -26,19 +26,19 @@ import org.springframework.test.web.servlet.ResultActions
  * @since 5.3
  */
 @Suppress("UsePropertyAccessSyntax")
-class StatusResultMatchersDsl internal constructor (private val actions: ResultActions) {
+class StatusResultMatchersDsl internal constructor(private val actions: ResultActions) {
 
 	private val matchers = MockMvcResultMatchers.status()
 
 	/**
-	 * @see StatusResultMatchers.is
+	 * @see StatusResultMatchers. is
 	 */
 	fun isEqualTo(matcher: Matcher<Int>) {
 		actions.andExpect(matchers.`is`(matcher))
 	}
 
 	/**
-	 * @see StatusResultMatchers.is
+	 * @see StatusResultMatchers. is
 	 */
 	fun isEqualTo(status: Int) {
 		actions.andExpect(matchers.`is`(status))

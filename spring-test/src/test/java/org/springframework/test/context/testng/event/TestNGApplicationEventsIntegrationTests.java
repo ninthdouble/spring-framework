@@ -16,12 +16,6 @@
 
 package org.springframework.test.context.testng.event;
 
-import java.lang.reflect.Method;
-
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -29,6 +23,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,13 +48,16 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 
 	private boolean testAlreadyExecuted = false;
 
+	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
+		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
+				.containsExactly(types);
+	}
 
 	@BeforeMethod
 	void beforeEach() {
 		if (!testAlreadyExecuted) {
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent");
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent");
 		}
 
@@ -65,8 +67,7 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 
 		if (!testAlreadyExecuted) {
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent");
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent");
 		}
 	}
@@ -85,8 +86,7 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 		if (!testAlreadyExecuted) {
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
 					"BeforeTestExecutionEvent");
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent");
 		}
 
@@ -97,8 +97,7 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 		if (!testAlreadyExecuted) {
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
 					"BeforeTestExecutionEvent", "CustomEvent");
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 					"CustomEvent");
 		}
@@ -109,8 +108,7 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 		if (!testAlreadyExecuted) {
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
 					"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent");
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 					"CustomEvent", "AfterTestExecutionEvent");
 		}
@@ -123,19 +121,11 @@ class TestNGApplicationEventsIntegrationTests extends AbstractTestNGSpringContex
 			assertEventTypes(applicationEvents, "PrepareTestInstanceEvent", "BeforeTestMethodEvent", "CustomEvent",
 					"BeforeTestExecutionEvent", "CustomEvent", "AfterTestExecutionEvent", "CustomEvent");
 			testAlreadyExecuted = true;
-		}
-		else {
+		} else {
 			assertEventTypes(applicationEvents, "BeforeTestMethodEvent", "CustomEvent", "BeforeTestExecutionEvent",
 					"CustomEvent", "AfterTestExecutionEvent", "CustomEvent");
 		}
 	}
-
-
-	private static void assertEventTypes(ApplicationEvents applicationEvents, String... types) {
-		assertThat(applicationEvents.stream().map(event -> event.getClass().getSimpleName()))
-			.containsExactly(types);
-	}
-
 
 	@Configuration
 	static class Config {

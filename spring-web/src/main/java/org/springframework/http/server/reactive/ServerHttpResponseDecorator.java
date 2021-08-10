@@ -15,11 +15,7 @@
  */
 package org.springframework.http.server.reactive;
 
-import java.util.function.Supplier;
-
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +24,9 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Supplier;
 
 /**
  * Wraps another {@link ServerHttpResponse} and delegates all methods to it.
@@ -46,13 +45,32 @@ public class ServerHttpResponseDecorator implements ServerHttpResponse {
 		this.delegate = delegate;
 	}
 
-
-	public ServerHttpResponse getDelegate() {
-		return this.delegate;
+	/**
+	 * Return the native response of the underlying server API, if possible,
+	 * also unwrapping {@link ServerHttpResponseDecorator} if necessary.
+	 *
+	 * @param response the response to check
+	 * @param <T>      the expected native response type
+	 * @throws IllegalArgumentException if the native response can't be obtained
+	 * @since 5.3.3
+	 */
+	public static <T> T getNativeResponse(ServerHttpResponse response) {
+		if (response instanceof AbstractServerHttpResponse) {
+			return ((AbstractServerHttpResponse) response).getNativeResponse();
+		} else if (response instanceof ServerHttpResponseDecorator) {
+			return getNativeResponse(((ServerHttpResponseDecorator) response).getDelegate());
+		} else {
+			throw new IllegalArgumentException(
+					"Can't find native response in " + response.getClass().getName());
+		}
 	}
 
 
 	// ServerHttpResponse delegation methods...
+
+	public ServerHttpResponse getDelegate() {
+		return this.delegate;
+	}
 
 	@Override
 	public boolean setStatusCode(@Nullable HttpStatus status) {
@@ -108,29 +126,6 @@ public class ServerHttpResponseDecorator implements ServerHttpResponse {
 	public Mono<Void> setComplete() {
 		return getDelegate().setComplete();
 	}
-
-
-	/**
-	 * Return the native response of the underlying server API, if possible,
-	 * also unwrapping {@link ServerHttpResponseDecorator} if necessary.
-	 * @param response the response to check
-	 * @param <T> the expected native response type
-	 * @throws IllegalArgumentException if the native response can't be obtained
-	 * @since 5.3.3
-	 */
-	public static <T> T getNativeResponse(ServerHttpResponse response) {
-		if (response instanceof AbstractServerHttpResponse) {
-			return ((AbstractServerHttpResponse) response).getNativeResponse();
-		}
-		else if (response instanceof ServerHttpResponseDecorator) {
-			return getNativeResponse(((ServerHttpResponseDecorator) response).getDelegate());
-		}
-		else {
-			throw new IllegalArgumentException(
-					"Can't find native response in " + response.getClass().getName());
-		}
-	}
-
 
 	@Override
 	public String toString() {

@@ -17,7 +17,6 @@
 package org.springframework.test.context.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.support.GenericApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;

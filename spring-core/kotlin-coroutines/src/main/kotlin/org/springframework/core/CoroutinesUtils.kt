@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("CoroutinesUtils")
+
 package org.springframework.core
 
 import kotlinx.coroutines.*
@@ -36,7 +37,7 @@ import kotlin.reflect.jvm.kotlinFunction
  * @author Sebastien Deleuze
  * @since 5.2
  */
-internal fun <T: Any> deferredToMono(source: Deferred<T>) =
+internal fun <T : Any> deferredToMono(source: Deferred<T>) =
 		mono(Dispatchers.Unconfined) { source.await() }
 
 /**
@@ -47,7 +48,7 @@ internal fun <T: Any> deferredToMono(source: Deferred<T>) =
  */
 @Suppress("DEPRECATION")
 @OptIn(DelicateCoroutinesApi::class)
-internal fun <T: Any> monoToDeferred(source: Mono<T>) =
+internal fun <T : Any> monoToDeferred(source: Mono<T>) =
 		GlobalScope.async(Dispatchers.Unconfined) { source.awaitSingleOrNull() }
 
 /**
@@ -60,12 +61,11 @@ internal fun <T: Any> monoToDeferred(source: Mono<T>) =
 fun invokeSuspendingFunction(method: Method, target: Any, vararg args: Any?): Publisher<*> {
 	val function = method.kotlinFunction!!
 	val mono = mono(Dispatchers.Unconfined) {
-		function.callSuspend(target, *args.sliceArray(0..(args.size-2))).let { if (it == Unit) null else it }
+		function.callSuspend(target, *args.sliceArray(0..(args.size - 2))).let { if (it == Unit) null else it }
 	}.onErrorMap(InvocationTargetException::class.java) { it.targetException }
 	return if (function.returnType.classifier == Flow::class) {
 		mono.flatMapMany { (it as Flow<Any>).asFlux() }
-	}
-	else {
+	} else {
 		mono
 	}
 }

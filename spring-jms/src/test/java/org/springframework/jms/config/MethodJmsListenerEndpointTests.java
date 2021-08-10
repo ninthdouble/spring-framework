@@ -16,24 +16,9 @@
 
 package org.springframework.jms.config;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jms.Destination;
-import javax.jms.InvalidDestinationException;
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import javax.jms.QueueSender;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.jms.StubTextMessage;
@@ -62,12 +47,19 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import javax.jms.*;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import java.lang.IllegalStateException;
 
 /**
  * @author Stephane Nicoll
@@ -241,7 +233,8 @@ class MethodJmsListenerEndpointTests {
 		MessagingMessageListenerAdapter listener = createDefaultInstance(String.class);
 		String body = "echo text";
 		String correlationId = "link-1234";
-		Destination replyDestination = new Destination() {};
+		Destination replyDestination = new Destination() {
+		};
 
 		TextMessage reply = mock(TextMessage.class);
 		QueueSender queueSender = mock(QueueSender.class);
@@ -335,16 +328,17 @@ class MethodJmsListenerEndpointTests {
 	}
 
 	private void processAndReplyWithSendTo(MessagingMessageListenerAdapter listener,
-			String replyDestinationName, boolean pubSubDomain) throws JMSException {
+										   String replyDestinationName, boolean pubSubDomain) throws JMSException {
 		processAndReplyWithSendTo(listener, replyDestinationName, pubSubDomain, null);
 	}
 
 	private void processAndReplyWithSendTo(MessagingMessageListenerAdapter listener,
-			String replyDestinationName, boolean pubSubDomain,
-			QosSettings replyQosSettings) throws JMSException {
+										   String replyDestinationName, boolean pubSubDomain,
+										   QosSettings replyQosSettings) throws JMSException {
 		String body = "echo text";
 		String correlationId = "link-1234";
-		Destination replyDestination = new Destination() {};
+		Destination replyDestination = new Destination() {
+		};
 
 		DestinationResolver destinationResolver = mock(DestinationResolver.class);
 		TextMessage reply = mock(TextMessage.class);
@@ -366,8 +360,7 @@ class MethodJmsListenerEndpointTests {
 		if (replyQosSettings != null) {
 			verify(queueSender).send(reply, replyQosSettings.getDeliveryMode(),
 					replyQosSettings.getPriority(), replyQosSettings.getTimeToLive());
-		}
-		else {
+		} else {
 			verify(queueSender).send(reply);
 		}
 		verify(queueSender).close();
@@ -383,15 +376,15 @@ class MethodJmsListenerEndpointTests {
 
 		assertThatExceptionOfType(ReplyFailureException.class).isThrownBy(() ->
 				listener.onMessage(createSimpleJmsTextMessage("content"), session))
-			.withCauseInstanceOf(InvalidDestinationException.class);
+				.withCauseInstanceOf(InvalidDestinationException.class);
 	}
 
 	@Test
 	void invalidSendTo() {
 		assertThatIllegalStateException().isThrownBy(() ->
 				createDefaultInstance(String.class))
-			.withMessageContaining("firstDestination")
-			.withMessageContaining("secondDestination");
+				.withMessageContaining("firstDestination")
+				.withMessageContaining("secondDestination");
 	}
 
 	@Test
@@ -434,8 +427,8 @@ class MethodJmsListenerEndpointTests {
 		// test is not a valid integer
 		assertThatExceptionOfType(ListenerExecutionFailedException.class).isThrownBy(() ->
 				listener.onMessage(createSimpleJmsTextMessage("test"), session))
-			.withCauseInstanceOf(MessageConversionException.class)
-			.withMessageContaining(getDefaultListenerMethod(Integer.class).toGenericString()); // ref to method
+				.withCauseInstanceOf(MessageConversionException.class)
+				.withMessageContaining(getDefaultListenerMethod(Integer.class).toGenericString()); // ref to method
 	}
 
 	@Test
@@ -446,7 +439,7 @@ class MethodJmsListenerEndpointTests {
 		// Message<String> as Message<Integer>
 		assertThatExceptionOfType(ListenerExecutionFailedException.class).isThrownBy(() ->
 				listener.onMessage(createSimpleJmsTextMessage("test"), session))
-			.withCauseInstanceOf(MessageConversionException.class);
+				.withCauseInstanceOf(MessageConversionException.class);
 	}
 
 
@@ -501,6 +494,7 @@ class MethodJmsListenerEndpointTests {
 			public boolean supports(Class<?> clazz) {
 				return String.class.isAssignableFrom(clazz);
 			}
+
 			@Override
 			public void validate(@Nullable Object target, Errors errors) {
 				String value = (String) target;
@@ -516,7 +510,8 @@ class MethodJmsListenerEndpointTests {
 	}
 
 
-	@SendTo("defaultReply") @SuppressWarnings("unused")
+	@SendTo("defaultReply")
+	@SuppressWarnings("unused")
 	static class JmsEndpointSampleBean {
 
 		private final Map<String, Boolean> invocations = new HashMap<>();

@@ -17,7 +17,6 @@
 package org.springframework.web.servlet.mvc.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;

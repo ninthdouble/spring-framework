@@ -16,9 +16,9 @@
 
 package org.springframework.jms.support;
 
-import javax.jms.Session;
-
 import org.junit.jupiter.api.Test;
+
+import javax.jms.Session;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

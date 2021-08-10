@@ -16,16 +16,16 @@
 
 package org.springframework.web.reactive.result.condition;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * A logical conjunction (' && ') request condition that matches a request against
@@ -50,11 +50,16 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
 	 * Create a new instance from the given header expressions. Expressions with
 	 * header names 'Accept' or 'Content-Type' are ignored. See {@link ConsumesRequestCondition}
 	 * and {@link ProducesRequestCondition} for those.
+	 *
 	 * @param headers media type expressions with syntax defined in {@link RequestMapping#headers()};
-	 * if 0, the condition will match to every request
+	 *                if 0, the condition will match to every request
 	 */
 	public HeadersRequestCondition(String... headers) {
 		this.expressions = parseExpressions(headers);
+	}
+
+	private HeadersRequestCondition(Set<HeaderExpression> conditions) {
+		this.expressions = conditions;
 	}
 
 	private static Set<HeaderExpression> parseExpressions(String... headers) {
@@ -71,11 +76,6 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
 		}
 		return (result != null ? result : Collections.emptySet());
 	}
-
-	private HeadersRequestCondition(Set<HeaderExpression> conditions) {
-		this.expressions = conditions;
-	}
-
 
 	/**
 	 * Return the contained request header expressions.
@@ -102,11 +102,9 @@ public final class HeadersRequestCondition extends AbstractRequestCondition<Head
 	public HeadersRequestCondition combine(HeadersRequestCondition other) {
 		if (isEmpty() && other.isEmpty()) {
 			return this;
-		}
-		else if (other.isEmpty()) {
+		} else if (other.isEmpty()) {
 			return this;
-		}
-		else if (isEmpty()) {
+		} else if (isEmpty()) {
 			return other;
 		}
 		Set<HeaderExpression> set = new LinkedHashSet<>(this.expressions);

@@ -16,22 +16,7 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.reactivestreams.Publisher;
-
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +30,15 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.WebAsyncManager;
 import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.*;
+import java.util.function.Function;
 
 /**
  * Default {@link AsyncServerResponse} implementation.
@@ -68,17 +62,54 @@ final class DefaultAsyncServerResponse extends ErrorHandlingServerResponse imple
 		this.timeout = timeout;
 	}
 
+	static void writeAsync(HttpServletRequest request, HttpServletResponse response, DeferredResult<?> deferredResult)
+			throws ServletException, IOException {
+
+		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+		AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
+		asyncManager.setAsyncWebRequest(asyncWebRequest);
+		try {
+			asyncManager.startDeferredResultProcessing(deferredResult);
+		} catch (IOException | ServletException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			throw new ServletException("Async processing failed", ex);
+		}
+
+	}
+
+	@SuppressWarnings({"unchecked"})
+	public static AsyncServerResponse create(Object o, @Nullable Duration timeout) {
+		Assert.notNull(o, "Argument to async must not be null");
+
+		if (o instanceof CompletableFuture) {
+			CompletableFuture<ServerResponse> futureResponse = (CompletableFuture<ServerResponse>) o;
+			return new DefaultAsyncServerResponse(futureResponse, timeout);
+		} else if (reactiveStreamsPresent) {
+			ReactiveAdapterRegistry registry = ReactiveAdapterRegistry.getSharedInstance();
+			ReactiveAdapter publisherAdapter = registry.getAdapter(o.getClass());
+			if (publisherAdapter != null) {
+				Publisher<ServerResponse> publisher = publisherAdapter.toPublisher(o);
+				ReactiveAdapter futureAdapter = registry.getAdapter(CompletableFuture.class);
+				if (futureAdapter != null) {
+					CompletableFuture<ServerResponse> futureResponse =
+							(CompletableFuture<ServerResponse>) futureAdapter.fromPublisher(publisher);
+					return new DefaultAsyncServerResponse(futureResponse, timeout);
+				}
+			}
+		}
+		throw new IllegalArgumentException("Asynchronous type not supported: " + o.getClass());
+	}
+
 	@Override
 	public ServerResponse block() {
 		try {
 			if (this.timeout != null) {
 				return this.futureResponse.get(this.timeout.toMillis(), TimeUnit.MILLISECONDS);
-			}
-			else {
+			} else {
 				return this.futureResponse.get();
 			}
-		}
-		catch (InterruptedException | ExecutionException | TimeoutException ex) {
+		} catch (InterruptedException | ExecutionException | TimeoutException ex) {
 			throw new IllegalStateException("Failed to get future response", ex);
 		}
 	}
@@ -107,8 +138,7 @@ final class DefaultAsyncServerResponse extends ErrorHandlingServerResponse imple
 		ServerResponse response = this.futureResponse.getNow(null);
 		if (response != null) {
 			return function.apply(response);
-		}
-		else {
+		} else {
 			throw new IllegalStateException("Future ServerResponse has not yet completed");
 		}
 	}
@@ -122,30 +152,11 @@ final class DefaultAsyncServerResponse extends ErrorHandlingServerResponse imple
 		return null;
 	}
 
-	static void writeAsync(HttpServletRequest request, HttpServletResponse response, DeferredResult<?> deferredResult)
-			throws ServletException, IOException {
-
-		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
-		AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
-		asyncManager.setAsyncWebRequest(asyncWebRequest);
-		try {
-			asyncManager.startDeferredResultProcessing(deferredResult);
-		}
-		catch (IOException | ServletException ex) {
-			throw ex;
-		}
-		catch (Exception ex) {
-			throw new ServletException("Async processing failed", ex);
-		}
-
-	}
-
 	private DeferredResult<ServerResponse> createDeferredResult(HttpServletRequest request) {
 		DeferredResult<ServerResponse> result;
 		if (this.timeout != null) {
 			result = new DeferredResult<>(this.timeout.toMillis());
-		}
-		else {
+		} else {
 			result = new DeferredResult<>();
 		}
 		this.futureResponse.handle((value, ex) -> {
@@ -156,41 +167,15 @@ final class DefaultAsyncServerResponse extends ErrorHandlingServerResponse imple
 				ServerResponse errorResponse = errorResponse(ex, request);
 				if (errorResponse != null) {
 					result.setResult(errorResponse);
-				}
-				else {
+				} else {
 					result.setErrorResult(ex);
 				}
-			}
-			else {
+			} else {
 				result.setResult(value);
 			}
 			return null;
 		});
 		return result;
-	}
-
-	@SuppressWarnings({"unchecked"})
-	public static AsyncServerResponse create(Object o, @Nullable Duration timeout) {
-		Assert.notNull(o, "Argument to async must not be null");
-
-		if (o instanceof CompletableFuture) {
-			CompletableFuture<ServerResponse> futureResponse = (CompletableFuture<ServerResponse>) o;
-			return new DefaultAsyncServerResponse(futureResponse, timeout);
-		}
-		else if (reactiveStreamsPresent) {
-			ReactiveAdapterRegistry registry = ReactiveAdapterRegistry.getSharedInstance();
-			ReactiveAdapter publisherAdapter = registry.getAdapter(o.getClass());
-			if (publisherAdapter != null) {
-				Publisher<ServerResponse> publisher = publisherAdapter.toPublisher(o);
-				ReactiveAdapter futureAdapter = registry.getAdapter(CompletableFuture.class);
-				if (futureAdapter != null) {
-					CompletableFuture<ServerResponse> futureResponse =
-							(CompletableFuture<ServerResponse>) futureAdapter.fromPublisher(publisher);
-					return new DefaultAsyncServerResponse(futureResponse, timeout);
-				}
-			}
-		}
-		throw new IllegalArgumentException("Asynchronous type not supported: " + o.getClass());
 	}
 
 

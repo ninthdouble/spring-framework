@@ -16,13 +16,6 @@
 
 package org.springframework.web.server.adapter;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -30,6 +23,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Extract values from "Forwarded" and "X-Forwarded-*" headers to override
@@ -51,8 +51,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  * in which case it removes but does not use the headers.
  *
  * @author Rossen Stoyanchev
- * @since 5.1
  * @see <a href="https://tools.ietf.org/html/rfc7239">https://tools.ietf.org/html/rfc7239</a>
+ * @since 5.1
  */
 public class ForwardedHeaderTransformer implements Function<ServerHttpRequest, ServerHttpRequest> {
 
@@ -72,10 +72,38 @@ public class ForwardedHeaderTransformer implements Function<ServerHttpRequest, S
 
 	private boolean removeOnly;
 
+	@Nullable
+	private static String getForwardedPrefix(ServerHttpRequest request) {
+		HttpHeaders headers = request.getHeaders();
+		String header = headers.getFirst("X-Forwarded-Prefix");
+		if (header == null) {
+			return null;
+		}
+		StringBuilder prefix = new StringBuilder(header.length());
+		String[] rawPrefixes = StringUtils.tokenizeToStringArray(header, ",");
+		for (String rawPrefix : rawPrefixes) {
+			int endIndex = rawPrefix.length();
+			while (endIndex > 1 && rawPrefix.charAt(endIndex - 1) == '/') {
+				endIndex--;
+			}
+			prefix.append((endIndex != rawPrefix.length() ? rawPrefix.substring(0, endIndex) : rawPrefix));
+		}
+		return prefix.toString();
+	}
+
+	/**
+	 * Whether the "remove only" mode is on.
+	 *
+	 * @see #setRemoveOnly
+	 */
+	public boolean isRemoveOnly() {
+		return this.removeOnly;
+	}
 
 	/**
 	 * Enable mode in which any "Forwarded" or "X-Forwarded-*" headers are
 	 * removed only and the information in them ignored.
+	 *
 	 * @param removeOnly whether to discard and ignore forwarded headers
 	 */
 	public void setRemoveOnly(boolean removeOnly) {
@@ -83,16 +111,8 @@ public class ForwardedHeaderTransformer implements Function<ServerHttpRequest, S
 	}
 
 	/**
-	 * Whether the "remove only" mode is on.
-	 * @see #setRemoveOnly
-	 */
-	public boolean isRemoveOnly() {
-		return this.removeOnly;
-	}
-
-
-	/**
 	 * Apply and remove, or remove Forwarded type headers.
+	 *
 	 * @param request the request
 	 */
 	@Override
@@ -121,6 +141,7 @@ public class ForwardedHeaderTransformer implements Function<ServerHttpRequest, S
 
 	/**
 	 * Whether the request has any Forwarded headers.
+	 *
 	 * @param request the request
 	 */
 	protected boolean hasForwardedHeaders(ServerHttpRequest request) {
@@ -135,26 +156,6 @@ public class ForwardedHeaderTransformer implements Function<ServerHttpRequest, S
 
 	private void removeForwardedHeaders(ServerHttpRequest.Builder builder) {
 		builder.headers(map -> FORWARDED_HEADER_NAMES.forEach(map::remove));
-	}
-
-
-	@Nullable
-	private static String getForwardedPrefix(ServerHttpRequest request) {
-		HttpHeaders headers = request.getHeaders();
-		String header = headers.getFirst("X-Forwarded-Prefix");
-		if (header == null) {
-			return null;
-		}
-		StringBuilder prefix = new StringBuilder(header.length());
-		String[] rawPrefixes = StringUtils.tokenizeToStringArray(header, ",");
-		for (String rawPrefix : rawPrefixes) {
-			int endIndex = rawPrefix.length();
-			while (endIndex > 1 && rawPrefix.charAt(endIndex - 1) == '/') {
-				endIndex--;
-			}
-			prefix.append((endIndex != rawPrefix.length() ? rawPrefix.substring(0, endIndex) : rawPrefix));
-		}
-		return prefix.toString();
 	}
 
 }

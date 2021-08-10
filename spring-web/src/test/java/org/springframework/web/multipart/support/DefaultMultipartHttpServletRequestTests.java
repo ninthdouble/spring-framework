@@ -16,15 +16,14 @@
 
 package org.springframework.web.multipart.support;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,19 +44,19 @@ public class DefaultMultipartHttpServletRequestTests {
 	@Test // SPR-16590
 	public void parameterValues() {
 
-		this.multipartParams.put("key", new String[] {"p"});
+		this.multipartParams.put("key", new String[]{"p"});
 		this.queryParams.add("key", "q");
 
 		String[] values = createMultipartRequest().getParameterValues("key");
 
-		assertThat(values).isEqualTo(new String[] {"p", "q"});
+		assertThat(values).isEqualTo(new String[]{"p", "q"});
 	}
 
 	@Test // SPR-16590
 	public void parameterMap() {
 
-		this.multipartParams.put("key1", new String[] {"p1"});
-		this.multipartParams.put("key2", new String[] {"p2"});
+		this.multipartParams.put("key1", new String[]{"p1"});
+		this.multipartParams.put("key2", new String[]{"p2"});
 
 		this.queryParams.add("key1", "q1");
 		this.queryParams.add("key3", "q3");
@@ -65,9 +64,9 @@ public class DefaultMultipartHttpServletRequestTests {
 		Map<String, String[]> map = createMultipartRequest().getParameterMap();
 
 		assertThat(map.size()).isEqualTo(3);
-		assertThat(map.get("key1")).isEqualTo(new String[] {"p1", "q1"});
-		assertThat(map.get("key2")).isEqualTo(new String[] {"p2"});
-		assertThat(map.get("key3")).isEqualTo(new String[] {"q3"});
+		assertThat(map.get("key1")).isEqualTo(new String[]{"p1", "q1"});
+		assertThat(map.get("key2")).isEqualTo(new String[]{"p2"});
+		assertThat(map.get("key3")).isEqualTo(new String[]{"q3"});
 	}
 
 	private DefaultMultipartHttpServletRequest createMultipartRequest() {

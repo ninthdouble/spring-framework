@@ -16,8 +16,14 @@
 
 package org.springframework.web.filter;
 
-import java.io.IOException;
-import java.util.Enumeration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.web.testfixture.servlet.MockFilterChain;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -26,16 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import org.springframework.web.testfixture.servlet.MockFilterChain;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -68,7 +66,8 @@ public class ForwardedHeaderFilterTests {
 	private final ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
 
 	@SuppressWarnings("serial")
-	private final MockFilterChain filterChain = new MockFilterChain(new HttpServlet() {});
+	private final MockFilterChain filterChain = new MockFilterChain(new HttpServlet() {
+	});
 
 	private MockHttpServletRequest request;
 
@@ -207,6 +206,12 @@ public class ForwardedHeaderFilterTests {
 		assertThat(actual).isNotNull();
 		assertThat(actual.getRequestURI()).isEqualTo("/bar");
 		assertThat(actual.getRequestURL().toString()).isEqualTo("https://www.mycompany.example/bar");
+	}
+
+	private HttpServletRequest filterAndGetWrappedRequest() throws ServletException, IOException {
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		this.filter.doFilterInternal(this.request, response, this.filterChain);
+		return (HttpServletRequest) this.filterChain.getRequest();
 	}
 
 	@Nested
@@ -629,7 +634,7 @@ public class ForwardedHeaderFilterTests {
 			Filter redirectFilter = new OncePerRequestFilter() {
 				@Override
 				protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-						FilterChain chain) throws IOException {
+												FilterChain chain) throws IOException {
 
 					res.sendRedirect(location);
 				}
@@ -639,12 +644,6 @@ public class ForwardedHeaderFilterTests {
 			filterChain.doFilter(request, response);
 			return response.getRedirectedUrl();
 		}
-	}
-
-	private HttpServletRequest filterAndGetWrappedRequest() throws ServletException, IOException {
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		this.filter.doFilterInternal(this.request, response, this.filterChain);
-		return (HttpServletRequest) this.filterChain.getRequest();
 	}
 
 }

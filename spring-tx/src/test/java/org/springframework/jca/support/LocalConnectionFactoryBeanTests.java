@@ -16,10 +16,10 @@
 
 package org.springframework.jca.support;
 
+import org.junit.jupiter.api.Test;
+
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

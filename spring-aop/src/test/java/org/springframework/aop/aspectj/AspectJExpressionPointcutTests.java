@@ -16,8 +16,6 @@
 
 package org.springframework.aop.aspectj;
 
-import java.lang.reflect.Method;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.aspectj.weaver.tools.PointcutExpression;
@@ -25,7 +23,6 @@ import org.aspectj.weaver.tools.PointcutPrimitive;
 import org.aspectj.weaver.tools.UnsupportedPointcutPrimitiveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.Pointcut;
@@ -36,10 +33,9 @@ import org.springframework.beans.testfixture.beans.ITestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.beans.testfixture.beans.subpkg.DeepBean;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.lang.reflect.Method;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rob Harrop
@@ -103,7 +99,7 @@ public class AspectJExpressionPointcutTests {
 
 
 	@Test
-	public void testThis() throws SecurityException, NoSuchMethodException{
+	public void testThis() throws SecurityException, NoSuchMethodException {
 		testThisOrTarget("this");
 	}
 
@@ -114,6 +110,7 @@ public class AspectJExpressionPointcutTests {
 
 	/**
 	 * This and target are equivalent. Really instanceof pointcuts.
+	 *
 	 * @param which this or target
 	 */
 	private void testThisOrTarget(String which) throws SecurityException, NoSuchMethodException {
@@ -165,7 +162,7 @@ public class AspectJExpressionPointcutTests {
 		AspectJExpressionPointcut pc = new AspectJExpressionPointcut();
 		assertThatIllegalStateException().isThrownBy(() ->
 				pc.matches(ITestBean.class))
-			.withMessageContaining("expression");
+				.withMessageContaining("expression");
 	}
 
 	@Test
@@ -173,7 +170,7 @@ public class AspectJExpressionPointcutTests {
 		AspectJExpressionPointcut pc = new AspectJExpressionPointcut();
 		assertThatIllegalStateException().isThrownBy(() ->
 				pc.matches(getAge, ITestBean.class))
-			.withMessageContaining("expression");
+				.withMessageContaining("expression");
 	}
 
 	@Test
@@ -181,7 +178,7 @@ public class AspectJExpressionPointcutTests {
 		AspectJExpressionPointcut pc = new AspectJExpressionPointcut();
 		assertThatIllegalStateException().isThrownBy(() ->
 				pc.matches(getAge, ITestBean.class, (Object[]) null))
-			.withMessageContaining("expression");
+				.withMessageContaining("expression");
 	}
 
 
@@ -267,7 +264,7 @@ public class AspectJExpressionPointcutTests {
 		String expression = "call(int org.springframework.beans.testfixture.beans.TestBean.getAge())";
 		assertThatExceptionOfType(UnsupportedPointcutPrimitiveException.class).isThrownBy(() ->
 				getPointcut(expression).getClassFilter()) // call to getClassFilter forces resolution...
-			.satisfies(ex -> assertThat(ex.getUnsupportedPrimitive()).isEqualTo(PointcutPrimitive.CALL));
+				.satisfies(ex -> assertThat(ex.getUnsupportedPrimitive()).isEqualTo(PointcutPrimitive.CALL));
 	}
 
 	@Test

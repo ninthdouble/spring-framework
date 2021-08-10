@@ -16,11 +16,11 @@
 
 package org.springframework.test.context.support;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * {@link EnumerablePropertySource} backed by a map with dynamically supplied
@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
  * @author Sam Brannen
  * @since 5.2.5
  */
-class DynamicValuesPropertySource extends EnumerablePropertySource<Map<String, Supplier<Object>>>  {
+class DynamicValuesPropertySource extends EnumerablePropertySource<Map<String, Supplier<Object>>> {
 
 	DynamicValuesPropertySource(String name, Map<String, Supplier<Object>> valueSuppliers) {
 		super(name, valueSuppliers);

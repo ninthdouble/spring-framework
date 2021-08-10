@@ -16,15 +16,15 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,8 +71,7 @@ class FileStorageTests {
 						StepVerifier.create(directory)
 								.consumeNextWith(path2 -> assertThat(path2).isNotEqualTo(path1))
 								.verifyComplete();
-					}
-					catch (IOException ex) {
+					} catch (IOException ex) {
 						throw new UncheckedIOException(ex);
 					}
 				})

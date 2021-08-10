@@ -16,12 +16,6 @@
 
 package org.springframework.web.reactive.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.ResourceLoader;
@@ -33,6 +27,8 @@ import org.springframework.web.reactive.resource.ResourceTransformerSupport;
 import org.springframework.web.reactive.resource.ResourceUrlProvider;
 import org.springframework.web.reactive.resource.ResourceWebHandler;
 import org.springframework.web.server.WebHandler;
+
+import java.util.*;
 
 /**
  * Stores registrations of resource handlers for serving static resources such
@@ -70,6 +66,7 @@ public class ResourceHandlerRegistry {
 	/**
 	 * Create a new resource handler registry for the given resource loader
 	 * (typically an application context).
+	 *
 	 * @param resourceLoader the resource loader to use
 	 */
 	public ResourceHandlerRegistry(ResourceLoader resourceLoader) {
@@ -79,13 +76,13 @@ public class ResourceHandlerRegistry {
 	/**
 	 * Configure the {@link ResourceUrlProvider} that can be used by
 	 * {@link org.springframework.web.reactive.resource.ResourceTransformer} instances.
+	 *
 	 * @param resourceUrlProvider the resource URL provider to use
 	 * @since 5.0.11
 	 */
 	public void setResourceUrlProvider(@Nullable ResourceUrlProvider resourceUrlProvider) {
 		this.resourceUrlProvider = resourceUrlProvider;
 	}
-
 
 
 	/**
@@ -95,6 +92,7 @@ public class ResourceHandlerRegistry {
 	 * <p>Patterns like {@code "/static/**"} or {@code "/css/{filename:\\w+\\.css}"}
 	 * are allowed. See {@link org.springframework.web.util.pattern.PathPattern}
 	 * for more details on the syntax.
+	 *
 	 * @return a {@link ResourceHandlerRegistration} to use to further configure
 	 * the registered resource handler
 	 */
@@ -154,8 +152,7 @@ public class ResourceHandlerRegistry {
 		}
 		try {
 			handler.afterPropertiesSet();
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			throw new BeanInitializationException("Failed to init ResourceHttpRequestHandler", ex);
 		}
 		return handler;

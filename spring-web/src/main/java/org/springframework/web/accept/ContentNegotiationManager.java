@@ -16,23 +16,15 @@
 
 package org.springframework.web.accept;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Central class to determine requested {@linkplain MediaType media types}
@@ -58,6 +50,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	 * Create an instance with the given list of
 	 * {@code ContentNegotiationStrategy} strategies each of which may also be
 	 * an instance of {@code MediaTypeFileExtensionResolver}.
+	 *
 	 * @param strategies the strategies to use
 	 */
 	public ContentNegotiationManager(ContentNegotiationStrategy... strategies) {
@@ -67,6 +60,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	/**
 	 * A collection-based alternative to
 	 * {@link #ContentNegotiationManager(ContentNegotiationStrategy...)}.
+	 *
 	 * @param strategies the strategies to use
 	 * @since 3.2.2
 	 */
@@ -90,6 +84,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 
 	/**
 	 * Return the configured content negotiation strategies.
+	 *
 	 * @since 3.2.16
 	 */
 	public List<ContentNegotiationStrategy> getStrategies() {
@@ -98,6 +93,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 
 	/**
 	 * Find a {@code ContentNegotiationStrategy} of the given type.
+	 *
 	 * @param strategyType the strategy type
 	 * @return the first matching strategy, or {@code null} if none
 	 * @since 4.3
@@ -116,6 +112,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	/**
 	 * Register more {@code MediaTypeFileExtensionResolver} instances in addition
 	 * to those detected at construction.
+	 *
 	 * @param resolvers the resolvers to add
 	 */
 	public void addFileExtensionResolvers(MediaTypeFileExtensionResolver... resolvers) {
@@ -175,6 +172,7 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	/**
 	 * Return all registered lookup key to media type mappings by iterating
 	 * {@link MediaTypeFileExtensionResolver}s.
+	 *
 	 * @since 5.2.4
 	 */
 	public Map<String, MediaType> getMediaTypeMappings() {

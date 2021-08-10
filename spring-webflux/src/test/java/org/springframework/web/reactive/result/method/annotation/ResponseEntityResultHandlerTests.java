@@ -16,37 +16,17 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.net.URI;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.ByteBufferEncoder;
 import org.springframework.core.codec.CharSequenceEncoder;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.codec.EncoderHttpMessageWriter;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.http.codec.ResourceHttpMessageWriter;
@@ -59,6 +39,16 @@ import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolverBuilder;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,6 +66,7 @@ import static org.springframework.web.testfixture.method.ResolvableMethod.on;
  * <li>{@code MessageWriterResultHandlerTests},
  * <li>{@code ContentNegotiatingResultHandlerSupportTests}
  * </ul>
+ *
  * @author Rossen Stoyanchev
  */
 public class ResponseEntityResultHandlerTests {
@@ -101,8 +92,7 @@ public class ResponseEntityResultHandlerTests {
 			writerList.add(new EncoderHttpMessageWriter<>(new Jaxb2XmlEncoder()));
 			writerList.add(new EncoderHttpMessageWriter<>(new Jackson2JsonEncoder()));
 			writerList.add(new EncoderHttpMessageWriter<>(CharSequenceEncoder.allMimeTypes()));
-		}
-		else {
+		} else {
 			writerList = Arrays.asList(writers);
 		}
 		RequestedContentTypeResolver resolver = new RequestedContentTypeResolverBuilder().build();
@@ -283,7 +273,7 @@ public class ResponseEntityResultHandlerTests {
 		MockServerWebExchange exchange = MockServerWebExchange.from(get("/path")
 				.ifNoneMatch(eTag)
 				.ifModifiedSince(currentTime.toEpochMilli())
-				);
+		);
 
 		ResponseEntity<String> entity = ResponseEntity.ok().eTag(eTag).lastModified(oneMinAgo.toEpochMilli()).body("body");
 		MethodParameter returnType = on(TestController.class).resolveReturnType(entity(String.class));
@@ -304,7 +294,7 @@ public class ResponseEntityResultHandlerTests {
 		MockServerWebExchange exchange = MockServerWebExchange.from(get("/path")
 				.ifNoneMatch(etag)
 				.ifModifiedSince(currentTime.toEpochMilli())
-				);
+		);
 
 		ResponseEntity<String> entity = ResponseEntity.ok().eTag(newEtag).lastModified(oneMinAgo.toEpochMilli()).body("body");
 		MethodParameter returnType = on(TestController.class).resolveReturnType(entity(String.class));
@@ -384,7 +374,7 @@ public class ResponseEntityResultHandlerTests {
 
 		MockServerWebExchange exchange = MockServerWebExchange.from(get("/path"));
 		Set<MediaType> mediaTypes = Collections.singleton(MediaType.APPLICATION_XML);
-				exchange.getAttributes().put(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, mediaTypes);
+		exchange.getAttributes().put(PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE, mediaTypes);
 
 		ResponseEntityResultHandler resultHandler = new ResponseEntityResultHandler(
 				Collections.singletonList(new EncoderHttpMessageWriter<>(CharSequenceEncoder.textPlainOnly())),
@@ -476,13 +466,12 @@ public class ResponseEntityResultHandlerTests {
 	}
 
 	private void assertConditionalResponse(MockServerWebExchange exchange, HttpStatus status,
-			String body, String etag, Instant lastModified) throws Exception {
+										   String body, String etag, Instant lastModified) throws Exception {
 
 		assertThat(exchange.getResponse().getStatusCode()).isEqualTo(status);
 		if (body != null) {
 			assertResponseBody(exchange, body);
-		}
-		else {
+		} else {
 			assertResponseBodyIsEmpty(exchange);
 		}
 		if (etag != null) {
@@ -499,29 +488,53 @@ public class ResponseEntityResultHandlerTests {
 	@SuppressWarnings("unused")
 	private static class TestController {
 
-		ResponseEntity<String> responseEntityString() { return null; }
+		ResponseEntity<String> responseEntityString() {
+			return null;
+		}
 
-		ResponseEntity<Void> responseEntityVoid() { return null; }
+		ResponseEntity<Void> responseEntityVoid() {
+			return null;
+		}
 
-		ResponseEntity<Person> responseEntityPerson() { return null; }
+		ResponseEntity<Person> responseEntityPerson() {
+			return null;
+		}
 
-		HttpHeaders httpHeaders() { return null; }
+		HttpHeaders httpHeaders() {
+			return null;
+		}
 
-		Mono<ResponseEntity<String>> mono() { return null; }
+		Mono<ResponseEntity<String>> mono() {
+			return null;
+		}
 
-		Single<ResponseEntity<String>> single() { return null; }
+		Single<ResponseEntity<String>> single() {
+			return null;
+		}
 
-		CompletableFuture<ResponseEntity<String>> completableFuture() { return null; }
+		CompletableFuture<ResponseEntity<String>> completableFuture() {
+			return null;
+		}
 
-		String string() { return null; }
+		String string() {
+			return null;
+		}
 
-		Completable completable() { return null; }
+		Completable completable() {
+			return null;
+		}
 
-		Mono<ResponseEntity<?>> monoResponseEntityWildcard() { return null; }
+		Mono<ResponseEntity<?>> monoResponseEntityWildcard() {
+			return null;
+		}
 
-		Flux<?> fluxWildcard() { return null; }
+		Flux<?> fluxWildcard() {
+			return null;
+		}
 
-		Object object() { return null; }
+		Object object() {
+			return null;
+		}
 	}
 
 

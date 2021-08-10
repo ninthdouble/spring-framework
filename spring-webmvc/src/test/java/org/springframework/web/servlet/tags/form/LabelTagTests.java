@@ -16,14 +16,13 @@
 
 package org.springframework.web.servlet.tags.form;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.Tag;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.web.servlet.tags.NestedPathTag;
 import org.springframework.web.testfixture.servlet.MockPageContext;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.Tag;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -18,7 +18,6 @@ package org.springframework.web.method.support;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ui.ModelMap;
 
 import static org.assertj.core.api.Assertions.assertThat;

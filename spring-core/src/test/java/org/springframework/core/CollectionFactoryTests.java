@@ -16,37 +16,15 @@
 
 package org.springframework.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.springframework.core.CollectionFactory.createApproximateCollection;
-import static org.springframework.core.CollectionFactory.createApproximateMap;
-import static org.springframework.core.CollectionFactory.createCollection;
-import static org.springframework.core.CollectionFactory.createMap;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.core.CollectionFactory.*;
 
 /**
  * Unit tests for {@link CollectionFactory}.
@@ -232,7 +210,8 @@ class CollectionFactoryTests {
 		assertThat(createCollection(EnumSet.class, Color.class, 0)).isInstanceOf(EnumSet.class);
 	}
 
-	@Test  // SPR-17619
+	@Test
+		// SPR-17619
 	void createsEnumSetSubclass() {
 		EnumSet<Color> enumSet = EnumSet.noneOf(Color.class);
 		assertThat(createCollection(enumSet.getClass(), Color.class, 0)).isInstanceOf(enumSet.getClass());

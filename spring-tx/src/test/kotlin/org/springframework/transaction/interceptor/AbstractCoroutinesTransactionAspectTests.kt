@@ -215,8 +215,7 @@ abstract class AbstractCoroutinesTransactionAspectTests {
 		runBlocking {
 			try {
 				itb.exceptional(ex)
-			}
-			catch (actual: Exception) {
+			} catch (actual: Exception) {
 				if (rollbackException) {
 					Assertions.assertThat(actual).hasMessage(tex.message).isInstanceOf(tex::class.java)
 				} else {
@@ -257,8 +256,7 @@ abstract class AbstractCoroutinesTransactionAspectTests {
 		runBlocking {
 			try {
 				itb.getName()
-			}
-			catch (actual: Exception) {
+			} catch (actual: Exception) {
 				Assertions.assertThat(actual).isInstanceOf(CannotCreateTransactionException::class.java)
 			}
 		}
@@ -289,8 +287,7 @@ abstract class AbstractCoroutinesTransactionAspectTests {
 		runBlocking {
 			try {
 				itb.setName(name)
-			}
-			catch (ex: Exception) {
+			} catch (ex: Exception) {
 				Assertions.assertThat(ex).isInstanceOf(RuntimeException::class.java)
 				Assertions.assertThat(ex.cause).hasMessage(ex.message).isInstanceOf(ex::class.java)
 			}

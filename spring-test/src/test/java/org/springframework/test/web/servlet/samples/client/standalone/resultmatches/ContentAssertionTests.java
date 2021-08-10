@@ -16,16 +16,15 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -129,16 +128,16 @@ public class ContentAssertionTests {
 	@Controller
 	private static class SimpleController {
 
-		@RequestMapping(value="/handle", produces="text/plain")
+		@RequestMapping(value = "/handle", produces = "text/plain")
 		@ResponseBody
 		public String handle() {
 			return "Hello world!";
 		}
 
-		@RequestMapping(value="/handleUtf8", produces="text/plain;charset=UTF-8")
+		@RequestMapping(value = "/handleUtf8", produces = "text/plain;charset=UTF-8")
 		@ResponseBody
 		public String handleWithCharset() {
-			return "\u3053\u3093\u306b\u3061\u306f\u4e16\u754c\uff01";	// "Hello world! (Japanese)
+			return "\u3053\u3093\u306b\u3061\u306f\u4e16\u754c\uff01";    // "Hello world! (Japanese)
 		}
 	}
 

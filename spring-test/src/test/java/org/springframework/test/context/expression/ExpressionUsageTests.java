@@ -16,13 +16,12 @@
 
 package org.springframework.test.context.expression;
 
-import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

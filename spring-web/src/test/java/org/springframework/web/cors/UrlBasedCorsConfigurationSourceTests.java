@@ -16,6 +16,13 @@
 
 package org.springframework.web.cors;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import org.springframework.web.util.ServletRequestPathUtils;
+import org.springframework.web.util.UrlPathHelper;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,31 +30,15 @@ import java.lang.annotation.Target;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.util.ServletRequestPathUtils;
-import org.springframework.web.util.UrlPathHelper;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link UrlBasedCorsConfigurationSource}.
+ *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  */
 class UrlBasedCorsConfigurationSourceTests {
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	@ParameterizedTest
-	@MethodSource("pathPatternsArguments")
-	@interface PathPatternsParameterizedTest {
-	}
 
 	@SuppressWarnings("unused")
 	private static Stream<Function<String, MockHttpServletRequest>> pathPatternsArguments() {
@@ -64,7 +55,6 @@ class UrlBasedCorsConfigurationSourceTests {
 				}
 		);
 	}
-
 
 	@PathPatternsParameterizedTest
 	void empty(Function<String, MockHttpServletRequest> requestFactory) {
@@ -107,5 +97,12 @@ class UrlBasedCorsConfigurationSourceTests {
 
 		source.setAllowInitLookupPath(false);
 		assertThatIllegalArgumentException().isThrownBy(() -> source.getCorsConfiguration(request));
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	@ParameterizedTest
+	@MethodSource("pathPatternsArguments")
+	@interface PathPatternsParameterizedTest {
 	}
 }

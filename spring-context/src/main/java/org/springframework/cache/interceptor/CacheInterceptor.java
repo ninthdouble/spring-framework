@@ -52,8 +52,7 @@ public class CacheInterceptor extends CacheAspectSupport implements MethodInterc
 		CacheOperationInvoker aopAllianceInvoker = () -> {
 			try {
 				return invocation.proceed();
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				throw new CacheOperationInvoker.ThrowableWrapper(ex);
 			}
 		};
@@ -62,8 +61,7 @@ public class CacheInterceptor extends CacheAspectSupport implements MethodInterc
 		Assert.state(target != null, "Target must not be null");
 		try {
 			return execute(aopAllianceInvoker, target, method, invocation.getArguments());
-		}
-		catch (CacheOperationInvoker.ThrowableWrapper th) {
+		} catch (CacheOperationInvoker.ThrowableWrapper th) {
 			throw th.getOriginal();
 		}
 	}

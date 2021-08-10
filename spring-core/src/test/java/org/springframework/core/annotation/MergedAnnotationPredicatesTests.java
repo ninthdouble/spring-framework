@@ -16,6 +16,8 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,8 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -94,8 +94,8 @@ class MergedAnnotationPredicatesTests {
 	void firstRunOfAcceptsOnlyFirstRun() {
 		List<MergedAnnotation<TestAnnotation>> filtered = MergedAnnotations.from(
 				WithMultipleTestAnnotation.class).stream(TestAnnotation.class).filter(
-						MergedAnnotationPredicates.firstRunOf(
-								this::firstCharOfValue)).collect(Collectors.toList());
+				MergedAnnotationPredicates.firstRunOf(
+						this::firstCharOfValue)).collect(Collectors.toList());
 		assertThat(filtered.stream().map(
 				annotation -> annotation.getString("value"))).containsExactly("a1", "a2", "a3");
 	}
@@ -110,8 +110,8 @@ class MergedAnnotationPredicatesTests {
 	void uniqueAcceptsUniquely() {
 		List<MergedAnnotation<TestAnnotation>> filtered = MergedAnnotations.from(
 				WithMultipleTestAnnotation.class).stream(TestAnnotation.class).filter(
-						MergedAnnotationPredicates.unique(
-								this::firstCharOfValue)).collect(Collectors.toList());
+				MergedAnnotationPredicates.unique(
+						this::firstCharOfValue)).collect(Collectors.toList());
 		assertThat(filtered.stream().map(
 				annotation -> annotation.getString("value"))).containsExactly("a1", "b1", "c1");
 	}

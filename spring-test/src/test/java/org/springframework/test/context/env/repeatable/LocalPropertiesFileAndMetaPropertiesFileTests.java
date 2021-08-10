@@ -16,15 +16,14 @@
 
 package org.springframework.test.context.env.repeatable;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.env.repeatable.LocalPropertiesFileAndMetaPropertiesFileTests.MetaFileTestProperty;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.env.repeatable.LocalPropertiesFileAndMetaPropertiesFileTests.MetaFileTestProperty;
 
 /**
  * Integration tests for {@link TestPropertySource @TestPropertySource} as a

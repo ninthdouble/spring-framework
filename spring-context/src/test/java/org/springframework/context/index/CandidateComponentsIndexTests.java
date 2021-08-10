@@ -32,6 +32,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class CandidateComponentsIndexTests {
 
+	private static Properties createProperties(String key, String stereotypes) {
+		Properties properties = new Properties();
+		properties.put(key, String.join(",", stereotypes));
+		return properties;
+	}
+
+	private static Properties createSampleProperties() {
+		Properties properties = new Properties();
+		properties.put("com.example.service.One", "service");
+		properties.put("com.example.service.sub.Two", "service");
+		properties.put("com.example.service.Three", "service");
+		properties.put("com.example.domain.Four", "entity");
+		return properties;
+	}
+
 	@Test
 	public void getCandidateTypes() {
 		CandidateComponentsIndex index = new CandidateComponentsIndex(
@@ -74,21 +89,6 @@ public class CandidateComponentsIndexTests {
 				.contains("com.example.Foo");
 		assertThat(index.getCandidateTypes("com.example", "entity"))
 				.contains("com.example.Foo");
-	}
-
-	private static Properties createProperties(String key, String stereotypes) {
-		Properties properties = new Properties();
-		properties.put(key, String.join(",", stereotypes));
-		return properties;
-	}
-
-	private static Properties createSampleProperties() {
-		Properties properties = new Properties();
-		properties.put("com.example.service.One", "service");
-		properties.put("com.example.service.sub.Two", "service");
-		properties.put("com.example.service.Three", "service");
-		properties.put("com.example.domain.Four", "entity");
-		return properties;
 	}
 
 }

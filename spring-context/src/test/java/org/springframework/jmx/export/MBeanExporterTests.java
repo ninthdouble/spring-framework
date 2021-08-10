@@ -104,7 +104,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		exporter.setNotificationListenerMappings(listeners);
 		assertThatExceptionOfType(MBeanExportException.class).as("NotificationListener on a non-existent MBean").isThrownBy(() ->
 				start(exporter))
-			.satisfies(ex -> assertThat(ex.contains(InstanceNotFoundException.class)));
+				.satisfies(ex -> assertThat(ex.contains(InstanceNotFoundException.class)));
 	}
 
 	@Test
@@ -116,8 +116,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			start(exporter);
 			assertIsRegistered("The bean was not registered with the MBeanServer",
 					ObjectNameManager.getInstance(OBJECT_NAME));
-		}
-		finally {
+		} finally {
 			exporter.destroy();
 		}
 	}
@@ -139,8 +138,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			Object name = server.getAttribute(ObjectNameManager.getInstance("spring:name=dynBean"), "Name");
 			assertThat(name).as("The name attribute is incorrect").isEqualTo("Rob Harrop");
 			assertThat(asm.invoked).as("Assembler should not have been invoked").isFalse();
-		}
-		finally {
+		} finally {
 			exporter.destroy();
 		}
 	}
@@ -341,7 +339,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 
 		assertIsRegistered("Bean instance not registered", objectName);
 
-		Object result = server.invoke(objectName, "add", new Object[] {new Integer(2), new Integer(3)}, new String[] {
+		Object result = server.invoke(objectName, "add", new Object[]{new Integer(2), new Integer(3)}, new String[]{
 				int.class.getName(), int.class.getName()});
 
 		assertThat(new Integer(5)).as("Incorrect result return from add").isEqualTo(result);
@@ -511,7 +509,8 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 				start(exporter));
 	}
 
-	@Test  // SPR-2158
+	@Test
+		// SPR-2158
 	void testMBeanIsNotUnregisteredSpuriouslyIfSomeExternalProcessHasUnregisteredMBean() throws Exception {
 		MBeanExporter exporter = new MBeanExporter();
 		exporter.setBeans(getBeanMap());
@@ -527,7 +526,8 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		assertThat(listener.getUnregistered().size()).as("Listener should not have been invoked (MBean previously unregistered by external agent)").isEqualTo(0);
 	}
 
-	@Test  // SPR-3302
+	@Test
+		// SPR-3302
 	void testBeanNameCanBeUsedInNotificationListenersMap() throws Exception {
 		String beanName = "charlesDexterWard";
 		BeanDefinitionBuilder testBean = BeanDefinitionBuilder.rootBeanDefinition(JmxTestBean.class);
@@ -571,7 +571,8 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		start(exporter);
 	}
 
-	@Test  // SPR-3625
+	@Test
+		// SPR-3625
 	void testMBeanIsUnregisteredForRuntimeExceptionDuringInitialization() throws Exception {
 		BeanDefinitionBuilder builder1 = BeanDefinitionBuilder.rootBeanDefinition(Person.class);
 		BeanDefinitionBuilder builder2 = BeanDefinitionBuilder
@@ -673,6 +674,15 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 	}
 
 
+	public static interface PersonMBean {
+
+		String getName();
+	}
+
+
+	public interface SomethingMBean {
+	}
+
 	private static class InvokeDetectAssembler implements MBeanInfoAssembler {
 
 		private boolean invoked = false;
@@ -683,7 +693,6 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			return null;
 		}
 	}
-
 
 	private static class MockMBeanExporterListener implements MBeanExporterListener {
 
@@ -710,27 +719,19 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		}
 	}
 
-
 	private static class SelfNamingTestBean implements SelfNaming {
 
 		private ObjectName objectName;
-
-		public void setObjectName(ObjectName objectName) {
-			this.objectName = objectName;
-		}
 
 		@Override
 		public ObjectName getObjectName() throws MalformedObjectNameException {
 			return this.objectName;
 		}
+
+		public void setObjectName(ObjectName objectName) {
+			this.objectName = objectName;
+		}
 	}
-
-
-	public static interface PersonMBean {
-
-		String getName();
-	}
-
 
 	public static class Person implements PersonMBean {
 
@@ -746,7 +747,6 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		}
 	}
 
-
 	public static final class StubNotificationListener implements NotificationListener {
 
 		private List<Notification> notifications = new ArrayList<>();
@@ -761,7 +761,6 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		}
 	}
 
-
 	private static class RuntimeExceptionThrowingConstructorBean {
 
 		@SuppressWarnings("unused")
@@ -769,7 +768,6 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			throw new RuntimeException();
 		}
 	}
-
 
 	private static final class NamedBeanAutodetectCapableMBeanInfoAssemblerStub extends
 			SimpleReflectiveMBeanInfoAssembler implements AutodetectCapableMBeanInfoAssembler {
@@ -786,23 +784,24 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		}
 	}
 
-
-	public interface SomethingMBean {}
-
-	public static class Something implements SomethingMBean {}
+	public static class Something implements SomethingMBean {
+	}
 
 
 	public static class ProperSomethingFactoryBean implements FactoryBean<Something> {
 
-		@Override public Something getObject() {
+		@Override
+		public Something getObject() {
 			return new Something();
 		}
 
-		@Override public Class<?> getObjectType() {
+		@Override
+		public Class<?> getObjectType() {
 			return Something.class;
 		}
 
-		@Override public boolean isSingleton() {
+		@Override
+		public boolean isSingleton() {
 			return true;
 		}
 	}
@@ -810,15 +809,18 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 
 	public static class NullSomethingFactoryBean implements FactoryBean<Something> {
 
-		@Override public Something getObject() {
+		@Override
+		public Something getObject() {
 			return null;
 		}
 
-		@Override public Class<?> getObjectType() {
+		@Override
+		public Class<?> getObjectType() {
 			return Something.class;
 		}
 
-		@Override public boolean isSingleton() {
+		@Override
+		public boolean isSingleton() {
 			return true;
 		}
 	}

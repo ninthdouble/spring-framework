@@ -16,33 +16,21 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.prefs.AbstractPreferences;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import java.util.prefs.PreferencesFactory;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ChildBeanDefinition;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.support.ManagedMap;
-import org.springframework.beans.factory.support.ManagedSet;
-import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.support.*;
 import org.springframework.beans.testfixture.beans.IndexedTestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
+import java.util.prefs.AbstractPreferences;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import java.util.prefs.PreferencesFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -57,20 +45,20 @@ import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifie
  * @author Juergen Hoeller
  * @author Chris Beams
  * @author Phillip Webb
- * @since 02.10.2003
  * @see PropertyPlaceholderConfigurerTests
+ * @since 02.10.2003
  */
 @SuppressWarnings("deprecation")
 public class PropertyResourceConfigurerTests {
-
-	static {
-		System.setProperty("java.util.prefs.PreferencesFactory", MockPreferencesFactory.class.getName());
-	}
 
 	private static final Class<?> CLASS = PropertyResourceConfigurerTests.class;
 	private static final Resource TEST_PROPS = qualifiedResource(CLASS, "test.properties");
 	private static final Resource XTEST_PROPS = qualifiedResource(CLASS, "xtest.properties"); // does not exist
 	private static final Resource TEST_PROPS_XML = qualifiedResource(CLASS, "test.properties.xml");
+
+	static {
+		System.setProperty("java.util.prefs.PreferencesFactory", MockPreferencesFactory.class.getName());
+	}
 
 	private final DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
 
@@ -273,8 +261,7 @@ public class PropertyResourceConfigurerTests {
 			poc.setOrder(0); // won't actually do anything since we're not processing through an app ctx
 			try {
 				poc.postProcessBeanFactory(factory);
-			}
-			catch (BeanInitializationException ex) {
+			} catch (BeanInitializationException ex) {
 				// prove that the processor chokes on the invalid key
 				assertThat(ex.getMessage().toLowerCase().contains("argh")).isTrue();
 			}
@@ -338,8 +325,7 @@ public class PropertyResourceConfigurerTests {
 			ChildBeanDefinition bd = new ChildBeanDefinition("${parent}", pvs2);
 			factory.registerBeanDefinition("parent1", parent);
 			factory.registerBeanDefinition("tb1", bd);
-		}
-		else {
+		} else {
 			MutablePropertyValues pvs = new MutablePropertyValues();
 			pvs.add("age", "${age}");
 			pvs.add("name", "name${var}${var}${");
@@ -355,7 +341,7 @@ public class PropertyResourceConfigurerTests {
 		cas.addGenericArgumentValue("${var}name${age}");
 
 		MutablePropertyValues pvs = new MutablePropertyValues();
-		pvs.add("stringArray", new String[] {"${os.name}", "${age}"});
+		pvs.add("stringArray", new String[]{"${os.name}", "${age}"});
 
 		List<Object> friends = new ManagedList<>();
 		friends.add("na${age}me");
@@ -481,7 +467,7 @@ public class PropertyResourceConfigurerTests {
 		ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_NEVER);
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				ppc.postProcessBeanFactory(factory))
-			.withMessageContaining("user.dir");
+				.withMessageContaining("user.dir");
 	}
 
 	@Test
@@ -491,7 +477,7 @@ public class PropertyResourceConfigurerTests {
 		PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				ppc.postProcessBeanFactory(factory))
-			.withMessageContaining("ref");
+				.withMessageContaining("ref");
 	}
 
 	@Test

@@ -16,11 +16,11 @@
 
 package org.springframework.core;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * A common delegate for detecting Kotlin's presence and for identifying Kotlin types.
@@ -42,8 +42,7 @@ public abstract class KotlinDetector {
 		ClassLoader classLoader = KotlinDetector.class.getClassLoader();
 		try {
 			metadata = ClassUtils.forName("kotlin.Metadata", classLoader);
-		}
-		catch (ClassNotFoundException ex) {
+		} catch (ClassNotFoundException ex) {
 			// Kotlin API not available - no Kotlin support
 			metadata = null;
 		}
@@ -61,6 +60,7 @@ public abstract class KotlinDetector {
 
 	/**
 	 * Determine whether Kotlin reflection is present.
+	 *
 	 * @since 5.1
 	 */
 	public static boolean isKotlinReflectPresent() {
@@ -77,6 +77,7 @@ public abstract class KotlinDetector {
 
 	/**
 	 * Return {@code true} if the method is a suspending function.
+	 *
 	 * @since 5.3
 	 */
 	public static boolean isSuspendingFunction(Method method) {

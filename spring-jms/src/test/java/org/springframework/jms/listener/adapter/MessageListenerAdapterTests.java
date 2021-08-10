@@ -16,27 +16,15 @@
 
 package org.springframework.jms.listener.adapter;
 
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-
-import javax.jms.BytesMessage;
-import javax.jms.InvalidDestinationException;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Queue;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
+
+import javax.jms.*;
+import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -311,7 +299,7 @@ public class MessageListenerAdapterTests {
 		};
 		assertThatExceptionOfType(ReplyFailureException.class).isThrownBy(() ->
 				adapter.onMessage(sentTextMessage, session))
-			.withCauseExactlyInstanceOf(InvalidDestinationException.class);
+				.withCauseExactlyInstanceOf(InvalidDestinationException.class);
 
 		verify(responseTextMessage).setJMSCorrelationID(CORRELATION_ID);
 		verify(delegate).handleMessage(sentTextMessage);
@@ -346,7 +334,7 @@ public class MessageListenerAdapterTests {
 		};
 		assertThatExceptionOfType(ReplyFailureException.class).isThrownBy(() ->
 				adapter.onMessage(sentTextMessage, session))
-			.withCauseExactlyInstanceOf(JMSException.class);
+				.withCauseExactlyInstanceOf(JMSException.class);
 
 		verify(responseTextMessage).setJMSCorrelationID(CORRELATION_ID);
 		verify(messageProducer).close();
@@ -387,7 +375,7 @@ public class MessageListenerAdapterTests {
 		adapter.setMessageConverter(null);
 		assertThatExceptionOfType(ReplyFailureException.class).isThrownBy(() ->
 				adapter.onMessage(sentTextMessage, session))
-			.withCauseExactlyInstanceOf(MessageConversionException.class);
+				.withCauseExactlyInstanceOf(MessageConversionException.class);
 	}
 
 	@Test

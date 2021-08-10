@@ -16,14 +16,12 @@
 
 package org.springframework.jdbc.core.support;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

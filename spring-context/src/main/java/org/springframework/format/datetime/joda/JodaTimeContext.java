@@ -34,8 +34,8 @@ import org.springframework.lang.Nullable;
  * <p>A {@code null} property value indicate the user has not specified a setting.
  *
  * @author Keith Donald
- * @since 3.0
  * @see JodaTimeContextHolder
+ * @since 3.0
  * @deprecated as of 5.3, in favor of standard JSR-310 support
  */
 @Deprecated
@@ -47,14 +47,6 @@ public class JodaTimeContext {
 	@Nullable
 	private DateTimeZone timeZone;
 
-
-	/**
-	 * Set the user's chronology (calendar system).
-	 */
-	public void setChronology(@Nullable Chronology chronology) {
-		this.chronology = chronology;
-	}
-
 	/**
 	 * Return the user's chronology (calendar system), if any.
 	 */
@@ -64,15 +56,10 @@ public class JodaTimeContext {
 	}
 
 	/**
-	 * Set the user's time zone.
-	 * <p>Alternatively, set a {@link TimeZoneAwareLocaleContext} on
-	 * {@link LocaleContextHolder}. This context class will fall back to
-	 * checking the locale context if no setting has been provided here.
-	 * @see org.springframework.context.i18n.LocaleContextHolder#getTimeZone()
-	 * @see org.springframework.context.i18n.LocaleContextHolder#setLocaleContext
+	 * Set the user's chronology (calendar system).
 	 */
-	public void setTimeZone(@Nullable DateTimeZone timeZone) {
-		this.timeZone = timeZone;
+	public void setChronology(@Nullable Chronology chronology) {
+		this.chronology = chronology;
 	}
 
 	/**
@@ -83,12 +70,25 @@ public class JodaTimeContext {
 		return this.timeZone;
 	}
 
+	/**
+	 * Set the user's time zone.
+	 * <p>Alternatively, set a {@link TimeZoneAwareLocaleContext} on
+	 * {@link LocaleContextHolder}. This context class will fall back to
+	 * checking the locale context if no setting has been provided here.
+	 *
+	 * @see org.springframework.context.i18n.LocaleContextHolder#getTimeZone()
+	 * @see org.springframework.context.i18n.LocaleContextHolder#setLocaleContext
+	 */
+	public void setTimeZone(@Nullable DateTimeZone timeZone) {
+		this.timeZone = timeZone;
+	}
 
 	/**
 	 * Get the DateTimeFormatter with the this context's settings
 	 * applied to the base {@code formatter}.
+	 *
 	 * @param formatter the base formatter that establishes default
-	 * formatting rules, generally context-independent
+	 *                  formatting rules, generally context-independent
 	 * @return the contextual DateTimeFormatter
 	 */
 	public DateTimeFormatter getFormatter(DateTimeFormatter formatter) {
@@ -97,8 +97,7 @@ public class JodaTimeContext {
 		}
 		if (this.timeZone != null) {
 			formatter = formatter.withZone(this.timeZone);
-		}
-		else {
+		} else {
 			LocaleContext localeContext = LocaleContextHolder.getLocaleContext();
 			if (localeContext instanceof TimeZoneAwareLocaleContext) {
 				TimeZone timeZone = ((TimeZoneAwareLocaleContext) localeContext).getTimeZone();

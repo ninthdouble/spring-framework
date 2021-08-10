@@ -16,12 +16,12 @@
 
 package org.springframework.test.context;
 
+import org.junit.jupiter.api.Test;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,15 +40,18 @@ class TestContextManagerTests {
 	private final TestContextManager testContextManager = new TestContextManager(ExampleTestCase.class);
 
 	private final Method testMethod;
+
 	{
 		try {
 			this.testMethod = ExampleTestCase.class.getDeclaredMethod("exampleTestMethod");
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
 
+	private static void assertExecutionOrder(String usageContext, String... expectedBeforeTestMethodCalls) {
+		assertThat(executionOrder).as("execution order (" + usageContext + ") ==>").isEqualTo(Arrays.asList(expectedBeforeTestMethodCalls));
+	}
 
 	@Test
 	void listenerExecutionOrder() throws Exception {
@@ -57,58 +60,53 @@ class TestContextManagerTests {
 
 		this.testContextManager.beforeTestMethod(this, this.testMethod);
 		assertExecutionOrder("beforeTestMethod",
-			"beforeTestMethod-1",
+				"beforeTestMethod-1",
 				"beforeTestMethod-2",
-					"beforeTestMethod-3"
+				"beforeTestMethod-3"
 		);
 
 		this.testContextManager.beforeTestExecution(this, this.testMethod);
 		assertExecutionOrder("beforeTestExecution",
-			"beforeTestMethod-1",
+				"beforeTestMethod-1",
 				"beforeTestMethod-2",
-					"beforeTestMethod-3",
-						"beforeTestExecution-1",
-							"beforeTestExecution-2",
-								"beforeTestExecution-3"
+				"beforeTestMethod-3",
+				"beforeTestExecution-1",
+				"beforeTestExecution-2",
+				"beforeTestExecution-3"
 		);
 
 		this.testContextManager.afterTestExecution(this, this.testMethod, null);
 		assertExecutionOrder("afterTestExecution",
-			"beforeTestMethod-1",
+				"beforeTestMethod-1",
 				"beforeTestMethod-2",
-					"beforeTestMethod-3",
-						"beforeTestExecution-1",
-							"beforeTestExecution-2",
-								"beforeTestExecution-3",
-								"afterTestExecution-3",
-							"afterTestExecution-2",
-						"afterTestExecution-1"
+				"beforeTestMethod-3",
+				"beforeTestExecution-1",
+				"beforeTestExecution-2",
+				"beforeTestExecution-3",
+				"afterTestExecution-3",
+				"afterTestExecution-2",
+				"afterTestExecution-1"
 		);
 
 		this.testContextManager.afterTestMethod(this, this.testMethod, null);
 		assertExecutionOrder("afterTestMethod",
-			"beforeTestMethod-1",
+				"beforeTestMethod-1",
 				"beforeTestMethod-2",
-					"beforeTestMethod-3",
-						"beforeTestExecution-1",
-							"beforeTestExecution-2",
-								"beforeTestExecution-3",
-								"afterTestExecution-3",
-							"afterTestExecution-2",
-						"afterTestExecution-1",
-					"afterTestMethod-3",
+				"beforeTestMethod-3",
+				"beforeTestExecution-1",
+				"beforeTestExecution-2",
+				"beforeTestExecution-3",
+				"afterTestExecution-3",
+				"afterTestExecution-2",
+				"afterTestExecution-1",
+				"afterTestMethod-3",
 				"afterTestMethod-2",
-			"afterTestMethod-1"
+				"afterTestMethod-1"
 		);
 		// @formatter:on
 	}
 
-	private static void assertExecutionOrder(String usageContext, String... expectedBeforeTestMethodCalls) {
-		assertThat(executionOrder).as("execution order (" + usageContext + ") ==>").isEqualTo(Arrays.asList(expectedBeforeTestMethodCalls));
-	}
-
-
-	@TestExecutionListeners({ FirstTel.class, SecondTel.class, ThirdTel.class })
+	@TestExecutionListeners({FirstTel.class, SecondTel.class, ThirdTel.class})
 	private static class ExampleTestCase {
 
 		@SuppressWarnings("unused")

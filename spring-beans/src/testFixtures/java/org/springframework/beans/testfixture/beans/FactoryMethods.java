@@ -28,6 +28,21 @@ import java.util.List;
  */
 public class FactoryMethods {
 
+	private int num = 0;
+	private String name = "default";
+	private TestBean tb;
+	private String stringValue;
+
+	/**
+	 * Constructor is private: not for use outside this class,
+	 * even by IoC container.
+	 */
+	private FactoryMethods(TestBean tb, String name, int num) {
+		this.tb = tb;
+		this.name = name;
+		this.num = num;
+	}
+
 	public static FactoryMethods nullInstance() {
 		return null;
 	}
@@ -64,29 +79,12 @@ public class FactoryMethods {
 		return Collections.EMPTY_LIST;
 	}
 
-
-	private int num = 0;
-	private String name = "default";
-	private TestBean tb;
-	private String stringValue;
-
-
-	/**
-	 * Constructor is private: not for use outside this class,
-	 * even by IoC container.
-	 */
-	private FactoryMethods(TestBean tb, String name, int num) {
-		this.tb = tb;
-		this.name = name;
-		this.num = num;
+	public String getStringValue() {
+		return this.stringValue;
 	}
 
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
-	}
-
-	public String getStringValue() {
-		return this.stringValue;
 	}
 
 	public TestBean getTestBean() {

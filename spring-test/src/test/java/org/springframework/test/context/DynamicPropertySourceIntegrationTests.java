@@ -20,7 +20,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -45,12 +44,11 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 class DynamicPropertySourceIntegrationTests {
 
 	private static final String TEST_CONTAINER_IP = "test.container.ip";
+	static DemoContainer container = new DemoContainer();
 
 	static {
 		System.setProperty(TEST_CONTAINER_IP, "system");
 	}
-
-	static DemoContainer container = new DemoContainer();
 
 	@DynamicPropertySource
 	static void containerProperties(DynamicPropertyRegistry registry) {

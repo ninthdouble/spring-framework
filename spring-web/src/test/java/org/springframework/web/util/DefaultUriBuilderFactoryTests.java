@@ -16,19 +16,19 @@
 
 package org.springframework.web.util;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.web.util.DefaultUriBuilderFactory.EncodingMode;
 
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link DefaultUriBuilderFactory}.
+ *
  * @author Rossen Stoyanchev
  */
 public class DefaultUriBuilderFactoryTests {

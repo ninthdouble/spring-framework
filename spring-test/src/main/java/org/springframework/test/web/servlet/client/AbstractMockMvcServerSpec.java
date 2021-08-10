@@ -15,8 +15,6 @@
  */
 package org.springframework.test.web.servlet.client;
 
-import javax.servlet.Filter;
-
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.DispatcherServletCustomizer;
@@ -26,14 +24,16 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 
+import javax.servlet.Filter;
+
 /**
  * Base class for implementations of {@link MockMvcWebTestClient.MockMvcServerSpec}
  * that simply delegates to a {@link ConfigurableMockMvcBuilder} supplied by
  * the concrete sub-classes.
  *
+ * @param <B> the type of the concrete sub-class spec
  * @author Rossen Stoyanchev
  * @since 5.3
- * @param <B> the type of the concrete sub-class spec
  */
 abstract class AbstractMockMvcServerSpec<B extends MockMvcWebTestClient.MockMvcServerSpec<B>>
 		implements MockMvcWebTestClient.MockMvcServerSpec<B> {

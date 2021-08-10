@@ -16,18 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -49,16 +37,19 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.method.annotation.MapMethodProcessor;
 import org.springframework.web.method.annotation.ModelMethodProcessor;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
-import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.method.support.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.handler.AbstractHandlerMethodExceptionResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An {@link AbstractHandlerMethodExceptionResolver} that resolves exceptions
@@ -83,59 +74,37 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	 * <p>The default is "false".
 	 */
 	private static final boolean shouldIgnoreXml = SpringProperties.getFlag("spring.xml.ignore");
-
-
-	@Nullable
-	private List<HandlerMethodArgumentResolver> customArgumentResolvers;
-
-	@Nullable
-	private HandlerMethodArgumentResolverComposite argumentResolvers;
-
-	@Nullable
-	private List<HandlerMethodReturnValueHandler> customReturnValueHandlers;
-
-	@Nullable
-	private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
-
-	private List<HttpMessageConverter<?>> messageConverters;
-
-	private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
-
 	private final List<Object> responseBodyAdvice = new ArrayList<>();
-
-	@Nullable
-	private ApplicationContext applicationContext;
-
 	private final Map<Class<?>, ExceptionHandlerMethodResolver> exceptionHandlerCache =
 			new ConcurrentHashMap<>(64);
-
 	private final Map<ControllerAdviceBean, ExceptionHandlerMethodResolver> exceptionHandlerAdviceCache =
 			new LinkedHashMap<>();
+	@Nullable
+	private List<HandlerMethodArgumentResolver> customArgumentResolvers;
+	@Nullable
+	private HandlerMethodArgumentResolverComposite argumentResolvers;
+	@Nullable
+	private List<HandlerMethodReturnValueHandler> customReturnValueHandlers;
+	@Nullable
+	private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
+	private List<HttpMessageConverter<?>> messageConverters;
+	private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
+	@Nullable
+	private ApplicationContext applicationContext;
 
 
 	public ExceptionHandlerExceptionResolver() {
 		this.messageConverters = new ArrayList<>();
 		this.messageConverters.add(new ByteArrayHttpMessageConverter());
 		this.messageConverters.add(new StringHttpMessageConverter());
-		if(!shouldIgnoreXml) {
+		if (!shouldIgnoreXml) {
 			try {
 				this.messageConverters.add(new SourceHttpMessageConverter<>());
-			}
-			catch (Error err) {
+			} catch (Error err) {
 				// Ignore when no TransformerFactory implementation is available
 			}
 		}
 		this.messageConverters.add(new AllEncompassingFormHttpMessageConverter());
-	}
-
-
-	/**
-	 * Provide resolvers for custom argument types. Custom resolvers are ordered
-	 * after built-in ones. To override the built-in support for argument
-	 * resolution use {@link #setArgumentResolvers} instead.
-	 */
-	public void setCustomArgumentResolvers(@Nullable List<HandlerMethodArgumentResolver> argumentResolvers) {
-		this.customArgumentResolvers = argumentResolvers;
 	}
 
 	/**
@@ -147,17 +116,12 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 	/**
-	 * Configure the complete list of supported argument types thus overriding
-	 * the resolvers that would otherwise be configured by default.
+	 * Provide resolvers for custom argument types. Custom resolvers are ordered
+	 * after built-in ones. To override the built-in support for argument
+	 * resolution use {@link #setArgumentResolvers} instead.
 	 */
-	public void setArgumentResolvers(@Nullable List<HandlerMethodArgumentResolver> argumentResolvers) {
-		if (argumentResolvers == null) {
-			this.argumentResolvers = null;
-		}
-		else {
-			this.argumentResolvers = new HandlerMethodArgumentResolverComposite();
-			this.argumentResolvers.addResolvers(argumentResolvers);
-		}
+	public void setCustomArgumentResolvers(@Nullable List<HandlerMethodArgumentResolver> argumentResolvers) {
+		this.customArgumentResolvers = argumentResolvers;
 	}
 
 	/**
@@ -170,12 +134,16 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 	/**
-	 * Provide handlers for custom return value types. Custom handlers are
-	 * ordered after built-in ones. To override the built-in support for
-	 * return value handling use {@link #setReturnValueHandlers}.
+	 * Configure the complete list of supported argument types thus overriding
+	 * the resolvers that would otherwise be configured by default.
 	 */
-	public void setCustomReturnValueHandlers(@Nullable List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-		this.customReturnValueHandlers = returnValueHandlers;
+	public void setArgumentResolvers(@Nullable List<HandlerMethodArgumentResolver> argumentResolvers) {
+		if (argumentResolvers == null) {
+			this.argumentResolvers = null;
+		} else {
+			this.argumentResolvers = new HandlerMethodArgumentResolverComposite();
+			this.argumentResolvers.addResolvers(argumentResolvers);
+		}
 	}
 
 	/**
@@ -187,17 +155,12 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 	/**
-	 * Configure the complete list of supported return value types thus
-	 * overriding handlers that would otherwise be configured by default.
+	 * Provide handlers for custom return value types. Custom handlers are
+	 * ordered after built-in ones. To override the built-in support for
+	 * return value handling use {@link #setReturnValueHandlers}.
 	 */
-	public void setReturnValueHandlers(@Nullable List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-		if (returnValueHandlers == null) {
-			this.returnValueHandlers = null;
-		}
-		else {
-			this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
-			this.returnValueHandlers.addHandlers(returnValueHandlers);
-		}
+	public void setCustomReturnValueHandlers(@Nullable List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+		this.customReturnValueHandlers = returnValueHandlers;
 	}
 
 	/**
@@ -210,11 +173,16 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 	/**
-	 * Set the message body converters to use.
-	 * <p>These converters are used to convert from and to HTTP requests and responses.
+	 * Configure the complete list of supported return value types thus
+	 * overriding handlers that would otherwise be configured by default.
 	 */
-	public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
-		this.messageConverters = messageConverters;
+	public void setReturnValueHandlers(@Nullable List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+		if (returnValueHandlers == null) {
+			this.returnValueHandlers = null;
+		} else {
+			this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite();
+			this.returnValueHandlers.addHandlers(returnValueHandlers);
+		}
 	}
 
 	/**
@@ -225,11 +193,11 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	}
 
 	/**
-	 * Set the {@link ContentNegotiationManager} to use to determine requested media types.
-	 * If not set, the default constructor is used.
+	 * Set the message body converters to use.
+	 * <p>These converters are used to convert from and to HTTP requests and responses.
 	 */
-	public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
-		this.contentNegotiationManager = contentNegotiationManager;
+	public void setMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
+		this.messageConverters = messageConverters;
 	}
 
 	/**
@@ -237,6 +205,14 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	 */
 	public ContentNegotiationManager getContentNegotiationManager() {
 		return this.contentNegotiationManager;
+	}
+
+	/**
+	 * Set the {@link ContentNegotiationManager} to use to determine requested media types.
+	 * If not set, the default constructor is used.
+	 */
+	public void setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager) {
+		this.contentNegotiationManager = contentNegotiationManager;
 	}
 
 	/**
@@ -251,16 +227,15 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		}
 	}
 
-	@Override
-	public void setApplicationContext(@Nullable ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
-	}
-
 	@Nullable
 	public ApplicationContext getApplicationContext() {
 		return this.applicationContext;
 	}
 
+	@Override
+	public void setApplicationContext(@Nullable ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
 	@Override
 	public void afterPropertiesSet() {
@@ -302,8 +277,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			int adviceSize = this.responseBodyAdvice.size();
 			if (handlerSize == 0 && adviceSize == 0) {
 				logger.debug("ControllerAdvice beans: none");
-			}
-			else {
+			} else {
 				logger.debug("ControllerAdvice beans: " +
 						handlerSize + " @ExceptionHandler, " + adviceSize + " ResponseBodyAdvice");
 			}
@@ -393,7 +367,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	@Override
 	@Nullable
 	protected ModelAndView doResolveHandlerMethodException(HttpServletRequest request,
-			HttpServletResponse response, @Nullable HandlerMethod handlerMethod, Exception exception) {
+														   HttpServletResponse response, @Nullable HandlerMethod handlerMethod, Exception exception) {
 
 		ServletInvocableHandlerMethod exceptionHandlerMethod = getExceptionHandlerMethod(handlerMethod, exception);
 		if (exceptionHandlerMethod == null) {
@@ -426,8 +400,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			exceptions.toArray(arguments);  // efficient arraycopy call in ArrayList
 			arguments[arguments.length - 1] = handlerMethod;
 			exceptionHandlerMethod.invokeAndHandle(webRequest, mavContainer, arguments);
-		}
-		catch (Throwable invocationEx) {
+		} catch (Throwable invocationEx) {
 			// Any other than the original exception (or a cause) is unintended here,
 			// probably an accident (e.g. failed assertion or the like).
 			if (!exceptions.contains(invocationEx) && logger.isWarnEnabled()) {
@@ -439,8 +412,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 
 		if (mavContainer.isRequestHandled()) {
 			return new ModelAndView();
-		}
-		else {
+		} else {
 			ModelMap model = mavContainer.getModel();
 			HttpStatus status = mavContainer.getStatus();
 			ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, status);
@@ -462,8 +434,9 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	 * and if not found, it continues searching for additional {@code @ExceptionHandler}
 	 * methods assuming some {@linkplain ControllerAdvice @ControllerAdvice}
 	 * Spring-managed beans were detected.
+	 *
 	 * @param handlerMethod the method where the exception was raised (may be {@code null})
-	 * @param exception the raised exception
+	 * @param exception     the raised exception
 	 * @return a method to handle the exception, or {@code null} if none
 	 */
 	@Nullable

@@ -17,7 +17,6 @@
 package org.springframework.r2dbc.connection.init;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;

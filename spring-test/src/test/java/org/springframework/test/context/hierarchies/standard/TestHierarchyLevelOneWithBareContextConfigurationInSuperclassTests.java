@@ -18,7 +18,6 @@ package org.springframework.test.context.hierarchies.standard;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +35,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration
 class TestHierarchyLevelOneWithBareContextConfigurationInSuperclassTests {
 
+	@Autowired
+	private String foo;
+	@Autowired
+	private String bar;
+	@Autowired
+	private ApplicationContext context;
+
+	@Test
+	void loadContextHierarchy() {
+		assertThat(context).as("child ApplicationContext").isNotNull();
+		assertThat(context.getParent()).as("parent ApplicationContext").isNull();
+		assertThat(foo).isEqualTo("foo-level-1");
+		assertThat(bar).isEqualTo("bar");
+	}
+
 	@Configuration
 	static class Config {
 
@@ -48,25 +62,6 @@ class TestHierarchyLevelOneWithBareContextConfigurationInSuperclassTests {
 		String bar() {
 			return "bar";
 		}
-	}
-
-
-	@Autowired
-	private String foo;
-
-	@Autowired
-	private String bar;
-
-	@Autowired
-	private ApplicationContext context;
-
-
-	@Test
-	void loadContextHierarchy() {
-		assertThat(context).as("child ApplicationContext").isNotNull();
-		assertThat(context.getParent()).as("parent ApplicationContext").isNull();
-		assertThat(foo).isEqualTo("foo-level-1");
-		assertThat(bar).isEqualTo("bar");
 	}
 
 }

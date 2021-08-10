@@ -16,21 +16,19 @@
 
 package org.springframework.dao.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.persistence.PersistenceException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.support.DataAccessUtilsTests.MapPersistenceExceptionTranslator;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.PersistenceException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -71,10 +69,10 @@ public class PersistenceExceptionTranslationAdvisorTests {
 		target.setBehavior(persistenceException1);
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(
 				ri::noThrowsClause)
-			.isSameAs(persistenceException1);
+				.isSameAs(persistenceException1);
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(
 				ri::throwsPersistenceException)
-			.isSameAs(persistenceException1);
+				.isSameAs(persistenceException1);
 	}
 
 	@Test
@@ -88,10 +86,10 @@ public class PersistenceExceptionTranslationAdvisorTests {
 		target.setBehavior(doNotTranslate);
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(
 				ri::noThrowsClause)
-			.isSameAs(doNotTranslate);
+				.isSameAs(doNotTranslate);
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(
 				ri::throwsPersistenceException)
-			.isSameAs(doNotTranslate);
+				.isSameAs(doNotTranslate);
 	}
 
 	@Test
@@ -125,11 +123,11 @@ public class PersistenceExceptionTranslationAdvisorTests {
 		target.setBehavior(persistenceException1);
 		assertThatExceptionOfType(DataAccessException.class).isThrownBy(
 				ri::noThrowsClause)
-			.withCause(persistenceException1);
+				.withCause(persistenceException1);
 
 		assertThatExceptionOfType(PersistenceException.class).isThrownBy(
 				ri::throwsPersistenceException)
-			.isSameAs(persistenceException1);
+				.isSameAs(persistenceException1);
 	}
 
 
@@ -138,6 +136,19 @@ public class PersistenceExceptionTranslationAdvisorTests {
 		void noThrowsClause();
 
 		void throwsPersistenceException() throws PersistenceException;
+	}
+
+	@Target({ElementType.TYPE})
+	@Retention(RetentionPolicy.RUNTIME)
+	@Repository
+	public @interface MyRepository {
+	}
+
+	@Repository
+	public interface StereotypedInterface {
+	}
+
+	public interface StereotypedInheritingInterface extends StereotypedInterface {
 	}
 
 	public static class RepositoryInterfaceImpl implements RepositoryInterface {
@@ -175,21 +186,8 @@ public class PersistenceExceptionTranslationAdvisorTests {
 	public static class CustomStereotypedRepositoryInterfaceImpl extends RepositoryInterfaceImpl {
 	}
 
-	@Target({ElementType.TYPE})
-	@Retention(RetentionPolicy.RUNTIME)
-	@Repository
-	public @interface MyRepository {
-	}
-
-	@Repository
-	public interface StereotypedInterface {
-	}
-
 	public static class MyInterfaceStereotypedRepositoryInterfaceImpl extends RepositoryInterfaceImpl
 			implements StereotypedInterface {
-	}
-
-	public interface StereotypedInheritingInterface extends StereotypedInterface {
 	}
 
 	public static class MyInterfaceInheritedStereotypedRepositoryInterfaceImpl extends RepositoryInterfaceImpl

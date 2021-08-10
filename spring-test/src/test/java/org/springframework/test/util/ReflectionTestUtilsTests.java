@@ -19,24 +19,12 @@ package org.springframework.test.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.test.util.subpackage.Component;
-import org.springframework.test.util.subpackage.LegacyEntity;
-import org.springframework.test.util.subpackage.Person;
-import org.springframework.test.util.subpackage.PersonEntity;
-import org.springframework.test.util.subpackage.StaticFields;
-import org.springframework.test.util.subpackage.StaticMethods;
+import org.springframework.test.util.subpackage.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.springframework.test.util.ReflectionTestUtils.getField;
-import static org.springframework.test.util.ReflectionTestUtils.invokeGetterMethod;
-import static org.springframework.test.util.ReflectionTestUtils.invokeMethod;
-import static org.springframework.test.util.ReflectionTestUtils.invokeSetterMethod;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.util.ReflectionTestUtils.*;
 
 /**
  * Unit tests for {@link ReflectionTestUtils}.
@@ -53,85 +41,6 @@ class ReflectionTestUtilsTests {
 	private final Component component = new Component();
 
 	private final LegacyEntity entity = new LegacyEntity();
-
-
-	@BeforeEach
-	void resetStaticFields() {
-		StaticFields.reset();
-		StaticMethods.reset();
-	}
-
-	@Test
-	void setFieldWithNullTargetObject() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> setField((Object) null, "id", Long.valueOf(99)))
-			.withMessageStartingWith("Either targetObject or targetClass");
-	}
-
-	@Test
-	void getFieldWithNullTargetObject() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> getField((Object) null, "id"))
-			.withMessageStartingWith("Either targetObject or targetClass");
-	}
-
-	@Test
-	void setFieldWithNullTargetClass() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> setField((Class<?>) null, "id", Long.valueOf(99)))
-			.withMessageStartingWith("Either targetObject or targetClass");
-	}
-
-	@Test
-	void getFieldWithNullTargetClass() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> getField((Class<?>) null, "id"))
-			.withMessageStartingWith("Either targetObject or targetClass");
-	}
-
-	@Test
-	void setFieldWithNullNameAndNullType() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> setField(person, null, Long.valueOf(99), null))
-			.withMessageStartingWith("Either name or type");
-	}
-
-	@Test
-	void setFieldWithBogusName() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> setField(person, "bogus", Long.valueOf(99), long.class))
-			.withMessageStartingWith("Could not find field 'bogus'");
-	}
-
-	@Test
-	void setFieldWithWrongType() throws Exception {
-		assertThatIllegalArgumentException()
-			.isThrownBy(() -> setField(person, "id", Long.valueOf(99), String.class))
-			.withMessageStartingWith("Could not find field");
-	}
-
-	@Test
-	void setFieldAndGetFieldForStandardUseCases() throws Exception {
-		assertSetFieldAndGetFieldBehavior(this.person);
-	}
-
-	@Test
-	void setFieldAndGetFieldViaJdkDynamicProxy() throws Exception {
-		ProxyFactory pf = new ProxyFactory(this.person);
-		pf.addInterface(Person.class);
-		Person proxy = (Person) pf.getProxy();
-		assertThat(AopUtils.isJdkDynamicProxy(proxy)).as("Proxy is a JDK dynamic proxy").isTrue();
-		assertSetFieldAndGetFieldBehaviorForProxy(proxy, this.person);
-	}
-
-	@Test
-	void setFieldAndGetFieldViaCglibProxy() throws Exception {
-		ProxyFactory pf = new ProxyFactory(this.person);
-		pf.setProxyTargetClass(true);
-		Person proxy = (Person) pf.getProxy();
-		assertThat(AopUtils.isCglibProxy(proxy)).as("Proxy is a CGLIB proxy").isTrue();
-		assertSetFieldAndGetFieldBehaviorForProxy(proxy, this.person);
-	}
 
 	private static void assertSetFieldAndGetFieldBehavior(Person person) {
 		// Set reflectively
@@ -169,6 +78,84 @@ class ReflectionTestUtilsTests {
 		assertThat(target.getEyeColor()).as("eye color (package private field)").isEqualTo("blue");
 		assertThat(target.likesPets()).as("'likes pets' flag (package private boolean field)").isEqualTo(true);
 		assertThat(target.getFavoriteNumber()).as("'favorite number' (package field)").isEqualTo(PI);
+	}
+
+	@BeforeEach
+	void resetStaticFields() {
+		StaticFields.reset();
+		StaticMethods.reset();
+	}
+
+	@Test
+	void setFieldWithNullTargetObject() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> setField((Object) null, "id", Long.valueOf(99)))
+				.withMessageStartingWith("Either targetObject or targetClass");
+	}
+
+	@Test
+	void getFieldWithNullTargetObject() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> getField((Object) null, "id"))
+				.withMessageStartingWith("Either targetObject or targetClass");
+	}
+
+	@Test
+	void setFieldWithNullTargetClass() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> setField((Class<?>) null, "id", Long.valueOf(99)))
+				.withMessageStartingWith("Either targetObject or targetClass");
+	}
+
+	@Test
+	void getFieldWithNullTargetClass() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> getField((Class<?>) null, "id"))
+				.withMessageStartingWith("Either targetObject or targetClass");
+	}
+
+	@Test
+	void setFieldWithNullNameAndNullType() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> setField(person, null, Long.valueOf(99), null))
+				.withMessageStartingWith("Either name or type");
+	}
+
+	@Test
+	void setFieldWithBogusName() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> setField(person, "bogus", Long.valueOf(99), long.class))
+				.withMessageStartingWith("Could not find field 'bogus'");
+	}
+
+	@Test
+	void setFieldWithWrongType() throws Exception {
+		assertThatIllegalArgumentException()
+				.isThrownBy(() -> setField(person, "id", Long.valueOf(99), String.class))
+				.withMessageStartingWith("Could not find field");
+	}
+
+	@Test
+	void setFieldAndGetFieldForStandardUseCases() throws Exception {
+		assertSetFieldAndGetFieldBehavior(this.person);
+	}
+
+	@Test
+	void setFieldAndGetFieldViaJdkDynamicProxy() throws Exception {
+		ProxyFactory pf = new ProxyFactory(this.person);
+		pf.addInterface(Person.class);
+		Person proxy = (Person) pf.getProxy();
+		assertThat(AopUtils.isJdkDynamicProxy(proxy)).as("Proxy is a JDK dynamic proxy").isTrue();
+		assertSetFieldAndGetFieldBehaviorForProxy(proxy, this.person);
+	}
+
+	@Test
+	void setFieldAndGetFieldViaCglibProxy() throws Exception {
+		ProxyFactory pf = new ProxyFactory(this.person);
+		pf.setProxyTargetClass(true);
+		Person proxy = (Person) pf.getProxy();
+		assertThat(AopUtils.isCglibProxy(proxy)).as("Proxy is a CGLIB proxy").isTrue();
+		assertSetFieldAndGetFieldBehaviorForProxy(proxy, this.person);
 	}
 
 	@Test
@@ -339,7 +326,7 @@ class ReflectionTestUtilsTests {
 	@Test
 	void invokeMethodWithPrimitiveVarArgsAsSingleArgument() {
 		// IntelliJ IDEA 11 won't accept int assignment here
-		Integer sum = invokeMethod(component, "add", new int[] { 1, 2, 3, 4 });
+		Integer sum = invokeMethod(component, "add", new int[]{1, 2, 3, 4});
 		assertThat(sum.intValue()).as("add(1,2,3,4)").isEqualTo(10);
 	}
 
@@ -366,58 +353,63 @@ class ReflectionTestUtilsTests {
 	@Test
 	void invokeInitMethodBeforeAutowiring() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> invokeMethod(component, "init"))
-			.withMessageStartingWith("number must not be null");
+				.isThrownBy(() -> invokeMethod(component, "init"))
+				.withMessageStartingWith("number must not be null");
 	}
 
 	@Test
 	void invokeMethodWithIncompatibleArgumentTypes() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> invokeMethod(component, "subtract", "foo", 2.0))
-			.withMessageStartingWith("Method not found");
+				.isThrownBy(() -> invokeMethod(component, "subtract", "foo", 2.0))
+				.withMessageStartingWith("Method not found");
 	}
 
 	@Test
 	void invokeMethodWithTooFewArguments() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> invokeMethod(component, "configure", Integer.valueOf(42)))
-			.withMessageStartingWith("Method not found");
+				.isThrownBy(() -> invokeMethod(component, "configure", Integer.valueOf(42)))
+				.withMessageStartingWith("Method not found");
 	}
 
 	@Test
 	void invokeMethodWithTooManyArguments() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> invokeMethod(component, "configure", Integer.valueOf(42), "enigma", "baz", "quux"))
-			.withMessageStartingWith("Method not found");
+				.isThrownBy(() -> invokeMethod(component, "configure", Integer.valueOf(42), "enigma", "baz", "quux"))
+				.withMessageStartingWith("Method not found");
 	}
 
-	@Test // SPR-14363
+	@Test
+		// SPR-14363
 	void getFieldOnLegacyEntityWithSideEffectsInToString() {
 		Object collaborator = getField(entity, "collaborator");
 		assertThat(collaborator).isNotNull();
 	}
 
-	@Test // SPR-9571 and SPR-14363
+	@Test
+		// SPR-9571 and SPR-14363
 	void setFieldOnLegacyEntityWithSideEffectsInToString() {
 		String testCollaborator = "test collaborator";
 		setField(entity, "collaborator", testCollaborator, Object.class);
 		assertThat(entity.toString().contains(testCollaborator)).isTrue();
 	}
 
-	@Test // SPR-14363
+	@Test
+		// SPR-14363
 	void invokeMethodOnLegacyEntityWithSideEffectsInToString() {
 		invokeMethod(entity, "configure", Integer.valueOf(42), "enigma");
 		assertThat(entity.getNumber()).as("number should have been configured").isEqualTo(Integer.valueOf(42));
 		assertThat(entity.getText()).as("text should have been configured").isEqualTo("enigma");
 	}
 
-	@Test // SPR-14363
+	@Test
+		// SPR-14363
 	void invokeGetterMethodOnLegacyEntityWithSideEffectsInToString() {
 		Object collaborator = invokeGetterMethod(entity, "collaborator");
 		assertThat(collaborator).isNotNull();
 	}
 
-	@Test // SPR-14363
+	@Test
+		// SPR-14363
 	void invokeSetterMethodOnLegacyEntityWithSideEffectsInToString() {
 		String testCollaborator = "test collaborator";
 		invokeSetterMethod(entity, "collaborator", testCollaborator);
@@ -427,22 +419,22 @@ class ReflectionTestUtilsTests {
 	@Test
 	void invokeStaticMethodWithNullTargetClass() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> invokeMethod((Class<?>) null, null))
-			.withMessage("Target class must not be null");
+				.isThrownBy(() -> invokeMethod((Class<?>) null, null))
+				.withMessage("Target class must not be null");
 	}
 
 	@Test
 	void invokeStaticMethodWithNullMethodName() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> invokeMethod(getClass(), null))
-			.withMessage("Method name must not be empty");
+				.isThrownBy(() -> invokeMethod(getClass(), null))
+				.withMessage("Method name must not be empty");
 	}
 
 	@Test
 	void invokeStaticMethodWithEmptyMethodName() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> invokeMethod(getClass(), "  "))
-			.withMessage("Method name must not be empty");
+				.isThrownBy(() -> invokeMethod(getClass(), "  "))
+				.withMessage("Method name must not be empty");
 	}
 
 	@Test
@@ -482,8 +474,8 @@ class ReflectionTestUtilsTests {
 	@Test
 	void invokeStaticMethodWithNullTargetObjectAndNullTargetClass() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> invokeMethod((Object) null, (Class<?>) null, "id"))
-			.withMessage("Either 'targetObject' or 'targetClass' for the method must be specified");
+				.isThrownBy(() -> invokeMethod((Object) null, (Class<?>) null, "id"))
+				.withMessage("Either 'targetObject' or 'targetClass' for the method must be specified");
 	}
 
 }

@@ -17,8 +17,6 @@
 package org.springframework.web.reactive.result.method.annotation;
 
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Flux;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,6 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <li>{@link RequestMappingDataBindingIntegrationTests}
  * <li>{@link RequestMappingMessageConversionIntegrationTests}
  * </ul>
+ *
  * @author Rossen Stoyanchev
  */
 class ControllerInputIntegrationTests extends AbstractRequestMappingIntegrationTests {
@@ -60,7 +60,8 @@ class ControllerInputIntegrationTests extends AbstractRequestMappingIntegrationT
 		assertThat(performGet("/param?name=George", new HttpHeaders(), String.class).getBody()).isEqualTo(expected);
 	}
 
-	@ParameterizedHttpServerTest  // SPR-15140
+	@ParameterizedHttpServerTest
+		// SPR-15140
 	void handleWithEncodedParam(HttpServer httpServer) throws Exception {
 		startServer(httpServer);
 

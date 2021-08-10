@@ -16,6 +16,8 @@
 
 package org.springframework.http;
 
+import org.junit.jupiter.api.Test;
+
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,26 +25,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TimeZone;
-
-import org.junit.jupiter.api.Test;
 
 import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link org.springframework.http.HttpHeaders}.
@@ -92,7 +79,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getFirst("Accept")).as("Invalid Accept header").isEqualTo("text/html, text/plain");
 	}
 
-	@Test  // SPR-9655
+	@Test
+		// SPR-9655
 	void acceptWithMultipleHeaderValues() {
 		headers.add("Accept", "text/html");
 		headers.add("Accept", "text/plain");
@@ -100,7 +88,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getAccept()).as("Invalid Accept header").isEqualTo(expected);
 	}
 
-	@Test  // SPR-14506
+	@Test
+		// SPR-14506
 	void acceptWithMultipleCommaSeparatedHeaderValues() {
 		headers.add("Accept", "text/html,text/pdf");
 		headers.add("Accept", "text/plain,text/csv");
@@ -279,8 +268,7 @@ public class HttpHeadersTests {
 			headers.setDate(date);
 			assertThat(headers.getFirst("date")).as("Invalid Date header").isEqualTo("Thu, 18 Dec 2008 10:20:00 GMT");
 			assertThat(headers.getDate()).as("Invalid Date header").isEqualTo(date);
-		}
-		finally {
+		} finally {
 			Locale.setDefault(defaultLocale);
 		}
 	}
@@ -313,7 +301,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getFirst("expires")).as("Invalid Expires header").isEqualTo("Thu, 18 Dec 2008 10:20:00 GMT");
 	}
 
-	@Test  // SPR-10648 (example is from INT-3063)
+	@Test
+		// SPR-10648 (example is from INT-3063)
 	void expiresInvalidDate() {
 		headers.set("Expires", "-1");
 		assertThat(headers.getExpires()).isEqualTo(-1);
@@ -329,7 +318,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getFirst("if-modified-since")).as("Invalid If-Modified-Since header").isEqualTo("Thu, 18 Dec 2008 10:20:00 GMT");
 	}
 
-	@Test  // SPR-14144
+	@Test
+		// SPR-14144
 	void invalidIfModifiedSinceHeader() {
 		headers.set(HttpHeaders.IF_MODIFIED_SINCE, "0");
 		assertThat(headers.getIfModifiedSince()).isEqualTo(-1);
@@ -389,7 +379,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getContentDisposition()).as("Invalid Content-Disposition header").isEqualTo(disposition);
 	}
 
-	@Test  // SPR-11917
+	@Test
+		// SPR-11917
 	void getAllowEmptySet() {
 		headers.setAllow(Collections.emptySet());
 		assertThat(headers.getAllow()).isEmpty();
@@ -491,7 +482,8 @@ public class HttpHeadersTests {
 		assertThat(headers.getAcceptLanguageAsLocales().get(0)).isEqualTo(Locale.FRANCE);
 	}
 
-	@Test // SPR-15603
+	@Test
+		// SPR-15603
 	void acceptLanguageWithEmptyValue() throws Exception {
 		this.headers.set(HttpHeaders.ACCEPT_LANGUAGE, "");
 		assertThat(this.headers.getAcceptLanguageAsLocales()).isEqualTo(Collections.emptyList());
@@ -506,7 +498,7 @@ public class HttpHeadersTests {
 
 	@Test
 	void contentLanguageSerialized() {
-		headers.set(HttpHeaders.CONTENT_LANGUAGE,  "de, en_CA");
+		headers.set(HttpHeaders.CONTENT_LANGUAGE, "de, en_CA");
 		assertThat(headers.getContentLanguage()).as("Expected one (first) locale").isEqualTo(Locale.GERMAN);
 	}
 
@@ -598,7 +590,7 @@ public class HttpHeadersTests {
 		assertThat(keySet.contains("Charlie")).as("Charlie should not be present").isFalse();
 
 		// toArray()
-		assertThat(keySet.toArray()).isEqualTo(new String[] {"Alpha", "Bravo"});
+		assertThat(keySet.toArray()).isEqualTo(new String[]{"Alpha", "Bravo"});
 
 		// spliterator() via stream()
 		assertThat(keySet.stream().collect(toList())).isEqualTo(Arrays.asList("Alpha", "Bravo"));
@@ -625,16 +617,17 @@ public class HttpHeadersTests {
 
 		// Unsupported operations
 		assertThatExceptionOfType(UnsupportedOperationException.class)
-			.isThrownBy(() -> keySet.add("x"));
+				.isThrownBy(() -> keySet.add("x"));
 		assertThatExceptionOfType(UnsupportedOperationException.class)
-			.isThrownBy(() -> keySet.addAll(Collections.singleton("enigma")));
+				.isThrownBy(() -> keySet.addAll(Collections.singleton("enigma")));
 	}
 
 	/**
 	 * This method intentionally checks a wider/different range of functionality
 	 * than {@link #removalFromKeySetRemovesEntryFromUnderlyingMap()}.
 	 */
-	@Test // https://github.com/spring-projects/spring-framework/issues/23633
+	@Test
+	// https://github.com/spring-projects/spring-framework/issues/23633
 	void keySetRemovalChecks() {
 		// --- Given ---
 		headers.add("Alpha", "apple");
@@ -696,7 +689,7 @@ public class HttpHeadersTests {
 		headers.add("dog", "enigma");
 		headers.add("elephant", "enigma");
 
-		String[] expectedKeys = new String[] { "aardvark", "beaver", "cat", "dog", "elephant" };
+		String[] expectedKeys = new String[]{"aardvark", "beaver", "cat", "dog", "elephant"};
 
 		assertThat(headers.entrySet()).extracting(Entry::getKey).containsExactly(expectedKeys);
 
@@ -704,7 +697,8 @@ public class HttpHeadersTests {
 		assertThat(readOnlyHttpHeaders.entrySet()).extracting(Entry::getKey).containsExactly(expectedKeys);
 	}
 
-	@Test // gh-25034
+	@Test
+		// gh-25034
 	void equalsUnwrapsHttpHeaders() {
 		HttpHeaders headers1 = new HttpHeaders();
 		HttpHeaders headers2 = new HttpHeaders(new HttpHeaders(headers1));

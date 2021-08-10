@@ -28,8 +28,8 @@ class KotlinDataClassRowMapperTests : AbstractRowMapperTests() {
 	fun testStaticQueryWithDataClass() {
 		val mock = Mock()
 		val result = mock.jdbcTemplate.query(
-			"select name, age, birth_date, balance from people",
-			DataClassRowMapper(ConstructorPerson::class.java)
+				"select name, age, birth_date, balance from people",
+				DataClassRowMapper(ConstructorPerson::class.java)
 		)
 		Assertions.assertThat(result.size).isEqualTo(1)
 		verifyPerson(result[0])
@@ -40,8 +40,8 @@ class KotlinDataClassRowMapperTests : AbstractRowMapperTests() {
 	fun testInitPropertiesAreNotOverridden() {
 		val mock = Mock()
 		val result = mock.jdbcTemplate.query(
-			"select name, age, birth_date, balance from people",
-			DataClassRowMapper(KotlinPerson::class.java)
+				"select name, age, birth_date, balance from people",
+				DataClassRowMapper(KotlinPerson::class.java)
 		)
 		Assertions.assertThat(result.size).isEqualTo(1)
 		Assertions.assertThat(result[0].name).isEqualTo("Bubba appended by init")

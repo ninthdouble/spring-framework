@@ -16,16 +16,15 @@
 
 package org.springframework.http;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.support.ResourceRegion;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.support.ResourceRegion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -43,7 +42,7 @@ public class HttpRangeTests {
 	@Test
 	public void invalidFirstPosition() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
-			HttpRange.createByteRange(-1));
+				HttpRange.createByteRange(-1));
 	}
 
 	@Test
@@ -110,7 +109,7 @@ public class HttpRangeTests {
 
 		// 1. At limit..
 		StringBuilder atLimit = new StringBuilder("bytes=0-0");
-		for (int i=0; i < 99; i++) {
+		for (int i = 0; i < 99; i++) {
 			atLimit.append(',').append(i).append('-').append(i + 1);
 		}
 		List<HttpRange> ranges = HttpRange.parseRanges(atLimit.toString());
@@ -118,7 +117,7 @@ public class HttpRangeTests {
 
 		// 2. Above limit..
 		StringBuilder aboveLimit = new StringBuilder("bytes=0-0");
-		for (int i=0; i < 100; i++) {
+		for (int i = 0; i < 100; i++) {
 			aboveLimit.append(',').append(i).append('-').append(i + 1);
 		}
 		assertThatIllegalArgumentException().isThrownBy(() ->

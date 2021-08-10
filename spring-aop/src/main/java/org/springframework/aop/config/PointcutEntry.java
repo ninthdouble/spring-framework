@@ -31,6 +31,7 @@ public class PointcutEntry implements ParseState.Entry {
 
 	/**
 	 * Create a new {@code PointcutEntry} instance.
+	 *
 	 * @param name the bean name of the pointcut
 	 */
 	public PointcutEntry(String name) {

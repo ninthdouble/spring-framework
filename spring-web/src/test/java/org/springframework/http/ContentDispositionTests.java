@@ -16,18 +16,19 @@
 
 package org.springframework.http;
 
+import org.junit.jupiter.api.Test;
+
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.BiConsumer;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 /**
  * Unit tests for {@link ContentDisposition}
+ *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  */
@@ -35,6 +36,9 @@ class ContentDispositionTests {
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
 
+	private static ContentDisposition parse(String input) {
+		return ContentDisposition.parse(input);
+	}
 
 	@Test
 	@SuppressWarnings("deprecation")
@@ -55,7 +59,8 @@ class ContentDispositionTests {
 						.build());
 	}
 
-	@Test  // SPR-16091
+	@Test
+		// SPR-16091
 	void parseFilenameWithSemicolon() {
 		assertThat(parse("attachment; filename=\"filename with ; semicolon.txt\""))
 				.isEqualTo(ContentDisposition.attachment()
@@ -72,7 +77,8 @@ class ContentDispositionTests {
 						.build());
 	}
 
-	@Test // gh-24112
+	@Test
+		// gh-24112
 	void parseEncodedFilenameWithPaddedCharset() {
 		assertThat(parse("attachment; filename*= UTF-8''some-file.zip"))
 				.isEqualTo(ContentDisposition.attachment()
@@ -80,13 +86,15 @@ class ContentDispositionTests {
 						.build());
 	}
 
-	@Test // gh-26463
+	@Test
+		// gh-26463
 	void parseBase64EncodedFilename() {
 		String input = "attachment; filename=\"=?UTF-8?B?5pel5pys6KqeLmNzdg==?=\"";
 		assertThat(parse(input).getFilename()).isEqualTo("日本語.csv");
 	}
 
-	@Test // gh-26463
+	@Test
+		// gh-26463
 	void parseBase64EncodedShiftJISFilename() {
 		String input = "attachment; filename=\"=?SHIFT_JIS?B?k/qWe4zqLmNzdg==?=\"";
 		assertThat(parse(input).getFilename()).isEqualTo("日本語.csv");
@@ -120,9 +128,9 @@ class ContentDispositionTests {
 	@SuppressWarnings("deprecation")
 	void parseWithEscapedQuote() {
 		BiConsumer<String, String> tester = (description, filename) ->
-			assertThat(parse("form-data; name=\"file\"; filename=\"" + filename + "\"; size=123"))
-					.as(description)
-					.isEqualTo(ContentDisposition.formData().name("file").filename(filename).size(123L).build());
+				assertThat(parse("form-data; name=\"file\"; filename=\"" + filename + "\"; size=123"))
+						.as(description)
+						.isEqualTo(ContentDisposition.formData().name("file").filename(filename).size(123L).build());
 
 		tester.accept("Escaped quotes should be ignored",
 				"\\\"The Twilight Zone\\\".txt");
@@ -197,11 +205,6 @@ class ContentDispositionTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> parse("foo;bar"));
 	}
 
-	private static ContentDisposition parse(String input) {
-		return ContentDisposition.parse(input);
-	}
-
-
 	@Test
 	@SuppressWarnings("deprecation")
 	void format() {
@@ -235,7 +238,8 @@ class ContentDispositionTests {
 				.isEqualTo("form-data; name=\"name\"; filename=\"test.txt\"");
 	}
 
-	@Test // gh-24220
+	@Test
+		// gh-24220
 	void formatWithFilenameWithQuotes() {
 
 		BiConsumer<String, String> tester = (input, output) -> {

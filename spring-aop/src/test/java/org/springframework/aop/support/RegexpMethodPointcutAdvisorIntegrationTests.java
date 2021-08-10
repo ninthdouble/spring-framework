@@ -17,7 +17,6 @@
 package org.springframework.aop.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.testfixture.interceptor.NopInterceptor;
 import org.springframework.aop.testfixture.interceptor.SerializableNopInterceptor;

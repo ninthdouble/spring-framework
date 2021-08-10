@@ -39,6 +39,11 @@ import org.springframework.test.context.support.DefaultTestContextBootstrapper;
  */
 public class WebTestContextBootstrapper extends DefaultTestContextBootstrapper {
 
+	@Nullable
+	private static WebAppConfiguration getWebAppConfiguration(Class<?> testClass) {
+		return TestContextAnnotationUtils.findMergedAnnotation(testClass, WebAppConfiguration.class);
+	}
+
 	/**
 	 * Returns {@link WebDelegatingSmartContextLoader} if the supplied class is
 	 * annotated with {@link WebAppConfiguration @WebAppConfiguration} and
@@ -48,8 +53,7 @@ public class WebTestContextBootstrapper extends DefaultTestContextBootstrapper {
 	protected Class<? extends ContextLoader> getDefaultContextLoaderClass(Class<?> testClass) {
 		if (getWebAppConfiguration(testClass) != null) {
 			return WebDelegatingSmartContextLoader.class;
-		}
-		else {
+		} else {
 			return super.getDefaultContextLoaderClass(testClass);
 		}
 	}
@@ -65,15 +69,9 @@ public class WebTestContextBootstrapper extends DefaultTestContextBootstrapper {
 		WebAppConfiguration webAppConfiguration = getWebAppConfiguration(mergedConfig.getTestClass());
 		if (webAppConfiguration != null) {
 			return new WebMergedContextConfiguration(mergedConfig, webAppConfiguration.value());
-		}
-		else {
+		} else {
 			return mergedConfig;
 		}
-	}
-
-	@Nullable
-	private static WebAppConfiguration getWebAppConfiguration(Class<?> testClass) {
-		return TestContextAnnotationUtils.findMergedAnnotation(testClass, WebAppConfiguration.class);
 	}
 
 }

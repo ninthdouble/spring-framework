@@ -16,10 +16,10 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +50,14 @@ class AnnotationBackCompatibiltyTests {
 		assertThat(defaultValue).isEqualTo(TestEnum.ONE);
 	}
 
+	static enum TestEnum {
+
+		ONE,
+
+		TWO
+
+	}
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface TestAnnotation {
 
@@ -75,12 +83,6 @@ class AnnotationBackCompatibiltyTests {
 	@interface MetaMetaTestAnnotation {
 	}
 
-	@MetaMetaTestAnnotation
-	@TestAndMetaTestAnnotation
-	static class WithMetaMetaTestAnnotation1AndMetaTestAnnotation2 {
-
-	}
-
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface DefaultValueAnnotation {
 
@@ -92,16 +94,14 @@ class AnnotationBackCompatibiltyTests {
 
 	}
 
-	@DefaultValueAnnotation
-	static class WithDefaultValue {
+	@MetaMetaTestAnnotation
+	@TestAndMetaTestAnnotation
+	static class WithMetaMetaTestAnnotation1AndMetaTestAnnotation2 {
 
 	}
 
-	static enum TestEnum {
-
-		ONE,
-
-		TWO
+	@DefaultValueAnnotation
+	static class WithDefaultValue {
 
 	}
 

@@ -19,7 +19,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +55,10 @@ class DynamicPropertySourceNestedTests {
 		registry.add(TEST_CONTAINER_PORT, container::getPort);
 	}
 
+	private static void assertServiceHasInjectedValues(Service service) {
+		assertThat(service.getIp()).isEqualTo("127.0.0.1");
+		assertThat(service.getPort()).isEqualTo(4242);
+	}
 
 	@Test
 	@DisplayName("@Service has values injected from @DynamicPropertySource")
@@ -63,9 +66,59 @@ class DynamicPropertySourceNestedTests {
 		assertServiceHasInjectedValues(service);
 	}
 
-	private static void assertServiceHasInjectedValues(Service service) {
-		assertThat(service.getIp()).isEqualTo("127.0.0.1");
-		assertThat(service.getPort()).isEqualTo(4242);
+	interface DynamicPropertySourceInterface {
+
+		@DynamicPropertySource
+		static void containerProperties(DynamicPropertyRegistry registry) {
+			registry.add(TEST_CONTAINER_IP, container::getIpAddress);
+			registry.add(TEST_CONTAINER_PORT, container::getPort);
+		}
+	}
+
+	static abstract class DynamicPropertySourceSuperclass {
+
+		@DynamicPropertySource
+		static void containerProperties(DynamicPropertyRegistry registry) {
+			registry.add(TEST_CONTAINER_IP, container::getIpAddress);
+			registry.add(TEST_CONTAINER_PORT, container::getPort);
+		}
+	}
+
+	@Configuration
+	@Import(Service.class)
+	static class Config {
+	}
+
+	static class Service {
+
+		private final String ip;
+
+		private final int port;
+
+
+		Service(@Value("${" + TEST_CONTAINER_IP + ":10.0.0.1}") String ip, @Value("${" + TEST_CONTAINER_PORT + ":-999}") int port) {
+			this.ip = ip;
+			this.port = port;
+		}
+
+		String getIp() {
+			return this.ip;
+		}
+
+		int getPort() {
+			return this.port;
+		}
+	}
+
+	static class DemoContainer {
+
+		String getIpAddress() {
+			return "127.0.0.1";
+		}
+
+		int getPort() {
+			return 4242;
+		}
 	}
 
 	@Nested
@@ -122,63 +175,6 @@ class DynamicPropertySourceNestedTests {
 			void serviceHasInjectedValues(@Autowired Service service) {
 				assertServiceHasInjectedValues(service);
 			}
-		}
-	}
-
-
-	static abstract class DynamicPropertySourceSuperclass {
-
-		@DynamicPropertySource
-		static void containerProperties(DynamicPropertyRegistry registry) {
-			registry.add(TEST_CONTAINER_IP, container::getIpAddress);
-			registry.add(TEST_CONTAINER_PORT, container::getPort);
-		}
-	}
-
-	interface DynamicPropertySourceInterface {
-
-		@DynamicPropertySource
-		static void containerProperties(DynamicPropertyRegistry registry) {
-			registry.add(TEST_CONTAINER_IP, container::getIpAddress);
-			registry.add(TEST_CONTAINER_PORT, container::getPort);
-		}
-	}
-
-
-	@Configuration
-	@Import(Service.class)
-	static class Config {
-	}
-
-	static class Service {
-
-		private final String ip;
-
-		private final int port;
-
-
-		Service(@Value("${" + TEST_CONTAINER_IP + ":10.0.0.1}") String ip, @Value("${" + TEST_CONTAINER_PORT + ":-999}") int port) {
-			this.ip = ip;
-			this.port = port;
-		}
-
-		String getIp() {
-			return this.ip;
-		}
-
-		int getPort() {
-			return this.port;
-		}
-	}
-
-	static class DemoContainer {
-
-		String getIpAddress() {
-			return "127.0.0.1";
-		}
-
-		int getPort() {
-			return 4242;
 		}
 	}
 

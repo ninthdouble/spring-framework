@@ -16,18 +16,17 @@
 
 package org.springframework.jdbc.core.support;
 
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.LobRetrievalFailureException;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
+
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -117,8 +116,7 @@ public class LobSupportTests {
 			protected void streamData(ResultSet rs) throws SQLException, IOException {
 				if (ex) {
 					throw new IOException();
-				}
-				else {
+				} else {
 					rs.clearWarnings();
 				}
 			}

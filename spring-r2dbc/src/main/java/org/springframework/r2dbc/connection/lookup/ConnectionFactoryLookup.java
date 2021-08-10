@@ -29,6 +29,7 @@ public interface ConnectionFactoryLookup {
 
 	/**
 	 * Retrieve the {@link ConnectionFactory} identified by the given name.
+	 *
 	 * @param connectionFactoryName the name of the {@link ConnectionFactory}
 	 * @return the {@link ConnectionFactory} (never {@code null})
 	 * @throws ConnectionFactoryLookupFailureException if the lookup failed

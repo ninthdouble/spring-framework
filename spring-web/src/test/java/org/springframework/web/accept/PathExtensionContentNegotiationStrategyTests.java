@@ -16,18 +16,17 @@
 
 package org.springframework.web.accept;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -72,7 +71,8 @@ class PathExtensionContentNegotiationStrategyTests {
 		assertThat(mediaTypes).isEqualTo(Arrays.asList(new MediaType("application", "vnd.ms-excel")));
 	}
 
-	@Test // SPR-8678
+	@Test
+		// SPR-8678
 	void getMediaTypeFilenameWithContextPath() throws Exception {
 		this.servletRequest.setContextPath("/project-1.0.0.M3");
 		this.servletRequest.setRequestURI("/project-1.0.0.M3/");
@@ -82,7 +82,8 @@ class PathExtensionContentNegotiationStrategyTests {
 		assertThat(this.strategy.resolveMediaTypes(webRequest)).as("Context path should be excluded").isEqualTo(ContentNegotiationStrategy.MEDIA_TYPE_ALL_LIST);
 	}
 
-	@Test // SPR-9390
+	@Test
+		// SPR-9390
 	void getMediaTypeFilenameWithEncodedURI() throws Exception {
 		this.servletRequest.setRequestURI("/quo%20vadis%3f.html");
 		List<MediaType> result = this.strategy.resolveMediaTypes(webRequest);
@@ -90,7 +91,8 @@ class PathExtensionContentNegotiationStrategyTests {
 		assertThat(result).as("Invalid content type").isEqualTo(Collections.singletonList(new MediaType("text", "html")));
 	}
 
-	@Test // SPR-10170
+	@Test
+		// SPR-10170
 	void resolveMediaTypesIgnoreUnknownExtension() throws Exception {
 		this.servletRequest.setRequestURI("test.foobar");
 
@@ -105,7 +107,7 @@ class PathExtensionContentNegotiationStrategyTests {
 
 		this.strategy.setIgnoreUnknownExtensions(false);
 		assertThatExceptionOfType(HttpMediaTypeNotAcceptableException.class)
-			.isThrownBy(() -> this.strategy.resolveMediaTypes(this.webRequest));
+				.isThrownBy(() -> this.strategy.resolveMediaTypes(this.webRequest));
 	}
 
 }

@@ -16,48 +16,13 @@
 
 package org.springframework.orm.jpa.vendor;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-
-import org.hibernate.ConnectionReleaseMode;
-import org.hibernate.FlushMode;
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
-import org.hibernate.NonUniqueObjectException;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.ObjectDeletedException;
-import org.hibernate.PersistentObjectException;
-import org.hibernate.PessimisticLockException;
-import org.hibernate.PropertyValueException;
-import org.hibernate.QueryException;
 import org.hibernate.QueryTimeoutException;
-import org.hibernate.Session;
-import org.hibernate.StaleObjectStateException;
-import org.hibernate.StaleStateException;
-import org.hibernate.TransientObjectException;
-import org.hibernate.UnresolvableObjectException;
-import org.hibernate.WrongClassException;
+import org.hibernate.*;
 import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.hibernate.dialect.lock.PessimisticEntityLockException;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.DataException;
-import org.hibernate.exception.JDBCConnectionException;
-import org.hibernate.exception.LockAcquisitionException;
-import org.hibernate.exception.SQLGrammarException;
-
-import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
-import org.springframework.dao.PessimisticLockingFailureException;
+import org.hibernate.exception.*;
+import org.springframework.dao.*;
 import org.springframework.jdbc.datasource.ConnectionHandle;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
@@ -72,16 +37,21 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.ResourceTransactionDefinition;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  * {@link org.springframework.orm.jpa.JpaDialect} implementation for
  * Hibernate EntityManager. Developed against Hibernate 5.2/5.3/5.4.
  *
  * @author Juergen Hoeller
  * @author Costin Leau
- * @since 2.0
  * @see HibernateJpaVendorAdapter
  * @see org.hibernate.Session#setFlushMode
  * @see org.hibernate.Transaction#setTimeout
+ * @since 2.0
  */
 @SuppressWarnings("serial")
 public class HibernateJpaDialect extends DefaultJpaDialect {
@@ -108,9 +78,10 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 	 * that you're running into read-only enforcement now where previously write
 	 * access has accidentally been tolerated: Please revise your transaction
 	 * declarations accordingly, removing invalid read-only markers if necessary.
-	 * @since 4.1
+	 *
 	 * @see java.sql.Connection#setTransactionIsolation
 	 * @see java.sql.Connection#setReadOnly
+	 * @since 4.1
 	 */
 	public void setPrepareConnection(boolean prepareConnection) {
 		this.prepareConnection = prepareConnection;
@@ -121,11 +92,12 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 	 * <p>Applied to any detected {@link java.sql.SQLException} root cause of a Hibernate
 	 * {@link JDBCException}, overriding Hibernate's own {@code SQLException} translation
 	 * (which is based on a Hibernate Dialect for a specific target database).
-	 * @since 5.1
+	 *
 	 * @see java.sql.SQLException
 	 * @see org.hibernate.JDBCException
 	 * @see org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
 	 * @see org.springframework.jdbc.support.SQLStateSQLExceptionTranslator
+	 * @since 5.1
 	 */
 	public void setJdbcExceptionTranslator(SQLExceptionTranslator jdbcExceptionTranslator) {
 		this.jdbcExceptionTranslator = jdbcExceptionTranslator;
@@ -151,12 +123,11 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 					session.getJdbcCoordinator().getLogicalConnection().getConnectionHandlingMode().getReleaseMode())) {
 				preparedCon = session.connection();
 				previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(preparedCon, definition);
-			}
-			else if (isolationLevelNeeded) {
+			} else if (isolationLevelNeeded) {
 				throw new InvalidIsolationLevelException(
 						"HibernateJpaDialect is not allowed to support custom isolation levels: " +
-						"make sure that its 'prepareConnection' flag is on (the default) and that the " +
-						"Hibernate connection release mode is set to ON_CLOSE.");
+								"make sure that its 'prepareConnection' flag is on (the default) and that the " +
+								"Hibernate connection release mode is set to ON_CLOSE.");
 			}
 		}
 
@@ -196,8 +167,7 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 				session.setHibernateFlushMode(FlushMode.MANUAL);
 				return flushMode;
 			}
-		}
-		else {
+		} else {
 			// We need AUTO or COMMIT for a non-read-only transaction.
 			if (flushMode.lessThan(FlushMode.COMMIT)) {
 				session.setHibernateFlushMode(FlushMode.AUTO);
@@ -238,6 +208,7 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 	/**
 	 * Convert the given HibernateException to an appropriate exception
 	 * from the {@code org.springframework.dao} hierarchy.
+	 *
 	 * @param ex the HibernateException that occurred
 	 * @return the corresponding DataAccessException instance
 	 */
@@ -272,7 +243,7 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 		}
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException jdbcEx = (ConstraintViolationException) ex;
-			return new DataIntegrityViolationException(ex.getMessage()  + "; SQL [" + jdbcEx.getSQL() +
+			return new DataIntegrityViolationException(ex.getMessage() + "; SQL [" + jdbcEx.getSQL() +
 					"]; constraint [" + jdbcEx.getConstraintName() + "]", ex);
 		}
 		if (ex instanceof DataException) {
@@ -351,7 +322,7 @@ public class HibernateJpaDialect extends DefaultJpaDialect {
 		private final boolean readOnly;
 
 		public SessionTransactionData(SessionImplementor session, @Nullable FlushMode previousFlushMode,
-				boolean connectionPrepared, @Nullable Integer previousIsolationLevel, boolean readOnly) {
+									  boolean connectionPrepared, @Nullable Integer previousIsolationLevel, boolean readOnly) {
 
 			this.session = session;
 			this.previousFlushMode = previousFlushMode;

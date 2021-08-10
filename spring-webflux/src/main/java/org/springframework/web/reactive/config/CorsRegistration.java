@@ -16,10 +16,10 @@
 
 package org.springframework.web.reactive.config;
 
+import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Assists with the creation of a {@link CorsConfiguration} instance for a given
@@ -27,9 +27,9 @@ import org.springframework.web.cors.CorsConfiguration;
  *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see CorsConfiguration
  * @see CorsRegistry
+ * @since 5.0
  */
 public class CorsRegistration {
 
@@ -53,6 +53,7 @@ public class CorsRegistration {
 	 * <p>By default, all origins are allowed, but if
 	 * {@link #allowedOriginPatterns(String...) allowedOriginPatterns} is also
 	 * set, then that takes precedence.
+	 *
 	 * @see #allowedOriginPatterns(String...)
 	 */
 	public CorsRegistration allowedOrigins(String... origins) {
@@ -67,6 +68,7 @@ public class CorsRegistration {
 	 * {@link CorsConfiguration#setAllowedOriginPatterns(List)} for format
 	 * details and other considerations.
 	 * <p>By default this is not set.
+	 *
 	 * @since 5.3
 	 */
 	public CorsRegistration allowedOriginPatterns(String... patterns) {
@@ -145,6 +147,7 @@ public class CorsRegistration {
 	 * Apply the given {@code CorsConfiguration} to the one being configured via
 	 * {@link CorsConfiguration#combine(CorsConfiguration)} which in turn has been
 	 * initialized with {@link CorsConfiguration#applyPermitDefaultValues()}.
+	 *
 	 * @param other the configuration to apply
 	 * @since 5.3
 	 */

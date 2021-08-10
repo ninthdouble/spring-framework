@@ -16,10 +16,7 @@
 
 package org.springframework.web.servlet.handler;
 
-import java.util.stream.Stream;
-
 import org.junit.jupiter.params.provider.Arguments;
-
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -29,6 +26,8 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.ServletRequestPathUtils;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -238,8 +237,7 @@ public class PathMatchingUrlHandlerMappingTests {
 			assertThat(chain.getHandler())
 					.as("PathPattern always matches to encoded paths.")
 					.isSameAs(bean);
-		}
-		else {
+		} else {
 			assertThat(chain.getHandler())
 					.as("PathMatcher should not match encoded pattern with urlDecode=true")
 					.isSameAs(defaultBean);

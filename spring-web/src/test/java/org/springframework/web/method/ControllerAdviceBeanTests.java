@@ -16,14 +16,7 @@
 
 package org.springframework.web.method;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-
-import javax.annotation.Priority;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -34,6 +27,11 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Priority;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -52,24 +50,24 @@ public class ControllerAdviceBeanTests {
 	@Test
 	public void constructorPreconditions() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new ControllerAdviceBean(null))
-			.withMessage("Bean must not be null");
+				.isThrownBy(() -> new ControllerAdviceBean(null))
+				.withMessage("Bean must not be null");
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new ControllerAdviceBean((String) null, null))
-			.withMessage("Bean name must contain text");
+				.isThrownBy(() -> new ControllerAdviceBean((String) null, null))
+				.withMessage("Bean name must contain text");
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new ControllerAdviceBean("", null))
-			.withMessage("Bean name must contain text");
+				.isThrownBy(() -> new ControllerAdviceBean("", null))
+				.withMessage("Bean name must contain text");
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new ControllerAdviceBean("\t", null))
-			.withMessage("Bean name must contain text");
+				.isThrownBy(() -> new ControllerAdviceBean("\t", null))
+				.withMessage("Bean name must contain text");
 
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> new ControllerAdviceBean("myBean", null))
-			.withMessage("BeanFactory must not be null");
+				.isThrownBy(() -> new ControllerAdviceBean("myBean", null))
+				.withMessage("BeanFactory must not be null");
 	}
 
 	@Test
@@ -202,14 +200,14 @@ public class ControllerAdviceBeanTests {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public void findAnnotatedBeansSortsBeans() {
 		Class[] expectedTypes = {
-			// Since ControllerAdviceBean currently treats PriorityOrdered the same as Ordered,
-			// OrderedControllerAdvice is sorted before PriorityOrderedControllerAdvice.
-			OrderedControllerAdvice.class,
-			PriorityOrderedControllerAdvice.class,
-			OrderAnnotationControllerAdvice.class,
-			PriorityAnnotationControllerAdvice.class,
-			SimpleControllerAdviceWithBeanOrder.class,
-			SimpleControllerAdvice.class,
+				// Since ControllerAdviceBean currently treats PriorityOrdered the same as Ordered,
+				// OrderedControllerAdvice is sorted before PriorityOrderedControllerAdvice.
+				OrderedControllerAdvice.class,
+				PriorityOrderedControllerAdvice.class,
+				OrderAnnotationControllerAdvice.class,
+				PriorityAnnotationControllerAdvice.class,
+				SimpleControllerAdviceWithBeanOrder.class,
+				SimpleControllerAdvice.class,
 		};
 
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
@@ -259,19 +257,30 @@ public class ControllerAdviceBeanTests {
 
 	// ControllerAdvice classes
 
-	@ControllerAdvice
-	static class SimpleControllerAdvice {}
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ControllerAnnotation {
+	}
+
+	interface ControllerInterface {
+	}
 
 	@ControllerAdvice
-	static class SimpleControllerAdviceWithBeanOrder {}
+	static class SimpleControllerAdvice {
+	}
+
+	@ControllerAdvice
+	static class SimpleControllerAdviceWithBeanOrder {
+	}
 
 	@ControllerAdvice
 	@Order(100)
-	static class OrderAnnotationControllerAdvice {}
+	static class OrderAnnotationControllerAdvice {
+	}
 
 	@ControllerAdvice
 	@Priority(200)
-	static class PriorityAnnotationControllerAdvice {}
+	static class PriorityAnnotationControllerAdvice {
+	}
 
 	@ControllerAdvice
 	// @Order and @Priority should be ignored due to implementation of Ordered.
@@ -298,45 +307,52 @@ public class ControllerAdviceBeanTests {
 	}
 
 	@ControllerAdvice(annotations = ControllerAnnotation.class)
-	static class AnnotationSupport {}
+	static class AnnotationSupport {
+	}
 
 	@ControllerAdvice(basePackageClasses = MarkerClass.class)
-	static class MarkerClassSupport {}
+	static class MarkerClassSupport {
+	}
 
 	@ControllerAdvice(assignableTypes = {ControllerInterface.class,
 			AbstractController.class})
-	static class AssignableTypesSupport {}
+	static class AssignableTypesSupport {
+	}
 
 	@ControllerAdvice(basePackages = "org.springframework.web.method")
-	static class BasePackageSupport {}
+	static class BasePackageSupport {
+	}
 
 	@ControllerAdvice("org.springframework.web.method")
-	static class BasePackageValueSupport {}
-
-	@ControllerAdvice(annotations = ControllerAnnotation.class, assignableTypes = ControllerInterface.class)
-	static class MultipleSelectorsSupport {}
-
-	@ControllerAdvice(basePackages = "java.util", annotations = {RestController.class})
-	static class ShouldNotMatch {}
+	static class BasePackageValueSupport {
+	}
 
 
 	// Support classes
 
-	static class MarkerClass {}
+	@ControllerAdvice(annotations = ControllerAnnotation.class, assignableTypes = ControllerInterface.class)
+	static class MultipleSelectorsSupport {
+	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ControllerAnnotation {}
+	@ControllerAdvice(basePackages = "java.util", annotations = {RestController.class})
+	static class ShouldNotMatch {
+	}
+
+	static class MarkerClass {
+	}
 
 	@ControllerAnnotation
-	public static class AnnotatedController {}
+	public static class AnnotatedController {
+	}
 
-	interface ControllerInterface {}
+	static class ImplementationController implements ControllerInterface {
+	}
 
-	static class ImplementationController implements ControllerInterface {}
+	static abstract class AbstractController {
+	}
 
-	static abstract class AbstractController {}
-
-	static class InheritanceController extends AbstractController {}
+	static class InheritanceController extends AbstractController {
+	}
 
 	@Configuration(proxyBeanMethods = false)
 	static class Config {

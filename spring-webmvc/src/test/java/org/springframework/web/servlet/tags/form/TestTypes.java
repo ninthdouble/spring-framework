@@ -16,27 +16,6 @@
 
 package org.springframework.web.servlet.tags.form;
 
-/**
- * Test related data types for {@code org.springframework.web.servlet.tags.form} package.
- *
- * @author Scott Andrews
- */
-public class TestTypes { }
-
-class BeanWithEnum {
-
-	private TestEnum testEnum;
-
-	public TestEnum getTestEnum() {
-		return testEnum;
-	}
-
-	public void setTestEnum(TestEnum customEnum) {
-		this.testEnum = customEnum;
-	}
-
-}
-
 enum TestEnum {
 
 	VALUE_1, VALUE_2;
@@ -52,6 +31,28 @@ enum TestEnum {
 	@Override
 	public String toString() {
 		return "TestEnum: " + name();
+	}
+
+}
+
+/**
+ * Test related data types for {@code org.springframework.web.servlet.tags.form} package.
+ *
+ * @author Scott Andrews
+ */
+public class TestTypes {
+}
+
+class BeanWithEnum {
+
+	private TestEnum testEnum;
+
+	public TestEnum getTestEnum() {
+		return testEnum;
+	}
+
+	public void setTestEnum(TestEnum customEnum) {
+		this.testEnum = customEnum;
 	}
 
 }

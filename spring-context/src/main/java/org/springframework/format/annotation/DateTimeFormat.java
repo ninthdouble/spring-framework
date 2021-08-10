@@ -64,9 +64,9 @@ import java.lang.annotation.Target;
  * @author Keith Donald
  * @author Juergen Hoeller
  * @author Sam Brannen
- * @since 3.0
  * @see java.time.format.DateTimeFormatter
  * @see org.joda.time.format.DateTimeFormat
+ * @since 3.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -78,6 +78,7 @@ public @interface DateTimeFormat {
 	 * <p>Defaults to 'SS' for short date, short time. Set this attribute when you
 	 * wish to format your field or method parameter in accordance with a common
 	 * style other than the default style.
+	 *
 	 * @see #fallbackPatterns
 	 */
 	String style() default "SS";
@@ -88,6 +89,7 @@ public @interface DateTimeFormat {
 	 * <p>Defaults to {@link ISO#NONE}, indicating this attribute should be ignored.
 	 * Set this attribute when you wish to format your field or method parameter
 	 * in accordance with an ISO format.
+	 *
 	 * @see #fallbackPatterns
 	 */
 	ISO iso() default ISO.NONE;
@@ -104,6 +106,7 @@ public @interface DateTimeFormat {
 	 * characters indicate a year in the traditional style, not a "year-of-era" as in the
 	 * {@link java.time.format.DateTimeFormatter} specification (i.e. 'yy' turns into 'uu'
 	 * when going through a {@code DateTimeFormatter} with strict resolution mode).
+	 *
 	 * @see #fallbackPatterns
 	 */
 	String pattern() default "";
@@ -123,6 +126,7 @@ public @interface DateTimeFormat {
 	 * which time zone is used for fallback patterns, see the
 	 * {@linkplain DateTimeFormat class-level documentation}.
 	 * <p>Fallback patterns are not supported for Joda-Time value types.
+	 *
 	 * @since 5.3.5
 	 */
 	String[] fallbackPatterns() default {};

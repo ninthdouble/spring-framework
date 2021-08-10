@@ -17,15 +17,14 @@
 package org.springframework.test.context.web;
 
 import org.junit.Test;
-
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Sam Brannen
- * @since 4.1
  * @see BasicXmlWacTests
+ * @since 4.1
  */
 // Config loaded from BasicGroovyWacTestsContext.groovy
 @ContextConfiguration

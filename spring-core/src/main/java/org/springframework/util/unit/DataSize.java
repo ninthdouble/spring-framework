@@ -16,13 +16,13 @@
 
 package org.springframework.util.unit;
 
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A data size, such as '12MB'.
@@ -46,8 +46,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Stephane Nicoll
  * @author Sam Brannen
- * @since 5.1
  * @see DataUnit
+ * @since 5.1
  */
 @SuppressWarnings("serial")
 public final class DataSize implements Comparable<DataSize>, Serializable {
@@ -88,6 +88,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing the specified number of bytes.
+	 *
 	 * @param bytes the number of bytes, positive or negative
 	 * @return a {@link DataSize}
 	 */
@@ -97,6 +98,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing the specified number of kilobytes.
+	 *
 	 * @param kilobytes the number of kilobytes, positive or negative
 	 * @return a {@link DataSize}
 	 */
@@ -106,6 +108,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing the specified number of megabytes.
+	 *
 	 * @param megabytes the number of megabytes, positive or negative
 	 * @return a {@link DataSize}
 	 */
@@ -115,6 +118,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing the specified number of gigabytes.
+	 *
 	 * @param gigabytes the number of gigabytes, positive or negative
 	 * @return a {@link DataSize}
 	 */
@@ -124,6 +128,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing the specified number of terabytes.
+	 *
 	 * @param terabytes the number of terabytes, positive or negative
 	 * @return a {@link DataSize}
 	 */
@@ -133,8 +138,9 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Obtain a {@link DataSize} representing an amount in the specified {@link DataUnit}.
+	 *
 	 * @param amount the amount of the size, measured in terms of the unit,
-	 * positive or negative
+	 *               positive or negative
 	 * @return a corresponding {@link DataSize}
 	 */
 	public static DataSize of(long amount, DataUnit unit) {
@@ -152,6 +158,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 	 * "5MB"  -- parses as "5 megabytes"
 	 * "20"   -- parses as "20 bytes"
 	 * </pre>
+	 *
 	 * @param text the text to parse
 	 * @return the parsed {@link DataSize}
 	 * @see #parse(CharSequence, DataUnit)
@@ -173,6 +180,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 	 * "5MB"  -- parses as "5 megabytes"
 	 * "20"   -- parses as "20 kilobytes" (where the {@code defaultUnit} is {@link DataUnit#KILOBYTES})
 	 * </pre>
+	 *
 	 * @param text the text to parse
 	 * @return the parsed {@link DataSize}
 	 */
@@ -184,8 +192,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 			DataUnit unit = determineDataUnit(matcher.group(2), defaultUnit);
 			long amount = Long.parseLong(matcher.group(1));
 			return DataSize.of(amount, unit);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalArgumentException("'" + text + "' is not a valid data size", ex);
 		}
 	}
@@ -197,6 +204,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Checks if this size is negative, excluding zero.
+	 *
 	 * @return true if this size has a size less than zero bytes
 	 */
 	public boolean isNegative() {
@@ -205,6 +213,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Return the number of bytes in this instance.
+	 *
 	 * @return the number of bytes
 	 */
 	public long toBytes() {
@@ -213,6 +222,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Return the number of kilobytes in this instance.
+	 *
 	 * @return the number of kilobytes
 	 */
 	public long toKilobytes() {
@@ -221,6 +231,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Return the number of megabytes in this instance.
+	 *
 	 * @return the number of megabytes
 	 */
 	public long toMegabytes() {
@@ -229,6 +240,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Return the number of gigabytes in this instance.
+	 *
 	 * @return the number of gigabytes
 	 */
 	public long toGigabytes() {
@@ -237,6 +249,7 @@ public final class DataSize implements Comparable<DataSize>, Serializable {
 
 	/**
 	 * Return the number of terabytes in this instance.
+	 *
 	 * @return the number of terabytes
 	 */
 	public long toTerabytes() {

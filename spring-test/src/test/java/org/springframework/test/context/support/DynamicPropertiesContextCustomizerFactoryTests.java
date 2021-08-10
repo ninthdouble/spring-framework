@@ -16,15 +16,14 @@
 
 package org.springframework.test.context.support;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,7 +48,7 @@ class DynamicPropertiesContextCustomizerFactoryTests {
 	@Test
 	void createContextCustomizerWhenSingleAnnotatedMethodReturnsCustomizer() {
 		DynamicPropertiesContextCustomizer customizer = this.factory.createContextCustomizer(
-			SingleDynamicPropertySource.class, this.configAttributes);
+				SingleDynamicPropertySource.class, this.configAttributes);
 		assertThat(customizer).isNotNull();
 		assertThat(customizer.getMethods()).flatExtracting(Method::getName).containsOnly("p1");
 	}
@@ -57,7 +56,7 @@ class DynamicPropertiesContextCustomizerFactoryTests {
 	@Test
 	void createContextCustomizerWhenMultipleAnnotatedMethodsReturnsCustomizer() {
 		DynamicPropertiesContextCustomizer customizer = this.factory.createContextCustomizer(
-			MultipleDynamicPropertySources.class, this.configAttributes);
+				MultipleDynamicPropertySources.class, this.configAttributes);
 		assertThat(customizer).isNotNull();
 		assertThat(customizer.getMethods()).flatExtracting(Method::getName).containsOnly("p1", "p2", "p3");
 	}
@@ -65,7 +64,7 @@ class DynamicPropertiesContextCustomizerFactoryTests {
 	@Test
 	void createContextCustomizerWhenAnnotatedMethodsInBaseClassReturnsCustomizer() {
 		DynamicPropertiesContextCustomizer customizer = this.factory.createContextCustomizer(
-			SubDynamicPropertySource.class, this.configAttributes);
+				SubDynamicPropertySource.class, this.configAttributes);
 		assertThat(customizer).isNotNull();
 		assertThat(customizer.getMethods()).flatExtracting(Method::getName).containsOnly("p1", "p2");
 	}

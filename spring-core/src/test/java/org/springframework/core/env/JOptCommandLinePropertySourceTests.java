@@ -16,11 +16,11 @@
 
 package org.springframework.core.env;
 
-import java.util.Arrays;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +54,8 @@ class JOptCommandLinePropertySourceTests {
 		assertThat(ps.getProperty("foo")).isEqualTo("");
 	}
 
-	@Test // gh-24464
+	@Test
+		// gh-24464
 	void withOptionalArg_andArgIsEmpty() {
 		OptionParser parser = new OptionParser();
 		parser.accepts("foo").withOptionalArg();
@@ -124,7 +125,7 @@ class JOptCommandLinePropertySourceTests {
 	@Test
 	void withDefaultNonOptionArgsNameAndNoNonOptionArgsPresent() {
 		OptionParser parser = new OptionParser();
-		parser.acceptsAll(Arrays.asList("o1","option1")).withRequiredArg();
+		parser.acceptsAll(Arrays.asList("o1", "option1")).withRequiredArg();
 		parser.accepts("o2");
 		OptionSet optionSet = parser.parse("--o1=v1", "--o2");
 		EnumerablePropertySource<?> ps = new JOptCommandLinePropertySource(optionSet);

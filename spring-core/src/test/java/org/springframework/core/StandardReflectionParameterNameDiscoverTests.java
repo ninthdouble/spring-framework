@@ -16,12 +16,11 @@
 
 package org.springframework.core;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +40,7 @@ class StandardReflectionParameterNameDiscoverTests {
 
 	@Test
 	void getParameterNamesOnInterface() {
-		Method method = ReflectionUtils.findMethod(MessageService.class,"sendMessage", String.class);
+		Method method = ReflectionUtils.findMethod(MessageService.class, "sendMessage", String.class);
 		String[] actualParams = parameterNameDiscoverer.getParameterNames(method);
 		assertThat(actualParams).isEqualTo(new String[]{"message"});
 	}

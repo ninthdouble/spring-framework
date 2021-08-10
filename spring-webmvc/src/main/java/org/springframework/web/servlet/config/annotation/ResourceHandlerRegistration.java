@@ -16,10 +16,6 @@
 
 package org.springframework.web.servlet.config.annotation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.cache.Cache;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
@@ -27,6 +23,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Encapsulates information required to create a resource handler.
@@ -58,6 +58,7 @@ public class ResourceHandlerRegistration {
 
 	/**
 	 * Create a {@link ResourceHandlerRegistration} instance.
+	 *
 	 * @param pathPatterns one or more resource URL path patterns
 	 */
 	public ResourceHandlerRegistration(String... pathPatterns) {
@@ -81,6 +82,7 @@ public class ResourceHandlerRegistration {
 	 * indicate the charset associated with the URL so that relative paths
 	 * appended to it can be encoded correctly, e.g.
 	 * {@code [charset=Windows-31J]https://example.org/path}.
+	 *
 	 * @return the same {@link ResourceHandlerRegistration} instance, for
 	 * chained method invocation
 	 */
@@ -92,6 +94,7 @@ public class ResourceHandlerRegistration {
 	/**
 	 * Configure locations to serve static resources from based on pre-resolved
 	 * {@code Resource} references.
+	 *
 	 * @param locations the resource locations to use
 	 * @return the same {@link ResourceHandlerRegistration} instance, for
 	 * chained method invocation
@@ -106,6 +109,7 @@ public class ResourceHandlerRegistration {
 	 * Specify the cache period for the resources served by the resource handler, in seconds. The default is to not
 	 * send any cache headers but to rely on last-modified timestamps only. Set to 0 in order to send cache headers
 	 * that prevent caching, or to a positive number of seconds to send cache headers with the given max-age value.
+	 *
 	 * @param cachePeriod the time to cache resources in seconds
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 */
@@ -118,6 +122,7 @@ public class ResourceHandlerRegistration {
 	 * Specify the {@link org.springframework.http.CacheControl} which should be used
 	 * by the resource handler.
 	 * <p>Setting a custom value here will override the configuration set with {@link #setCachePeriod}.
+	 *
 	 * @param cacheControl the CacheControl configuration to use
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 * @since 4.2
@@ -130,6 +135,7 @@ public class ResourceHandlerRegistration {
 	/**
 	 * Set whether the {@link Resource#lastModified()} information should be used to drive HTTP responses.
 	 * <p>This configuration is set to {@code true} by default.
+	 *
 	 * @param useLastModified whether the "last modified" resource information should be used.
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 * @since 5.3
@@ -145,9 +151,10 @@ public class ResourceHandlerRegistration {
 	 * <p>If this method is not invoked, by default only a simple
 	 * {@link PathResourceResolver} is used in order to match URL paths to
 	 * resources under the configured locations.
+	 *
 	 * @param cacheResources whether to cache the result of resource resolution;
-	 * setting this to "true" is recommended for production (and "false" for
-	 * development, especially when applying a version strategy)
+	 *                       setting this to "true" is recommended for production (and "false" for
+	 *                       development, especially when applying a version strategy)
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 * @since 4.1
 	 */
@@ -162,14 +169,15 @@ public class ResourceHandlerRegistration {
 	 * <p>If this method is not invoked, by default only a simple
 	 * {@link PathResourceResolver} is used in order to match URL paths to
 	 * resources under the configured locations.
+	 *
 	 * @param cacheResources whether to cache the result of resource resolution;
-	 * setting this to "true" is recommended for production (and "false" for
-	 * development, especially when applying a version strategy
-	 * @param cache the cache to use for storing resolved and transformed resources;
-	 * by default a {@link org.springframework.cache.concurrent.ConcurrentMapCache}
-	 * is used. Since Resources aren't serializable and can be dependent on the
-	 * application host, one should not use a distributed cache but rather an
-	 * in-memory cache.
+	 *                       setting this to "true" is recommended for production (and "false" for
+	 *                       development, especially when applying a version strategy
+	 * @param cache          the cache to use for storing resolved and transformed resources;
+	 *                       by default a {@link org.springframework.cache.concurrent.ConcurrentMapCache}
+	 *                       is used. Since Resources aren't serializable and can be dependent on the
+	 *                       application host, one should not use a distributed cache but rather an
+	 *                       in-memory cache.
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 * @since 4.1
 	 */
@@ -199,8 +207,7 @@ public class ResourceHandlerRegistration {
 		handler.setLocations(this.locationsResources);
 		if (this.cacheControl != null) {
 			handler.setCacheControl(this.cacheControl);
-		}
-		else if (this.cachePeriod != null) {
+		} else if (this.cachePeriod != null) {
 			handler.setCacheSeconds(this.cachePeriod);
 		}
 		handler.setUseLastModified(this.useLastModified);

@@ -16,15 +16,8 @@
 
 package org.springframework.http.codec.protobuf;
 
-import java.io.IOException;
-import java.util.Arrays;
-
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -34,6 +27,12 @@ import org.springframework.http.MediaType;
 import org.springframework.protobuf.Msg;
 import org.springframework.protobuf.SecondMsg;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -116,8 +115,7 @@ public class ProtobufDecoderTests extends AbstractDecoderTests<ProtobufDecoder> 
 					try {
 						msg.writeDelimitedTo(buffer.asOutputStream());
 						return Mono.just(buffer);
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						release(buffer);
 						return Mono.error(e);
 					}
@@ -139,8 +137,7 @@ public class ProtobufDecoderTests extends AbstractDecoderTests<ProtobufDecoder> 
 					try {
 						msg.writeDelimitedTo(buffer.asOutputStream());
 						return Mono.just(buffer);
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						release(buffer);
 						return Mono.error(e);
 					}
@@ -177,8 +174,7 @@ public class ProtobufDecoderTests extends AbstractDecoderTests<ProtobufDecoder> 
 					try {
 						msg.writeDelimitedTo(buffer.asOutputStream());
 						return Mono.just(buffer);
-					}
-					catch (IOException e) {
+					} catch (IOException e) {
 						release(buffer);
 						return Mono.error(e);
 					}

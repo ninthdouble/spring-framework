@@ -17,7 +17,6 @@
 package org.springframework.aop.target;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.TargetSource;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.BeanDefinition;

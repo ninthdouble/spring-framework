@@ -149,6 +149,18 @@ public class JdkDynamicProxyTests extends AbstractAopProxyTests implements Seria
 	}
 
 
+	public enum MyEnum implements MyInterface {
+
+		A, B;
+	}
+
+
+	public enum MyOtherEnum implements MyInterface {
+
+		C, D;
+	}
+
+
 	public interface Foo {
 
 		Bar getBarThis();
@@ -158,20 +170,6 @@ public class JdkDynamicProxyTests extends AbstractAopProxyTests implements Seria
 
 
 	public interface Bar {
-	}
-
-
-	public static class FooBar implements Foo, Bar {
-
-		@Override
-		public Bar getBarThis() {
-			return this;
-		}
-
-		@Override
-		public Foo getFooThis() {
-			return this;
-		}
 	}
 
 
@@ -186,6 +184,29 @@ public class JdkDynamicProxyTests extends AbstractAopProxyTests implements Seria
 		int hashCode();
 	}
 
+
+	public interface VarargTestInterface {
+
+		@SuppressWarnings("unchecked")
+		<V extends MyInterface> boolean doWithVarargs(V... args);
+	}
+
+
+	public interface MyInterface {
+	}
+
+	public static class FooBar implements Foo, Bar {
+
+		@Override
+		public Bar getBarThis() {
+			return this;
+		}
+
+		@Override
+		public Foo getFooThis() {
+			return this;
+		}
+	}
 
 	public static class Person implements Named {
 
@@ -211,14 +232,6 @@ public class JdkDynamicProxyTests extends AbstractAopProxyTests implements Seria
 		}
 	}
 
-
-	public interface VarargTestInterface {
-
-		@SuppressWarnings("unchecked")
-		<V extends MyInterface> boolean doWithVarargs(V... args);
-	}
-
-
 	public static class VarargTestBean implements VarargTestInterface {
 
 		@SuppressWarnings("unchecked")
@@ -226,22 +239,6 @@ public class JdkDynamicProxyTests extends AbstractAopProxyTests implements Seria
 		public <V extends MyInterface> boolean doWithVarargs(V... args) {
 			return true;
 		}
-	}
-
-
-	public interface MyInterface {
-	}
-
-
-	public enum MyEnum implements MyInterface {
-
-		A, B;
-	}
-
-
-	public enum MyOtherEnum implements MyInterface {
-
-		C, D;
 	}
 
 }

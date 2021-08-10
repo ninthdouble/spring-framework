@@ -16,20 +16,12 @@
 
 package org.springframework.web.servlet.view.groovy;
 
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
 import groovy.text.Template;
 import groovy.text.TemplateEngine;
 import groovy.text.markup.MarkupTemplateEngine;
 import groovy.text.markup.TemplateConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -40,6 +32,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.ServletContext;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -75,7 +73,7 @@ public class GroovyMarkupViewTests {
 		view.setUrl("sampleView");
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() ->
 				view.setApplicationContext(this.webAppContext))
-			.withMessageContaining("GroovyMarkupConfig");
+				.withMessageContaining("GroovyMarkupConfig");
 	}
 
 	@Test
@@ -180,6 +178,16 @@ public class GroovyMarkupViewTests {
 		return view;
 	}
 
+	@Configuration
+	static class GroovyMarkupConfiguration {
+
+		@Bean
+		public GroovyMarkupConfig groovyMarkupConfigurer() {
+			GroovyMarkupConfigurer configurer = new GroovyMarkupConfigurer();
+			configurer.setResourceLoaderPath(RESOURCE_LOADER_PATH);
+			return configurer;
+		}
+	}
 
 	public class TestTemplateEngine extends MarkupTemplateEngine {
 
@@ -190,18 +198,6 @@ public class GroovyMarkupViewTests {
 		@Override
 		public Template createTemplate(Reader reader) {
 			return null;
-		}
-	}
-
-
-	@Configuration
-	static class GroovyMarkupConfiguration {
-
-		@Bean
-		public GroovyMarkupConfig groovyMarkupConfigurer() {
-			GroovyMarkupConfigurer configurer = new GroovyMarkupConfigurer();
-			configurer.setResourceLoaderPath(RESOURCE_LOADER_PATH);
-			return configurer;
 		}
 	}
 

@@ -16,18 +16,15 @@
 
 package org.springframework.util;
 
+import org.junit.jupiter.api.Test;
+
+import javax.net.ServerSocketFactory;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.SortedSet;
 
-import javax.net.ServerSocketFactory;
-
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.util.SocketUtils.PORT_RANGE_MAX;
 import static org.springframework.util.SocketUtils.PORT_RANGE_MIN;
 
@@ -82,8 +79,8 @@ class SocketUtilsTests {
 			// will only look for the exact port
 			assertThatIllegalStateException().isThrownBy(() ->
 					SocketUtils.findAvailableTcpPort(port, port))
-				.withMessageStartingWith("Could not find an available TCP port")
-				.withMessageEndingWith("after 1 attempts");
+					.withMessageStartingWith("Could not find an available TCP port")
+					.withMessageEndingWith("after 1 attempts");
 		}
 	}
 
@@ -156,8 +153,8 @@ class SocketUtilsTests {
 			// will only look for the exact port
 			assertThatIllegalStateException().isThrownBy(() ->
 					SocketUtils.findAvailableUdpPort(port, port))
-				.withMessageStartingWith("Could not find an available UDP port")
-				.withMessageEndingWith("after 1 attempts");
+					.withMessageStartingWith("Could not find an available UDP port")
+					.withMessageEndingWith("after 1 attempts");
 		}
 	}
 
@@ -223,6 +220,7 @@ class SocketUtilsTests {
 		SortedSet<Integer> ports = SocketUtils.findAvailableUdpPorts(numRequested, minPort, maxPort);
 		assertAvailablePorts(ports, numRequested, minPort, maxPort);
 	}
+
 	private void assertPortInRange(int port, int minPort, int maxPort) {
 		assertThat(port >= minPort).as("port [" + port + "] >= " + minPort).isTrue();
 		assertThat(port <= maxPort).as("port [" + port + "] <= " + maxPort).isTrue();

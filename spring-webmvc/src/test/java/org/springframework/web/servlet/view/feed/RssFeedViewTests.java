@@ -16,22 +16,20 @@
 
 package org.springframework.web.servlet.view.feed;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.rometools.rome.feed.rss.Channel;
 import com.rometools.rome.feed.rss.Description;
 import com.rometools.rome.feed.rss.Item;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.testfixture.xml.XmlContent;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -76,7 +74,7 @@ public class RssFeedViewTests {
 
 		@Override
 		protected List<Item> buildFeedItems(Map<String, Object> model,
-				HttpServletRequest request, HttpServletResponse response) throws Exception {
+											HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 			List<Item> items = new ArrayList<>();
 			for (String name : model.keySet()) {

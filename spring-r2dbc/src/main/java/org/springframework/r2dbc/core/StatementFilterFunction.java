@@ -19,7 +19,6 @@ package org.springframework.r2dbc.core;
 import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Statement;
 import org.reactivestreams.Publisher;
-
 import org.springframework.util.Assert;
 
 /**
@@ -33,8 +32,8 @@ import org.springframework.util.Assert;
  *
  * @author Mark Paluch
  * @author Juergen Hoeller
- * @since 5.3
  * @see ExecuteFunction
+ * @since 5.3
  */
 @FunctionalInterface
 public interface StatementFilterFunction {
@@ -50,8 +49,9 @@ public interface StatementFilterFunction {
 	 * <p>The given {@link ExecuteFunction} represents the next entity in the chain,
 	 * to be invoked via {@link ExecuteFunction#execute(Statement)} invoked} in
 	 * order to proceed with the execution, or not invoked to shortcut the chain.
+	 *
 	 * @param statement the current {@link Statement}
-	 * @param next the next execute function in the chain
+	 * @param next      the next execute function in the chain
 	 * @return the filtered {@link Result}s.
 	 */
 	Publisher<? extends Result> filter(Statement statement, ExecuteFunction next);
@@ -59,6 +59,7 @@ public interface StatementFilterFunction {
 	/**
 	 * Return a composed filter function that first applies this filter, and then
 	 * applies the given {@code "after"} filter.
+	 *
 	 * @param afterFilter the filter to apply after this filter
 	 * @return the composed filter.
 	 */

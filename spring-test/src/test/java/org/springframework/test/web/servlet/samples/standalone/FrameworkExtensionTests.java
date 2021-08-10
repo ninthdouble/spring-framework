@@ -16,11 +16,8 @@
 
 package org.springframework.test.web.servlet.samples.standalone;
 
-import java.security.Principal;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Controller;
@@ -32,6 +29,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.security.Principal;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,6 +54,13 @@ public class FrameworkExtensionTests {
 
 	private MockMvc mockMvc;
 
+	private static TestMockMvcConfigurer defaultSetup() {
+		return new TestMockMvcConfigurer();
+	}
+
+	private static TestRequestPostProcessor headers() {
+		return new TestRequestPostProcessor();
+	}
 
 	@BeforeEach
 	public void setup() {
@@ -70,15 +76,6 @@ public class FrameworkExtensionTests {
 	public void barHeader() throws Exception {
 		this.mockMvc.perform(get("/").with(headers().bar("a=b"))).andExpect(content().string("Bar"));
 	}
-
-	private static TestMockMvcConfigurer defaultSetup() {
-		return new TestMockMvcConfigurer();
-	}
-
-	private static TestRequestPostProcessor headers() {
-		return new TestRequestPostProcessor();
-	}
-
 
 	/**
 	 * Test {@code RequestPostProcessor}.
@@ -120,7 +117,7 @@ public class FrameworkExtensionTests {
 
 		@Override
 		public RequestPostProcessor beforeMockMvcCreated(ConfigurableMockMvcBuilder<?> builder,
-				WebApplicationContext context) {
+														 WebApplicationContext context) {
 			return request -> {
 				request.setUserPrincipal(mock(Principal.class));
 				return request;

@@ -16,9 +16,9 @@
 
 package org.springframework.util.comparator;
 
-import java.util.Comparator;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -40,7 +40,7 @@ class ComparableComparatorTests {
 		assertThat(c.compare(s1, s2) < 0).isTrue();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Test
 	void shouldNeedComparable() {
 		Comparator c = new ComparableComparator();

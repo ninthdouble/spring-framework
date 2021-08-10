@@ -16,13 +16,12 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.TestContextAnnotationUtils.AnnotationDescriptor;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestContextAnnotationUtils.findAnnotationDescriptor;
@@ -34,9 +33,9 @@ import static org.springframework.test.context.TestContextAnnotationUtils.findAn
  * <p>See <a href="https://jira.spring.io/browse/SPR-10181">SPR-10181</a>.
  *
  * @author Sam Brannen
+ * @see TestContextAnnotationUtilsTests
  * @since 5.3, though originally since 4.0 for the deprecated
  * {@link org.springframework.test.util.MetaAnnotationUtils} support
- * @see TestContextAnnotationUtilsTests
  */
 class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 
@@ -44,7 +43,7 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 	void contextConfigurationValue() {
 		Class<?> rootDeclaringClass = MetaValueConfigTestCase.class;
 		AnnotationDescriptor<ContextConfiguration> descriptor = findAnnotationDescriptor(rootDeclaringClass,
-			ContextConfiguration.class);
+				ContextConfiguration.class);
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(rootDeclaringClass);
 		assertThat(descriptor.getDeclaringClass()).isEqualTo(MetaValueConfig.class);
@@ -57,7 +56,7 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 	void overriddenContextConfigurationValue() {
 		Class<?> rootDeclaringClass = OverriddenMetaValueConfigTestCase.class;
 		AnnotationDescriptor<ContextConfiguration> descriptor = findAnnotationDescriptor(rootDeclaringClass,
-			ContextConfiguration.class);
+				ContextConfiguration.class);
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(rootDeclaringClass);
 		assertThat(descriptor.getDeclaringClass()).isEqualTo(MetaValueConfig.class);
@@ -70,7 +69,7 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 	void contextConfigurationLocationsAndInheritLocations() {
 		Class<?> rootDeclaringClass = MetaLocationsConfigTestCase.class;
 		AnnotationDescriptor<ContextConfiguration> descriptor = findAnnotationDescriptor(rootDeclaringClass,
-			ContextConfiguration.class);
+				ContextConfiguration.class);
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(rootDeclaringClass);
 		assertThat(descriptor.getDeclaringClass()).isEqualTo(MetaLocationsConfig.class);
@@ -84,7 +83,7 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 	void overriddenContextConfigurationLocationsAndInheritLocations() {
 		Class<?> rootDeclaringClass = OverriddenMetaLocationsConfigTestCase.class;
 		AnnotationDescriptor<ContextConfiguration> descriptor = findAnnotationDescriptor(rootDeclaringClass,
-			ContextConfiguration.class);
+				ContextConfiguration.class);
 		assertThat(descriptor).isNotNull();
 		assertThat(descriptor.getRootDeclaringClass()).isEqualTo(rootDeclaringClass);
 		assertThat(descriptor.getDeclaringClass()).isEqualTo(MetaLocationsConfig.class);
@@ -105,14 +104,6 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 		String[] value() default "foo.xml";
 	}
 
-	@MetaValueConfig
-	static class MetaValueConfigTestCase {
-	}
-
-	@MetaValueConfig("bar.xml")
-	static class OverriddenMetaValueConfigTestCase {
-	}
-
 	@ContextConfiguration(locations = "foo.xml", inheritLocations = false)
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface MetaLocationsConfig {
@@ -120,6 +111,14 @@ class OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests {
 		String[] locations() default {};
 
 		boolean inheritLocations();
+	}
+
+	@MetaValueConfig
+	static class MetaValueConfigTestCase {
+	}
+
+	@MetaValueConfig("bar.xml")
+	static class OverriddenMetaValueConfigTestCase {
 	}
 
 	@MetaLocationsConfig(inheritLocations = true)

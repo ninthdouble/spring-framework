@@ -16,16 +16,15 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.OverridingClassLoader;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.OverridingClassLoader;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -35,9 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * dealt with correctly.
  *
  * @author Phillip Webb
- * @since 5.2
  * @see AnnotationUtils
  * @see AnnotatedElementUtils
+ * @since 5.2
  */
 class AnnotationIntrospectionFailureTests {
 
@@ -52,7 +51,7 @@ class AnnotationIntrospectionFailureTests {
 		method.setAccessible(true);
 		assertThatExceptionOfType(TypeNotPresentException.class).isThrownBy(() ->
 				ReflectionUtils.invokeMethod(method, annotation))
-			.withCauseInstanceOf(ClassNotFoundException.class);
+				.withCauseInstanceOf(ClassNotFoundException.class);
 	}
 
 	@Test
@@ -95,6 +94,24 @@ class AnnotationIntrospectionFailureTests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ExampleAnnotation {
+
+		Class<?> value() default Void.class;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@ExampleAnnotation
+	@interface ExampleMetaAnnotation {
+
+		@AliasFor(annotation = ExampleAnnotation.class, attribute = "value")
+		Class<?> example1() default Void.class;
+
+		@AliasFor(annotation = ExampleAnnotation.class, attribute = "value")
+		Class<?> example2() default Void.class;
+
+	}
+
 	static class FilteringClassLoader extends OverridingClassLoader {
 
 		FilteringClassLoader(ClassLoader parent) {
@@ -120,26 +137,8 @@ class AnnotationIntrospectionFailureTests {
 	static class FilteredType {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ExampleAnnotation {
-
-		Class<?> value() default Void.class;
-	}
-
 	@ExampleAnnotation(FilteredType.class)
 	static class WithExampleAnnotation {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@ExampleAnnotation
-	@interface ExampleMetaAnnotation {
-
-		@AliasFor(annotation = ExampleAnnotation.class, attribute = "value")
-		Class<?> example1() default Void.class;
-
-		@AliasFor(annotation = ExampleAnnotation.class, attribute = "value")
-		Class<?> example2() default Void.class;
-
 	}
 
 	@ExampleMetaAnnotation(example1 = FilteredType.class)

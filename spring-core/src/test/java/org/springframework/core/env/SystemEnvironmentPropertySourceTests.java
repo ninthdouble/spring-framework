@@ -16,13 +16,13 @@
 
 package org.springframework.core.env;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,7 +78,7 @@ class SystemEnvironmentPropertySourceTests {
 		assertThat(ps.containsProperty("a.key")).isEqualTo(true);
 
 		assertThat(ps.getProperty("a_key")).isEqualTo("a_value");
-		assertThat( ps.getProperty("a.key")).isEqualTo("a_value");
+		assertThat(ps.getProperty("a.key")).isEqualTo("a_value");
 	}
 
 	@Test
@@ -87,7 +87,7 @@ class SystemEnvironmentPropertySourceTests {
 		envMap.put("a.key", "a.value");
 
 		assertThat(ps.getProperty("a_key")).isEqualTo("a_value");
-		assertThat( ps.getProperty("a.key")).isEqualTo("a.value");
+		assertThat(ps.getProperty("a.key")).isEqualTo("a.value");
 	}
 
 	@Test
@@ -156,6 +156,7 @@ class SystemEnvironmentPropertySourceTests {
 			public boolean containsKey(Object key) {
 				throw new UnsupportedOperationException();
 			}
+
 			@Override
 			public Set<String> keySet() {
 				return new HashSet<>(super.keySet());

@@ -16,14 +16,6 @@
 
 package org.springframework.test.context.testng;
 
-import javax.annotation.Resource;
-
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +26,9 @@ import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.testng.annotations.*;
+
+import javax.annotation.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.transaction.TransactionAssert.assertThatTransaction;
@@ -154,8 +149,8 @@ public class ConcreteTransactionalTestNGSpringContextTests extends AbstractTrans
 	void verifyBeanNameSet() {
 		assertThatTransaction().isNotActive();
 		assertThat(this.beanName)
-			.as("The bean name of this test instance should have been set to the fully qualified class name due to BeanNameAware semantics.")
-			.startsWith(getClass().getName());
+				.as("The bean name of this test instance should have been set to the fully qualified class name due to BeanNameAware semantics.")
+				.startsWith(getClass().getName());
 	}
 
 	@Test
@@ -163,8 +158,8 @@ public class ConcreteTransactionalTestNGSpringContextTests extends AbstractTrans
 	void verifyApplicationContextSet() {
 		assertThatTransaction().isNotActive();
 		assertThat(super.applicationContext)
-			.as("The application context should have been set due to ApplicationContextAware semantics.")
-			.isNotNull();
+				.as("The application context should have been set due to ApplicationContextAware semantics.")
+				.isNotNull();
 		Employee employeeBean = (Employee) super.applicationContext.getBean("employee");
 		assertThat(employeeBean.getName()).as("employee's name.").isEqualTo("John Smith");
 	}
@@ -174,8 +169,8 @@ public class ConcreteTransactionalTestNGSpringContextTests extends AbstractTrans
 	void verifyBeanInitialized() {
 		assertThatTransaction().isNotActive();
 		assertThat(beanInitialized)
-			.as("This test instance should have been initialized due to InitializingBean semantics.")
-			.isTrue();
+				.as("This test instance should have been initialized due to InitializingBean semantics.")
+				.isTrue();
 	}
 
 	@Test
@@ -228,8 +223,8 @@ public class ConcreteTransactionalTestNGSpringContextTests extends AbstractTrans
 
 	private void assertNumRowsInPersonTable(int expectedNumRows, String testState) {
 		assertThat(countRowsInTable("person"))
-			.as("the number of rows in the person table (" + testState + ").")
-			.isEqualTo(expectedNumRows);
+				.as("the number of rows in the person table (" + testState + ").")
+				.isEqualTo(expectedNumRows);
 	}
 
 	private void assertAddPerson(String name) {

@@ -16,15 +16,6 @@
 
 package org.springframework.web.accept;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.ServletContext;
-
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.MediaType;
@@ -33,6 +24,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.ServletContextAware;
+
+import javax.servlet.ServletContext;
+import java.util.*;
 
 /**
  * Factory to create a {@code ContentNegotiationManager} and configure it with
@@ -93,6 +87,7 @@ import org.springframework.web.context.ServletContextAware;
  * {@link org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
  * RequestMappingHandlerMapping}. For further context, please read issue
  * <a href="https://github.com/spring-projects/spring-framework/issues/24179">#24719</a>.
+ *
  * @author Rossen Stoyanchev
  * @author Brian Clozel
  * @since 3.2
@@ -134,6 +129,7 @@ public class ContentNegotiationManagerFactoryBean
 	 * <p><strong>Note:</strong> use of this method is mutually exclusive with
 	 * use of all other setters in this class which customize a default, fixed
 	 * set of strategies. See class level doc for more details.
+	 *
 	 * @param strategies the strategies to use
 	 * @since 5.0
 	 */
@@ -146,6 +142,7 @@ public class ContentNegotiationManagerFactoryBean
 	 * determine the requested media type. For this option to work you must
 	 * register {@link #setMediaTypes media type mappings}.
 	 * <p>By default this is set to {@code false}.
+	 *
 	 * @see #setParameterName
 	 */
 	public void setFavorParameter(boolean favorParameter) {
@@ -166,6 +163,7 @@ public class ContentNegotiationManagerFactoryBean
 	 * the requested media type.
 	 * <p>By default this is set to {@code false} in which case path extensions
 	 * have no impact on content negotiation.
+	 *
 	 * @deprecated as of 5.2.4. See class-level note on the deprecation of path
 	 * extension config options. As there is no replacement for this method,
 	 * in 5.2.x it is necessary to set it to {@code false}. In 5.3 the default
@@ -199,6 +197,7 @@ public class ContentNegotiationManagerFactoryBean
 	 * <li>List safe extensions for RFD attack detection (check the Spring
 	 * Framework reference docs for details).
 	 * </ul>
+	 *
 	 * @param mediaTypes media type mappings
 	 * @see #addMediaType(String, MediaType)
 	 * @see #addMediaTypes(Map)
@@ -231,6 +230,7 @@ public class ContentNegotiationManagerFactoryBean
 	 * to any media type. Setting this to {@code false} will result in an
 	 * {@code HttpMediaTypeNotAcceptableException} if there is no match.
 	 * <p>By default this is set to {@code true}.
+	 *
 	 * @deprecated as of 5.2.4. See class-level note on the deprecation of path
 	 * extension config options.
 	 */
@@ -242,6 +242,7 @@ public class ContentNegotiationManagerFactoryBean
 	/**
 	 * Indicate whether to use the Java Activation Framework as a fallback option
 	 * to map from file extensions to media types.
+	 *
 	 * @deprecated as of 5.0, in favor of {@link #setUseRegisteredExtensionsOnly(boolean)},
 	 * which has reverse behavior.
 	 */
@@ -276,6 +277,7 @@ public class ContentNegotiationManagerFactoryBean
 	/**
 	 * Set the default content type to use when no content type is requested.
 	 * <p>By default this is not set.
+	 *
 	 * @see #setDefaultContentTypeStrategy
 	 */
 	public void setDefaultContentType(MediaType contentType) {
@@ -285,8 +287,9 @@ public class ContentNegotiationManagerFactoryBean
 	/**
 	 * Set the default content types to use when no content type is requested.
 	 * <p>By default this is not set.
-	 * @since 5.0
+	 *
 	 * @see #setDefaultContentTypeStrategy
+	 * @since 5.0
 	 */
 	public void setDefaultContentTypes(List<MediaType> contentTypes) {
 		this.defaultNegotiationStrategy = new FixedContentNegotiationStrategy(contentTypes);
@@ -296,8 +299,9 @@ public class ContentNegotiationManagerFactoryBean
 	 * Set a custom {@link ContentNegotiationStrategy} to use to determine
 	 * the content type to use when no content type is requested.
 	 * <p>By default this is not set.
-	 * @since 4.1.2
+	 *
 	 * @see #setDefaultContentType
+	 * @since 4.1.2
 	 */
 	public void setDefaultContentTypeStrategy(ContentNegotiationStrategy strategy) {
 		this.defaultNegotiationStrategy = strategy;
@@ -319,6 +323,7 @@ public class ContentNegotiationManagerFactoryBean
 
 	/**
 	 * Create and initialize a {@link ContentNegotiationManager} instance.
+	 *
 	 * @since 5.0
 	 */
 	@SuppressWarnings("deprecation")
@@ -327,14 +332,12 @@ public class ContentNegotiationManagerFactoryBean
 
 		if (this.strategies != null) {
 			strategies.addAll(this.strategies);
-		}
-		else {
+		} else {
 			if (this.favorPathExtension) {
 				PathExtensionContentNegotiationStrategy strategy;
 				if (this.servletContext != null && !useRegisteredExtensionsOnly()) {
 					strategy = new ServletPathExtensionContentNegotiationStrategy(this.servletContext, this.mediaTypes);
-				}
-				else {
+				} else {
 					strategy = new PathExtensionContentNegotiationStrategy(this.mediaTypes);
 				}
 				strategy.setIgnoreUnknownExtensions(this.ignoreUnknownPathExtensions);
@@ -348,8 +351,7 @@ public class ContentNegotiationManagerFactoryBean
 				strategy.setParameterName(this.parameterName);
 				if (this.useRegisteredExtensionsOnly != null) {
 					strategy.setUseRegisteredExtensionsOnly(this.useRegisteredExtensionsOnly);
-				}
-				else {
+				} else {
 					strategy.setUseRegisteredExtensionsOnly(true);  // backwards compatibility
 				}
 				strategies.add(strategy);

@@ -16,14 +16,14 @@
 
 package org.springframework.test.context.junit.jupiter.event;
 
+import org.springframework.test.context.event.ApplicationEventsHolder;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.springframework.test.context.event.ApplicationEventsHolder;
 
 /**
  * Default implementation of {@link PublishedEvents}.

@@ -16,18 +16,7 @@
 
 package org.springframework.http.server.reactive;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.servlet.AsyncContext;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -37,9 +26,16 @@ import org.springframework.web.testfixture.servlet.MockAsyncContext;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import javax.servlet.AsyncContext;
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -168,7 +164,8 @@ public class ServerHttpRequestTests {
 		assertThat(request.getHeaders().get(headerName)).containsExactly(headerValue3);
 	}
 
-	@Test // gh-26615
+	@Test
+		// gh-26615
 	void mutateContentTypeHeaderValue() throws Exception {
 		ServerHttpRequest request = createRequest("/path").mutate()
 				.headers(headers -> headers.setContentType(MediaType.APPLICATION_JSON)).build();

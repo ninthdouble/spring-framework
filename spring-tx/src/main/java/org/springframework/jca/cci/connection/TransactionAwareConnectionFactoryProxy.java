@@ -16,16 +16,15 @@
 
 package org.springframework.jca.cci.connection;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import org.springframework.lang.Nullable;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionFactory;
-
-import org.springframework.lang.Nullable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * Proxy for a target CCI {@link javax.resource.cci.ConnectionFactory}, adding
@@ -60,11 +59,11 @@ import org.springframework.lang.Nullable;
  * be cast to a native CCI Connection type or to a connection pool implementation type.
  *
  * @author Juergen Hoeller
- * @since 1.2
  * @see javax.resource.cci.ConnectionFactory#getConnection
  * @see javax.resource.cci.Connection#close
  * @see ConnectionFactoryUtils#doGetConnection
  * @see ConnectionFactoryUtils#doReleaseConnection
+ * @since 1.2
  * @deprecated as of 5.3, in favor of specific data access APIs
  * (or native CCI usage if there is no alternative)
  */
@@ -74,6 +73,7 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 
 	/**
 	 * Create a new TransactionAwareConnectionFactoryProxy.
+	 *
 	 * @see #setTargetConnectionFactory
 	 */
 	public TransactionAwareConnectionFactoryProxy() {
@@ -81,6 +81,7 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 
 	/**
 	 * Create a new TransactionAwareConnectionFactoryProxy.
+	 *
 	 * @param targetConnectionFactory the target ConnectionFactory
 	 */
 	public TransactionAwareConnectionFactoryProxy(ConnectionFactory targetConnectionFactory) {
@@ -92,6 +93,7 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 	/**
 	 * Delegate to ConnectionFactoryUtils for automatically participating in Spring-managed
 	 * transactions. Throws the original ResourceException, if any.
+	 *
 	 * @return a transactional Connection if any, a new one else
 	 * @see org.springframework.jca.cci.connection.ConnectionFactoryUtils#doGetConnection
 	 */
@@ -105,8 +107,9 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 	/**
 	 * Wrap the given Connection with a proxy that delegates every method call to it
 	 * but delegates {@code close} calls to ConnectionFactoryUtils.
+	 *
 	 * @param target the original Connection to wrap
-	 * @param cf the ConnectionFactory that the Connection came from
+	 * @param cf     the ConnectionFactory that the Connection came from
 	 * @return the wrapped Connection
 	 * @see javax.resource.cci.Connection#close()
 	 * @see ConnectionFactoryUtils#doReleaseConnection
@@ -114,7 +117,7 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 	protected Connection getTransactionAwareConnectionProxy(Connection target, ConnectionFactory cf) {
 		return (Connection) Proxy.newProxyInstance(
 				Connection.class.getClassLoader(),
-				new Class<?>[] {Connection.class},
+				new Class<?>[]{Connection.class},
 				new TransactionAwareInvocationHandler(target, cf));
 	}
 
@@ -161,8 +164,7 @@ public class TransactionAwareConnectionFactoryProxy extends DelegatingConnection
 			// Invoke method on target Connection.
 			try {
 				return method.invoke(this.target, args);
-			}
-			catch (InvocationTargetException ex) {
+			} catch (InvocationTargetException ex) {
 				throw ex.getTargetException();
 			}
 		}

@@ -17,7 +17,6 @@
 package org.springframework.test.context.transaction.ejb;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 

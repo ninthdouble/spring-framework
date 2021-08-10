@@ -16,14 +16,13 @@
 
 package org.springframework.jms.listener.endpoint;
 
-import javax.jms.Destination;
-import javax.jms.Session;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jca.StubResourceAdapter;
 import org.springframework.jms.StubQueue;
 import org.springframework.jms.support.destination.DestinationResolver;
+
+import javax.jms.Destination;
+import javax.jms.Session;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -96,20 +95,20 @@ public class DefaultJmsActivationSpecFactoryTests {
 
 		private boolean useRAManagedTransaction;
 
-		public void setMaxSessions(int maxSessions) {
-			this.maxSessions = maxSessions;
-		}
-
-		public void setMaxMessagesPerSessions(int maxMessagesPerSessions) {
-			this.maxMessagesPerSessions = maxMessagesPerSessions;
-		}
-
 		public int getMaxSessions() {
 			return maxSessions;
 		}
 
+		public void setMaxSessions(int maxSessions) {
+			this.maxSessions = maxSessions;
+		}
+
 		public int getMaxMessagesPerSessions() {
 			return maxMessagesPerSessions;
+		}
+
+		public void setMaxMessagesPerSessions(int maxMessagesPerSessions) {
+			this.maxMessagesPerSessions = maxMessagesPerSessions;
 		}
 
 		public String getDestination() {
@@ -139,12 +138,12 @@ public class DefaultJmsActivationSpecFactoryTests {
 
 		private int maxBatchSize;
 
-		public void setDestination(Destination destination) {
-			this.destination = destination;
-		}
-
 		public Destination getDestination() {
 			return destination;
+		}
+
+		public void setDestination(Destination destination) {
+			this.destination = destination;
 		}
 
 		public int getMaxConcurrency() {

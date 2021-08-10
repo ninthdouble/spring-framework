@@ -16,20 +16,19 @@
 
 package org.springframework.test.web.reactive.server;
 
-import java.util.function.Consumer;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.test.util.AssertionErrors;
+
+import java.util.function.Consumer;
 
 /**
  * Assertions on the response status.
  *
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see WebTestClient.ResponseSpec#expectStatus()
+ * @since 5.0
  */
 public class StatusAssertions {
 
@@ -139,6 +138,7 @@ public class StatusAssertions {
 
 	/**
 	 * Assert the response status code is {@code HttpStatus.FORBIDDEN} (403).
+	 *
 	 * @since 5.0.2
 	 */
 	public WebTestClient.ResponseSpec isForbidden() {
@@ -199,6 +199,7 @@ public class StatusAssertions {
 
 	/**
 	 * Match the response status value with a Hamcrest matcher.
+	 *
 	 * @param matcher the matcher to use
 	 * @since 5.1
 	 */
@@ -210,6 +211,7 @@ public class StatusAssertions {
 
 	/**
 	 * Consume the response status value as an integer.
+	 *
 	 * @param consumer the consumer to use
 	 * @since 5.1
 	 */

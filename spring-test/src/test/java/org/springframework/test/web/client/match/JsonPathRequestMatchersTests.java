@@ -16,11 +16,10 @@
 
 package org.springframework.test.web.client.match;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.mock.http.client.MockClientHttpRequest;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.equalTo;
@@ -43,15 +42,14 @@ public class JsonPathRequestMatchersTests {
 			"'emptyString': '',              " + //
 			"'emptyArray':  [],              " + //
 			"'emptyMap':    {}               " + //
-	"}";
+			"}";
 
 	private static final MockClientHttpRequest request = new MockClientHttpRequest();
 
 	static {
 		try {
 			request.getBody().write(REQUEST_CONTENT.getBytes());
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 	}

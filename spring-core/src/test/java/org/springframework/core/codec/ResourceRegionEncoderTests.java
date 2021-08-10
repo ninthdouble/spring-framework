@@ -16,16 +16,8 @@
 
 package org.springframework.core.codec;
 
-import java.util.Collections;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.BaseSubscriber;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -35,12 +27,20 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.core.testfixture.io.buffer.AbstractLeakCheckingTests;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.BaseSubscriber;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.Collections;
+import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test cases for {@link ResourceRegionEncoder} class.
+ *
  * @author Brian Clozel
  */
 class ResourceRegionEncoderTests extends AbstractLeakCheckingTests {
@@ -116,7 +116,8 @@ class ResourceRegionEncoderTests extends AbstractLeakCheckingTests {
 				.verify();
 	}
 
-	@Test // gh-22107
+	@Test
+		// gh-22107
 	void cancelWithoutDemandForMultipleResourceRegions() {
 		Resource resource = new ClassPathResource("ResourceRegionEncoderTests.txt", getClass());
 		Flux<ResourceRegion> regions = Flux.just(
@@ -138,7 +139,8 @@ class ResourceRegionEncoderTests extends AbstractLeakCheckingTests {
 		subscriber.cancel();
 	}
 
-	@Test // gh-22107
+	@Test
+		// gh-22107
 	void cancelWithoutDemandForSingleResourceRegion() {
 		Resource resource = new ClassPathResource("ResourceRegionEncoderTests.txt", getClass());
 		Mono<ResourceRegion> regions = Mono.just(new ResourceRegion(resource, 0, 6));

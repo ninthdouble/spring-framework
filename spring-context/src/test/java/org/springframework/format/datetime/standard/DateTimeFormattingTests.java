@@ -136,7 +136,7 @@ class DateTimeFormattingTests {
 	@Test
 	void testBindLocalDateArray() {
 		MutablePropertyValues propertyValues = new MutablePropertyValues();
-		propertyValues.add("localDate", new String[] {"10/31/09"});
+		propertyValues.add("localDate", new String[]{"10/31/09"});
 		binder.bind(propertyValues);
 		assertThat(binder.getBindingResult().getErrorCount()).isEqualTo(0);
 	}
@@ -331,24 +331,24 @@ class DateTimeFormattingTests {
 		assertThat(bindingResult.getErrorCount()).isEqualTo(1);
 		FieldError fieldError = bindingResult.getFieldError(propertyName);
 		assertThat(fieldError.unwrap(TypeMismatchException.class))
-			.hasMessageContaining("for property 'isoLocalDate'")
-			.hasCauseInstanceOf(ConversionFailedException.class).getCause()
+				.hasMessageContaining("for property 'isoLocalDate'")
+				.hasCauseInstanceOf(ConversionFailedException.class).getCause()
 				.hasMessageContaining("for value '2009-31-10'")
 				.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
-					.hasMessageContaining("Parse attempt failed for value [2009-31-10]")
-					.hasCauseInstanceOf(DateTimeParseException.class).getCause()
-						// Unable to parse date time value "2009-31-10" using configuration from
-						// @org.springframework.format.annotation.DateTimeFormat(pattern=, style=SS, iso=DATE, fallbackPatterns=[])
-						// We do not check "fallbackPatterns=[]", since the array representation in the toString()
-						// implementation for annotations changed from [] to {} in Java 9.
-						.hasMessageContainingAll(
-							"Unable to parse date time value \"2009-31-10\" using configuration from",
-							"@org.springframework.format.annotation.DateTimeFormat", "iso=DATE")
-						.hasCauseInstanceOf(DateTimeParseException.class).getCause()
-							.hasMessageStartingWith("Text '2009-31-10'")
-							.hasCauseInstanceOf(DateTimeException.class).getCause()
-								.hasMessageContaining("Invalid value for MonthOfYear (valid values 1 - 12): 31")
-								.hasNoCause();
+				.hasMessageContaining("Parse attempt failed for value [2009-31-10]")
+				.hasCauseInstanceOf(DateTimeParseException.class).getCause()
+				// Unable to parse date time value "2009-31-10" using configuration from
+				// @org.springframework.format.annotation.DateTimeFormat(pattern=, style=SS, iso=DATE, fallbackPatterns=[])
+				// We do not check "fallbackPatterns=[]", since the array representation in the toString()
+				// implementation for annotations changed from [] to {} in Java 9.
+				.hasMessageContainingAll(
+						"Unable to parse date time value \"2009-31-10\" using configuration from",
+						"@org.springframework.format.annotation.DateTimeFormat", "iso=DATE")
+				.hasCauseInstanceOf(DateTimeParseException.class).getCause()
+				.hasMessageStartingWith("Text '2009-31-10'")
+				.hasCauseInstanceOf(DateTimeException.class).getCause()
+				.hasMessageContaining("Invalid value for MonthOfYear (valid values 1 - 12): 31")
+				.hasNoCause();
 	}
 
 	@Test
@@ -407,8 +407,7 @@ class DateTimeFormattingTests {
 			binder.bind(propertyValues);
 			assertThat(binder.getBindingResult().getErrorCount()).isEqualTo(0);
 			assertThat(binder.getBindingResult().getFieldValue("instant").toString().startsWith("2009-10-31")).isTrue();
-		}
-		finally {
+		} finally {
 			TimeZone.setDefault(defaultZone);
 		}
 	}
@@ -476,145 +475,41 @@ class DateTimeFormattingTests {
 		assertThat(binder.getBindingResult().getFieldValue("monthDay").toString().equals("--12-03")).isTrue();
 	}
 
-	@Nested
-	class FallbackPatternTests {
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void styleLocalDate(String propertyValue) {
-			String propertyName = "styleLocalDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
-		void patternLocalDate(String propertyValue) {
-			String propertyName = "patternLocalDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"12:00:00 PM", "12:00:00", "12:00"})
-		void styleLocalTime(String propertyValue) {
-			String propertyName = "styleLocalTimeWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("12:00:00 PM");
-		}
-
-		@ParameterizedTest(name = "input date: {0}")
-		@ValueSource(strings = {"2021-03-02T12:00:00", "2021-03-02 12:00:00", "3/2/21 12:00"})
-		void isoLocalDateTime(String propertyValue) {
-			String propertyName = "isoLocalDateTimeWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
-			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02T12:00:00");
-		}
-
-		@Test
-		void patternLocalDateWithUnsupportedPattern() {
-			String propertyValue = "210302";
-			String propertyName = "patternLocalDateWithFallbackPatterns";
-			MutablePropertyValues propertyValues = new MutablePropertyValues();
-			propertyValues.add(propertyName, propertyValue);
-			binder.bind(propertyValues);
-			BindingResult bindingResult = binder.getBindingResult();
-			assertThat(bindingResult.getErrorCount()).isEqualTo(1);
-			FieldError fieldError = bindingResult.getFieldError(propertyName);
-			assertThat(fieldError.unwrap(TypeMismatchException.class))
-				.hasMessageContaining("for property 'patternLocalDateWithFallbackPatterns'")
-				.hasCauseInstanceOf(ConversionFailedException.class).getCause()
-					.hasMessageContaining("for value '210302'")
-					.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
-						.hasMessageContaining("Parse attempt failed for value [210302]")
-						.hasCauseInstanceOf(DateTimeParseException.class).getCause()
-							// Unable to parse date time value "210302" using configuration from
-							// @org.springframework.format.annotation.DateTimeFormat(
-							// pattern=yyyy-MM-dd, style=SS, iso=NONE, fallbackPatterns=[M/d/yy, yyyyMMdd, yyyy.MM.dd])
-							.hasMessageContainingAll(
-								"Unable to parse date time value \"210302\" using configuration from",
-								"@org.springframework.format.annotation.DateTimeFormat",
-								"yyyy-MM-dd", "M/d/yy", "yyyyMMdd", "yyyy.MM.dd")
-							.hasCauseInstanceOf(DateTimeParseException.class).getCause()
-								.hasMessageStartingWith("Text '210302'")
-								.hasNoCause();
-		}
-	}
-
-
 	public static class DateTimeBean {
 
+		private final List<DateTimeBean> children = new ArrayList<>();
 		private LocalDate localDate;
-
 		@DateTimeFormat(style = "M-")
 		private LocalDate styleLocalDate;
-
-		@DateTimeFormat(style = "S-", fallbackPatterns = { "yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(style = "S-", fallbackPatterns = {"yyyy-MM-dd", "yyyyMMdd", "yyyy.MM.dd"})
 		private LocalDate styleLocalDateWithFallbackPatterns;
-
-		@DateTimeFormat(pattern = "yyyy-MM-dd", fallbackPatterns = { "M/d/yy", "yyyyMMdd", "yyyy.MM.dd" })
+		@DateTimeFormat(pattern = "yyyy-MM-dd", fallbackPatterns = {"M/d/yy", "yyyyMMdd", "yyyy.MM.dd"})
 		private LocalDate patternLocalDateWithFallbackPatterns;
-
 		private LocalTime localTime;
-
 		@DateTimeFormat(style = "-M")
 		private LocalTime styleLocalTime;
-
-		@DateTimeFormat(style = "-M", fallbackPatterns = { "HH:mm:ss", "HH:mm"})
+		@DateTimeFormat(style = "-M", fallbackPatterns = {"HH:mm:ss", "HH:mm"})
 		private LocalTime styleLocalTimeWithFallbackPatterns;
-
 		private LocalDateTime localDateTime;
-
 		@DateTimeFormat(style = "MM")
 		private LocalDateTime styleLocalDateTime;
-
 		@DateTimeFormat(pattern = "M/d/yy h:mm a")
 		private LocalDateTime patternLocalDateTime;
-
 		@DateTimeFormat(iso = ISO.DATE)
 		private LocalDate isoLocalDate;
-
 		@DateTimeFormat(iso = ISO.TIME)
 		private LocalTime isoLocalTime;
-
 		@DateTimeFormat(iso = ISO.DATE_TIME)
 		private LocalDateTime isoLocalDateTime;
-
-		@DateTimeFormat(iso = ISO.DATE_TIME, fallbackPatterns = { "yyyy-MM-dd HH:mm:ss", "M/d/yy HH:mm"})
+		@DateTimeFormat(iso = ISO.DATE_TIME, fallbackPatterns = {"yyyy-MM-dd HH:mm:ss", "M/d/yy HH:mm"})
 		private LocalDateTime isoLocalDateTimeWithFallbackPatterns;
-
 		private Instant instant;
-
 		private Period period;
-
 		private Duration duration;
-
 		private Year year;
-
 		private Month month;
-
 		private YearMonth yearMonth;
-
 		private MonthDay monthDay;
-
-		private final List<DateTimeBean> children = new ArrayList<>();
-
 
 		public LocalDate getLocalDate() {
 			return this.localDate;
@@ -639,6 +534,7 @@ class DateTimeFormattingTests {
 		public void setStyleLocalDateWithFallbackPatterns(LocalDate styleLocalDateWithFallbackPatterns) {
 			this.styleLocalDateWithFallbackPatterns = styleLocalDateWithFallbackPatterns;
 		}
+
 		public LocalDate getPatternLocalDateWithFallbackPatterns() {
 			return this.patternLocalDateWithFallbackPatterns;
 		}
@@ -785,6 +681,87 @@ class DateTimeFormattingTests {
 
 		public List<DateTimeBean> getChildren() {
 			return this.children;
+		}
+	}
+
+	@Nested
+	class FallbackPatternTests {
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void styleLocalDate(String propertyValue) {
+			String propertyName = "styleLocalDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("3/2/21");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02", "2021.03.02", "20210302", "3/2/21"})
+		void patternLocalDate(String propertyValue) {
+			String propertyName = "patternLocalDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"12:00:00 PM", "12:00:00", "12:00"})
+		void styleLocalTime(String propertyValue) {
+			String propertyName = "styleLocalTimeWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("12:00:00 PM");
+		}
+
+		@ParameterizedTest(name = "input date: {0}")
+		@ValueSource(strings = {"2021-03-02T12:00:00", "2021-03-02 12:00:00", "3/2/21 12:00"})
+		void isoLocalDateTime(String propertyValue) {
+			String propertyName = "isoLocalDateTimeWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(0);
+			assertThat(bindingResult.getFieldValue(propertyName)).isEqualTo("2021-03-02T12:00:00");
+		}
+
+		@Test
+		void patternLocalDateWithUnsupportedPattern() {
+			String propertyValue = "210302";
+			String propertyName = "patternLocalDateWithFallbackPatterns";
+			MutablePropertyValues propertyValues = new MutablePropertyValues();
+			propertyValues.add(propertyName, propertyValue);
+			binder.bind(propertyValues);
+			BindingResult bindingResult = binder.getBindingResult();
+			assertThat(bindingResult.getErrorCount()).isEqualTo(1);
+			FieldError fieldError = bindingResult.getFieldError(propertyName);
+			assertThat(fieldError.unwrap(TypeMismatchException.class))
+					.hasMessageContaining("for property 'patternLocalDateWithFallbackPatterns'")
+					.hasCauseInstanceOf(ConversionFailedException.class).getCause()
+					.hasMessageContaining("for value '210302'")
+					.hasCauseInstanceOf(IllegalArgumentException.class).getCause()
+					.hasMessageContaining("Parse attempt failed for value [210302]")
+					.hasCauseInstanceOf(DateTimeParseException.class).getCause()
+					// Unable to parse date time value "210302" using configuration from
+					// @org.springframework.format.annotation.DateTimeFormat(
+					// pattern=yyyy-MM-dd, style=SS, iso=NONE, fallbackPatterns=[M/d/yy, yyyyMMdd, yyyy.MM.dd])
+					.hasMessageContainingAll(
+							"Unable to parse date time value \"210302\" using configuration from",
+							"@org.springframework.format.annotation.DateTimeFormat",
+							"yyyy-MM-dd", "M/d/yy", "yyyyMMdd", "yyyy.MM.dd")
+					.hasCauseInstanceOf(DateTimeParseException.class).getCause()
+					.hasMessageStartingWith("Text '210302'")
+					.hasNoCause();
 		}
 	}
 

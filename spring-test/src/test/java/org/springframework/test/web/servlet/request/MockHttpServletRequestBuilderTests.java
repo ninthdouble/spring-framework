@@ -16,25 +16,8 @@
 
 package org.springframework.test.web.servlet.request;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -47,6 +30,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.SessionFlashMapManager;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -64,12 +56,14 @@ public class MockHttpServletRequestBuilderTests {
 
 	private MockHttpServletRequestBuilder builder;
 
+	private static RequestAttributePostProcessor requestAttr(String attrName) {
+		return new RequestAttributePostProcessor().attr(attrName);
+	}
 
 	@BeforeEach
 	public void setUp() {
 		this.builder = new MockHttpServletRequestBuilder(HttpMethod.GET, "/foo/bar");
 	}
-
 
 	@Test
 	public void method() {
@@ -197,8 +191,7 @@ public class MockHttpServletRequestBuilderTests {
 			this.builder.contextPath(contextPath);
 			this.builder.servletPath(servletPath);
 			this.builder.buildRequest(this.servletContext);
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			assertThat(ex.getMessage()).isEqualTo(message);
 		}
 	}
@@ -218,7 +211,7 @@ public class MockHttpServletRequestBuilderTests {
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 		Map<String, String[]> parameterMap = request.getParameterMap();
 
-		assertThat(parameterMap.get("foo")).isEqualTo(new String[] {"bar", "baz"});
+		assertThat(parameterMap.get("foo")).isEqualTo(new String[]{"bar", "baz"});
 	}
 
 	@Test
@@ -228,7 +221,7 @@ public class MockHttpServletRequestBuilderTests {
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 		Map<String, String[]> parameterMap = request.getParameterMap();
 
-		assertThat(parameterMap.get("foo")).isEqualTo(new String[] {"bar", "baz"});
+		assertThat(parameterMap.get("foo")).isEqualTo(new String[]{"bar", "baz"});
 		assertThat(request.getQueryString()).isEqualTo("foo=bar&foo=baz");
 	}
 
@@ -251,7 +244,7 @@ public class MockHttpServletRequestBuilderTests {
 
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 
-		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[] {"bar", "baz"});
+		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[]{"bar", "baz"});
 		assertThat(request.getQueryString()).isEqualTo("foo=bar&foo=baz");
 	}
 
@@ -267,7 +260,7 @@ public class MockHttpServletRequestBuilderTests {
 
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 
-		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[] {"bar", "baz"});
+		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[]{"bar", "baz"});
 		assertThat(request.getQueryString()).isEqualTo("foo=bar&foo=baz");
 	}
 
@@ -301,7 +294,7 @@ public class MockHttpServletRequestBuilderTests {
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 		Map<String, String[]> parameterMap = request.getParameterMap();
 
-		assertThat(parameterMap.get("foo")).isEqualTo(new String[] {null});
+		assertThat(parameterMap.get("foo")).isEqualTo(new String[]{null});
 		assertThat(request.getQueryString()).isEqualTo("foo");
 	}
 
@@ -315,7 +308,7 @@ public class MockHttpServletRequestBuilderTests {
 
 		MockHttpServletRequest request = this.builder.buildRequest(this.servletContext);
 
-		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[] {"bar", "baz"});
+		assertThat(request.getParameterMap().get("foo")).isEqualTo(new String[]{"bar", "baz"});
 	}
 
 	@Test
@@ -327,9 +320,9 @@ public class MockHttpServletRequestBuilderTests {
 				.contentType(contentType).content(body.getBytes(StandardCharsets.UTF_8))
 				.buildRequest(this.servletContext);
 
-		assertThat(request.getParameterMap().get("name 1")).isEqualTo(new String[] {"value 1"});
-		assertThat(request.getParameterMap().get("name 2")).isEqualTo(new String[] {"value A", "value B"});
-		assertThat(request.getParameterMap().get("name 3")).isEqualTo(new String[] {null});
+		assertThat(request.getParameterMap().get("name 1")).isEqualTo(new String[]{"value 1"});
+		assertThat(request.getParameterMap().get("name 2")).isEqualTo(new String[]{"value A", "value B"});
+		assertThat(request.getParameterMap().get("name 3")).isEqualTo(new String[]{null});
 	}
 
 	@Test
@@ -580,21 +573,6 @@ public class MockHttpServletRequestBuilderTests {
 		assertThat(request.getPathInfo()).isEqualTo("/foo/42");
 	}
 
-
-	private static RequestAttributePostProcessor requestAttr(String attrName) {
-		return new RequestAttributePostProcessor().attr(attrName);
-	}
-
-
-	private final class User implements Principal {
-
-		@Override
-		public String getName() {
-			return "Foo";
-		}
-	}
-
-
 	private static class RequestAttributePostProcessor implements RequestPostProcessor {
 
 		String attr;
@@ -615,6 +593,14 @@ public class MockHttpServletRequestBuilderTests {
 		public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
 			request.setAttribute(attr, value);
 			return request;
+		}
+	}
+
+	private final class User implements Principal {
+
+		@Override
+		public String getName() {
+			return "Foo";
 		}
 	}
 

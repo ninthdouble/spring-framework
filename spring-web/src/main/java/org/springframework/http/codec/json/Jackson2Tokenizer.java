@@ -16,11 +16,6 @@
 
 package org.springframework.http.codec.json;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,13 +25,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
 import com.fasterxml.jackson.databind.util.TokenBuffer;
-import reactor.core.Exceptions;
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.codec.DecodingException;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import reactor.core.Exceptions;
+import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * {@link Function} to transform a JSON stream of arbitrary size, byte array
@@ -59,23 +58,17 @@ final class Jackson2Tokenizer {
 	private final boolean forceUseOfBigDecimal;
 
 	private final int maxInMemorySize;
-
-	private int objectDepth;
-
-	private int arrayDepth;
-
-	private int byteCount;
-
-	private TokenBuffer tokenBuffer;
-
-
 	// TODO: change to ByteBufferFeeder when supported by Jackson
 	// See https://github.com/FasterXML/jackson-core/issues/478
 	private final ByteArrayFeeder inputFeeder;
+	private int objectDepth;
+	private int arrayDepth;
+	private int byteCount;
+	private TokenBuffer tokenBuffer;
 
 
 	private Jackson2Tokenizer(JsonParser parser, DeserializationContext deserializationContext,
-			boolean tokenizeArrayElements, boolean forceUseOfBigDecimal, int maxInMemorySize) {
+							  boolean tokenizeArrayElements, boolean forceUseOfBigDecimal, int maxInMemorySize) {
 
 		this.parser = parser;
 		this.deserializationContext = deserializationContext;
@@ -86,7 +79,36 @@ final class Jackson2Tokenizer {
 		this.tokenBuffer = createToken();
 	}
 
+	/**
+	 * Tokenize the given {@code Flux<DataBuffer>} into {@code Flux<TokenBuffer>}.
+	 *
+	 * @param dataBuffers          the source data buffers
+	 * @param jsonFactory          the factory to use
+	 * @param objectMapper         the current mapper instance
+	 * @param tokenizeArrays       if {@code true} and the "top level" JSON object is
+	 *                             an array, each element is returned individually immediately after it is received
+	 * @param forceUseOfBigDecimal if {@code true}, any floating point values encountered
+	 *                             in source will use {@link java.math.BigDecimal}
+	 * @param maxInMemorySize      maximum memory size
+	 * @return the resulting token buffers
+	 */
+	public static Flux<TokenBuffer> tokenize(Flux<DataBuffer> dataBuffers, JsonFactory jsonFactory,
+											 ObjectMapper objectMapper, boolean tokenizeArrays, boolean forceUseOfBigDecimal, int maxInMemorySize) {
 
+		try {
+			JsonParser parser = jsonFactory.createNonBlockingByteArrayParser();
+			DeserializationContext context = objectMapper.getDeserializationContext();
+			if (context instanceof DefaultDeserializationContext) {
+				context = ((DefaultDeserializationContext) context).createInstance(
+						objectMapper.getDeserializationConfig(), parser, objectMapper.getInjectableValues());
+			}
+			Jackson2Tokenizer tokenizer =
+					new Jackson2Tokenizer(parser, context, tokenizeArrays, forceUseOfBigDecimal, maxInMemorySize);
+			return dataBuffers.concatMapIterable(tokenizer::tokenize).concatWith(tokenizer.endOfInput());
+		} catch (IOException ex) {
+			return Flux.error(ex);
+		}
+	}
 
 	private List<TokenBuffer> tokenize(DataBuffer dataBuffer) {
 		int bufferSize = dataBuffer.readableByteCount();
@@ -99,11 +121,9 @@ final class Jackson2Tokenizer {
 			List<TokenBuffer> result = parseTokenBufferFlux();
 			assertInMemorySize(bufferSize, result);
 			return result;
-		}
-		catch (JsonProcessingException ex) {
+		} catch (JsonProcessingException ex) {
 			throw new DecodingException("JSON decoding error: " + ex.getOriginalMessage(), ex);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw Exceptions.propagate(ex);
 		}
 	}
@@ -113,11 +133,9 @@ final class Jackson2Tokenizer {
 			this.inputFeeder.endOfInput();
 			try {
 				return Flux.fromIterable(parseTokenBufferFlux());
-			}
-			catch (JsonProcessingException ex) {
+			} catch (JsonProcessingException ex) {
 				throw new DecodingException("JSON decoding error: " + ex.getOriginalMessage(), ex);
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				throw Exceptions.propagate(ex);
 			}
 		});
@@ -133,19 +151,16 @@ final class Jackson2Tokenizer {
 			if (token == JsonToken.NOT_AVAILABLE ||
 					token == null && previousNull) {
 				break;
-			}
-			else if (token == null ) { // !previousNull
+			} else if (token == null) { // !previousNull
 				previousNull = true;
 				continue;
-			}
-			else {
+			} else {
 				previousNull = false;
 			}
 			updateDepth(token);
 			if (!this.tokenizeArrayElements) {
 				processTokenNormal(token, result);
-			}
-			else {
+			} else {
 				processTokenArray(token, result);
 			}
 		}
@@ -205,11 +220,9 @@ final class Jackson2Tokenizer {
 		if (this.maxInMemorySize >= 0) {
 			if (!result.isEmpty()) {
 				this.byteCount = 0;
-			}
-			else if (currentBufferSize > Integer.MAX_VALUE - this.byteCount) {
+			} else if (currentBufferSize > Integer.MAX_VALUE - this.byteCount) {
 				raiseLimitException();
-			}
-			else {
+			} else {
 				this.byteCount += currentBufferSize;
 				if (this.byteCount > this.maxInMemorySize) {
 					raiseLimitException();
@@ -221,38 +234,6 @@ final class Jackson2Tokenizer {
 	private void raiseLimitException() {
 		throw new DataBufferLimitException(
 				"Exceeded limit on max bytes per JSON object: " + this.maxInMemorySize);
-	}
-
-
-	/**
-	 * Tokenize the given {@code Flux<DataBuffer>} into {@code Flux<TokenBuffer>}.
-	 * @param dataBuffers the source data buffers
-	 * @param jsonFactory the factory to use
-	 * @param objectMapper the current mapper instance
-	 * @param tokenizeArrays if {@code true} and the "top level" JSON object is
-	 * an array, each element is returned individually immediately after it is received
-	 * @param forceUseOfBigDecimal if {@code true}, any floating point values encountered
-	 * in source will use {@link java.math.BigDecimal}
-	 * @param maxInMemorySize maximum memory size
-	 * @return the resulting token buffers
-	 */
-	public static Flux<TokenBuffer> tokenize(Flux<DataBuffer> dataBuffers, JsonFactory jsonFactory,
-			ObjectMapper objectMapper, boolean tokenizeArrays, boolean forceUseOfBigDecimal, int maxInMemorySize) {
-
-		try {
-			JsonParser parser = jsonFactory.createNonBlockingByteArrayParser();
-			DeserializationContext context = objectMapper.getDeserializationContext();
-			if (context instanceof DefaultDeserializationContext) {
-				context = ((DefaultDeserializationContext) context).createInstance(
-						objectMapper.getDeserializationConfig(), parser, objectMapper.getInjectableValues());
-			}
-			Jackson2Tokenizer tokenizer =
-					new Jackson2Tokenizer(parser, context, tokenizeArrays, forceUseOfBigDecimal, maxInMemorySize);
-			return dataBuffers.concatMapIterable(tokenizer::tokenize).concatWith(tokenizer.endOfInput());
-		}
-		catch (IOException ex) {
-			return Flux.error(ex);
-		}
 	}
 
 }

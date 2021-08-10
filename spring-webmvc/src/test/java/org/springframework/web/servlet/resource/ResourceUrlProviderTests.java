@@ -16,15 +16,8 @@
 
 package org.springframework.web.servlet.resource;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -33,6 +26,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +70,8 @@ public class ResourceUrlProviderTests {
 		assertThat(url).isEqualTo("/resources/foo.css");
 	}
 
-	@Test // SPR-13374
+	@Test
+		// SPR-13374
 	void getStaticResourceUrlRequestWithQueryOrHash() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setContextPath("/");
@@ -90,7 +86,8 @@ public class ResourceUrlProviderTests {
 		assertThat(resolvedUrl).isEqualTo("/resources/foo.css#hash");
 	}
 
-	@Test // SPR-16526
+	@Test
+		// SPR-16526
 	void getStaticResourceWithMissingContextPath() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setContextPath("/contextpath-longer-than-request-path");
@@ -116,7 +113,8 @@ public class ResourceUrlProviderTests {
 		assertThat(url).isEqualTo("/resources/foo-e36d2e05253c6c7085a91522ce43a0b4.css");
 	}
 
-	@Test // SPR-12647
+	@Test
+		// SPR-12647
 	void bestPatternMatch() throws Exception {
 		ResourceHttpRequestHandler otherHandler = new ResourceHttpRequestHandler();
 		otherHandler.setLocations(this.locations);
@@ -173,7 +171,8 @@ public class ResourceUrlProviderTests {
 		assertThat(childUrlProvider.isAutodetect()).isFalse();
 	}
 
-	@Test // SPR-16296
+	@Test
+		// SPR-16296
 	void getForLookupPathShouldNotFailIfPathContainsDoubleSlashes() {
 		// given
 		ResourceResolver mockResourceResolver = mock(ResourceResolver.class);
@@ -200,7 +199,7 @@ public class ResourceUrlProviderTests {
 		@Bean
 		public SimpleUrlHandlerMapping simpleUrlHandlerMapping() {
 			return new SimpleUrlHandlerMapping(
-				Collections.singletonMap("/resources/**", new ResourceHttpRequestHandler()));
+					Collections.singletonMap("/resources/**", new ResourceHttpRequestHandler()));
 		}
 
 		@Bean

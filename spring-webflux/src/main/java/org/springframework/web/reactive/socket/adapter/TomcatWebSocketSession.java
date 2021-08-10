@@ -16,16 +16,14 @@
 
 package org.springframework.web.reactive.socket.adapter;
 
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
-import javax.websocket.Session;
-
 import org.apache.tomcat.websocket.WsSession;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.web.reactive.socket.HandshakeInfo;
 import org.springframework.web.reactive.socket.WebSocketSession;
+import reactor.core.publisher.Sinks;
+
+import javax.websocket.Session;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
  * Spring {@link WebSocketSession} adapter for Tomcat's
@@ -48,7 +46,7 @@ public class TomcatWebSocketSession extends StandardWebSocketSession {
 	}
 
 	public TomcatWebSocketSession(Session session, HandshakeInfo info, DataBufferFactory factory,
-			Sinks.Empty<Void> completionSink) {
+								  Sinks.Empty<Void> completionSink) {
 
 		super(session, info, factory, completionSink);
 		suspendReceiving();
@@ -56,7 +54,7 @@ public class TomcatWebSocketSession extends StandardWebSocketSession {
 
 	@Deprecated
 	public TomcatWebSocketSession(Session session, HandshakeInfo info, DataBufferFactory factory,
-			reactor.core.publisher.MonoProcessor<Void> completionMono) {
+								  reactor.core.publisher.MonoProcessor<Void> completionMono) {
 
 		super(session, info, factory, completionMono);
 		suspendReceiving();

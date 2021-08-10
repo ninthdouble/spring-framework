@@ -25,6 +25,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface AnInterface {
+	public void interfaceMethod();
+}
+
 /**
  * Test for ensuring the aspects aren't advised. See SPR-3893 for more details.
  *
@@ -36,7 +40,7 @@ public class AspectImplementingInterfaceTests {
 	@Test
 	public void testProxyCreation() {
 		ClassPathXmlApplicationContext ctx =
-			new ClassPathXmlApplicationContext(getClass().getSimpleName() + "-context.xml", getClass());
+				new ClassPathXmlApplicationContext(getClass().getSimpleName() + "-context.xml", getClass());
 
 		ITestBean testBean = (ITestBean) ctx.getBean("testBean");
 		AnInterface interfaceExtendingAspect = (AnInterface) ctx.getBean("interfaceExtendingAspect");
@@ -48,12 +52,6 @@ public class AspectImplementingInterfaceTests {
 	}
 
 }
-
-
-interface AnInterface {
-	public void interfaceMethod();
-}
-
 
 class InterfaceExtendingAspect implements AnInterface {
 	public void increment(ProceedingJoinPoint pjp) throws Throwable {

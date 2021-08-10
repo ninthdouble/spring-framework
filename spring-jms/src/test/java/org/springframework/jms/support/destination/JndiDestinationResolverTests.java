@@ -16,13 +16,12 @@
 
 package org.springframework.jms.support.destination;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.jms.StubTopic;
+
 import javax.jms.Destination;
 import javax.jms.Session;
 import javax.naming.NamingException;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jms.StubTopic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

@@ -16,20 +16,11 @@
 
 package org.springframework.http.client.reactive;
 
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
-
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Flux;
-import reactor.netty.Connection;
-import reactor.netty.NettyInbound;
-import reactor.netty.http.client.HttpClientResponse;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -37,23 +28,29 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
+import org.springframework.util.*;
+import reactor.core.publisher.Flux;
+import reactor.netty.Connection;
+import reactor.netty.NettyInbound;
+import reactor.netty.http.client.HttpClientResponse;
+
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 
 /**
  * {@link ClientHttpResponse} implementation for the Reactor-Netty HTTP client.
  *
  * @author Brian Clozel
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see reactor.netty.http.client.HttpClient
+ * @since 5.0
  */
 class ReactorClientHttpResponse implements ClientHttpResponse {
 
-	/** Reactor Netty 1.0.5+. */
+	/**
+	 * Reactor Netty 1.0.5+.
+	 */
 	static final boolean reactorNettyRequestChannelOperationsIdPresent = ClassUtils.isPresent(
 			"reactor.netty.ChannelOperationsId", ReactorClientHttpResponse.class.getClassLoader());
 
@@ -75,6 +72,7 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 	/**
 	 * Constructor that matches the inputs from
 	 * {@link reactor.netty.http.client.HttpClient.ResponseReceiver#responseConnection(BiFunction)}.
+	 *
 	 * @since 5.2.8
 	 */
 	public ReactorClientHttpResponse(HttpClientResponse response, Connection connection) {
@@ -87,6 +85,7 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 
 	/**
 	 * Constructor with inputs extracted from a {@link Connection}.
+	 *
 	 * @deprecated as of 5.2.8, in favor of {@link #ReactorClientHttpResponse(HttpClientResponse, Connection)}
 	 */
 	@Deprecated
@@ -98,6 +97,16 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 		this.bufferFactory = new NettyDataBufferFactory(alloc);
 	}
 
+	@Nullable
+	private static String getSameSite(Cookie cookie) {
+		if (cookie instanceof DefaultCookie) {
+			DefaultCookie defaultCookie = (DefaultCookie) cookie;
+			if (defaultCookie.sameSite() != null) {
+				return defaultCookie.sameSite().name();
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public String getId() {
@@ -161,17 +170,6 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 		return CollectionUtils.unmodifiableMultiValueMap(result);
 	}
 
-	@Nullable
-	private static String getSameSite(Cookie cookie) {
-		if (cookie instanceof DefaultCookie) {
-			DefaultCookie defaultCookie = (DefaultCookie) cookie;
-			if (defaultCookie.sameSite() != null) {
-				return defaultCookie.sameSite().name();
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Called by {@link ReactorClientHttpConnector} when a cancellation is detected
 	 * but the content has not been subscribed to. If the subscription never
@@ -184,7 +182,10 @@ class ReactorClientHttpResponse implements ClientHttpResponse {
 			if (logger.isDebugEnabled()) {
 				logger.debug("[" + getId() + "]" + "Releasing body, not yet subscribed.");
 			}
-			this.inbound.receive().doOnNext(byteBuf -> {}).subscribe(byteBuf -> {}, ex -> {});
+			this.inbound.receive().doOnNext(byteBuf -> {
+			}).subscribe(byteBuf -> {
+			}, ex -> {
+			});
 		}
 	}
 

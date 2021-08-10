@@ -16,17 +16,11 @@
 
 package org.springframework.core.style;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.ObjectUtils;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,7 +77,7 @@ class ToStringCreatorTests {
 
 	@Test
 	void defaultStyleArray() {
-		SomeObject[] array = new SomeObject[] {s1, s2, s3};
+		SomeObject[] array = new SomeObject[]{s1, s2, s3};
 		String str = new ToStringCreator(array).toString();
 		assertThat(str).isEqualTo(("[@" + ObjectUtils.getIdentityHexString(array) +
 				" array<ToStringCreatorTests.SomeObject>[A, B, C]]"));
@@ -91,7 +85,7 @@ class ToStringCreatorTests {
 
 	@Test
 	void primitiveArrays() {
-		int[] integers = new int[] {0, 1, 2, 3, 4};
+		int[] integers = new int[]{0, 1, 2, 3, 4};
 		String str = new ToStringCreator(integers).toString();
 		assertThat(str).isEqualTo(("[@" + ObjectUtils.getIdentityHexString(integers) + " array<Integer>[0, 1, 2, 3, 4]]"));
 	}

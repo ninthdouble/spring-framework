@@ -16,13 +16,12 @@
 
 package org.springframework.beans;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.testfixture.beans.TestBean;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.testfixture.beans.TestBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -85,11 +84,11 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		pvs.addPropertyValue(new PropertyValue("touchy", invalidTouchy));
 		assertThatExceptionOfType(PropertyBatchUpdateException.class).isThrownBy(() ->
 				accessor.setPropertyValues(pvs))
-			.satisfies(ex -> {
-				assertThat(ex.getExceptionCount()).isEqualTo(2);
-				assertThat(ex.getPropertyAccessException("touchy").getPropertyChangeEvent()
-						.getNewValue()).isEqualTo(invalidTouchy);
-			});
+				.satisfies(ex -> {
+					assertThat(ex.getExceptionCount()).isEqualTo(2);
+					assertThat(ex.getPropertyAccessException("touchy").getPropertyChangeEvent()
+							.getNewValue()).isEqualTo(invalidTouchy);
+				});
 		// Test validly set property matches
 		assertThat(target.getName().equals(newName)).as("Valid set property must stick").isTrue();
 		assertThat(target.getAge() == 0).as("Invalid set property must retain old value").isTrue();
@@ -101,7 +100,7 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		BeanWrapper accessor = createAccessor(target);
 		assertThatExceptionOfType(NotWritablePropertyException.class).isThrownBy(() ->
 				accessor.setPropertyValue("ag", "foobar"))
-			.satisfies(ex -> assertThat(ex.getPossibleMatches()).containsExactly("age"));
+				.satisfies(ex -> assertThat(ex.getPossibleMatches()).containsExactly("age"));
 	}
 
 	@Test // Can't be shared; there is no such thing as a read-only field
@@ -118,8 +117,7 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		BeanWrapper bw = createAccessor(target);
 		try {
 			bw.setPropertyValue("names", "Alef");
-		}
-		catch (NotWritablePropertyException ex) {
+		} catch (NotWritablePropertyException ex) {
 			assertThat(ex.getPossibleMatches()).as("Possible matches not determined").isNotNull();
 			assertThat(ex.getPossibleMatches().length).as("Invalid amount of alternatives").isEqualTo(1);
 		}
@@ -131,8 +129,7 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		BeanWrapper bw = createAccessor(target);
 		try {
 			bw.setPropertyValue("mystring", "Arjen");
-		}
-		catch (NotWritablePropertyException ex) {
+		} catch (NotWritablePropertyException ex) {
 			assertThat(ex.getPossibleMatches()).as("Possible matches not determined").isNotNull();
 			assertThat(ex.getPossibleMatches().length).as("Invalid amount of alternatives").isEqualTo(3);
 		}
@@ -206,7 +203,7 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		BeanWrapper accessor = createAccessor(target);
 		assertThatExceptionOfType(NotWritablePropertyException.class).isThrownBy(() ->
 				accessor.setPropertyValue("[']", "foobar"))
-			.satisfies(ex -> assertThat(ex.getPossibleMatches()).isNull());
+				.satisfies(ex -> assertThat(ex.getPossibleMatches()).isNull());
 	}
 
 
@@ -237,16 +234,16 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 		private String name;
 
 		@Override
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		@Override
 		public String getName() {
 			if (this.name == null) {
 				throw new RuntimeException("name property must be set");
 			}
 			return name;
+		}
+
+		@Override
+		public void setName(String name) {
+			this.name = name;
 		}
 	}
 
@@ -294,12 +291,12 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 
 		public String value;
 
-		public void setObject(String object) {
-			this.value = object;
-		}
-
 		public Integer getObject() {
 			return (this.value != null ? this.value.length() : null);
+		}
+
+		public void setObject(String object) {
+			this.value = object;
 		}
 	}
 
@@ -308,12 +305,12 @@ public class BeanWrapperTests extends AbstractPropertyAccessorTests {
 
 		public TestBean value;
 
-		public void setObject(TestBean object) {
-			this.value = object;
-		}
-
 		public Optional<TestBean> getObject() {
 			return Optional.ofNullable(this.value);
+		}
+
+		public void setObject(TestBean object) {
+			this.value = object;
 		}
 	}
 

@@ -16,11 +16,7 @@
 
 package org.springframework.web.servlet.mvc;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.ui.ModelMap;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -31,6 +27,9 @@ import org.springframework.web.servlet.handler.PathPatternsTestUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.util.ServletRequestPathUtils;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

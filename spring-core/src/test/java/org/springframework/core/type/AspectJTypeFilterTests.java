@@ -18,7 +18,6 @@ package org.springframework.core.type;
 
 import example.type.AspectJTypeFilterTestsTypes;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;

@@ -16,11 +16,10 @@
 
 package org.springframework.web.reactive.function.client;
 
-import java.util.function.Function;
-
+import org.springframework.util.Assert;
 import reactor.core.publisher.Mono;
 
-import org.springframework.util.Assert;
+import java.util.function.Function;
 
 /**
  * Represents a function that filters an {@linkplain ExchangeFunction exchange function}.
@@ -32,6 +31,30 @@ import org.springframework.util.Assert;
  */
 @FunctionalInterface
 public interface ExchangeFilterFunction {
+
+	/**
+	 * Adapt the given request processor function to a filter function that only
+	 * operates on the {@code ClientRequest}.
+	 *
+	 * @param processor the request processor
+	 * @return the resulting filter adapter
+	 */
+	static ExchangeFilterFunction ofRequestProcessor(Function<ClientRequest, Mono<ClientRequest>> processor) {
+		Assert.notNull(processor, "ClientRequest Function must not be null");
+		return (request, next) -> processor.apply(request).flatMap(next::exchange);
+	}
+
+	/**
+	 * Adapt the given response processor function to a filter function that
+	 * only operates on the {@code ClientResponse}.
+	 *
+	 * @param processor the response processor
+	 * @return the resulting filter adapter
+	 */
+	static ExchangeFilterFunction ofResponseProcessor(Function<ClientResponse, Mono<ClientResponse>> processor) {
+		Assert.notNull(processor, "ClientResponse Function must not be null");
+		return (request, next) -> next.exchange(request).flatMap(processor);
+	}
 
 	/**
 	 * Apply this filter to the given request and exchange function.
@@ -47,7 +70,7 @@ public interface ExchangeFilterFunction {
 	 * reference documentation for more details on this.
 	 *
 	 * @param request the current request
-	 * @param next the next exchange function in the chain
+	 * @param next    the next exchange function in the chain
 	 * @return the filtered response
 	 */
 	Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next);
@@ -55,6 +78,7 @@ public interface ExchangeFilterFunction {
 	/**
 	 * Return a composed filter function that first applies this filter, and
 	 * then applies the given {@code "after"} filter.
+	 *
 	 * @param afterFilter the filter to apply after this filter
 	 * @return the composed filter
 	 */
@@ -67,34 +91,13 @@ public interface ExchangeFilterFunction {
 	/**
 	 * Apply this filter to the given {@linkplain ExchangeFunction}, resulting
 	 * in a filtered exchange function.
+	 *
 	 * @param exchange the exchange function to filter
 	 * @return the filtered exchange function
 	 */
 	default ExchangeFunction apply(ExchangeFunction exchange) {
 		Assert.notNull(exchange, "ExchangeFunction must not be null");
 		return request -> this.filter(request, exchange);
-	}
-
-	/**
-	 * Adapt the given request processor function to a filter function that only
-	 * operates on the {@code ClientRequest}.
-	 * @param processor the request processor
-	 * @return the resulting filter adapter
-	 */
-	static ExchangeFilterFunction ofRequestProcessor(Function<ClientRequest, Mono<ClientRequest>> processor) {
-		Assert.notNull(processor, "ClientRequest Function must not be null");
-		return (request, next) -> processor.apply(request).flatMap(next::exchange);
-	}
-
-	/**
-	 * Adapt the given response processor function to a filter function that
-	 * only operates on the {@code ClientResponse}.
-	 * @param processor the response processor
-	 * @return the resulting filter adapter
-	 */
-	static ExchangeFilterFunction ofResponseProcessor(Function<ClientResponse, Mono<ClientResponse>> processor) {
-		Assert.notNull(processor, "ClientResponse Function must not be null");
-		return (request, next) -> next.exchange(request).flatMap(processor);
 	}
 
 }

@@ -16,9 +16,9 @@
 
 package org.springframework.core;
 
-import java.util.Comparator;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -115,14 +115,14 @@ class OrderComparatorTests {
 	@Test
 	void compareWithSourceProviderArray() {
 		Comparator<Object> customComparator = this.comparator.withSourceProvider(
-				new TestSourceProvider(5L, new Object[] {new StubOrdered(10), new StubOrdered(-25)}));
+				new TestSourceProvider(5L, new Object[]{new StubOrdered(10), new StubOrdered(-25)}));
 		assertThat(customComparator.compare(5L, new Object())).isEqualTo(-1);
 	}
 
 	@Test
 	void compareWithSourceProviderArrayNoMatch() {
 		Comparator<Object> customComparator = this.comparator.withSourceProvider(
-				new TestSourceProvider(5L, new Object[] {new Object(), new Object()}));
+				new TestSourceProvider(5L, new Object[]{new Object(), new Object()}));
 		assertThat(customComparator.compare(new Object(), 5L)).isEqualTo(0);
 	}
 

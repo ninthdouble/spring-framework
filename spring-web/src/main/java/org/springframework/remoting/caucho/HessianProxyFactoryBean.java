@@ -33,13 +33,13 @@ import org.springframework.lang.Nullable;
  * For details, see the {@link HessianClientInterceptor} javadoc.
  *
  * @author Juergen Hoeller
- * @since 13.05.2003
  * @see #setServiceInterface
  * @see #setServiceUrl
  * @see HessianClientInterceptor
  * @see HessianServiceExporter
  * @see org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean
  * @see org.springframework.remoting.rmi.RmiProxyFactoryBean
+ * @since 13.05.2003
  * @deprecated as of 5.3 (phasing out serialization-based remoting)
  */
 @Deprecated

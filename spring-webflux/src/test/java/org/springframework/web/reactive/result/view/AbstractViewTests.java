@@ -16,18 +16,9 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -36,6 +27,14 @@ import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -87,7 +86,7 @@ public class AbstractViewTests {
 
 		@Override
 		protected Mono<Void> renderInternal(Map<String, Object> renderAttributes,
-				@Nullable MediaType contentType, ServerWebExchange exchange) {
+											@Nullable MediaType contentType, ServerWebExchange exchange) {
 
 			this.attributes = renderAttributes;
 			return Mono.empty();

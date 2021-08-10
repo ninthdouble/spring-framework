@@ -16,6 +16,17 @@
 
 package org.springframework.http.server.reactive;
 
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.undertow.util.HeaderMap;
+import org.apache.tomcat.util.http.MimeHeaders;
+import org.eclipse.jetty.http.HttpFields;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedCaseInsensitiveMap;
+import org.springframework.util.MultiValueMap;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,18 +35,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.stream.Stream;
-
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.undertow.util.HeaderMap;
-import org.apache.tomcat.util.http.MimeHeaders;
-import org.eclipse.jetty.http.HttpFields;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedCaseInsensitiveMap;
-import org.springframework.util.MultiValueMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,6 +47,16 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  * @author Sam Brannen
  */
 class HeadersAdaptersTests {
+
+	static Stream<Arguments> headers() {
+		return Stream.of(
+				arguments("Map", CollectionUtils.toMultiValueMap(new LinkedCaseInsensitiveMap<>(8, Locale.ENGLISH))),
+				arguments("Netty", new NettyHeadersAdapter(new DefaultHttpHeaders())),
+				arguments("Tomcat", new TomcatHeadersAdapter(new MimeHeaders())),
+				arguments("Undertow", new UndertowHeadersAdapter(new HeaderMap())),
+				arguments("Jetty", new JettyHeadersAdapter(new HttpFields()))
+		);
+	}
 
 	@ParameterizedHeadersTest
 	void getWithUnknownHeaderShouldReturnNull(String displayName, MultiValueMap<String, String> headers) {
@@ -128,16 +137,6 @@ class HeadersAdaptersTests {
 	@ParameterizedTest(name = "[{index}] {0}")
 	@MethodSource("headers")
 	@interface ParameterizedHeadersTest {
-	}
-
-	static Stream<Arguments> headers() {
-		return Stream.of(
-			arguments("Map", CollectionUtils.toMultiValueMap(new LinkedCaseInsensitiveMap<>(8, Locale.ENGLISH))),
-			arguments("Netty", new NettyHeadersAdapter(new DefaultHttpHeaders())),
-			arguments("Tomcat", new TomcatHeadersAdapter(new MimeHeaders())),
-			arguments("Undertow", new UndertowHeadersAdapter(new HeaderMap())),
-			arguments("Jetty", new JettyHeadersAdapter(new HttpFields()))
-		);
 	}
 
 }

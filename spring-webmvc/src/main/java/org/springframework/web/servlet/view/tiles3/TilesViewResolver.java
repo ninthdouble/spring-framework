@@ -17,7 +17,6 @@
 package org.springframework.web.servlet.view.tiles3;
 
 import org.apache.tiles.request.render.Renderer;
-
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
@@ -52,6 +51,7 @@ public class TilesViewResolver extends UrlBasedViewResolver {
 	/**
 	 * Set the {@link Renderer} to use. If not specified, a default
 	 * {@link org.apache.tiles.renderer.DefinitionRenderer} will be used.
+	 *
 	 * @see TilesView#setRenderer(Renderer)
 	 */
 	public void setRenderer(Renderer renderer) {
@@ -62,8 +62,9 @@ public class TilesViewResolver extends UrlBasedViewResolver {
 	 * Specify whether to always include the view rather than forward to it.
 	 * <p>Default is "false". Switch this flag on to enforce the use of a
 	 * Servlet include, even if a forward would be possible.
-	 * @since 4.1.2
+	 *
 	 * @see TilesView#setAlwaysInclude
+	 * @since 4.1.2
 	 */
 	public void setAlwaysInclude(Boolean alwaysInclude) {
 		this.alwaysInclude = alwaysInclude;

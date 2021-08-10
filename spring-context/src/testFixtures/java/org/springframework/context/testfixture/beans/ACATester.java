@@ -16,16 +16,20 @@
 
 package org.springframework.context.testfixture.beans;
 
-import java.util.Locale;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.NoSuchMessageException;
 
+import java.util.Locale;
+
 public class ACATester implements ApplicationContextAware {
 
 	private ApplicationContext ac;
+
+	public ApplicationContext getApplicationContext() {
+		return ac;
+	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext ctx) throws ApplicationContextException {
@@ -38,17 +42,12 @@ public class ACATester implements ApplicationContextAware {
 		if (ctx != null) {
 			try {
 				ctx.getMessage("code1", null, Locale.getDefault());
-			}
-			catch (NoSuchMessageException ex) {
+			} catch (NoSuchMessageException ex) {
 				// expected
 			}
 		}
 
 		this.ac = ctx;
-	}
-
-	public ApplicationContext getApplicationContext() {
-		return ac;
 	}
 
 }

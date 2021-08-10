@@ -49,8 +49,7 @@ final class CompositeCronField extends CronField {
 
 		if (fields.length == 1) {
 			return fields[0];
-		}
-		else {
+		} else {
 			return new CompositeCronField(type, fields, value);
 		}
 	}

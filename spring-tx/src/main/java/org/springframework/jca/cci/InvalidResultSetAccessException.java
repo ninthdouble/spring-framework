@@ -16,9 +16,9 @@
 
 package org.springframework.jca.cci;
 
-import java.sql.SQLException;
-
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
+
+import java.sql.SQLException;
 
 /**
  * Exception thrown when a ResultSet has been accessed in an invalid fashion.
@@ -28,8 +28,8 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
  * has been specified.
  *
  * @author Juergen Hoeller
- * @since 1.2
  * @see javax.resource.cci.ResultSet
+ * @since 1.2
  * @deprecated as of 5.3, in favor of specific data access APIs
  * (or native CCI usage if there is no alternative)
  */
@@ -39,8 +39,9 @@ public class InvalidResultSetAccessException extends InvalidDataAccessResourceUs
 
 	/**
 	 * Constructor for InvalidResultSetAccessException.
+	 *
 	 * @param msg message
-	 * @param ex the root cause
+	 * @param ex  the root cause
 	 */
 	public InvalidResultSetAccessException(String msg, SQLException ex) {
 		super(ex.getMessage(), ex);

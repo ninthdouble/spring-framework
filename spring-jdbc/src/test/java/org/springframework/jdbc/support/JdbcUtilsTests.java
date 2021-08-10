@@ -16,9 +16,9 @@
 
 package org.springframework.jdbc.support;
 
-import java.sql.Types;
-
 import org.junit.jupiter.api.Test;
+
+import java.sql.Types;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

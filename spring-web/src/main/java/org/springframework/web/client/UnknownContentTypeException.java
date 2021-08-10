@@ -16,12 +16,12 @@
 
 package org.springframework.web.client;
 
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Raised when no suitable
@@ -51,15 +51,16 @@ public class UnknownContentTypeException extends RestClientException {
 
 	/**
 	 * Construct a new instance of with the given response data.
-	 * @param targetType the expected target type
-	 * @param contentType the content type of the response
-	 * @param statusCode the raw status code value
-	 * @param statusText the status text
+	 *
+	 * @param targetType      the expected target type
+	 * @param contentType     the content type of the response
+	 * @param statusCode      the raw status code value
+	 * @param statusText      the status text
 	 * @param responseHeaders the response headers (may be {@code null})
-	 * @param responseBody the response body content (may be {@code null})
+	 * @param responseBody    the response body content (may be {@code null})
 	 */
 	public UnknownContentTypeException(Type targetType, MediaType contentType,
-			int statusCode, String statusText, HttpHeaders responseHeaders, byte[] responseBody) {
+									   int statusCode, String statusText, HttpHeaders responseHeaders, byte[] responseBody) {
 
 		super("Could not extract response: no suitable HttpMessageConverter found " +
 				"for response type [" + targetType + "] and content type [" + contentType + "]");

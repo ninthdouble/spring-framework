@@ -16,23 +16,16 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A logical disjunction (' || ') request condition that matches a request
@@ -70,6 +63,10 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 		this(parse(parser, patterns));
 	}
 
+	private PathPatternsRequestCondition(SortedSet<PathPattern> patterns) {
+		this.patterns = patterns;
+	}
+
 	private static SortedSet<PathPattern> parse(PathPatternParser parser, String... patterns) {
 		if (patterns.length == 0 || (patterns.length == 1 && !StringUtils.hasText(patterns[0]))) {
 			return EMPTY_PATH_PATTERN;
@@ -82,10 +79,6 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 			result.add(parser.parse(path));
 		}
 		return result;
-	}
-
-	private PathPatternsRequestCondition(SortedSet<PathPattern> patterns) {
-		this.patterns = patterns;
 	}
 
 	/**
@@ -160,14 +153,11 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 	public PathPatternsRequestCondition combine(PathPatternsRequestCondition other) {
 		if (isEmptyPathMapping() && other.isEmptyPathMapping()) {
 			return this;
-		}
-		else if (other.isEmptyPathMapping()) {
+		} else if (other.isEmptyPathMapping()) {
 			return this;
-		}
-		else if (isEmptyPathMapping()) {
+		} else if (isEmptyPathMapping()) {
 			return other;
-		}
-		else {
+		} else {
 			SortedSet<PathPattern> combined = new TreeSet<>();
 			for (PathPattern pattern1 : this.patterns) {
 				for (PathPattern pattern2 : other.patterns) {
@@ -181,6 +171,7 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 	/**
 	 * Checks if any of the patterns match the given request and returns an
 	 * instance that is guaranteed to contain matching patterns, sorted.
+	 *
 	 * @param request the current request
 	 * @return the same instance if the condition contains no patterns;
 	 * or a new condition with sorted matching patterns;
@@ -228,11 +219,9 @@ public final class PathPatternsRequestCondition extends AbstractRequestCondition
 		}
 		if (iterator.hasNext()) {
 			return -1;
-		}
-		else if (iteratorOther.hasNext()) {
+		} else if (iteratorOther.hasNext()) {
 			return 1;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}

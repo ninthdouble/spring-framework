@@ -131,8 +131,8 @@ class PropertySourceAnnotationTests {
 	@Test
 	void withUnresolvablePlaceholder() {
 		assertThatExceptionOfType(BeanDefinitionStoreException.class)
-			.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithUnresolvablePlaceholder.class))
-			.withCauseInstanceOf(IllegalArgumentException.class);
+				.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithUnresolvablePlaceholder.class))
+				.withCauseInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -160,8 +160,8 @@ class PropertySourceAnnotationTests {
 	@Test
 	void withEmptyResourceLocations() {
 		assertThatExceptionOfType(BeanDefinitionStoreException.class)
-			.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithEmptyResourceLocations.class))
-			.withCauseInstanceOf(IllegalArgumentException.class);
+				.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithEmptyResourceLocations.class))
+				.withCauseInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -221,8 +221,7 @@ class PropertySourceAnnotationTests {
 			assertThat(ctx.getEnvironment().containsProperty("from.p3")).isTrue();
 			// p3 should 'win' as it was registered last
 			assertThat(ctx.getEnvironment().getProperty("testbean.name")).isEqualTo("p3TestBean");
-		}
-		finally {
+		} finally {
 			System.clearProperty(key);
 		}
 	}
@@ -239,8 +238,8 @@ class PropertySourceAnnotationTests {
 	@Test
 	void withMissingPropertySource() {
 		assertThatExceptionOfType(BeanDefinitionStoreException.class)
-			.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithMissingPropertySource.class))
-			.withCauseInstanceOf(FileNotFoundException.class);
+				.isThrownBy(() -> new AnnotationConfigApplicationContext(ConfigWithMissingPropertySource.class))
+				.withCauseInstanceOf(FileNotFoundException.class);
 	}
 
 	@Test
@@ -287,30 +286,48 @@ class PropertySourceAnnotationTests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@PropertySource(value = {}, factory = MyCustomFactory.class)
+	@interface MyPropertySource {
+
+		@AliasFor(annotation = PropertySource.class)
+		String value();
+	}
+
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Configuration
+	@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
+	@PropertySource(value = "classpath:${base.package}/p2.properties", ignoreResourceNotFound = true)
+	@PropertySource(value = "classpath:${custom.config.package:bogus/config}/p3.properties", ignoreResourceNotFound = true)
+	@interface ComposedConfiguration {
+	}
+
 	@Configuration
 	@PropertySource("classpath:${unresolvable}/p1.properties")
 	static class ConfigWithUnresolvablePlaceholder {
 	}
 
-
 	@Configuration
 	@PropertySource("classpath:${unresolvable:org/springframework/context/annotation}/p1.properties")
 	static class ConfigWithUnresolvablePlaceholderAndDefault {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
 		@Bean
 		TestBean testBean() {
 			return new TestBean(env.getProperty("testbean.name"));
 		}
 	}
-
 
 	@Configuration
 	@PropertySource("classpath:${path.to.properties}/p1.properties")
 	static class ConfigWithResolvablePlaceholder {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
 		@Bean
 		TestBean testBean() {
@@ -318,12 +335,12 @@ class PropertySourceAnnotationTests {
 		}
 	}
 
-
 	@Configuration
 	@PropertySource("classpath:${path.to.properties}/p1.properties")
 	static class ConfigWithResolvablePlaceholderAndFactoryBean {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
 		@Bean
 		FactoryBean<TestBean> testBean() {
@@ -333,10 +350,12 @@ class PropertySourceAnnotationTests {
 				public TestBean getObject() {
 					return new TestBean(name);
 				}
+
 				@Override
 				public Class<?> getObjectType() {
 					return TestBean.class;
 				}
+
 				@Override
 				public boolean isSingleton() {
 					return false;
@@ -345,25 +364,25 @@ class PropertySourceAnnotationTests {
 		}
 	}
 
-
 	@Configuration
-	@PropertySource(name="p1", value="classpath:org/springframework/context/annotation/p1.properties")
+	@PropertySource(name = "p1", value = "classpath:org/springframework/context/annotation/p1.properties")
 	static class ConfigWithExplicitName {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
 		@Bean
 		TestBean testBean() {
 			return new TestBean(env.getProperty("testbean.name"));
 		}
 	}
-
 
 	@Configuration
 	@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
 	static class ConfigWithImplicitName {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
 		@Bean
 		TestBean testBean() {
@@ -371,47 +390,35 @@ class PropertySourceAnnotationTests {
 		}
 	}
 
-
 	@Configuration
-	@PropertySource(name="p1", value="classpath:org/springframework/context/annotation/p1.properties")
+	@PropertySource(name = "p1", value = "classpath:org/springframework/context/annotation/p1.properties")
 	@ComponentScan("org.springframework.context.annotation.spr12111")
 	static class ConfigWithTestProfileBeans {
 
-		@Inject Environment env;
+		@Inject
+		Environment env;
 
-		@Bean @Profile("test")
+		@Bean
+		@Profile("test")
 		TestBean testBean() {
 			return new TestBean(env.getProperty("testbean.name"));
 		}
 	}
-
 
 	@Configuration
 	@PropertySource("classpath:org/springframework/context/annotation/p2.properties")
 	static class P2Config {
 	}
 
-
 	@Configuration
 	@PropertySource(value = "classpath:org/springframework/context/annotation/p2.properties", factory = MyCustomFactory.class)
 	static class WithCustomFactory {
 	}
 
-
 	@Configuration
 	@MyPropertySource("classpath:org/springframework/context/annotation/p2.properties")
 	static class WithCustomFactoryAsMeta {
 	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@PropertySource(value = {}, factory = MyCustomFactory.class)
-	@interface MyPropertySource {
-
-		@AliasFor(annotation = PropertySource.class)
-		String value();
-	}
-
 
 	static class MyCustomFactory implements PropertySourceFactory {
 
@@ -428,7 +435,6 @@ class PropertySourceAnnotationTests {
 		}
 	}
 
-
 	@Configuration
 	@PropertySource(
 			name = "psName",
@@ -439,39 +445,26 @@ class PropertySourceAnnotationTests {
 	static class ConfigWithNameAndMultipleResourceLocations {
 	}
 
-
 	@Configuration
 	@PropertySource({
-		"classpath:org/springframework/context/annotation/p1.properties",
-		"classpath:org/springframework/context/annotation/p2.properties"
+			"classpath:org/springframework/context/annotation/p1.properties",
+			"classpath:org/springframework/context/annotation/p2.properties"
 	})
 	static class ConfigWithMultipleResourceLocations {
 	}
 
-
 	@Configuration
 	@PropertySources({
-		@PropertySource("classpath:org/springframework/context/annotation/p1.properties"),
-		@PropertySource("classpath:${base.package}/p2.properties")
+			@PropertySource("classpath:org/springframework/context/annotation/p1.properties"),
+			@PropertySource("classpath:${base.package}/p2.properties")
 	})
 	static class ConfigWithPropertySources {
 	}
-
 
 	@Configuration
 	@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
 	@PropertySource(value = "classpath:${base.package}/p2.properties", ignoreResourceNotFound = true)
 	static class ConfigWithRepeatedPropertySourceAnnotations {
-	}
-
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Configuration
-	@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
-	@PropertySource(value = "classpath:${base.package}/p2.properties", ignoreResourceNotFound = true)
-	@PropertySource(value = "classpath:${custom.config.package:bogus/config}/p3.properties", ignoreResourceNotFound = true)
-	@interface ComposedConfiguration {
 	}
 
 	@ComposedConfiguration
@@ -481,8 +474,8 @@ class PropertySourceAnnotationTests {
 
 	@Configuration
 	@PropertySources({
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties"),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties"),
 	})
 	static class ConfigWithNamedPropertySources {
 	}
@@ -490,9 +483,9 @@ class PropertySourceAnnotationTests {
 
 	@Configuration
 	@PropertySources({
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/missing.properties"),
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties")
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/missing.properties"),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties")
 	})
 	static class ConfigWithMissingPropertySource {
 	}
@@ -500,10 +493,10 @@ class PropertySourceAnnotationTests {
 
 	@Configuration
 	@PropertySources({
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/missing.properties", ignoreResourceNotFound=true),
-		@PropertySource(name = "psName", value = "classpath:${myPath}/missing.properties", ignoreResourceNotFound=true),
-		@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties")
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p1.properties"),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/missing.properties", ignoreResourceNotFound = true),
+			@PropertySource(name = "psName", value = "classpath:${myPath}/missing.properties", ignoreResourceNotFound = true),
+			@PropertySource(name = "psName", value = "classpath:org/springframework/context/annotation/p2.properties")
 	})
 	static class ConfigWithIgnoredPropertySource {
 	}
@@ -517,8 +510,8 @@ class PropertySourceAnnotationTests {
 
 	@Import(ConfigImportedWithSameSourceImportedInDifferentOrder.class)
 	@PropertySources({
-		@PropertySource("classpath:org/springframework/context/annotation/p1.properties"),
-		@PropertySource("classpath:org/springframework/context/annotation/p2.properties")
+			@PropertySource("classpath:org/springframework/context/annotation/p1.properties"),
+			@PropertySource("classpath:org/springframework/context/annotation/p2.properties")
 	})
 	@Configuration
 	static class ConfigWithSameSourceImportedInDifferentOrder {
@@ -528,8 +521,8 @@ class PropertySourceAnnotationTests {
 
 	@Configuration
 	@PropertySources({
-		@PropertySource("classpath:org/springframework/context/annotation/p2.properties"),
-		@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
+			@PropertySource("classpath:org/springframework/context/annotation/p2.properties"),
+			@PropertySource("classpath:org/springframework/context/annotation/p1.properties")
 	})
 	static class ConfigImportedWithSameSourceImportedInDifferentOrder {
 	}
@@ -537,10 +530,10 @@ class PropertySourceAnnotationTests {
 
 	@Configuration
 	@PropertySource({
-		"classpath:org/springframework/context/annotation/p1.properties",
-		"classpath:org/springframework/context/annotation/p2.properties",
-		"classpath:org/springframework/context/annotation/p3.properties",
-		"classpath:org/springframework/context/annotation/p4.properties"
+			"classpath:org/springframework/context/annotation/p1.properties",
+			"classpath:org/springframework/context/annotation/p2.properties",
+			"classpath:org/springframework/context/annotation/p3.properties",
+			"classpath:org/springframework/context/annotation/p4.properties"
 	})
 	static class ConfigWithFourResourceLocations {
 	}

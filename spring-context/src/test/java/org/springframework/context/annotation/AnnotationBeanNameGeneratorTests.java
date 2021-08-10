@@ -132,11 +132,30 @@ public class AnnotationBeanNameGeneratorTests {
 		// SPR-11360
 		BeanDefinitionRegistry registry = new SimpleBeanDefinitionRegistry();
 		AnnotatedBeanDefinition bd = new AnnotatedGenericBeanDefinition(
-			ComposedControllerAnnotationWithStringValue.class);
+				ComposedControllerAnnotationWithStringValue.class);
 		String beanName = this.beanNameGenerator.generateBeanName(bd, registry);
 		assertThat(beanName).isEqualTo("restController");
 	}
 
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Component
+	public @interface NonStringMetaComponent {
+
+		long value();
+	}
+
+	/**
+	 * @see org.springframework.web.bind.annotation.RestController
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Controller
+	public static @interface TestRestController {
+
+		String value() default "";
+	}
 
 	@Component("walden")
 	private static class ComponentWithName {
@@ -154,27 +173,8 @@ public class AnnotationBeanNameGeneratorTests {
 	private static class ComponentFromStringMeta {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@Component
-	public @interface NonStringMetaComponent {
-
-		long value();
-	}
-
 	@NonStringMetaComponent(123)
 	private static class ComponentFromNonStringMeta {
-	}
-
-	/**
-	 * @see org.springframework.web.bind.annotation.RestController
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@Controller
-	public static @interface TestRestController {
-
-		String value() default "";
 	}
 
 	@TestRestController

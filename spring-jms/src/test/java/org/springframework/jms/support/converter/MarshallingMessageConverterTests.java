@@ -16,17 +16,16 @@
 
 package org.springframework.jms.support.converter;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
+
 import javax.jms.BytesMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;

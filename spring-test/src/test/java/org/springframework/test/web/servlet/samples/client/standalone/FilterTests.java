@@ -16,25 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.concurrent.CompletableFuture;
-
-import javax.servlet.AsyncContext;
-import javax.servlet.AsyncListener;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.validation.Valid;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.Person;
@@ -49,6 +31,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -171,7 +163,7 @@ public class FilterTests {
 	@Controller
 	private static class PersonController {
 
-		@PostMapping(path="/persons")
+		@PostMapping(path = "/persons")
 		public String save(@Valid Person person, Errors errors, RedirectAttributes redirectAttrs) {
 			if (errors.hasErrors()) {
 				return "person/add";
@@ -198,16 +190,6 @@ public class FilterTests {
 		}
 	}
 
-	private class ContinueFilter extends OncePerRequestFilter {
-
-		@Override
-		protected void doFilterInternal(HttpServletRequest request,
-				HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-			filterChain.doFilter(request, response);
-		}
-	}
-
 	private static class WrappingRequestResponseFilter extends OncePerRequestFilter {
 
 		public static final String PRINCIPAL_NAME = "WrapRequestResponseFilterPrincipal";
@@ -215,7 +197,7 @@ public class FilterTests {
 
 		@Override
 		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-				FilterChain filterChain) throws ServletException, IOException {
+										FilterChain filterChain) throws ServletException, IOException {
 
 			filterChain.doFilter(new HttpServletRequestWrapper(request) {
 
@@ -235,17 +217,6 @@ public class FilterTests {
 			}, new HttpServletResponseWrapper(response));
 		}
 	}
-
-	private class RedirectFilter extends OncePerRequestFilter {
-
-		@Override
-		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-				FilterChain filterChain) throws ServletException, IOException {
-
-			response.sendRedirect("/login");
-		}
-	}
-
 
 	private static class AsyncContextWrapper implements AsyncContext {
 
@@ -311,13 +282,33 @@ public class FilterTests {
 		}
 
 		@Override
-		public void setTimeout(long timeout) {
-			this.delegate.setTimeout(timeout);
+		public long getTimeout() {
+			return this.delegate.getTimeout();
 		}
 
 		@Override
-		public long getTimeout() {
-			return this.delegate.getTimeout();
+		public void setTimeout(long timeout) {
+			this.delegate.setTimeout(timeout);
+		}
+	}
+
+	private class ContinueFilter extends OncePerRequestFilter {
+
+		@Override
+		protected void doFilterInternal(HttpServletRequest request,
+										HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+			filterChain.doFilter(request, response);
+		}
+	}
+
+	private class RedirectFilter extends OncePerRequestFilter {
+
+		@Override
+		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+										FilterChain filterChain) throws ServletException, IOException {
+
+			response.sendRedirect("/login");
 		}
 	}
 }

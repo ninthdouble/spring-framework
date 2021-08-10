@@ -166,12 +166,20 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 	}
 
 
+	@Autowired
+	@Lazy
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface LazyInject {
+	}
+
 	public static class FieldResourceInjectionBean implements TestBeanHolder {
 
-		@Autowired @Lazy
+		@Autowired
+		@Lazy
 		private TestBean testBean;
 
-		@Autowired @Lazy
+		@Autowired
+		@Lazy
 		private List<TestBean> testBeans;
 
 		@Override
@@ -184,13 +192,14 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class OptionalFieldResourceInjectionBean implements TestBeanHolder {
 
-		@Autowired(required = false) @Lazy
+		@Autowired(required = false)
+		@Lazy
 		private TestBean testBean;
 
-		@Autowired(required = false) @Lazy
+		@Autowired(required = false)
+		@Lazy
 		private List<TestBean> testBeans;
 
 		@Override
@@ -203,7 +212,6 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class FieldResourceInjectionBeanWithCompositeAnnotation implements TestBeanHolder {
 
 		@LazyInject
@@ -215,10 +223,14 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class MethodResourceInjectionBean implements TestBeanHolder {
 
 		private TestBean testBean;
+
+		@Override
+		public TestBean getTestBean() {
+			return this.testBean;
+		}
 
 		@Autowired
 		public void setTestBean(@Lazy TestBean testBean) {
@@ -227,36 +239,35 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 			}
 			this.testBean = testBean;
 		}
-
-		@Override
-		public TestBean getTestBean() {
-			return this.testBean;
-		}
 	}
-
 
 	public static class MethodResourceInjectionBeanWithMethodLevelLazy implements TestBeanHolder {
 
 		private TestBean testBean;
 
-		@Autowired @Lazy
+		@Override
+		public TestBean getTestBean() {
+			return this.testBean;
+		}
+
+		@Autowired
+		@Lazy
 		public void setTestBean(TestBean testBean) {
 			if (this.testBean != null) {
 				throw new IllegalStateException("Already called");
 			}
 			this.testBean = testBean;
 		}
+	}
+
+	public static class MethodResourceInjectionBeanWithCompositeAnnotation implements TestBeanHolder {
+
+		private TestBean testBean;
 
 		@Override
 		public TestBean getTestBean() {
 			return this.testBean;
 		}
-	}
-
-
-	public static class MethodResourceInjectionBeanWithCompositeAnnotation implements TestBeanHolder {
-
-		private TestBean testBean;
 
 		@LazyInject
 		public void setTestBean(TestBean testBean) {
@@ -265,13 +276,7 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 			}
 			this.testBean = testBean;
 		}
-
-		@Override
-		public TestBean getTestBean() {
-			return this.testBean;
-		}
 	}
-
 
 	public static class ConstructorResourceInjectionBean implements TestBeanHolder {
 
@@ -288,12 +293,12 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 		}
 	}
 
-
 	public static class ConstructorResourceInjectionBeanWithConstructorLevelLazy implements TestBeanHolder {
 
 		private final TestBean testBean;
 
-		@Autowired @Lazy
+		@Autowired
+		@Lazy
 		public ConstructorResourceInjectionBeanWithConstructorLevelLazy(TestBean testBean) {
 			this.testBean = testBean;
 		}
@@ -303,7 +308,6 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 			return this.testBean;
 		}
 	}
-
 
 	public static class ConstructorResourceInjectionBeanWithCompositeAnnotation implements TestBeanHolder {
 
@@ -318,12 +322,6 @@ public class LazyAutowiredAnnotationBeanPostProcessorTests {
 		public TestBean getTestBean() {
 			return this.testBean;
 		}
-	}
-
-
-	@Autowired @Lazy
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface LazyInject {
 	}
 
 }

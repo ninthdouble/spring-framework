@@ -16,11 +16,8 @@
 
 package org.springframework.web.servlet.config.annotation;
 
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +31,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 import org.springframework.web.util.UrlPathHelper;
+
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -56,7 +55,8 @@ public class DelegatingWebMvcConfigurationIntegrationTests {
 
 	@Test
 	void requestMappingHandlerMappingUsesMvcInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		RequestMappingHandlerMapping handlerMapping = this.context.getBean(RequestMappingHandlerMapping.class);
 		assertThat(handlerMapping.getContentNegotiationManager()).isSameAs(this.context.getBean("mvcContentNegotiationManager"));
 	}
@@ -128,7 +128,8 @@ public class DelegatingWebMvcConfigurationIntegrationTests {
 
 	@Test
 	void requestMappingHandlerAdapterUsesMvcInfrastructureByDefault() {
-		load(context -> { });
+		load(context -> {
+		});
 		RequestMappingHandlerAdapter mappingHandlerAdapter = this.context.getBean(RequestMappingHandlerAdapter.class);
 		assertThat(mappingHandlerAdapter).hasFieldOrPropertyWithValue(
 				"contentNegotiationManager", this.context.getBean("mvcContentNegotiationManager"));

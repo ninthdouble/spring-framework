@@ -17,7 +17,6 @@
 package org.springframework.jdbc.datasource.init;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,8 +27,8 @@ import static org.mockito.BDDMockito.mock;
  * Unit tests for {@link ResourceDatabasePopulator}.
  *
  * @author Sam Brannen
- * @since 4.1
  * @see AbstractDatabasePopulatorTests
+ * @since 4.1
  */
 class ResourceDatabasePopulatorUnitTests {
 

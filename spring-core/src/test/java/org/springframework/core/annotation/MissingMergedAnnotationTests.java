@@ -16,16 +16,15 @@
 
 package org.springframework.core.annotation;
 
+import org.assertj.core.api.ThrowableTypeAssert;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ConcurrentReferenceHashMap;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import org.assertj.core.api.ThrowableTypeAssert;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.ConcurrentReferenceHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -39,6 +38,9 @@ class MissingMergedAnnotationTests {
 
 	private final MergedAnnotation<?> missing = MissingMergedAnnotation.getInstance();
 
+	private static ThrowableTypeAssert<NoSuchElementException> assertThatNoSuchElementException() {
+		return assertThatExceptionOfType(NoSuchElementException.class);
+	}
 
 	@Test
 	void getTypeThrowsNoSuchElementException() {
@@ -291,13 +293,8 @@ class MissingMergedAnnotationTests {
 
 	@Test
 	void asMapWithFactoryReturnsNewMapFromFactory() {
-		Map<String, Object> map = this.missing.asMap(annotation->new ConcurrentReferenceHashMap<>());
+		Map<String, Object> map = this.missing.asMap(annotation -> new ConcurrentReferenceHashMap<>());
 		assertThat(map).isInstanceOf(ConcurrentReferenceHashMap.class);
-	}
-
-
-	private static ThrowableTypeAssert<NoSuchElementException> assertThatNoSuchElementException() {
-		return assertThatExceptionOfType(NoSuchElementException.class);
 	}
 
 

@@ -16,18 +16,16 @@
 
 package org.springframework.jms.support.converter;
 
-import java.io.Serializable;
+import org.junit.jupiter.api.Test;
+import org.springframework.jms.StubTextMessage;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.jms.StubTextMessage;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
+import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

@@ -16,11 +16,11 @@
 
 package org.springframework.core.testfixture;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -61,10 +61,10 @@ class TestGroupParsingTests {
 	@Test
 	void parseMissing() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> TestGroup.parse("long_running, missing"))
-			.withMessageContaining("Unable to find test group 'missing' when parsing " +
-					"testGroups value: 'long_running, missing'. Available groups include: " +
-					"[LONG_RUNNING]");
+				.isThrownBy(() -> TestGroup.parse("long_running, missing"))
+				.withMessageContaining("Unable to find test group 'missing' when parsing " +
+						"testGroups value: 'long_running, missing'. Available groups include: " +
+						"[LONG_RUNNING]");
 	}
 
 	@Test
@@ -82,10 +82,10 @@ class TestGroupParsingTests {
 	@Test
 	void parseAllExceptMissing() {
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> TestGroup.parse("all-missing"))
-			.withMessageContaining("Unable to find test group 'missing' when parsing " +
-					"testGroups value: 'all-missing'. Available groups include: " +
-					"[LONG_RUNNING]");
+				.isThrownBy(() -> TestGroup.parse("all-missing"))
+				.withMessageContaining("Unable to find test group 'missing' when parsing " +
+						"testGroups value: 'all-missing'. Available groups include: " +
+						"[LONG_RUNNING]");
 	}
 
 }

@@ -16,18 +16,9 @@
 
 package org.springframework.web.reactive.socket.adapter;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.function.Function;
-
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -36,6 +27,10 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketMessage.Type;
 import org.springframework.web.reactive.socket.WebSocketSession;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 /**
  * Identical to {@link JettyWebSocketHandlerAdapter}, only excluding the
@@ -57,7 +52,7 @@ public class Jetty10WebSocketHandlerAdapter {
 
 
 	public Jetty10WebSocketHandlerAdapter(WebSocketHandler handler,
-			Function<Session, JettyWebSocketSession> sessionFactory) {
+										  Function<Session, JettyWebSocketSession> sessionFactory) {
 
 		Assert.notNull(handler, "WebSocketHandler is required");
 		Assert.notNull(sessionFactory, "'sessionFactory' is required");
@@ -115,16 +110,13 @@ public class Jetty10WebSocketHandlerAdapter {
 			byte[] bytes = ((String) message).getBytes(StandardCharsets.UTF_8);
 			DataBuffer buffer = session.bufferFactory().wrap(bytes);
 			return new WebSocketMessage(Type.TEXT, buffer);
-		}
-		else if (Type.BINARY.equals(type)) {
+		} else if (Type.BINARY.equals(type)) {
 			DataBuffer buffer = session.bufferFactory().wrap((ByteBuffer) message);
 			return new WebSocketMessage(Type.BINARY, buffer);
-		}
-		else if (Type.PONG.equals(type)) {
+		} else if (Type.PONG.equals(type)) {
 			DataBuffer buffer = session.bufferFactory().wrap((ByteBuffer) message);
 			return new WebSocketMessage(Type.PONG, buffer);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Unexpected message type: " + message);
 		}
 	}

@@ -16,13 +16,7 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonView;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,6 +30,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,7 +68,8 @@ class JacksonHintsIntegrationTests extends AbstractRequestMappingIntegrationTest
 		assertThat(performGet("/response/mono", MediaType.APPLICATION_JSON, String.class).getBody()).isEqualTo(expected);
 	}
 
-	@ParameterizedHttpServerTest  // SPR-16098
+	@ParameterizedHttpServerTest
+		// SPR-16098
 	void jsonViewWithMonoResponseEntity(HttpServer httpServer) throws Exception {
 		startServer(httpServer);
 
@@ -103,7 +103,8 @@ class JacksonHintsIntegrationTests extends AbstractRequestMappingIntegrationTest
 				new JacksonViewBean("with", "with", "without"), MediaType.APPLICATION_JSON, String.class).getBody()).isEqualTo(expected);
 	}
 
-	@ParameterizedHttpServerTest  // SPR-16098
+	@ParameterizedHttpServerTest
+		// SPR-16098
 	void jsonViewWithEntityMonoRequest(HttpServer httpServer) throws Exception {
 		startServer(httpServer);
 
@@ -113,7 +114,8 @@ class JacksonHintsIntegrationTests extends AbstractRequestMappingIntegrationTest
 				MediaType.APPLICATION_JSON, String.class).getBody()).isEqualTo(expected);
 	}
 
-	@ParameterizedHttpServerTest  // SPR-16098
+	@ParameterizedHttpServerTest
+		// SPR-16098
 	void jsonViewWithEntityFluxRequest(HttpServer httpServer) throws Exception {
 		startServer(httpServer);
 
@@ -141,13 +143,19 @@ class JacksonHintsIntegrationTests extends AbstractRequestMappingIntegrationTest
 	}
 
 
+	private interface MyJacksonView1 {
+	}
+
+
+	private interface MyJacksonView2 {
+	}
+
 	@Configuration
 	@ComponentScan(resourcePattern = "**/JacksonHintsIntegrationTests*.class")
 	@EnableWebFlux
 	@SuppressWarnings({"unused", "WeakerAccess"})
 	static class WebConfig {
 	}
-
 
 	@RestController
 	@SuppressWarnings("unused")
@@ -203,11 +211,6 @@ class JacksonHintsIntegrationTests extends AbstractRequestMappingIntegrationTest
 		}
 
 	}
-
-	private interface MyJacksonView1 {}
-
-	private interface MyJacksonView2 {}
-
 
 	@SuppressWarnings("unused")
 	private static class JacksonViewBean {

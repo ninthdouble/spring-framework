@@ -18,7 +18,6 @@ package org.springframework.test.context.junit4.annotation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.testfixture.beans.Employee;
 import org.springframework.context.annotation.Bean;
@@ -35,12 +34,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@link DelegatingSmartContextLoader}.
  *
  * @author Sam Brannen
- * @since 3.1
  * @see DefaultConfigClassesBaseTests
+ * @since 3.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class DefaultLoaderDefaultConfigClassesBaseTests {
+
+	@Autowired
+	protected Employee employee;
+
+	@Test
+	public void verifyEmployeeSetFromBaseContextConfig() {
+		assertThat(this.employee).as("The employee field should have been autowired.").isNotNull();
+		assertThat(this.employee.getName()).isEqualTo("John Smith");
+	}
 
 	@Configuration
 	static class Config {
@@ -53,17 +61,6 @@ public class DefaultLoaderDefaultConfigClassesBaseTests {
 			employee.setCompany("Acme Widgets, Inc.");
 			return employee;
 		}
-	}
-
-
-	@Autowired
-	protected Employee employee;
-
-
-	@Test
-	public void verifyEmployeeSetFromBaseContextConfig() {
-		assertThat(this.employee).as("The employee field should have been autowired.").isNotNull();
-		assertThat(this.employee.getName()).isEqualTo("John Smith");
 	}
 
 }

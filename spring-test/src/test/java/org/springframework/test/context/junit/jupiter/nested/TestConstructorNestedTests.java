@@ -18,7 +18,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +53,21 @@ class TestConstructorNestedTests {
 	void test() {
 	}
 
+
+	@TestConstructor(autowireMode = ALL)
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class Config {
+
+		@Bean
+		String text() {
+			return "enigma";
+		}
+	}
+
+	// -------------------------------------------------------------------------
 
 	@Nested
 	@SpringJUnitConfig(Config.class)
@@ -150,21 +164,6 @@ class TestConstructorNestedTests {
 				}
 			}
 		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class Config {
-
-		@Bean
-		String text() {
-			return "enigma";
-		}
-	}
-
-	@TestConstructor(autowireMode = ALL)
-	interface TestInterface {
 	}
 
 }

@@ -51,10 +51,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ScopingTests {
 
-	public static String flag = "1";
-
 	private static final String SCOPE = "my scope";
-
+	public static String flag = "1";
 	private CustomScope customScope;
 
 	private GenericApplicationContext ctx;
@@ -225,6 +223,20 @@ public class ScopingTests {
 	}
 
 
+	@Target({ElementType.METHOD})
+	@Retention(RetentionPolicy.RUNTIME)
+	@Scope(SCOPE)
+	@interface MyScope {
+	}
+
+
+	@Target({ElementType.METHOD})
+	@Retention(RetentionPolicy.RUNTIME)
+	@Bean
+	@Scope(value = SCOPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+	@interface MyProxiedScope {
+	}
+
 	static class Foo {
 
 		public Foo() {
@@ -233,7 +245,6 @@ public class ScopingTests {
 		public void doSomething() {
 		}
 	}
-
 
 	static class Bar {
 
@@ -248,16 +259,15 @@ public class ScopingTests {
 		}
 	}
 
-
 	@Configuration
 	public static class InvalidProxyOnPredefinedScopesConfiguration {
 
-		@Bean @Scope(proxyMode=ScopedProxyMode.INTERFACES)
+		@Bean
+		@Scope(proxyMode = ScopedProxyMode.INTERFACES)
 		public Object invalidProxyOnPredefinedScopes() {
 			return new Object();
 		}
 	}
-
 
 	@Configuration
 	public static class ScopedConfigurationClass {
@@ -308,24 +318,9 @@ public class ScopingTests {
 		}
 	}
 
-
-	@Target({ElementType.METHOD})
-	@Retention(RetentionPolicy.RUNTIME)
-	@Scope(SCOPE)
-	@interface MyScope {
-	}
-
-
-	@Target({ElementType.METHOD})
-	@Retention(RetentionPolicy.RUNTIME)
-	@Bean
-	@Scope(value=SCOPE, proxyMode=ScopedProxyMode.TARGET_CLASS)
-	@interface MyProxiedScope {
-	}
-
-
 	/**
 	 * Simple scope implementation which creates object based on a flag.
+	 *
 	 * @author Costin Leau
 	 * @author Chris Beams
 	 */

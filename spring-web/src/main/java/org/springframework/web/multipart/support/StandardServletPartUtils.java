@@ -16,29 +16,29 @@
 
 package org.springframework.web.multipart.support;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Utility methods for standard Servlet {@link Part} handling.
  *
  * @author Juergen Hoeller
- * @since 5.3
  * @see HttpServletRequest#getParts()
  * @see StandardServletMultipartResolver
+ * @since 5.3
  */
 public abstract class StandardServletPartUtils {
 
 	/**
 	 * Retrieve all parts from the given servlet request.
+	 *
 	 * @param request the servlet request
 	 * @return the parts in a MultiValueMap
 	 * @throws MultipartException in case of failures
@@ -50,16 +50,16 @@ public abstract class StandardServletPartUtils {
 				parts.add(part.getName(), part);
 			}
 			return parts;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new MultipartException("Failed to get request parts", ex);
 		}
 	}
 
 	/**
 	 * Retrieve all parts with the given name from the given servlet request.
+	 *
 	 * @param request the servlet request
-	 * @param name the name to look for
+	 * @param name    the name to look for
 	 * @return the parts in a MultiValueMap
 	 * @throws MultipartException in case of failures
 	 */
@@ -72,16 +72,16 @@ public abstract class StandardServletPartUtils {
 				}
 			}
 			return parts;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new MultipartException("Failed to get request parts", ex);
 		}
 	}
 
 	/**
 	 * Bind all parts from the given servlet request.
-	 * @param request the servlet request
-	 * @param mpvs the property values to bind to
+	 *
+	 * @param request   the servlet request
+	 * @param mpvs      the property values to bind to
 	 * @param bindEmpty whether to bind empty parts as well
 	 * @throws MultipartException in case of failures
 	 */
@@ -94,8 +94,7 @@ public abstract class StandardServletPartUtils {
 				if (bindEmpty || part.getSize() > 0) {
 					mpvs.add(key, part);
 				}
-			}
-			else {
+			} else {
 				mpvs.add(key, values);
 			}
 		});

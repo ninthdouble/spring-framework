@@ -19,7 +19,6 @@ package org.springframework.test.web.servlet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
@@ -65,28 +64,28 @@ class MockMvcReuseTests {
 	void sessionAttributesAreClearedBetweenInvocations() throws Exception {
 
 		this.mvc.perform(get("/"))
-			.andExpect(content().string(HELLO))
-			.andExpect(request().sessionAttribute(FOO, nullValue()));
+				.andExpect(content().string(HELLO))
+				.andExpect(request().sessionAttribute(FOO, nullValue()));
 
 		this.mvc.perform(get("/").sessionAttr(FOO, BAR))
-			.andExpect(content().string(HELLO))
-			.andExpect(request().sessionAttribute(FOO, BAR));
+				.andExpect(content().string(HELLO))
+				.andExpect(request().sessionAttribute(FOO, BAR));
 
 		this.mvc.perform(get("/"))
-			.andExpect(content().string(HELLO))
-			.andExpect(request().sessionAttribute(FOO, nullValue()));
+				.andExpect(content().string(HELLO))
+				.andExpect(request().sessionAttribute(FOO, nullValue()));
 	}
 
 	@Test
 	void requestParametersAreClearedBetweenInvocations() throws Exception {
 		this.mvc.perform(get("/"))
-			.andExpect(content().string(HELLO));
+				.andExpect(content().string(HELLO));
 
 		this.mvc.perform(get("/").param(ENIGMA, ""))
-			.andExpect(content().string(ENIGMA));
+				.andExpect(content().string(ENIGMA));
 
 		this.mvc.perform(get("/"))
-			.andExpect(content().string(HELLO));
+				.andExpect(content().string(HELLO));
 	}
 
 

@@ -16,25 +16,21 @@
 
 package org.springframework.transaction.annotation;
 
-import java.time.Duration;
-
 import io.vavr.control.Try;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.testfixture.CallCountingTransactionManager;
 import org.springframework.transaction.testfixture.ReactiveCallCountingTransactionManager;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.time.Duration;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rob Harrop
@@ -146,11 +142,11 @@ public class AnnotationTransactionInterceptorTests {
 
 		assertThatIllegalStateException().isThrownBy(
 				proxy::doSomethingErroneous)
-			.satisfies(ex -> assertGetTransactionAndRollbackCount(1));
+				.satisfies(ex -> assertGetTransactionAndRollbackCount(1));
 
 		assertThatIllegalArgumentException().isThrownBy(
 				proxy::doSomethingElseErroneous)
-			.satisfies(ex -> assertGetTransactionAndRollbackCount(2));
+				.satisfies(ex -> assertGetTransactionAndRollbackCount(2));
 	}
 
 	@Test
@@ -163,7 +159,7 @@ public class AnnotationTransactionInterceptorTests {
 
 		assertThatExceptionOfType(Exception.class).isThrownBy(
 				proxy::doSomethingElseWithCheckedException)
-			.satisfies(ex -> assertGetTransactionAndCommitCount(1));
+				.satisfies(ex -> assertGetTransactionAndCommitCount(1));
 	}
 
 	@Test
@@ -176,7 +172,7 @@ public class AnnotationTransactionInterceptorTests {
 
 		assertThatExceptionOfType(Exception.class).isThrownBy(
 				proxy::doSomethingElseWithCheckedExceptionAndRollbackRule)
-			.satisfies(ex -> assertGetTransactionAndRollbackCount(1));
+				.satisfies(ex -> assertGetTransactionAndRollbackCount(1));
 	}
 
 	@Test
@@ -435,6 +431,42 @@ public class AnnotationTransactionInterceptorTests {
 	}
 
 
+	public interface BaseInterface {
+
+		void doSomething();
+	}
+
+
+	@Transactional
+	public interface TestWithInterface extends BaseInterface {
+
+		@Transactional(readOnly = true)
+		void doSomethingElse();
+
+		default void doSomethingDefault() {
+			assertThat(TransactionSynchronizationManager.isActualTransactionActive()).isTrue();
+			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isFalse();
+		}
+	}
+
+
+	public interface SomeService {
+
+		void foo();
+
+		@Transactional
+		void bar();
+
+		@Transactional(readOnly = true)
+		void fooBar();
+	}
+
+
+	public interface OtherService {
+
+		void foo();
+	}
+
 	@Transactional
 	public static class TestClassLevelOnly {
 
@@ -448,7 +480,6 @@ public class AnnotationTransactionInterceptorTests {
 			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isFalse();
 		}
 	}
-
 
 	@Transactional
 	public static class TestWithSingleMethodOverride {
@@ -470,7 +501,6 @@ public class AnnotationTransactionInterceptorTests {
 		}
 	}
 
-
 	@Transactional(readOnly = true)
 	public static class TestWithSingleMethodOverrideInverted {
 
@@ -490,7 +520,6 @@ public class AnnotationTransactionInterceptorTests {
 			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isTrue();
 		}
 	}
-
 
 	@Transactional
 	public static class TestWithMultiMethodOverride {
@@ -512,7 +541,6 @@ public class AnnotationTransactionInterceptorTests {
 			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isFalse();
 		}
 	}
-
 
 	@Transactional
 	public static class TestWithExceptions {
@@ -593,26 +621,6 @@ public class AnnotationTransactionInterceptorTests {
 		}
 	}
 
-
-	public interface BaseInterface {
-
-		void doSomething();
-	}
-
-
-	@Transactional
-	public interface TestWithInterface extends BaseInterface {
-
-		@Transactional(readOnly = true)
-		void doSomethingElse();
-
-		default void doSomethingDefault() {
-			assertThat(TransactionSynchronizationManager.isActualTransactionActive()).isTrue();
-			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isFalse();
-		}
-	}
-
-
 	public static class TestWithInterfaceImpl implements TestWithInterface {
 
 		@Override
@@ -627,19 +635,6 @@ public class AnnotationTransactionInterceptorTests {
 			assertThat(TransactionSynchronizationManager.isCurrentTransactionReadOnly()).isTrue();
 		}
 	}
-
-
-	public interface SomeService {
-
-		void foo();
-
-		@Transactional
-		void bar();
-
-		@Transactional(readOnly = true)
-		void fooBar();
-	}
-
 
 	public static class SomeServiceImpl implements SomeService {
 
@@ -657,13 +652,6 @@ public class AnnotationTransactionInterceptorTests {
 		public void fooBar() {
 		}
 	}
-
-
-	public interface OtherService {
-
-		void foo();
-	}
-
 
 	@Transactional
 	public static class OtherServiceImpl implements OtherService {

@@ -16,13 +16,8 @@
 
 package org.springframework.test.web.client.match;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -32,6 +27,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 

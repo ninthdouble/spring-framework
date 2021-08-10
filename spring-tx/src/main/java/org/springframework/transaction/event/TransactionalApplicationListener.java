@@ -16,13 +16,13 @@
 
 package org.springframework.transaction.event;
 
-import java.util.function.Consumer;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
+
+import java.util.function.Consumer;
 
 /**
  * An {@link ApplicationListener} that is invoked according to a {@link TransactionPhase}.
@@ -39,20 +39,54 @@ import org.springframework.lang.Nullable;
  * uses the Reactor context instead of thread-local variables, so from the perspective of
  * an event listener, there is no compatible active transaction that it can participate in.
  *
+ * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  * @author Juergen Hoeller
  * @author Oliver Drotbohm
- * @since 5.3
- * @param <E> the specific {@code ApplicationEvent} subclass to listen to
  * @see TransactionalEventListener
  * @see TransactionalApplicationListenerAdapter
  * @see #forPayload
+ * @since 5.3
  */
 public interface TransactionalApplicationListener<E extends ApplicationEvent>
 		extends ApplicationListener<E>, Ordered {
 
 	/**
+	 * Create a new {@code TransactionalApplicationListener} for the given payload consumer,
+	 * to be applied in the default phase {@link TransactionPhase#AFTER_COMMIT}.
+	 *
+	 * @param consumer the event payload consumer
+	 * @param <T>      the type of the event payload
+	 * @return a corresponding {@code TransactionalApplicationListener} instance
+	 * @see PayloadApplicationEvent#getPayload()
+	 * @see TransactionalApplicationListenerAdapter
+	 */
+	static <T> TransactionalApplicationListener<PayloadApplicationEvent<T>> forPayload(Consumer<T> consumer) {
+		return forPayload(TransactionPhase.AFTER_COMMIT, consumer);
+	}
+
+	/**
+	 * Create a new {@code TransactionalApplicationListener} for the given payload consumer.
+	 *
+	 * @param phase    the transaction phase in which to invoke the listener
+	 * @param consumer the event payload consumer
+	 * @param <T>      the type of the event payload
+	 * @return a corresponding {@code TransactionalApplicationListener} instance
+	 * @see PayloadApplicationEvent#getPayload()
+	 * @see TransactionalApplicationListenerAdapter
+	 */
+	static <T> TransactionalApplicationListener<PayloadApplicationEvent<T>> forPayload(
+			TransactionPhase phase, Consumer<T> consumer) {
+
+		TransactionalApplicationListenerAdapter<PayloadApplicationEvent<T>> listener =
+				new TransactionalApplicationListenerAdapter<>(event -> consumer.accept(event.getPayload()));
+		listener.setTransactionPhase(phase);
+		return listener;
+	}
+
+	/**
 	 * Return the execution order within transaction synchronizations.
 	 * <p>Default is {@link Ordered#LOWEST_PRECEDENCE}.
+	 *
 	 * @see org.springframework.transaction.support.TransactionSynchronization#getOrder()
 	 */
 	@Override
@@ -65,6 +99,7 @@ public interface TransactionalApplicationListener<E extends ApplicationEvent>
 	 * <p>It might be necessary for specific completion callback implementations
 	 * to provide a specific id, whereas for other scenarios an empty String
 	 * (as the common default value) is acceptable as well.
+	 *
 	 * @see org.springframework.context.event.SmartApplicationListener#getListenerId()
 	 * @see TransactionalEventListener#id
 	 * @see #addCallback
@@ -84,6 +119,7 @@ public interface TransactionalApplicationListener<E extends ApplicationEvent>
 	/**
 	 * Add a callback to be invoked on processing within transaction synchronization,
 	 * i.e. when {@link #processEvent} is being triggered during actual transactions.
+	 *
 	 * @param callback the synchronization callback to apply
 	 */
 	void addCallback(SynchronizationCallback callback);
@@ -93,41 +129,10 @@ public interface TransactionalApplicationListener<E extends ApplicationEvent>
 	 * {@link #onApplicationEvent(ApplicationEvent)}, a call to this method will
 	 * directly process the given event without deferring it to the associated
 	 * {@link #getTransactionPhase() transaction phase}.
+	 *
 	 * @param event the event to process through the target listener implementation
 	 */
 	void processEvent(E event);
-
-
-	/**
-	 * Create a new {@code TransactionalApplicationListener} for the given payload consumer,
-	 * to be applied in the default phase {@link TransactionPhase#AFTER_COMMIT}.
-	 * @param consumer the event payload consumer
-	 * @param <T> the type of the event payload
-	 * @return a corresponding {@code TransactionalApplicationListener} instance
-	 * @see PayloadApplicationEvent#getPayload()
-	 * @see TransactionalApplicationListenerAdapter
-	 */
-	static <T> TransactionalApplicationListener<PayloadApplicationEvent<T>> forPayload(Consumer<T> consumer) {
-		return forPayload(TransactionPhase.AFTER_COMMIT, consumer);
-	}
-
-	/**
-	 * Create a new {@code TransactionalApplicationListener} for the given payload consumer.
-	 * @param phase the transaction phase in which to invoke the listener
-	 * @param consumer the event payload consumer
-	 * @param <T> the type of the event payload
-	 * @return a corresponding {@code TransactionalApplicationListener} instance
-	 * @see PayloadApplicationEvent#getPayload()
-	 * @see TransactionalApplicationListenerAdapter
-	 */
-	static <T> TransactionalApplicationListener<PayloadApplicationEvent<T>> forPayload(
-			TransactionPhase phase, Consumer<T> consumer) {
-
-		TransactionalApplicationListenerAdapter<PayloadApplicationEvent<T>> listener =
-				new TransactionalApplicationListenerAdapter<>(event -> consumer.accept(event.getPayload()));
-		listener.setTransactionPhase(phase);
-		return listener;
-	}
 
 
 	/**
@@ -141,6 +146,7 @@ public interface TransactionalApplicationListener<E extends ApplicationEvent>
 
 		/**
 		 * Called before transactional event listener invocation.
+		 *
 		 * @param event the event that transaction synchronization is about to process
 		 */
 		default void preProcessEvent(ApplicationEvent event) {
@@ -148,8 +154,9 @@ public interface TransactionalApplicationListener<E extends ApplicationEvent>
 
 		/**
 		 * Called after a transactional event listener invocation.
+		 *
 		 * @param event the event that transaction synchronization finished processing
-		 * @param ex an exception that occurred during listener invocation, if any
+		 * @param ex    an exception that occurred during listener invocation, if any
 		 */
 		default void postProcessEvent(ApplicationEvent event, @Nullable Throwable ex) {
 		}

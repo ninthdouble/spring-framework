@@ -15,14 +15,14 @@
  */
 package org.springframework.web.reactive.socket;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Representation of a WebSocket message.
@@ -55,10 +55,11 @@ public class WebSocketMessage {
 
 	/**
 	 * Constructor for an inbound message with access to the underlying message.
-	 * @param type the type of WebSocket message
-	 * @param payload the message content
+	 *
+	 * @param type          the type of WebSocket message
+	 * @param payload       the message content
 	 * @param nativeMessage the message from the API of the underlying WebSocket
-	 * library, if applicable.
+	 *                      library, if applicable.
 	 * @since 5.3
 	 */
 	public WebSocketMessage(Type type, DataBuffer payload, @Nullable Object nativeMessage) {
@@ -88,6 +89,7 @@ public class WebSocketMessage {
 	 * is applicable for inbound messages only and when the underlying message
 	 * has additional fields other than the content. Currently this is the case
 	 * for Reactor Netty only.
+	 *
 	 * @param <T> the type to cast the underlying message to
 	 * @return the underlying message, or {@code null}
 	 * @since 5.3
@@ -110,6 +112,7 @@ public class WebSocketMessage {
 	 * A shortcut for decoding the raw content of the message to text with the
 	 * given character encoding. This is useful for text WebSocket messages, or
 	 * otherwise when the payload is expected to contain text.
+	 *
 	 * @param charset the character encoding
 	 * @since 5.0.5
 	 */
@@ -124,6 +127,7 @@ public class WebSocketMessage {
 	 * DataBuffer payload = message.getPayload();
 	 * DataBufferUtils.retain(payload);
 	 * </pre>
+	 *
 	 * @see DataBufferUtils#retain(DataBuffer)
 	 */
 	public WebSocketMessage retain() {
@@ -138,6 +142,7 @@ public class WebSocketMessage {
 	 * DataBuffer payload = message.getPayload();
 	 * DataBufferUtils.release(payload);
 	 * </pre>
+	 *
 	 * @see DataBufferUtils#release(DataBuffer)
 	 */
 	public void release() {

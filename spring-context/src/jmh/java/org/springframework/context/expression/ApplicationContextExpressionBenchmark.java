@@ -32,10 +32,18 @@ import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * Benchmark for application context expressions resolution during prototype bean creation.
+ *
  * @author Brian Clozel
  */
 @BenchmarkMode(Mode.Throughput)
 public class ApplicationContextExpressionBenchmark {
+
+	@Benchmark
+	public void prototypeCreationWithSystemProperties(BenchmarkState state, Blackhole bh) {
+		TestBean tb = (TestBean) state.context.getBean("test");
+		bh.consume(tb.getName());
+		bh.consume(tb.getCountry());
+	}
 
 	@State(Scope.Benchmark)
 	public static class BenchmarkState {
@@ -60,12 +68,5 @@ public class ApplicationContextExpressionBenchmark {
 			System.getProperties().remove("country");
 			System.getProperties().remove("name");
 		}
-	}
-
-	@Benchmark
-	public void prototypeCreationWithSystemProperties(BenchmarkState state, Blackhole bh) {
-		TestBean tb = (TestBean) state.context.getBean("test");
-		bh.consume(tb.getName());
-		bh.consume(tb.getCountry());
 	}
 }

@@ -16,6 +16,15 @@
 
 package org.springframework.core.testfixture.io.buffer;
 
+import io.netty.buffer.*;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.core.io.buffer.*;
+import reactor.core.publisher.Mono;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -28,24 +37,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.PoolArenaMetric;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.buffer.PooledByteBufAllocatorMetric;
-import io.netty.buffer.UnpooledByteBufAllocator;
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import reactor.core.publisher.Mono;
-
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
-import org.springframework.core.io.buffer.NettyDataBufferFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,11 +52,33 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 public abstract class AbstractDataBufferAllocatingTests {
 
+	protected DataBufferFactory bufferFactory;
 	@RegisterExtension
 	AfterEachCallback leakDetector = context -> waitForDataBufferRelease(Duration.ofSeconds(2));
 
-	protected DataBufferFactory bufferFactory;
+	private static long getAllocations(List<PoolArenaMetric> metrics) {
+		return metrics.stream().mapToLong(PoolArenaMetric::numActiveAllocations).sum();
+	}
 
+	@SuppressWarnings("deprecation") // PooledByteBufAllocator no longer supports tinyCacheSize.
+	public static Stream<Arguments> dataBufferFactories() {
+		return Stream.of(
+				arguments("NettyDataBufferFactory - UnpooledByteBufAllocator - preferDirect = true",
+						new NettyDataBufferFactory(new UnpooledByteBufAllocator(true))),
+				arguments("NettyDataBufferFactory - UnpooledByteBufAllocator - preferDirect = false",
+						new NettyDataBufferFactory(new UnpooledByteBufAllocator(false))),
+				// 1) Disable caching for reliable leak detection, see https://github.com/netty/netty/issues/5275
+				// 2) maxOrder is 4 (vs default 11) but can be increased if necessary
+				arguments("NettyDataBufferFactory - PooledByteBufAllocator - preferDirect = true",
+						new NettyDataBufferFactory(new PooledByteBufAllocator(true, 1, 1, 4096, 4, 0, 0, 0, true))),
+				arguments("NettyDataBufferFactory - PooledByteBufAllocator - preferDirect = false",
+						new NettyDataBufferFactory(new PooledByteBufAllocator(false, 1, 1, 4096, 4, 0, 0, 0, true))),
+				arguments("DefaultDataBufferFactory - preferDirect = true",
+						new DefaultDataBufferFactory(true)),
+				arguments("DefaultDataBufferFactory - preferDirect = false",
+						new DefaultDataBufferFactory(false))
+		);
+	}
 
 	protected DataBuffer createDataBuffer(int capacity) {
 		return this.bufferFactory.allocateBuffer(capacity);
@@ -110,8 +123,7 @@ public abstract class AbstractDataBufferAllocatingTests {
 			try {
 				verifyAllocations();
 				break;
-			}
-			catch (AssertionError ex) {
+			} catch (AssertionError ex) {
 				if (Instant.now().isAfter(start.plus(duration))) {
 					throw ex;
 				}
@@ -134,8 +146,7 @@ public abstract class AbstractDataBufferAllocatingTests {
 					if (Instant.now().isBefore(start.plus(Duration.ofSeconds(5)))) {
 						try {
 							Thread.sleep(50);
-						}
-						catch (InterruptedException ex) {
+						} catch (InterruptedException ex) {
 							// ignore
 						}
 						continue;
@@ -146,36 +157,11 @@ public abstract class AbstractDataBufferAllocatingTests {
 		}
 	}
 
-	private static long getAllocations(List<PoolArenaMetric> metrics) {
-		return metrics.stream().mapToLong(PoolArenaMetric::numActiveAllocations).sum();
-	}
-
-
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	@ParameterizedTest(name = "[{index}] {0}")
 	@MethodSource("org.springframework.core.testfixture.io.buffer.AbstractDataBufferAllocatingTests#dataBufferFactories()")
 	public @interface ParameterizedDataBufferAllocatingTest {
-	}
-
-	@SuppressWarnings("deprecation") // PooledByteBufAllocator no longer supports tinyCacheSize.
-	public static Stream<Arguments> dataBufferFactories() {
-		return Stream.of(
-			arguments("NettyDataBufferFactory - UnpooledByteBufAllocator - preferDirect = true",
-					new NettyDataBufferFactory(new UnpooledByteBufAllocator(true))),
-			arguments("NettyDataBufferFactory - UnpooledByteBufAllocator - preferDirect = false",
-					new NettyDataBufferFactory(new UnpooledByteBufAllocator(false))),
-			// 1) Disable caching for reliable leak detection, see https://github.com/netty/netty/issues/5275
-			// 2) maxOrder is 4 (vs default 11) but can be increased if necessary
-			arguments("NettyDataBufferFactory - PooledByteBufAllocator - preferDirect = true",
-					new NettyDataBufferFactory(new PooledByteBufAllocator(true, 1, 1, 4096, 4, 0, 0, 0, true))),
-			arguments("NettyDataBufferFactory - PooledByteBufAllocator - preferDirect = false",
-					new NettyDataBufferFactory(new PooledByteBufAllocator(false, 1, 1, 4096, 4, 0, 0, 0, true))),
-			arguments("DefaultDataBufferFactory - preferDirect = true",
-					new DefaultDataBufferFactory(true)),
-			arguments("DefaultDataBufferFactory - preferDirect = false",
-					new DefaultDataBufferFactory(false))
-		);
 	}
 
 }

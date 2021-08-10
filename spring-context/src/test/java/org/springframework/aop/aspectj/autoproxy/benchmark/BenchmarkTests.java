@@ -195,16 +195,15 @@ public class BenchmarkTests {
 
 class MultiplyReturnValueInterceptor implements MethodInterceptor {
 
-	private int multiple = 2;
-
 	public int invocations;
-
-	public void setMultiple(int multiple) {
-		this.multiple = multiple;
-	}
+	private int multiple = 2;
 
 	public int getMultiple() {
 		return this.multiple;
+	}
+
+	public void setMultiple(int multiple) {
+		this.multiple = multiple;
 	}
 
 	@Override
@@ -221,21 +220,21 @@ class TraceAfterReturningAdvice implements AfterReturningAdvice {
 
 	public int afterTakesInt;
 
+	public static Advisor advisor() {
+		return new DefaultPointcutAdvisor(
+				new StaticMethodMatcherPointcut() {
+					@Override
+					public boolean matches(Method method, Class<?> targetClass) {
+						return method.getParameterCount() == 1 &&
+								method.getParameterTypes()[0].equals(Integer.class);
+					}
+				},
+				new TraceAfterReturningAdvice());
+	}
+
 	@Override
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
 		++afterTakesInt;
-	}
-
-	public static Advisor advisor() {
-		return new DefaultPointcutAdvisor(
-			new StaticMethodMatcherPointcut() {
-				@Override
-				public boolean matches(Method method, Class<?> targetClass) {
-					return method.getParameterCount() == 1 &&
-						method.getParameterTypes()[0].equals(Integer.class);
-				}
-			},
-			new TraceAfterReturningAdvice());
 	}
 
 }
@@ -265,20 +264,20 @@ class TraceBeforeAdvice implements MethodBeforeAdvice {
 
 	public int beforeStringReturn;
 
+	public static Advisor advisor() {
+		return new DefaultPointcutAdvisor(
+				new StaticMethodMatcherPointcut() {
+					@Override
+					public boolean matches(Method method, Class<?> targetClass) {
+						return method.getReturnType().equals(String.class);
+					}
+				},
+				new TraceBeforeAdvice());
+	}
+
 	@Override
 	public void before(Method method, Object[] args, Object target) throws Throwable {
 		++beforeStringReturn;
-	}
-
-	public static Advisor advisor() {
-		return new DefaultPointcutAdvisor(
-			new StaticMethodMatcherPointcut() {
-				@Override
-				public boolean matches(Method method, Class<?> targetClass) {
-					return method.getReturnType().equals(String.class);
-				}
-			},
-			new TraceBeforeAdvice());
 	}
 
 }

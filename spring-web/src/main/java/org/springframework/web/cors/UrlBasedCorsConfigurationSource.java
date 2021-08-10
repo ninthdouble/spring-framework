@@ -16,12 +16,6 @@
 
 package org.springframework.web.cors;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
@@ -32,6 +26,11 @@ import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * {@code CorsConfigurationSource} that uses URL path patterns to select the
@@ -47,9 +46,9 @@ import org.springframework.web.util.pattern.PathPatternParser;
  *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
- * @since 4.2
  * @see PathPattern
  * @see AntPathMatcher
+ * @since 4.2
  */
 public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource {
 
@@ -57,17 +56,12 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 
 	private final PathPatternParser patternParser;
-
+	private final Map<PathPattern, CorsConfiguration> corsConfigurations = new LinkedHashMap<>();
 	private UrlPathHelper urlPathHelper = UrlPathHelper.defaultInstance;
-
 	private PathMatcher pathMatcher = defaultPathMatcher;
-
 	@Nullable
 	private String lookupPathAttributeName;
-
 	private boolean allowInitLookupPath = true;
-
-	private final Map<PathPattern, CorsConfiguration> corsConfigurations = new LinkedHashMap<>();
 
 
 	/**
@@ -79,6 +73,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 	/**
 	 * Constructor with a {@link PathPatternParser} to parse patterns with.
+	 *
 	 * @param parser the parser to use
 	 * @since 5.3
 	 */
@@ -92,6 +87,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	 * Shortcut to the
 	 * {@link org.springframework.web.util.UrlPathHelper#setAlwaysUseFullPath
 	 * same property} on the configured {@code UrlPathHelper}.
+	 *
 	 * @deprecated as of 5.3 in favor of using
 	 * {@link #setUrlPathHelper(UrlPathHelper)}, if at all. For further details,
 	 * please see {@link #setAllowInitLookupPath(boolean)}.
@@ -106,6 +102,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	 * Shortcut to the
 	 * {@link org.springframework.web.util.UrlPathHelper#setUrlDecode same property}
 	 * on the configured {@code UrlPathHelper}.
+	 *
 	 * @deprecated as of 5.3 in favor of using
 	 * {@link #setUrlPathHelper(UrlPathHelper)}, if at all. For further details,
 	 * please see {@link #setAllowInitLookupPath(boolean)}.
@@ -120,6 +117,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	 * Shortcut to the
 	 * {@link org.springframework.web.util.UrlPathHelper#setRemoveSemicolonContent
 	 * same property} on the configured {@code UrlPathHelper}.
+	 *
 	 * @deprecated as of 5.3 in favor of using
 	 * {@link #setUrlPathHelper(UrlPathHelper)}, if at all. For further details,
 	 * please see {@link #setAllowInitLookupPath(boolean)}.
@@ -165,8 +163,9 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	 * {@code RequestPath} can be parsed earlier via
 	 * {@link org.springframework.web.filter.ServletRequestPathFilter
 	 * ServletRequestPathFilter}.
+	 *
 	 * @param allowInitLookupPath whether to disable lazy initialization
-	 * and fail if not already resolved
+	 *                            and fail if not already resolved
 	 * @since 5.3
 	 */
 	public void setAllowInitLookupPath(boolean allowInitLookupPath) {
@@ -177,6 +176,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	 * Configure the name of the attribute that holds the lookupPath extracted
 	 * via {@link UrlPathHelper#getLookupPathForRequest(HttpServletRequest)}.
 	 * <p>By default this is {@link UrlPathHelper#PATH_ATTRIBUTE}.
+	 *
 	 * @param name the request attribute to check
 	 * @since 5.2
 	 * @deprecated as of 5.3 in favor of {@link UrlPathHelper#PATH_ATTRIBUTE}.
@@ -201,26 +201,10 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	}
 
 	/**
-	 * Set the CORS configuration mappings.
-	 * <p>For pattern syntax see {@link AntPathMatcher} and {@link PathPattern}
-	 * as well as class-level Javadoc for details on which one may in use.
-	 * Generally the syntax is largely the same with {@link PathPattern} more
-	 * tailored for web usage.
-	 * @param corsConfigurations the mappings to use
-	 * @see PathPattern
-	 * @see AntPathMatcher
-	 */
-	public void setCorsConfigurations(@Nullable Map<String, CorsConfiguration> corsConfigurations) {
-		this.corsConfigurations.clear();
-		if (corsConfigurations != null) {
-			corsConfigurations.forEach(this::registerCorsConfiguration);
-		}
-	}
-
-	/**
 	 * Variant of {@link #setCorsConfigurations(Map)} to register one mapping at a time.
+	 *
 	 * @param pattern the mapping pattern
-	 * @param config the CORS configuration to use for the pattern
+	 * @param config  the CORS configuration to use for the pattern
 	 * @see PathPattern
 	 * @see AntPathMatcher
 	 */
@@ -237,6 +221,23 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 		return Collections.unmodifiableMap(result);
 	}
 
+	/**
+	 * Set the CORS configuration mappings.
+	 * <p>For pattern syntax see {@link AntPathMatcher} and {@link PathPattern}
+	 * as well as class-level Javadoc for details on which one may in use.
+	 * Generally the syntax is largely the same with {@link PathPattern} more
+	 * tailored for web usage.
+	 *
+	 * @param corsConfigurations the mappings to use
+	 * @see PathPattern
+	 * @see AntPathMatcher
+	 */
+	public void setCorsConfigurations(@Nullable Map<String, CorsConfiguration> corsConfigurations) {
+		this.corsConfigurations.clear();
+		if (corsConfigurations != null) {
+			corsConfigurations.forEach(this::registerCorsConfiguration);
+		}
+	}
 
 	@Override
 	@Nullable

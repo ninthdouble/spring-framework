@@ -17,7 +17,6 @@
 package org.springframework.beans.factory.xml;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.testfixture.beans.DummyBean;
@@ -94,7 +93,7 @@ public class SimpleConstructorNamespaceHandlerTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				new XmlBeanDefinitionReader(bf).loadBeanDefinitions(
-							new ClassPathResource("simpleConstructorNamespaceHandlerTestsWithErrors.xml", getClass())));
+						new ClassPathResource("simpleConstructorNamespaceHandlerTestsWithErrors.xml", getClass())));
 	}
 
 	@Test

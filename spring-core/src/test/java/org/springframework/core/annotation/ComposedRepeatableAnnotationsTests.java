@@ -16,22 +16,15 @@
 
 package org.springframework.core.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.*;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedRepeatableAnnotations;
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedRepeatableAnnotations;
 
@@ -42,11 +35,11 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.getMerge
  * <p>See <a href="https://jira.spring.io/browse/SPR-13973">SPR-13973</a>.
  *
  * @author Sam Brannen
- * @since 4.3
  * @see AnnotatedElementUtils#getMergedRepeatableAnnotations
  * @see AnnotatedElementUtils#findMergedRepeatableAnnotations
  * @see AnnotatedElementUtilsTests
  * @see MultipleComposedAnnotationsOnSingleAnnotatedElementTests
+ * @since 4.3
  */
 class ComposedRepeatableAnnotationsTests {
 
@@ -137,7 +130,7 @@ class ComposedRepeatableAnnotationsTests {
 	void findInvalidRepeatableAnnotationContainerWithArrayValueAttributeButWrongComponentType() {
 		expectContainerWithArrayValueAttributeButWrongComponentType(() ->
 				findMergedRepeatableAnnotations(getClass(), InvalidRepeatable.class,
-					ContainerWithArrayValueAttributeButWrongComponentType.class));
+						ContainerWithArrayValueAttributeButWrongComponentType.class));
 	}
 
 	@Test
@@ -181,34 +174,34 @@ class ComposedRepeatableAnnotationsTests {
 
 	private void expectNonRepeatableAnnotation(ThrowingCallable throwingCallable) {
 		assertThatIllegalArgumentException().isThrownBy(throwingCallable)
-			.withMessageStartingWith("Annotation type must be a repeatable annotation")
-			.withMessageContaining("failed to resolve container type for")
-			.withMessageContaining(NonRepeatable.class.getName());
+				.withMessageStartingWith("Annotation type must be a repeatable annotation")
+				.withMessageContaining("failed to resolve container type for")
+				.withMessageContaining(NonRepeatable.class.getName());
 	}
 
 	private void expectContainerMissingValueAttribute(ThrowingCallable throwingCallable) {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(throwingCallable)
-			.withMessageStartingWith("Invalid declaration of container type")
-			.withMessageContaining(ContainerMissingValueAttribute.class.getName())
-			.withMessageContaining("for repeatable annotation")
-			.withMessageContaining(InvalidRepeatable.class.getName())
-			.withCauseExactlyInstanceOf(NoSuchMethodException.class);
+				.withMessageStartingWith("Invalid declaration of container type")
+				.withMessageContaining(ContainerMissingValueAttribute.class.getName())
+				.withMessageContaining("for repeatable annotation")
+				.withMessageContaining(InvalidRepeatable.class.getName())
+				.withCauseExactlyInstanceOf(NoSuchMethodException.class);
 	}
 
 	private void expectContainerWithNonArrayValueAttribute(ThrowingCallable throwingCallable) {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(throwingCallable)
-			.withMessageStartingWith("Container type")
-			.withMessageContaining(ContainerWithNonArrayValueAttribute.class.getName())
-			.withMessageContaining("must declare a 'value' attribute for an array of type")
-			.withMessageContaining(InvalidRepeatable.class.getName());
+				.withMessageStartingWith("Container type")
+				.withMessageContaining(ContainerWithNonArrayValueAttribute.class.getName())
+				.withMessageContaining("must declare a 'value' attribute for an array of type")
+				.withMessageContaining(InvalidRepeatable.class.getName());
 	}
 
 	private void expectContainerWithArrayValueAttributeButWrongComponentType(ThrowingCallable throwingCallable) {
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(throwingCallable)
-			.withMessageStartingWith("Container type")
-			.withMessageContaining(ContainerWithArrayValueAttributeButWrongComponentType.class.getName())
-			.withMessageContaining("must declare a 'value' attribute for an array of type")
-			.withMessageContaining(InvalidRepeatable.class.getName());
+				.withMessageStartingWith("Container type")
+				.withMessageContaining(ContainerWithArrayValueAttributeButWrongComponentType.class.getName())
+				.withMessageContaining("must declare a 'value' attribute for an array of type")
+				.withMessageContaining(InvalidRepeatable.class.getName());
 	}
 
 	private void assertGetRepeatableAnnotations(AnnotatedElement element) {
@@ -291,7 +284,7 @@ class ComposedRepeatableAnnotationsTests {
 	}
 
 	@PeteRepeat("shadowed")
-	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Inherited
 	@interface ForPetesSake {
@@ -301,7 +294,7 @@ class ComposedRepeatableAnnotationsTests {
 	}
 
 	@PeteRepeat("shadowed")
-	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Inherited
 	@interface ForTheLoveOfFoo {
@@ -310,36 +303,11 @@ class ComposedRepeatableAnnotationsTests {
 		String value();
 	}
 
-	@PeteRepeats({ @PeteRepeat("B"), @PeteRepeat("C") })
-	@Target({ ElementType.METHOD, ElementType.TYPE })
+	@PeteRepeats({@PeteRepeat("B"), @PeteRepeat("C")})
+	@Target({ElementType.METHOD, ElementType.TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Inherited
 	@interface ComposedContainer {
-	}
-
-	@PeteRepeat("A")
-	@PeteRepeats({ @PeteRepeat("B"), @PeteRepeat("C") })
-	static class RepeatableClass {
-	}
-
-	static class SubRepeatableClass extends RepeatableClass {
-	}
-
-	@ForPetesSake("B")
-	@ForTheLoveOfFoo("C")
-	@PeteRepeat("A")
-	static class ComposedRepeatableClass {
-	}
-
-	@ForPetesSake("C")
-	@PeteRepeats(@PeteRepeat("A"))
-	@PeteRepeat("B")
-	static class ComposedRepeatableMixedWithContainerClass {
-	}
-
-	@PeteRepeat("A")
-	@ComposedContainer
-	static class ComposedContainerClass {
 	}
 
 	@Target(ElementType.TYPE)
@@ -370,8 +338,33 @@ class ComposedRepeatableAnnotationsTests {
 		String name() default "";
 	}
 
+	@PeteRepeat("A")
+	@PeteRepeats({@PeteRepeat("B"), @PeteRepeat("C")})
+	static class RepeatableClass {
+	}
+
+	static class SubRepeatableClass extends RepeatableClass {
+	}
+
+	@ForPetesSake("B")
+	@ForTheLoveOfFoo("C")
+	@PeteRepeat("A")
+	static class ComposedRepeatableClass {
+	}
+
+	@ForPetesSake("C")
+	@PeteRepeats(@PeteRepeat("A"))
+	@PeteRepeat("B")
+	static class ComposedRepeatableMixedWithContainerClass {
+	}
+
+	@PeteRepeat("A")
+	@ComposedContainer
+	static class ComposedContainerClass {
+	}
+
 	@ComposedNoninherited(name = "C")
-	@Noninheriteds({ @Noninherited(value = "A"), @Noninherited(name = "B") })
+	@Noninheriteds({@Noninherited(value = "A"), @Noninherited(name = "B")})
 	static class NoninheritedRepeatableClass {
 	}
 

@@ -16,11 +16,14 @@
 
 package org.springframework.web.reactive.socket.adapter;
 
-import java.util.function.Consumer;
-
 import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.reactivestreams.Publisher;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.web.reactive.socket.CloseStatus;
+import org.springframework.web.reactive.socket.HandshakeInfo;
+import org.springframework.web.reactive.socket.WebSocketMessage;
+import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
@@ -30,11 +33,7 @@ import reactor.netty.channel.ChannelOperations;
 import reactor.netty.http.websocket.WebsocketInbound;
 import reactor.netty.http.websocket.WebsocketOutbound;
 
-import org.springframework.core.io.buffer.NettyDataBufferFactory;
-import org.springframework.web.reactive.socket.CloseStatus;
-import org.springframework.web.reactive.socket.HandshakeInfo;
-import org.springframework.web.reactive.socket.WebSocketMessage;
-import org.springframework.web.reactive.socket.WebSocketSession;
+import java.util.function.Consumer;
 
 /**
  * {@link WebSocketSession} implementation for use with the Reactor Netty's
@@ -55,18 +54,19 @@ public class ReactorNettyWebSocketSession
 	 * Constructor for the session, using the {@link #DEFAULT_FRAME_MAX_SIZE} value.
 	 */
 	public ReactorNettyWebSocketSession(WebsocketInbound inbound, WebsocketOutbound outbound,
-			HandshakeInfo info, NettyDataBufferFactory bufferFactory) {
+										HandshakeInfo info, NettyDataBufferFactory bufferFactory) {
 
 		this(inbound, outbound, info, bufferFactory, DEFAULT_FRAME_MAX_SIZE);
 	}
 
 	/**
 	 * Constructor with an additional maxFramePayloadLength argument.
+	 *
 	 * @since 5.1
 	 */
 	public ReactorNettyWebSocketSession(WebsocketInbound inbound, WebsocketOutbound outbound,
-			HandshakeInfo info, NettyDataBufferFactory bufferFactory,
-			int maxFramePayloadLength) {
+										HandshakeInfo info, NettyDataBufferFactory bufferFactory,
+										int maxFramePayloadLength) {
 
 		super(new WebSocketConnection(inbound, outbound), info, bufferFactory);
 		this.maxFramePayloadLength = maxFramePayloadLength;
@@ -76,6 +76,7 @@ public class ReactorNettyWebSocketSession
 
 	/**
 	 * Return the id of the underlying Netty channel.
+	 *
 	 * @since 5.3.4
 	 */
 	public ChannelId getChannelId() {

@@ -16,16 +16,15 @@
 
 package org.springframework.web.cors.reactive;
 
-import reactor.core.publisher.Mono;
-
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 /**
  * Handler for CORS pre-flight requests.
  *
  * @author Rossen Stoyanchev
- * @since 5.3.4
  * @see PreFlightRequestWebFilter
+ * @since 5.3.4
  */
 public interface PreFlightRequestHandler {
 
@@ -34,6 +33,7 @@ public interface PreFlightRequestHandler {
 	 * that matches the expected actual request. As a result of handling, the
 	 * response should be updated with CORS headers or rejected with
 	 * {@link org.springframework.http.HttpStatus#FORBIDDEN}.
+	 *
 	 * @param exchange the exchange for the request
 	 * @return a completion handle
 	 */

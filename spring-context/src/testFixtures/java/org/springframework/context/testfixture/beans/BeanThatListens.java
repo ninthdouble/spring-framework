@@ -16,10 +16,10 @@
 
 package org.springframework.context.testfixture.beans;
 
-import java.util.Map;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+
+import java.util.Map;
 
 /**
  * A stub {@link ApplicationListener}.

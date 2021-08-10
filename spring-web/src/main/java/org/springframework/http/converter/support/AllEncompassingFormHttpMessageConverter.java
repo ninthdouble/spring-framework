@@ -64,7 +64,7 @@ public class AllEncompassingFormHttpMessageConverter extends FormHttpMessageConv
 		ClassLoader classLoader = AllEncompassingFormHttpMessageConverter.class.getClassLoader();
 		jaxb2Present = ClassUtils.isPresent("javax.xml.bind.Binder", classLoader);
 		jackson2Present = ClassUtils.isPresent("com.fasterxml.jackson.databind.ObjectMapper", classLoader) &&
-						ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
+				ClassUtils.isPresent("com.fasterxml.jackson.core.JsonGenerator", classLoader);
 		jackson2XmlPresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.xml.XmlMapper", classLoader);
 		jackson2SmilePresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.smile.SmileFactory", classLoader);
 		gsonPresent = ClassUtils.isPresent("com.google.gson.Gson", classLoader);
@@ -77,8 +77,7 @@ public class AllEncompassingFormHttpMessageConverter extends FormHttpMessageConv
 		if (!shouldIgnoreXml) {
 			try {
 				addPartConverter(new SourceHttpMessageConverter<>());
-			}
-			catch (Error err) {
+			} catch (Error err) {
 				// Ignore when no TransformerFactory implementation is available
 			}
 
@@ -89,14 +88,11 @@ public class AllEncompassingFormHttpMessageConverter extends FormHttpMessageConv
 
 		if (jackson2Present) {
 			addPartConverter(new MappingJackson2HttpMessageConverter());
-		}
-		else if (gsonPresent) {
+		} else if (gsonPresent) {
 			addPartConverter(new GsonHttpMessageConverter());
-		}
-		else if (jsonbPresent) {
+		} else if (jsonbPresent) {
 			addPartConverter(new JsonbHttpMessageConverter());
-		}
-		else if (kotlinSerializationJsonPresent) {
+		} else if (kotlinSerializationJsonPresent) {
 			addPartConverter(new KotlinSerializationJsonHttpMessageConverter());
 		}
 

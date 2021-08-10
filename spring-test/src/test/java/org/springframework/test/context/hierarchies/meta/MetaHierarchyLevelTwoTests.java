@@ -17,7 +17,6 @@
 package org.springframework.test.context.hierarchies.meta;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,23 +35,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("prod")
 class MetaHierarchyLevelTwoTests extends MetaHierarchyLevelOneTests {
 
-	@Configuration
-	@Profile("prod")
-	static class Config {
-
-		@Bean
-		String bar() {
-			return "Prod Bar";
-		}
-	}
-
-
 	@Autowired
 	protected ApplicationContext context;
-
 	@Autowired
 	private String bar;
-
 
 	@Test
 	void bar() {
@@ -64,6 +50,16 @@ class MetaHierarchyLevelTwoTests extends MetaHierarchyLevelOneTests {
 		assertThat(context).as("child ApplicationContext").isNotNull();
 		assertThat(context.getParent()).as("parent ApplicationContext").isNotNull();
 		assertThat(context.getParent().getParent()).as("grandparent ApplicationContext").isNull();
+	}
+
+	@Configuration
+	@Profile("prod")
+	static class Config {
+
+		@Bean
+		String bar() {
+			return "Prod Bar";
+		}
 	}
 
 }

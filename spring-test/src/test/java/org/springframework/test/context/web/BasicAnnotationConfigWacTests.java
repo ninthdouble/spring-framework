@@ -17,7 +17,6 @@
 package org.springframework.test.context.web;
 
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,20 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration
 public class BasicAnnotationConfigWacTests extends AbstractBasicWacTests {
 
-	@Configuration
-	static class Config {
-
-		@Bean
-		public String foo() {
-			return "enigma";
-		}
-
-		@Bean
-		public ServletContextAwareBean servletContextAwareBean() {
-			return new ServletContextAwareBean();
-		}
-	}
-
 	@Autowired
 	protected ServletContextAwareBean servletContextAwareBean;
 
@@ -58,6 +43,20 @@ public class BasicAnnotationConfigWacTests extends AbstractBasicWacTests {
 	public void servletContextAwareBeanProcessed() {
 		assertThat(servletContextAwareBean).isNotNull();
 		assertThat(servletContextAwareBean.servletContext).isNotNull();
+	}
+
+	@Configuration
+	static class Config {
+
+		@Bean
+		public String foo() {
+			return "enigma";
+		}
+
+		@Bean
+		public ServletContextAwareBean servletContextAwareBean() {
+			return new ServletContextAwareBean();
+		}
 	}
 
 }

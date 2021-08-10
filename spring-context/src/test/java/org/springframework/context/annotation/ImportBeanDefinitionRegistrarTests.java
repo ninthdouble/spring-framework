@@ -58,18 +58,16 @@ public class ImportBeanDefinitionRegistrarTests {
 	}
 
 
-	@Sample
-	@Configuration
-	static class Config {
-	}
-
-
 	@Target(ElementType.TYPE)
 	@Retention(RetentionPolicy.RUNTIME)
 	@Import(SampleRegistrar.class)
 	public @interface Sample {
 	}
 
+	@Sample
+	@Configuration
+	static class Config {
+	}
 
 	private static class SampleRegistrar implements ImportBeanDefinitionRegistrar,
 			BeanClassLoaderAware, ResourceLoaderAware, BeanFactoryAware, EnvironmentAware {
@@ -101,7 +99,7 @@ public class ImportBeanDefinitionRegistrarTests {
 
 		@Override
 		public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
-				BeanDefinitionRegistry registry) {
+											BeanDefinitionRegistry registry) {
 		}
 	}
 

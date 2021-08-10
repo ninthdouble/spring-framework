@@ -16,10 +16,6 @@
 
 package org.springframework.transaction.event;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ApplicationListenerMethodAdapter;
 import org.springframework.context.event.EventListener;
@@ -27,6 +23,10 @@ import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * {@link GenericApplicationListener} adapter that delegates the processing of
@@ -40,10 +40,10 @@ import org.springframework.util.Assert;
  *
  * @author Stephane Nicoll
  * @author Juergen Hoeller
- * @since 5.3
  * @see TransactionalEventListener
  * @see TransactionalApplicationListener
  * @see TransactionalApplicationListenerAdapter
+ * @since 5.3
  */
 public class TransactionalApplicationListenerMethodAdapter extends ApplicationListenerMethodAdapter
 		implements TransactionalApplicationListener<ApplicationEvent> {
@@ -57,9 +57,10 @@ public class TransactionalApplicationListenerMethodAdapter extends ApplicationLi
 
 	/**
 	 * Construct a new TransactionalApplicationListenerMethodAdapter.
-	 * @param beanName the name of the bean to invoke the listener method on
+	 *
+	 * @param beanName    the name of the bean to invoke the listener method on
 	 * @param targetClass the target class that the method is declared on
-	 * @param method the listener method to invoke
+	 * @param method      the listener method to invoke
 	 */
 	public TransactionalApplicationListenerMethodAdapter(String beanName, Class<?> targetClass, Method method) {
 		super(beanName, targetClass, method);
@@ -91,14 +92,12 @@ public class TransactionalApplicationListenerMethodAdapter extends ApplicationLi
 				TransactionSynchronizationManager.isActualTransactionActive()) {
 			TransactionSynchronizationManager.registerSynchronization(
 					new TransactionalApplicationListenerSynchronization<>(event, this, this.callbacks));
-		}
-		else if (this.annotation.fallbackExecution()) {
+		} else if (this.annotation.fallbackExecution()) {
 			if (this.annotation.phase() == TransactionPhase.AFTER_ROLLBACK && logger.isWarnEnabled()) {
 				logger.warn("Processing " + event + " as a fallback execution on AFTER_ROLLBACK phase");
 			}
 			processEvent(event);
-		}
-		else {
+		} else {
 			// No transactional event execution at all
 			if (logger.isDebugEnabled()) {
 				logger.debug("No transaction is active - skipping " + event);

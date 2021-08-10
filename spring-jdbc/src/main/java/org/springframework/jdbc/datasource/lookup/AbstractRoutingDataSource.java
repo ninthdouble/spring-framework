@@ -16,18 +16,17 @@
 
 package org.springframework.jdbc.datasource.lookup;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Abstract {@link javax.sql.DataSource} implementation that routes {@link #getConnection()}
@@ -35,10 +34,10 @@ import org.springframework.util.CollectionUtils;
  * (but not necessarily) determined through some thread-bound transaction context.
  *
  * @author Juergen Hoeller
- * @since 2.0.1
  * @see #setTargetDataSources
  * @see #setDefaultTargetDataSource
  * @see #determineCurrentLookupKey()
+ * @since 2.0.1
  */
 public abstract class AbstractRoutingDataSource extends AbstractDataSource implements InitializingBean {
 
@@ -95,6 +94,7 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * <p>Switch this flag to "false" if you would prefer the fallback to only apply
 	 * if the lookup key was {@code null}. Lookup keys without a DataSource
 	 * entry will then lead to an IllegalStateException.
+	 *
 	 * @see #setTargetDataSources
 	 * @see #setDefaultTargetDataSource
 	 * @see #determineCurrentLookupKey()
@@ -136,6 +136,7 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * the actual lookup key to be used for matching with the
 	 * {@link #determineCurrentLookupKey() current lookup key}.
 	 * <p>The default implementation simply returns the given key as-is.
+	 *
 	 * @param lookupKey the lookup key object as specified by the user
 	 * @return the lookup key as needed for matching
 	 */
@@ -147,19 +148,18 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * Resolve the specified data source object into a DataSource instance.
 	 * <p>The default implementation handles DataSource instances and data source
 	 * names (to be resolved via a {@link #setDataSourceLookup DataSourceLookup}).
+	 *
 	 * @param dataSource the data source value object as specified in the
-	 * {@link #setTargetDataSources targetDataSources} map
+	 *                   {@link #setTargetDataSources targetDataSources} map
 	 * @return the resolved DataSource (never {@code null})
 	 * @throws IllegalArgumentException in case of an unsupported value type
 	 */
 	protected DataSource resolveSpecifiedDataSource(Object dataSource) throws IllegalArgumentException {
 		if (dataSource instanceof DataSource) {
 			return (DataSource) dataSource;
-		}
-		else if (dataSource instanceof String) {
+		} else if (dataSource instanceof String) {
 			return this.dataSourceLookup.getDataSource((String) dataSource);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException(
 					"Illegal data source value - only [javax.sql.DataSource] and String supported: " + dataSource);
 		}
@@ -167,10 +167,11 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 
 	/**
 	 * Return the resolved target DataSources that this router manages.
+	 *
 	 * @return an unmodifiable map of resolved lookup keys and DataSources
 	 * @throws IllegalStateException if the target DataSources are not resolved yet
-	 * @since 5.2.9
 	 * @see #setTargetDataSources
+	 * @since 5.2.9
 	 */
 	public Map<Object, DataSource> getResolvedDataSources() {
 		Assert.state(this.resolvedDataSources != null, "DataSources not resolved yet - call afterPropertiesSet");
@@ -179,9 +180,10 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 
 	/**
 	 * Return the resolved default target DataSource, if any.
+	 *
 	 * @return the default DataSource, or {@code null} if none or not resolved yet
-	 * @since 5.2.9
 	 * @see #setDefaultTargetDataSource
+	 * @since 5.2.9
 	 */
 	@Nullable
 	public DataSource getResolvedDefaultDataSource() {
@@ -219,6 +221,7 @@ public abstract class AbstractRoutingDataSource extends AbstractDataSource imple
 	 * a lookup in the {@link #setTargetDataSources targetDataSources} map,
 	 * falls back to the specified
 	 * {@link #setDefaultTargetDataSource default target DataSource} if necessary.
+	 *
 	 * @see #determineCurrentLookupKey()
 	 */
 	protected DataSource determineTargetDataSource() {

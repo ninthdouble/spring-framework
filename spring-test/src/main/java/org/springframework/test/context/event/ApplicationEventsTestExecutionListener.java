@@ -16,8 +16,6 @@
 
 package org.springframework.test.context.event;
 
-import java.io.Serializable;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +25,8 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestContextAnnotationUtils;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
 
 /**
  * {@code TestExecutionListener} which provides support for {@link ApplicationEvents}.
@@ -42,9 +42,9 @@ import org.springframework.util.Assert;
  * effectively does nothing.
  *
  * @author Sam Brannen
- * @since 5.3.3
  * @see ApplicationEvents
  * @see ApplicationEventsHolder
+ * @since 5.3.3
  */
 public class ApplicationEventsTestExecutionListener extends AbstractTestExecutionListener {
 
@@ -103,7 +103,7 @@ public class ApplicationEventsTestExecutionListener extends AbstractTestExecutio
 				"The ApplicationContext for the test must be an AbstractApplicationContext");
 		AbstractApplicationContext aac = (AbstractApplicationContext) applicationContext;
 		// Synchronize to avoid race condition in parallel test execution
-		synchronized(applicationEventsMonitor) {
+		synchronized (applicationEventsMonitor) {
 			boolean notAlreadyRegistered = aac.getApplicationListeners().stream()
 					.map(Object::getClass)
 					.noneMatch(ApplicationEventsApplicationListener.class::equals);

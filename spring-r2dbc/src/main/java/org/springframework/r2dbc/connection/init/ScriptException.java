@@ -32,6 +32,7 @@ public abstract class ScriptException extends DataAccessException {
 
 	/**
 	 * Create a new {@code ScriptException}.
+	 *
 	 * @param message the detail message
 	 */
 	public ScriptException(String message) {
@@ -40,8 +41,9 @@ public abstract class ScriptException extends DataAccessException {
 
 	/**
 	 * Create a new {@code ScriptException}.
+	 *
 	 * @param message the detail message
-	 * @param cause the root cause
+	 * @param cause   the root cause
 	 */
 	public ScriptException(String message, @Nullable Throwable cause) {
 		super(message, cause);

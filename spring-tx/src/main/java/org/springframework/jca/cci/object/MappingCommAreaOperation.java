@@ -16,15 +16,14 @@
 
 package org.springframework.jca.cci.object;
 
-import java.io.IOException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataRetrievalFailureException;
 
 import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.InteractionSpec;
 import javax.resource.cci.Record;
 import javax.resource.cci.RecordFactory;
-
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataRetrievalFailureException;
+import java.io.IOException;
 
 /**
  * EIS operation object for access to COMMAREA records.
@@ -40,6 +39,7 @@ public abstract class MappingCommAreaOperation extends MappingRecordOperation {
 
 	/**
 	 * Create a new MappingCommAreaQuery.
+	 *
 	 * @see #setConnectionFactory
 	 * @see #setInteractionSpec
 	 */
@@ -48,8 +48,9 @@ public abstract class MappingCommAreaOperation extends MappingRecordOperation {
 
 	/**
 	 * Create a new MappingCommAreaQuery.
+	 *
 	 * @param connectionFactory the ConnectionFactory to use to obtain connections
-	 * @param interactionSpec specification to configure the interaction
+	 * @param interactionSpec   specification to configure the interaction
 	 */
 	public MappingCommAreaOperation(ConnectionFactory connectionFactory, InteractionSpec interactionSpec) {
 		super(connectionFactory, interactionSpec);
@@ -60,8 +61,7 @@ public abstract class MappingCommAreaOperation extends MappingRecordOperation {
 	protected final Record createInputRecord(RecordFactory recordFactory, Object inObject) {
 		try {
 			return new org.springframework.jca.cci.core.support.CommAreaRecord(objectToBytes(inObject));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new DataRetrievalFailureException("I/O exception during bytes conversion", ex);
 		}
 	}
@@ -72,8 +72,7 @@ public abstract class MappingCommAreaOperation extends MappingRecordOperation {
 				(org.springframework.jca.cci.core.support.CommAreaRecord) record;
 		try {
 			return bytesToObject(commAreaRecord.toByteArray());
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new DataRetrievalFailureException("I/O exception during bytes conversion", ex);
 		}
 	}
@@ -81,18 +80,20 @@ public abstract class MappingCommAreaOperation extends MappingRecordOperation {
 
 	/**
 	 * Method used to convert an object into COMMAREA bytes.
+	 *
 	 * @param inObject the input data
 	 * @return the COMMAREA's bytes
-	 * @throws IOException if thrown by I/O methods
+	 * @throws IOException         if thrown by I/O methods
 	 * @throws DataAccessException if conversion failed
 	 */
 	protected abstract byte[] objectToBytes(Object inObject) throws IOException, DataAccessException;
 
 	/**
 	 * Method used to convert the COMMAREA's bytes to an object.
+	 *
 	 * @param bytes the COMMAREA's bytes
 	 * @return the output data
-	 * @throws IOException if thrown by I/O methods
+	 * @throws IOException         if thrown by I/O methods
 	 * @throws DataAccessException if conversion failed
 	 */
 	protected abstract Object bytesToObject(byte[] bytes) throws IOException, DataAccessException;

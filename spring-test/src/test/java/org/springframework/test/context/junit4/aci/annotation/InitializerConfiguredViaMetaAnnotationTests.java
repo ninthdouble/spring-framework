@@ -16,15 +16,8 @@
 
 package org.springframework.test.context.junit4.aci.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
@@ -34,6 +27,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.junit4.aci.annotation.InitializerConfiguredViaMetaAnnotationTests.ComposedContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,14 +72,6 @@ public class InitializerConfiguredViaMetaAnnotationTests {
 	}
 
 
-	static class FooConfigInitializer implements ApplicationContextInitializer<GenericApplicationContext> {
-
-		@Override
-		public void initialize(GenericApplicationContext applicationContext) {
-			new AnnotatedBeanDefinitionReader(applicationContext).register(FooConfig.class);
-		}
-	}
-
 	@ContextConfiguration(loader = AnnotationConfigContextLoader.class, initializers = FooConfigInitializer.class)
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
@@ -88,6 +79,14 @@ public class InitializerConfiguredViaMetaAnnotationTests {
 
 		@AliasFor(annotation = ContextConfiguration.class, attribute = "classes")
 		Class<?>[] value() default {};
+	}
+
+	static class FooConfigInitializer implements ApplicationContextInitializer<GenericApplicationContext> {
+
+		@Override
+		public void initialize(GenericApplicationContext applicationContext) {
+			new AnnotatedBeanDefinitionReader(applicationContext).register(FooConfig.class);
+		}
 	}
 
 }

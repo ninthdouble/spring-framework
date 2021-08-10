@@ -16,6 +16,19 @@
 
 package org.springframework.web.servlet.function;
 
+import org.reactivestreams.Publisher;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ReactiveAdapterRegistry;
+import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
@@ -30,25 +43,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.reactivestreams.Publisher;
-
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.ReactiveAdapterRegistry;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.lang.Nullable;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.servlet.ModelAndView;
-
 /**
  * Represents a typed server-side HTTP response, as returned
  * by a {@linkplain HandlerFunction handler function} or
@@ -60,47 +54,8 @@ import org.springframework.web.servlet.ModelAndView;
 public interface ServerResponse {
 
 	/**
-	 * Return the status code of this response.
-	 * @return the status as an HttpStatus enum value
-	 * @throws IllegalArgumentException in case of an unknown HTTP status code
-	 * @see HttpStatus#valueOf(int)
-	 */
-	HttpStatus statusCode();
-
-	/**
-	 * Return the (potentially non-standard) status code of this response.
-	 * @return the status as an integer
-	 * @see #statusCode()
-	 * @see HttpStatus#valueOf(int)
-	 */
-	int rawStatusCode();
-
-	/**
-	 * Return the headers of this response.
-	 */
-	HttpHeaders headers();
-
-	/**
-	 * Return the cookies of this response.
-	 */
-	MultiValueMap<String, Cookie> cookies();
-
-	/**
-	 * Write this response to the given servlet response.
-	 * @param request the current request
-	 * @param response the response to write to
-	 * @param context the context to use when writing
-	 * @return a {@code ModelAndView} to render, or {@code null} if handled directly
-	 */
-	@Nullable
-	ModelAndView writeTo(HttpServletRequest request, HttpServletResponse response, Context context)
-		throws ServletException, IOException;
-
-
-	// Static methods
-
-	/**
 	 * Create a builder with the status code and headers of the given response.
+	 *
 	 * @param other the response to copy the status and headers from
 	 * @return the created builder
 	 */
@@ -110,6 +65,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with the given HTTP status.
+	 *
 	 * @param status the response status
 	 * @return the created builder
 	 */
@@ -119,6 +75,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with the given HTTP status.
+	 *
 	 * @param status the response status
 	 * @return the created builder
 	 */
@@ -128,6 +85,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with the status set to {@linkplain HttpStatus#OK 200 OK}.
+	 *
 	 * @return the created builder
 	 */
 	static BodyBuilder ok() {
@@ -137,6 +95,7 @@ public interface ServerResponse {
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#CREATED 201 Created} status
 	 * and a location header set to the given URI.
+	 *
 	 * @param location the location URI
 	 * @return the created builder
 	 */
@@ -145,8 +104,12 @@ public interface ServerResponse {
 		return builder.location(location);
 	}
 
+
+	// Static methods
+
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#ACCEPTED 202 Accepted} status.
+	 *
 	 * @return the created builder
 	 */
 	static BodyBuilder accepted() {
@@ -155,6 +118,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#NO_CONTENT 204 No Content} status.
+	 *
 	 * @return the created builder
 	 */
 	static HeadersBuilder<?> noContent() {
@@ -164,6 +128,7 @@ public interface ServerResponse {
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#SEE_OTHER 303 See Other}
 	 * status and a location header set to the given URI.
+	 *
 	 * @param location the location URI
 	 * @return the created builder
 	 */
@@ -175,6 +140,7 @@ public interface ServerResponse {
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#TEMPORARY_REDIRECT 307 Temporary Redirect}
 	 * status and a location header set to the given URI.
+	 *
 	 * @param location the location URI
 	 * @return the created builder
 	 */
@@ -186,6 +152,7 @@ public interface ServerResponse {
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#PERMANENT_REDIRECT 308 Permanent Redirect}
 	 * status and a location header set to the given URI.
+	 *
 	 * @param location the location URI
 	 * @return the created builder
 	 */
@@ -196,6 +163,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#BAD_REQUEST 400 Bad Request} status.
+	 *
 	 * @return the created builder
 	 */
 	static BodyBuilder badRequest() {
@@ -204,6 +172,7 @@ public interface ServerResponse {
 
 	/**
 	 * Create a builder with a {@linkplain HttpStatus#NOT_FOUND 404 Not Found} status.
+	 *
 	 * @return the created builder
 	 */
 	static HeadersBuilder<?> notFound() {
@@ -213,6 +182,7 @@ public interface ServerResponse {
 	/**
 	 * Create a builder with a
 	 * {@linkplain HttpStatus#UNPROCESSABLE_ENTITY 422 Unprocessable Entity} status.
+	 *
 	 * @return the created builder
 	 */
 	static BodyBuilder unprocessableEntity() {
@@ -230,8 +200,9 @@ public interface ServerResponse {
 	 * <p>This method can be used to set the response status code, headers, and
 	 * body based on an asynchronous result. If only the body is asynchronous,
 	 * {@link BodyBuilder#body(Object)} can be used instead.
+	 *
 	 * @param asyncResponse a {@code CompletableFuture<ServerResponse>} or
-	 * {@code Publisher<ServerResponse>}
+	 *                      {@code Publisher<ServerResponse>}
 	 * @return the asynchronous response
 	 * @since 5.3
 	 */
@@ -250,9 +221,10 @@ public interface ServerResponse {
 	 * <p>This method can be used to set the response status code, headers, and
 	 * body based on an asynchronous result. If only the body is asynchronous,
 	 * {@link BodyBuilder#body(Object)} can be used instead.
+	 *
 	 * @param asyncResponse a {@code CompletableFuture<ServerResponse>} or
-	 * {@code Publisher<ServerResponse>}
-	 * @param timeout maximum time period to wait for before timing out
+	 *                      {@code Publisher<ServerResponse>}
+	 * @param timeout       maximum time period to wait for before timing out
 	 * @return the asynchronous response
 	 * @since 5.3.2
 	 */
@@ -280,10 +252,11 @@ public interface ServerResponse {
 	 *         .send("Hello World!"));
 	 * }
 	 * </pre>
+	 *
 	 * @param consumer consumer that will be provided with an event builder
 	 * @return the server-side event response
-	 * @since 5.3.2
 	 * @see <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events</a>
+	 * @since 5.3.2
 	 */
 	static ServerResponse sse(Consumer<SseBuilder> consumer) {
 		return SseServerResponse.create(consumer, null);
@@ -309,25 +282,68 @@ public interface ServerResponse {
 	 *         .send("Hello World!"));
 	 * }
 	 * </pre>
+	 *
 	 * @param consumer consumer that will be provided with an event builder
 	 * @param timeout  maximum time period to wait before timing out
 	 * @return the server-side event response
-	 * @since 5.3.2
 	 * @see <a href="https://www.w3.org/TR/eventsource/">Server-Sent Events</a>
+	 * @since 5.3.2
 	 */
 	static ServerResponse sse(Consumer<SseBuilder> consumer, Duration timeout) {
 		return SseServerResponse.create(consumer, timeout);
 	}
 
+	/**
+	 * Return the status code of this response.
+	 *
+	 * @return the status as an HttpStatus enum value
+	 * @throws IllegalArgumentException in case of an unknown HTTP status code
+	 * @see HttpStatus#valueOf(int)
+	 */
+	HttpStatus statusCode();
+
+	/**
+	 * Return the (potentially non-standard) status code of this response.
+	 *
+	 * @return the status as an integer
+	 * @see #statusCode()
+	 * @see HttpStatus#valueOf(int)
+	 */
+	int rawStatusCode();
+
+	/**
+	 * Return the headers of this response.
+	 */
+	HttpHeaders headers();
+
+	/**
+	 * Return the cookies of this response.
+	 */
+	MultiValueMap<String, Cookie> cookies();
+
+	/**
+	 * Write this response to the given servlet response.
+	 *
+	 * @param request  the current request
+	 * @param response the response to write to
+	 * @param context  the context to use when writing
+	 * @return a {@code ModelAndView} to render, or {@code null} if handled directly
+	 */
+	@Nullable
+	ModelAndView writeTo(HttpServletRequest request, HttpServletResponse response, Context context)
+			throws ServletException, IOException;
+
 
 	/**
 	 * Defines a builder that adds headers to the response.
+	 *
 	 * @param <B> the builder subclass
 	 */
 	interface HeadersBuilder<B extends HeadersBuilder<B>> {
 
 		/**
 		 * Add the given header value(s) under the given name.
+		 *
 		 * @param headerName   the header name
 		 * @param headerValues the header value(s)
 		 * @return this builder
@@ -341,6 +357,7 @@ public interface ServerResponse {
 		 * {@linkplain HttpHeaders#set(String, String) overwrite} existing header values,
 		 * {@linkplain HttpHeaders#remove(Object) remove} values, or use any of the other
 		 * {@link HttpHeaders} methods.
+		 *
 		 * @param headersConsumer a function that consumes the {@code HttpHeaders}
 		 * @return this builder
 		 */
@@ -348,6 +365,7 @@ public interface ServerResponse {
 
 		/**
 		 * Add the given cookie to the response.
+		 *
 		 * @param cookie the cookie to add
 		 * @return this builder
 		 */
@@ -359,6 +377,7 @@ public interface ServerResponse {
 		 * {@linkplain MultiValueMap#set(Object, Object) overwrite} existing cookies,
 		 * {@linkplain MultiValueMap#remove(Object) remove} cookies, or use any of the other
 		 * {@link MultiValueMap} methods.
+		 *
 		 * @param cookiesConsumer a function that consumes the cookies
 		 * @return this builder
 		 */
@@ -377,6 +396,7 @@ public interface ServerResponse {
 		/**
 		 * Set the set of allowed {@link HttpMethod HTTP methods}, as specified
 		 * by the {@code Allow} header.
+		 *
 		 * @param allowedMethods the allowed methods
 		 * @return this builder
 		 * @see HttpHeaders#setAllow(Set)
@@ -385,6 +405,7 @@ public interface ServerResponse {
 
 		/**
 		 * Set the entity tag of the body, as specified by the {@code ETag} header.
+		 *
 		 * @param eTag the new entity tag
 		 * @return this builder
 		 * @see HttpHeaders#setETag(String)
@@ -394,6 +415,7 @@ public interface ServerResponse {
 		/**
 		 * Set the time the resource was last changed, as specified by the
 		 * {@code Last-Modified} header.
+		 *
 		 * @param lastModified the last modified date
 		 * @return this builder
 		 * @see HttpHeaders#setLastModified(long)
@@ -403,13 +425,16 @@ public interface ServerResponse {
 		/**
 		 * Set the time the resource was last changed, as specified by the
 		 * {@code Last-Modified} header.
+		 *
 		 * @param lastModified the last modified date
 		 * @return this builder
 		 * @see HttpHeaders#setLastModified(long)
 		 */
 		B lastModified(Instant lastModified);
+
 		/**
 		 * Set the location of a resource, as specified by the {@code Location} header.
+		 *
 		 * @param location the location
 		 * @return this builder
 		 * @see HttpHeaders#setLocation(URI)
@@ -421,6 +446,7 @@ public interface ServerResponse {
 		 * {@code Cache-Control} header.
 		 * <p>A {@code CacheControl} instance can be built like
 		 * {@code CacheControl.maxAge(3600).cachePublic().noTransform()}.
+		 *
 		 * @param cacheControl a builder for cache-related HTTP response headers
 		 * @return this builder
 		 * @see <a href="https://tools.ietf.org/html/rfc7234#section-5.2">RFC-7234 Section 5.2</a>
@@ -433,6 +459,7 @@ public interface ServerResponse {
 		 * subject to content negotiation and variances based on the value of the
 		 * given request headers. The configured request header names are added only
 		 * if not already present in the response "Vary" header.
+		 *
 		 * @param requestHeaders request header names
 		 * @return this builder
 		 */
@@ -445,6 +472,7 @@ public interface ServerResponse {
 
 		/**
 		 * Build the response entity with a custom write function.
+		 *
 		 * @param writeFunction the function used to write to the {@link HttpServletResponse}
 		 */
 		ServerResponse build(BiFunction<HttpServletRequest, HttpServletResponse,
@@ -461,6 +489,7 @@ public interface ServerResponse {
 		/**
 		 * Set the length of the body in bytes, as specified by the
 		 * {@code Content-Length} header.
+		 *
 		 * @param contentLength the content length
 		 * @return this builder
 		 * @see HttpHeaders#setContentLength(long)
@@ -470,6 +499,7 @@ public interface ServerResponse {
 		/**
 		 * Set the {@linkplain MediaType media type} of the body, as specified by the
 		 * {@code Content-Type} header.
+		 *
 		 * @param contentType the content type
 		 * @return this builder
 		 * @see HttpHeaders#setContentType(MediaType)
@@ -484,6 +514,7 @@ public interface ServerResponse {
 		 * {@link CompletionStage} or {@link Publisher} as body (or any
 		 * asynchronous producer of a single entity that can be adapted via the
 		 * {@link ReactiveAdapterRegistry}).
+		 *
 		 * @param body the body of the response
 		 * @return the built response
 		 */
@@ -493,7 +524,7 @@ public interface ServerResponse {
 		 * Set the body of the response to the given {@code Object} and return it. The parameter
 		 * {@code bodyType} is used to capture the generic type.
 		 *
-		 * @param body the body of the response
+		 * @param body     the body of the response
 		 * @param bodyType the type of the body, used to capture the generic type
 		 * @return the built response
 		 */
@@ -506,7 +537,8 @@ public interface ServerResponse {
 		 * <p><em>Note: Empty {@link Collection Collections} are not added to
 		 * the model when using this method because we cannot correctly determine
 		 * the true convention name.</em>
-		 * @param name the name of the template to be rendered
+		 *
+		 * @param name            the name of the template to be rendered
 		 * @param modelAttributes the modelAttributes used to render the template
 		 * @return the built response
 		 */
@@ -514,7 +546,8 @@ public interface ServerResponse {
 
 		/**
 		 * Render the template with the given {@code name} using the given {@code model}.
-		 * @param name the name of the template to be rendered
+		 *
+		 * @param name  the name of the template to be rendered
 		 * @param model the model used to render the template
 		 * @return the built response
 		 */
@@ -537,6 +570,7 @@ public interface ServerResponse {
 		 *
 		 * <p>This convenience method has the same effect as
 		 * {@link #data(Object)}.
+		 *
 		 * @param object the object to send
 		 * @throws IOException in case of I/O errors
 		 */
@@ -544,6 +578,7 @@ public interface ServerResponse {
 
 		/**
 		 * Add an SSE "id" line.
+		 *
 		 * @param id the event identifier
 		 * @return this builder
 		 */
@@ -551,6 +586,7 @@ public interface ServerResponse {
 
 		/**
 		 * Add an SSE "event" line.
+		 *
 		 * @param eventName the event name
 		 * @return this builder
 		 */
@@ -558,6 +594,7 @@ public interface ServerResponse {
 
 		/**
 		 * Add an SSE "retry" line.
+		 *
 		 * @param duration the duration to convert into millis
 		 * @return this builder
 		 */
@@ -565,6 +602,7 @@ public interface ServerResponse {
 
 		/**
 		 * Add an SSE comment.
+		 *
 		 * @param comment the comment
 		 * @return this builder
 		 */
@@ -576,6 +614,7 @@ public interface ServerResponse {
 		 * Strings will be sent as UTF-8 encoded bytes, and other objects will
 		 * be converted into JSON using
 		 * {@linkplain HttpMessageConverter message converters}.
+		 *
 		 * @param object the object to send as data
 		 * @throws IOException in case of I/O errors
 		 */
@@ -587,7 +626,8 @@ public interface ServerResponse {
 		 * <p>The throwable is dispatched back into Spring MVC, and passed to
 		 * its exception handling mechanism. Since the response has
 		 * been committed by this point, the response status can not change.
- 		 * @param t the throwable to dispatch
+		 *
+		 * @param t the throwable to dispatch
 		 */
 		void error(Throwable t);
 
@@ -599,6 +639,7 @@ public interface ServerResponse {
 		/**
 		 * Register a callback to be invoked when an SSE request times
 		 * out.
+		 *
 		 * @param onTimeout the callback to invoke on timeout
 		 * @return this builder
 		 */
@@ -607,13 +648,15 @@ public interface ServerResponse {
 		/**
 		 * Register a callback to be invoked when an error occurs during SSE
 		 * processing.
-		 * @param onError  the callback to invoke on error
+		 *
+		 * @param onError the callback to invoke on error
 		 * @return this builder
 		 */
 		SseBuilder onError(Consumer<Throwable> onError);
 
 		/**
 		 * Register a callback to be invoked when the SSE request completes.
+		 *
 		 * @param onCompletion the callback to invoked on completion
 		 * @return this builder
 		 */
@@ -628,6 +671,7 @@ public interface ServerResponse {
 
 		/**
 		 * Return the {@link HttpMessageConverter HttpMessageConverters} to be used for response body conversion.
+		 *
 		 * @return the list of message writers
 		 */
 		List<HttpMessageConverter<?>> messageConverters();

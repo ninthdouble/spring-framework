@@ -16,6 +16,13 @@
 
 package org.springframework.mock.web;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -24,24 +31,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import org.springframework.web.util.WebUtils;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.http.HttpHeaders.CONTENT_LANGUAGE;
-import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpHeaders.LAST_MODIFIED;
-import static org.springframework.http.HttpHeaders.LOCATION;
-import static org.springframework.http.HttpHeaders.SET_COOKIE;
+import static org.springframework.http.HttpHeaders.*;
 
 /**
  * Unit tests for {@link MockHttpServletResponse}.
@@ -63,11 +56,11 @@ class MockHttpServletResponseTests {
 
 	@ParameterizedTest  // gh-26488
 	@ValueSource(strings = {
-		CONTENT_TYPE,
-		CONTENT_LENGTH,
-		CONTENT_LANGUAGE,
-		SET_COOKIE,
-		"enigma"
+			CONTENT_TYPE,
+			CONTENT_LENGTH,
+			CONTENT_LANGUAGE,
+			SET_COOKIE,
+			"enigma"
 	})
 	void addHeaderWithNullValue(String headerName) {
 		response.addHeader(headerName, null);
@@ -76,18 +69,19 @@ class MockHttpServletResponseTests {
 
 	@ParameterizedTest  // gh-26488
 	@ValueSource(strings = {
-		CONTENT_TYPE,
-		CONTENT_LENGTH,
-		CONTENT_LANGUAGE,
-		SET_COOKIE,
-		"enigma"
+			CONTENT_TYPE,
+			CONTENT_LENGTH,
+			CONTENT_LANGUAGE,
+			SET_COOKIE,
+			"enigma"
 	})
 	void setHeaderWithNullValue(String headerName) {
 		response.setHeader(headerName, null);
 		assertThat(response.containsHeader(headerName)).isFalse();
 	}
 
-	@Test  // gh-26493
+	@Test
+		// gh-26493
 	void setLocaleWithNullValue() {
 		assertThat(response.getLocale()).isEqualTo(Locale.getDefault());
 		response.setLocale(null);
@@ -142,7 +136,8 @@ class MockHttpServletResponseTests {
 		assertThat(response.getCharacterEncoding()).isEqualTo("UTF-8");
 	}
 
-	@Test  // SPR-12677
+	@Test
+		// SPR-12677
 	void contentTypeHeaderWithMoreComplexCharsetSyntax() {
 		String contentType = "test/plain;charset=\"utf-8\";foo=\"charset=bar\";foocharset=bar;foo=bar";
 		response.setHeader(CONTENT_TYPE, contentType);
@@ -157,7 +152,8 @@ class MockHttpServletResponseTests {
 		assertThat(response.getCharacterEncoding()).isEqualTo("UTF-8");
 	}
 
-	@Test  // gh-25281
+	@Test
+		// gh-25281
 	void contentLanguageHeaderWithSingleValue() {
 		String contentLanguage = "it";
 		response.setHeader(CONTENT_LANGUAGE, contentLanguage);
@@ -167,7 +163,8 @@ class MockHttpServletResponseTests {
 		});
 	}
 
-	@Test  // gh-25281
+	@Test
+		// gh-25281
 	void contentLanguageHeaderWithMultipleValues() {
 		String contentLanguage = "it, en";
 		response.setHeader(CONTENT_LANGUAGE, contentLanguage);
@@ -296,7 +293,8 @@ class MockHttpServletResponseTests {
 		assertThat(response.getContentAsByteArray().length).isEqualTo(1);
 	}
 
-	@Test // SPR-16683
+	@Test
+		// SPR-16683
 	void servletWriterCommittedOnWriterClose() throws IOException {
 		assertThat(response.isCommitted()).isFalse();
 		response.getWriter().write("X");
@@ -306,7 +304,8 @@ class MockHttpServletResponseTests {
 		assertThat(response.getContentAsByteArray().length).isEqualTo(1);
 	}
 
-	@Test  // gh-23219
+	@Test
+		// gh-23219
 	void contentAsUtf8() throws IOException {
 		String content = "Příliš žluťoučký kůň úpěl ďábelské ódy";
 		response.getOutputStream().write(content.getBytes(StandardCharsets.UTF_8));
@@ -377,13 +376,15 @@ class MockHttpServletResponseTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> response.getDateHeader(LAST_MODIFIED));
 	}
 
-	@Test  // SPR-16160
+	@Test
+		// SPR-16160
 	void getNonExistentDateHeader() {
 		assertThat(response.getHeader(LAST_MODIFIED)).isNull();
 		assertThat(response.getDateHeader(LAST_MODIFIED)).isEqualTo(-1);
 	}
 
-	@Test  // SPR-10414
+	@Test
+		// SPR-10414
 	void modifyStatusAfterSendError() throws IOException {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		response.setStatus(HttpServletResponse.SC_OK);
@@ -549,7 +550,8 @@ class MockHttpServletResponseTests {
 		assertThat(((MockCookie) cookie).getSameSite()).isEqualTo("Lax");
 	}
 
-	@Test  // gh-25501
+	@Test
+		// gh-25501
 	void resetResetsCharset() {
 		assertThat(response.isCharset()).isFalse();
 		response.setCharacterEncoding("UTF-8");

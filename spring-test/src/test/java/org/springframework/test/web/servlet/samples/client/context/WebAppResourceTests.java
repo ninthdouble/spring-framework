@@ -19,7 +19,6 @@ package org.springframework.test.web.servlet.samples.client.context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -44,8 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration("src/test/resources/META-INF/web-resources")
 @ContextHierarchy({
-	@ContextConfiguration("../../context/root-context.xml"),
-	@ContextConfiguration("../../context/servlet-context.xml")
+		@ContextConfiguration("../../context/root-context.xml"),
+		@ContextConfiguration("../../context/servlet-context.xml")
 })
 public class WebAppResourceTests {
 

@@ -16,12 +16,7 @@
 
 package org.springframework.test.context.jdbc;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * {@code @SqlMergeMode} is used to annotate a test class or test method to
@@ -39,10 +34,10 @@ import java.lang.annotation.Target;
  *
  * @author Sam Brannen
  * @author Dmitry Semukhin
- * @since 5.2
  * @see Sql
  * @see MergeMode#MERGE
  * @see MergeMode#OVERRIDE
+ * @since 5.2
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -16,16 +16,7 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
@@ -34,6 +25,10 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,16 +36,14 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 /**
  * Unit tests for {@link HttpMessageWriterView}.
+ *
  * @author Rossen Stoyanchev
  */
 public class HttpMessageWriterViewTests {
 
-	private HttpMessageWriterView view = new HttpMessageWriterView(new Jackson2JsonEncoder());
-
 	private final ModelMap model = new ExtendedModelMap();
-
 	private final MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
-
+	private HttpMessageWriterView view = new HttpMessageWriterView(new Jackson2JsonEncoder());
 
 	@Test
 	public void supportedMediaTypes() {
@@ -106,7 +99,7 @@ public class HttpMessageWriterViewTests {
 
 		assertThatIllegalStateException().isThrownBy(
 				this::doRender)
-			.withMessageContaining("Map rendering is not supported");
+				.withMessageContaining("Map rendering is not supported");
 	}
 
 	@Test
@@ -129,7 +122,6 @@ public class HttpMessageWriterViewTests {
 		this.view.render(this.model, MediaType.APPLICATION_JSON, this.exchange).block(Duration.ZERO);
 		return this.exchange.getResponse().getBodyAsString().block(Duration.ZERO);
 	}
-
 
 
 	@SuppressWarnings("unused")

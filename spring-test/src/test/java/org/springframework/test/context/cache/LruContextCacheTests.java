@@ -16,31 +16,27 @@
 
 package org.springframework.test.context.cache;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
+import java.util.Map;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the LRU eviction policy in {@link DefaultContextCache}.
  *
  * @author Sam Brannen
- * @since 4.3
  * @see ContextCacheTests
+ * @since 4.3
  */
 class LruContextCacheTests {
 
@@ -55,6 +51,25 @@ class LruContextCacheTests {
 	private final ConfigurableApplicationContext barContext = mock(ConfigurableApplicationContext.class);
 	private final ConfigurableApplicationContext bazContext = mock(ConfigurableApplicationContext.class);
 
+	private static MergedContextConfiguration config(Class<?> clazz) {
+		return new MergedContextConfiguration(null, null, new Class<?>[]{clazz}, null, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void assertCacheContents(DefaultContextCache cache, String... expectedNames) {
+
+		Map<MergedContextConfiguration, ApplicationContext> contextMap =
+				(Map<MergedContextConfiguration, ApplicationContext>) ReflectionTestUtils.getField(cache, "contextMap");
+
+		// @formatter:off
+		List<String> actualNames = contextMap.keySet().stream()
+				.map(cfg -> cfg.getClasses()[0])
+				.map(Class::getSimpleName)
+				.collect(toList());
+		// @formatter:on
+
+		assertThat(actualNames).isEqualTo(asList(expectedNames));
+	}
 
 	@Test
 	void maxCacheSizeNegativeOne() {
@@ -151,31 +166,16 @@ class LruContextCacheTests {
 		verify(bazContext, never()).close();
 	}
 
-
-	private static MergedContextConfiguration config(Class<?> clazz) {
-		return new MergedContextConfiguration(null, null, new Class<?>[] { clazz }, null, null);
+	private static class Abc {
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void assertCacheContents(DefaultContextCache cache, String... expectedNames) {
-
-		Map<MergedContextConfiguration, ApplicationContext> contextMap =
-				(Map<MergedContextConfiguration, ApplicationContext>) ReflectionTestUtils.getField(cache, "contextMap");
-
-		// @formatter:off
-		List<String> actualNames = contextMap.keySet().stream()
-			.map(cfg -> cfg.getClasses()[0])
-			.map(Class::getSimpleName)
-			.collect(toList());
-		// @formatter:on
-
-		assertThat(actualNames).isEqualTo(asList(expectedNames));
+	private static class Foo {
 	}
 
+	private static class Bar {
+	}
 
-	private static class Abc {}
-	private static class Foo {}
-	private static class Bar {}
-	private static class Baz {}
+	private static class Baz {
+	}
 
 }

@@ -30,9 +30,9 @@ import org.springframework.context.annotation.Role;
  * annotations.
  *
  * @author Stephane Nicoll
- * @since 4.1
  * @see org.springframework.cache.annotation.EnableCaching
  * @see org.springframework.cache.annotation.CachingConfigurationSelector
+ * @since 4.1
  */
 @Configuration(proxyBeanMethods = false)
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)

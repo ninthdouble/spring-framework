@@ -184,8 +184,8 @@ public class AnnotationDrivenEventListenerTests {
 
 		assertThatExceptionOfType(BeanInitializationException.class).isThrownBy(() ->
 				failingContext.refresh())
-			.withMessageContaining(InvalidMethodSignatureEventListener.class.getName())
-			.withMessageContaining("cannotBeCalled");
+				.withMessageContaining(InvalidMethodSignatureEventListener.class.getName())
+				.withMessageContaining("cannotBeCalled");
 	}
 
 	@Test
@@ -384,7 +384,7 @@ public class AnnotationDrivenEventListenerTests {
 	public void privateMethodOnCglibProxyFails() {
 		assertThatExceptionOfType(BeanInitializationException.class).isThrownBy(() ->
 				load(CglibProxyWithPrivateMethod.class))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -413,7 +413,7 @@ public class AnnotationDrivenEventListenerTests {
 		customScope.active = false;
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				this.context.publishEvent(new TestEvent()))
-			.withCauseInstanceOf(IllegalStateException.class);
+				.withCauseInstanceOf(IllegalStateException.class);
 	}
 
 	@Test
@@ -469,7 +469,7 @@ public class AnnotationDrivenEventListenerTests {
 		this.eventCollector.assertNoEventReceived(listener);
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.context.publishEvent(event))
-			.withMessage("Test exception");
+				.withMessage("Test exception");
 		this.eventCollector.assertEvent(listener, event);
 		this.eventCollector.assertTotalEventsCount(1);
 	}
@@ -634,7 +634,8 @@ public class AnnotationDrivenEventListenerTests {
 		assertThat(listener.order).contains("first", "second", "third");
 	}
 
-	@Test @Disabled  // SPR-15122
+	@Test
+	@Disabled  // SPR-15122
 	public void listenersReceiveEarlyEvents() {
 		load(EventOnPostConstruct.class, OrderedTestListener.class);
 		OrderedTestListener listener = this.context.getBean(OrderedTestListener.class);
@@ -676,6 +677,48 @@ public class AnnotationDrivenEventListenerTests {
 	}
 
 
+	@EventListener(id = "foo")
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface FooListener {
+	}
+
+
+	interface SimpleService extends Identifiable {
+
+		void handleIt(TestEvent event);
+
+		void handleAsync(AnotherTestEvent event);
+	}
+
+
+	interface AnnotatedSimpleService extends Identifiable {
+
+		@EventListener
+		void handleIt(TestEvent event);
+	}
+
+
+	@EventListener
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface ConditionalEvent {
+
+		@AliasFor(annotation = EventListener.class, attribute = "condition")
+		String value();
+	}
+
+
+	interface ConditionalEventInterface extends Identifiable {
+
+		void handle(TestEvent event);
+
+		void handleString(String payload);
+
+		void handleTimestamp(Long timestamp);
+
+		void handleRatio(Double ratio);
+	}
+
 	@Configuration
 	static class BasicConfiguration {
 
@@ -702,7 +745,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	static abstract class AbstractTestEventListener extends AbstractIdentifiable {
 
 		@Autowired
@@ -712,7 +754,6 @@ public class AnnotationDrivenEventListenerTests {
 			this.eventCollector.addEvent(this, content);
 		}
 	}
-
 
 	@Component
 	static class TestEventListener extends AbstractTestEventListener {
@@ -728,14 +769,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
-	@EventListener(id = "foo")
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface FooListener {
-	}
-
-
 	@Component
 	static class MetaAnnotationListenerTestBean extends AbstractTestEventListener {
 
@@ -744,7 +777,6 @@ public class AnnotationDrivenEventListenerTests {
 			collectEvent(event);
 		}
 	}
-
 
 	@Component
 	static class ContextEventListener extends AbstractTestEventListener {
@@ -756,7 +788,6 @@ public class AnnotationDrivenEventListenerTests {
 
 	}
 
-
 	@Component
 	static class InvalidMethodSignatureEventListener {
 
@@ -764,7 +795,6 @@ public class AnnotationDrivenEventListenerTests {
 		public void cannotBeCalled(String s, Integer what) {
 		}
 	}
-
 
 	@Component
 	static class ReplyEventListener extends AbstractTestEventListener {
@@ -774,20 +804,17 @@ public class AnnotationDrivenEventListenerTests {
 			collectEvent(event);
 			if (event.content == null) {
 				return null;
-			}
-			else if (event.content instanceof String) {
+			} else if (event.content instanceof String) {
 				String s = (String) event.content;
 				if (s.equals("String")) {
 					return event.content;
-				}
-				else {
+				} else {
 					return new TestEvent(this, event.getId(), s);
 				}
 			}
 			return event.content;
 		}
 	}
-
 
 	@Component
 	static class ExceptionEventListener extends AbstractTestEventListener {
@@ -814,7 +841,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Component
 	static class AsyncEventListener extends AbstractTestEventListener {
 
@@ -830,28 +856,17 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Configuration
 	@Import(BasicConfiguration.class)
 	@EnableAsync(proxyTargetClass = true)
 	static class AsyncConfiguration {
 	}
 
-
 	@Configuration
 	@Import(BasicConfiguration.class)
 	@EnableAsync(proxyTargetClass = false)
 	static class AsyncConfigurationWithInterfaces {
 	}
-
-
-	interface SimpleService extends Identifiable {
-
-		void handleIt(TestEvent event);
-
-		void handleAsync(AnotherTestEvent event);
-	}
-
 
 	@Component
 	static class SimpleProxyTestBean extends AbstractIdentifiable implements SimpleService {
@@ -877,7 +892,6 @@ public class AnnotationDrivenEventListenerTests {
 			this.countDownLatch.countDown();
 		}
 	}
-
 
 	@Component
 	@Scope(proxyMode = ScopedProxyMode.INTERFACES)
@@ -905,14 +919,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
-	interface AnnotatedSimpleService extends Identifiable {
-
-		@EventListener
-		void handleIt(TestEvent event);
-	}
-
-
 	@Component
 	@Scope(proxyMode = ScopedProxyMode.INTERFACES)
 	static class AnnotatedProxyTestBean extends AbstractIdentifiable implements AnnotatedSimpleService {
@@ -926,7 +932,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Component
 	@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 	static class CglibProxyTestBean extends AbstractTestEventListener {
@@ -936,7 +941,6 @@ public class AnnotationDrivenEventListenerTests {
 			collectEvent(event);
 		}
 	}
-
 
 	@Component
 	@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -948,7 +952,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Component
 	@Scope(scopeName = "custom", proxyMode = ScopedProxyMode.TARGET_CLASS)
 	static class CustomScopeTestBean extends AbstractTestEventListener {
@@ -959,7 +962,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Component
 	static class GenericEventListener extends AbstractTestEventListener {
 
@@ -969,7 +971,6 @@ public class AnnotationDrivenEventListenerTests {
 		}
 	}
 
-
 	@Component
 	static class ResolvableTypeEventListener extends AbstractTestEventListener {
 
@@ -978,29 +979,6 @@ public class AnnotationDrivenEventListenerTests {
 			collectEvent(value);
 		}
 	}
-
-
-
-	@EventListener
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface ConditionalEvent {
-
-		@AliasFor(annotation = EventListener.class, attribute = "condition")
-		String value();
-	}
-
-
-	interface ConditionalEventInterface extends Identifiable {
-
-		void handle(TestEvent event);
-
-		void handleString(String payload);
-
-		void handleTimestamp(Long timestamp);
-
-		void handleRatio(Double ratio);
-	}
-
 
 	@Component
 	@Validated

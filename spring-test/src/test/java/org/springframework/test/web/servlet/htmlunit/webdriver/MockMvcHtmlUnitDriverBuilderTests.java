@@ -16,14 +16,9 @@
 
 package org.springframework.test.web.servlet.htmlunit.webdriver;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -95,7 +93,8 @@ class MockMvcHtmlUnitDriverBuilderTests {
 		assertThat(this.driver.isJavascriptEnabled()).isFalse();
 	}
 
-	@Test // SPR-14066
+	@Test
+		// SPR-14066
 	void cookieManagerShared() throws Exception {
 		WebConnectionHtmlUnitDriver otherDriver = new WebConnectionHtmlUnitDriver();
 		this.mockMvc = MockMvcBuilders.standaloneSetup(new CookieController()).build();

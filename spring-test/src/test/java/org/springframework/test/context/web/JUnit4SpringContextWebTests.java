@@ -16,12 +16,7 @@
 
 package org.springframework.test.context.web;
 
-import java.io.File;
-
-import javax.servlet.ServletContext;
-
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +29,9 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.ServletWebRequest;
+
+import javax.servlet.ServletContext;
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,39 +46,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebAppConfiguration
 public class JUnit4SpringContextWebTests extends AbstractJUnit4SpringContextTests implements ServletContextAware {
 
-	@Configuration
-	static class Config {
-
-		@Bean
-		public String foo() {
-			return "enigma";
-		}
-	}
-
-
 	protected ServletContext servletContext;
-
 	@Autowired
 	protected WebApplicationContext wac;
-
 	@Autowired
 	protected MockServletContext mockServletContext;
-
 	@Autowired
 	protected MockHttpServletRequest request;
-
 	@Autowired
 	protected MockHttpServletResponse response;
-
 	@Autowired
 	protected MockHttpSession session;
-
 	@Autowired
 	protected ServletWebRequest webRequest;
-
 	@Autowired
 	protected String foo;
-
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
@@ -113,6 +93,15 @@ public class JUnit4SpringContextWebTests extends AbstractJUnit4SpringContextTest
 	@Test
 	public void fooEnigmaAutowired() {
 		assertThat(foo).isEqualTo("enigma");
+	}
+
+	@Configuration
+	static class Config {
+
+		@Bean
+		public String foo() {
+			return "enigma";
+		}
 	}
 
 }

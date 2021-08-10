@@ -16,13 +16,7 @@
 
 package org.springframework.core.testfixture.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * Utilities for testing serializability of objects.
@@ -45,8 +39,7 @@ public class SerializationTestUtils {
 		try {
 			testSerialization(o);
 			return true;
-		}
-		catch (NotSerializableException ex) {
+		} catch (NotSerializableException ex) {
 			return false;
 		}
 	}

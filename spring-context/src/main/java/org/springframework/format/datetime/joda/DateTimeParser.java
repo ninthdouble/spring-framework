@@ -39,6 +39,7 @@ public final class DateTimeParser implements Parser<DateTime> {
 
 	/**
 	 * Create a new DateTimeParser.
+	 *
 	 * @param formatter the Joda DateTimeFormatter instance
 	 */
 	public DateTimeParser(DateTimeFormatter formatter) {

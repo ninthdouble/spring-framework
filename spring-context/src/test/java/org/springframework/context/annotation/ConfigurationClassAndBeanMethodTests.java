@@ -39,6 +39,31 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ConfigurationClassAndBeanMethodTests {
 
+	private static ConfigurationClass newConfigurationClass(Class<?> clazz) throws Exception {
+		ConfigurationClassParser parser = newParser();
+		parser.parse(clazz.getName(), clazz.getSimpleName());
+		assertThat(parser.getConfigurationClasses()).hasSize(1);
+		return parser.getConfigurationClasses().iterator().next();
+	}
+
+	private static ConfigurationClassParser newParser() {
+		return new ConfigurationClassParser(
+				new CachingMetadataReaderFactory(),
+				new FailFastProblemReporter(),
+				new StandardEnvironment(),
+				new DefaultResourceLoader(),
+				new AnnotationBeanNameGenerator(),
+				new DefaultListableBeanFactory());
+	}
+
+	private static List<BeanMethod> getBeanMethods(ConfigurationClass configurationClass) {
+		List<BeanMethod> beanMethods = configurationClass.getBeanMethods().stream()
+				.sorted(Comparator.comparing(beanMethod -> beanMethod.getMetadata().getMethodName()))
+				.collect(Collectors.toList());
+		assertThat(beanMethods).hasSize(3);
+		return beanMethods;
+	}
+
 	@Test
 	void verifyEquals() throws Exception {
 		ConfigurationClass configurationClass1 = newConfigurationClass(Config1.class);
@@ -126,39 +151,13 @@ class ConfigurationClassAndBeanMethodTests {
 	void verifyToString() throws Exception {
 		ConfigurationClass configurationClass = newConfigurationClass(Config1.class);
 		assertThat(configurationClass.toString())
-			.startsWith("ConfigurationClass: beanName 'Config1', class path resource");
+				.startsWith("ConfigurationClass: beanName 'Config1', class path resource");
 
 		List<BeanMethod> beanMethods = getBeanMethods(configurationClass);
 		String prefix = "BeanMethod: " + Config1.class.getName();
 		assertThat(beanMethods.get(0).toString()).isEqualTo(prefix + ".bean0()");
 		assertThat(beanMethods.get(1).toString()).isEqualTo(prefix + ".bean1(java.lang.String)");
 		assertThat(beanMethods.get(2).toString()).isEqualTo(prefix + ".bean2(java.lang.String,java.lang.Integer)");
-	}
-
-
-	private static ConfigurationClass newConfigurationClass(Class<?> clazz) throws Exception {
-		ConfigurationClassParser parser = newParser();
-		parser.parse(clazz.getName(), clazz.getSimpleName());
-		assertThat(parser.getConfigurationClasses()).hasSize(1);
-		return parser.getConfigurationClasses().iterator().next();
-	}
-
-	private static ConfigurationClassParser newParser() {
-		return new ConfigurationClassParser(
-				new CachingMetadataReaderFactory(),
-				new FailFastProblemReporter(),
-				new StandardEnvironment(),
-				new DefaultResourceLoader(),
-				new AnnotationBeanNameGenerator(),
-				new DefaultListableBeanFactory());
-	}
-
-	private static List<BeanMethod> getBeanMethods(ConfigurationClass configurationClass) {
-		List<BeanMethod> beanMethods = configurationClass.getBeanMethods().stream()
-				.sorted(Comparator.comparing(beanMethod -> beanMethod.getMetadata().getMethodName()))
-				.collect(Collectors.toList());
-		assertThat(beanMethods).hasSize(3);
-		return beanMethods;
 	}
 
 	static class Config1 {

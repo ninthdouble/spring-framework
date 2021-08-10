@@ -16,6 +16,8 @@
 
 package org.springframework.core.annotation;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -23,8 +25,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -134,7 +134,7 @@ class AttributeMethodsTests {
 	}
 
 	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	void isValidWhenDoesNotHaveTypeNotPresentExceptionReturnsTrue() {
 		ClassValue annotation = mock(ClassValue.class);
 		given(annotation.value()).willReturn((Class) InputStream.class);
@@ -151,7 +151,7 @@ class AttributeMethodsTests {
 	}
 
 	@Test
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	void validateWhenDoesNotHaveTypeNotPresentExceptionThrowsNothing() {
 		ClassValue annotation = mockAnnotation(ClassValue.class);
 		given(annotation.value()).willReturn((Class) InputStream.class);
@@ -167,7 +167,7 @@ class AttributeMethodsTests {
 		return result;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private <A extends Annotation> A mockAnnotation(Class<A> annotationType) {
 		A annotation = mock(annotationType);
 		given(annotation.annotationType()).willReturn((Class) annotationType);

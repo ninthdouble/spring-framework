@@ -17,7 +17,6 @@
 package org.springframework.aop.config;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -38,7 +37,7 @@ public class AopNamespaceHandlerPointcutErrorTests {
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				new XmlBeanDefinitionReader(bf).loadBeanDefinitions(
 						qualifiedResource(getClass(), "pointcutDuplication.xml")))
-			.satisfies(ex -> ex.contains(BeanDefinitionParsingException.class));
+				.satisfies(ex -> ex.contains(BeanDefinitionParsingException.class));
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class AopNamespaceHandlerPointcutErrorTests {
 		assertThatExceptionOfType(BeanDefinitionStoreException.class).isThrownBy(() ->
 				new XmlBeanDefinitionReader(bf).loadBeanDefinitions(
 						qualifiedResource(getClass(), "pointcutMissing.xml")))
-			.satisfies(ex -> ex.contains(BeanDefinitionParsingException.class));
+				.satisfies(ex -> ex.contains(BeanDefinitionParsingException.class));
 	}
 
 }

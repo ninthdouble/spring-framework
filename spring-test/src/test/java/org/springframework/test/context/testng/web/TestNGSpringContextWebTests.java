@@ -16,12 +16,6 @@
 
 package org.springframework.test.context.testng.web;
 
-import java.io.File;
-
-import javax.servlet.ServletContext;
-
-import org.testng.annotations.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +29,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.ServletWebRequest;
+import org.testng.annotations.Test;
+
+import javax.servlet.ServletContext;
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,39 +47,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebAppConfiguration
 public class TestNGSpringContextWebTests extends AbstractTestNGSpringContextTests implements ServletContextAware {
 
-	@Configuration
-	static class Config {
-
-		@Bean
-		String foo() {
-			return "enigma";
-		}
-	}
-
-
 	ServletContext servletContext;
-
 	@Autowired
 	WebApplicationContext wac;
-
 	@Autowired
 	MockServletContext mockServletContext;
-
 	@Autowired
 	MockHttpServletRequest request;
-
 	@Autowired
 	MockHttpServletResponse response;
-
 	@Autowired
 	MockHttpSession session;
-
 	@Autowired
 	ServletWebRequest webRequest;
-
 	@Autowired
 	String foo;
-
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
@@ -102,20 +82,29 @@ public class TestNGSpringContextWebTests extends AbstractTestNGSpringContextTest
 
 		Object rootWac = mockServletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 		assertThat(rootWac)
-			.as("Root WAC must be stored in the ServletContext as: " + WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
-			.isNotNull();
+				.as("Root WAC must be stored in the ServletContext as: " + WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE)
+				.isNotNull();
 		assertThat(rootWac).as("test WAC and Root WAC in ServletContext must be the same object.").isSameAs(wac);
 		assertThat(wac.getServletContext()).as("ServletContext instances must be the same object.").isSameAs(mockServletContext);
 		assertThat(request.getServletContext()).as("ServletContext in the WAC and in the mock request").isSameAs(mockServletContext);
 
 		assertThat(mockServletContext.getRealPath("index.jsp"))
-			.as("Getting real path for ServletContext resource.")
-			.isEqualTo(new File("src/main/webapp/index.jsp").getCanonicalPath());
+				.as("Getting real path for ServletContext resource.")
+				.isEqualTo(new File("src/main/webapp/index.jsp").getCanonicalPath());
 	}
 
 	@Test
 	void fooEnigmaAutowired() {
 		assertThat(foo).isEqualTo("enigma");
+	}
+
+	@Configuration
+	static class Config {
+
+		@Bean
+		String foo() {
+			return "enigma";
+		}
 	}
 
 }

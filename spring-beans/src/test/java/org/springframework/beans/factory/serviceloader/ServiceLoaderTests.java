@@ -16,16 +16,14 @@
 
 package org.springframework.beans.factory.serviceloader;
 
-import java.util.List;
-import java.util.ServiceLoader;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.List;
+import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;

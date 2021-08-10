@@ -16,6 +16,10 @@
 
 package org.springframework.web.util;
 
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -24,10 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Representation of a URI template that can be expanded with URI variables via
@@ -63,6 +63,7 @@ public class UriTemplate implements Serializable {
 
 	/**
 	 * Construct a new {@code UriTemplate} with the given URI String.
+	 *
 	 * @param uriTemplate the URI template string
 	 */
 	public UriTemplate(String uriTemplate) {
@@ -78,6 +79,7 @@ public class UriTemplate implements Serializable {
 
 	/**
 	 * Return the names of the variables in the template, in order.
+	 *
 	 * @return the template variable names
 	 */
 	public List<String> getVariableNames() {
@@ -96,10 +98,11 @@ public class UriTemplate implements Serializable {
 	 * System.out.println(template.expand(uriVariables));
 	 * </pre>
 	 * will print: <blockquote>{@code https://example.com/hotels/Rest%20%26%20Relax/bookings/42}</blockquote>
+	 *
 	 * @param uriVariables the map of URI variables
 	 * @return the expanded URI
 	 * @throws IllegalArgumentException if {@code uriVariables} is {@code null};
-	 * or if it does not contain values for all the variable names
+	 *                                  or if it does not contain values for all the variable names
 	 */
 	public URI expand(Map<String, ?> uriVariables) {
 		UriComponents expandedComponents = this.uriComponents.expand(uriVariables);
@@ -116,10 +119,11 @@ public class UriTemplate implements Serializable {
 	 * System.out.println(template.expand("Rest & Relax", 42));
 	 * </pre>
 	 * will print: <blockquote>{@code https://example.com/hotels/Rest%20%26%20Relax/bookings/42}</blockquote>
+	 *
 	 * @param uriVariableValues the array of URI variables
 	 * @return the expanded URI
 	 * @throws IllegalArgumentException if {@code uriVariables} is {@code null}
-	 * or if it does not contain sufficient variables
+	 *                                  or if it does not contain sufficient variables
 	 */
 	public URI expand(Object... uriVariableValues) {
 		UriComponents expandedComponents = this.uriComponents.expand(uriVariableValues);
@@ -129,6 +133,7 @@ public class UriTemplate implements Serializable {
 
 	/**
 	 * Indicate whether the given URI matches this template.
+	 *
 	 * @param uri the URI to match to
 	 * @return {@code true} if it matches; {@code false} otherwise
 	 */
@@ -149,6 +154,7 @@ public class UriTemplate implements Serializable {
 	 * System.out.println(template.match("https://example.com/hotels/1/bookings/42"));
 	 * </pre>
 	 * will print: <blockquote>{@code {hotel=1, booking=42}}</blockquote>
+	 *
 	 * @param uri the URI to match to
 	 * @return a map of variable values
 	 */
@@ -186,20 +192,12 @@ public class UriTemplate implements Serializable {
 			this.pattern = pattern;
 		}
 
-		public List<String> getVariableNames() {
-			return this.variableNames;
-		}
-
-		public Pattern getMatchPattern() {
-			return this.pattern;
-		}
-
 		public static TemplateInfo parse(String uriTemplate) {
 			int level = 0;
 			List<String> variableNames = new ArrayList<>();
 			StringBuilder pattern = new StringBuilder();
 			StringBuilder builder = new StringBuilder();
-			for (int i = 0 ; i < uriTemplate.length(); i++) {
+			for (int i = 0; i < uriTemplate.length(); i++) {
 				char c = uriTemplate.charAt(i);
 				if (c == '{') {
 					level++;
@@ -209,8 +207,7 @@ public class UriTemplate implements Serializable {
 						builder = new StringBuilder();
 						continue;
 					}
-				}
-				else if (c == '}') {
+				} else if (c == '}') {
 					level--;
 					if (level == 0) {
 						// end of URI variable
@@ -219,8 +216,7 @@ public class UriTemplate implements Serializable {
 						if (idx == -1) {
 							pattern.append("([^/]*)");
 							variableNames.add(variable);
-						}
-						else {
+						} else {
 							if (idx + 1 == variable.length()) {
 								throw new IllegalArgumentException(
 										"No custom regular expression specified after ':' in \"" + variable + "\"");
@@ -245,6 +241,14 @@ public class UriTemplate implements Serializable {
 
 		private static String quote(StringBuilder builder) {
 			return (builder.length() > 0 ? Pattern.quote(builder.toString()) : "");
+		}
+
+		public List<String> getVariableNames() {
+			return this.variableNames;
+		}
+
+		public Pattern getMatchPattern() {
+			return this.pattern;
 		}
 	}
 

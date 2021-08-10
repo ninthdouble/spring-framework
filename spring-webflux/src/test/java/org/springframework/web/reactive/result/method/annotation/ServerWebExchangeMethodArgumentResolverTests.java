@@ -16,13 +16,7 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.time.ZoneId;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.http.HttpMethod;
@@ -36,6 +30,11 @@ import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
+
+import java.time.ZoneId;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -72,7 +71,7 @@ public class ServerWebExchangeMethodArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(this.testMethod.arg(String.class))).isFalse();
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.testMethod.arg(Mono.class, ServerWebExchange.class)))
-			.withMessageStartingWith("ServerWebExchangeMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("ServerWebExchangeMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test

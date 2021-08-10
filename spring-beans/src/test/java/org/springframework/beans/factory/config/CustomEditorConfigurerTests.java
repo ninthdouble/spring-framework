@@ -16,6 +16,15 @@
 
 package org.springframework.beans.factory.config;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyEditorRegistrar;
+import org.springframework.beans.PropertyEditorRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.testfixture.beans.TestBean;
+
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;
 import java.text.DateFormat;
@@ -24,16 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.PropertyEditorRegistrar;
-import org.springframework.beans.PropertyEditorRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.beans.testfixture.beans.TestBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,7 +48,7 @@ public class CustomEditorConfigurerTests {
 		DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
 		CustomEditorConfigurer cec = new CustomEditorConfigurer();
 		final DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.GERMAN);
-		cec.setPropertyEditorRegistrars(new PropertyEditorRegistrar[] {
+		cec.setPropertyEditorRegistrars(new PropertyEditorRegistrar[]{
 				new PropertyEditorRegistrar() {
 					@Override
 					public void registerCustomEditors(PropertyEditorRegistry registry) {
@@ -128,7 +127,7 @@ public class CustomEditorConfigurerTests {
 
 		@Override
 		public void setAsText(String text) {
-			setValue(new String[] {"test"});
+			setValue(new String[]{"test"});
 		}
 	}
 

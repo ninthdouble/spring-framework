@@ -16,11 +16,6 @@
 
 package org.springframework.http.server.reactive;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +24,10 @@ import org.springframework.http.server.RequestPath;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+
+import java.net.InetSocketAddress;
+import java.net.URI;
 
 /**
  * Wraps another {@link ServerHttpRequest} and delegates all methods to it.
@@ -47,13 +46,32 @@ public class ServerHttpRequestDecorator implements ServerHttpRequest {
 		this.delegate = delegate;
 	}
 
-
-	public ServerHttpRequest getDelegate() {
-		return this.delegate;
+	/**
+	 * Return the native request of the underlying server API, if possible,
+	 * also unwrapping {@link ServerHttpRequestDecorator} if necessary.
+	 *
+	 * @param request the request to check
+	 * @param <T>     the expected native request type
+	 * @throws IllegalArgumentException if the native request can't be obtained
+	 * @since 5.3.3
+	 */
+	public static <T> T getNativeRequest(ServerHttpRequest request) {
+		if (request instanceof AbstractServerHttpRequest) {
+			return ((AbstractServerHttpRequest) request).getNativeRequest();
+		} else if (request instanceof ServerHttpRequestDecorator) {
+			return getNativeRequest(((ServerHttpRequestDecorator) request).getDelegate());
+		} else {
+			throw new IllegalArgumentException(
+					"Can't find native request in " + request.getClass().getName());
+		}
 	}
 
 
 	// ServerHttpRequest delegation methods...
+
+	public ServerHttpRequest getDelegate() {
+		return this.delegate;
+	}
 
 	@Override
 	public String getId() {
@@ -118,29 +136,6 @@ public class ServerHttpRequestDecorator implements ServerHttpRequest {
 	public Flux<DataBuffer> getBody() {
 		return getDelegate().getBody();
 	}
-
-
-	/**
-	 * Return the native request of the underlying server API, if possible,
-	 * also unwrapping {@link ServerHttpRequestDecorator} if necessary.
-	 * @param request the request to check
-	 * @param <T> the expected native request type
-	 * @throws IllegalArgumentException if the native request can't be obtained
-	 * @since 5.3.3
-	 */
-	public static <T> T getNativeRequest(ServerHttpRequest request) {
-		if (request instanceof AbstractServerHttpRequest) {
-			return ((AbstractServerHttpRequest) request).getNativeRequest();
-		}
-		else if (request instanceof ServerHttpRequestDecorator) {
-			return getNativeRequest(((ServerHttpRequestDecorator) request).getDelegate());
-		}
-		else {
-			throw new IllegalArgumentException(
-					"Can't find native request in " + request.getClass().getName());
-		}
-	}
-
 
 	@Override
 	public String toString() {

@@ -16,12 +16,12 @@
 
 package org.springframework.test.context.junit4.statements;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.junit.Test;
 import org.junit.runners.model.Statement;
 import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -69,7 +69,7 @@ public class SpringFailOnTimeoutTests {
 		}).given(statement).evaluate();
 
 		assertThatExceptionOfType(TimeoutException.class).isThrownBy(() ->
-		new SpringFailOnTimeout(statement, 1).evaluate());
+				new SpringFailOnTimeout(statement, 1).evaluate());
 	}
 
 	@Test

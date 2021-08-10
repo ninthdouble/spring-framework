@@ -16,12 +16,12 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.Objects;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
+
+import java.util.Objects;
 
 /**
  * A database value that can be set in a statement.
@@ -47,6 +47,7 @@ public final class Parameter {
 
 	/**
 	 * Create a new {@link Parameter} from {@code value}.
+	 *
 	 * @param value the parameter value
 	 * @return the {@link Parameter} value for {@code value}
 	 */
@@ -57,8 +58,9 @@ public final class Parameter {
 
 	/**
 	 * Create a new {@link Parameter} from {@code value} and {@code type}.
+	 *
 	 * @param value the parameter value (can be {@code null})
-	 * @param type the parameter type
+	 * @param type  the parameter type
 	 * @return the {@link Parameter} value for {@code value}
 	 */
 	public static Parameter fromOrEmpty(@Nullable Object value, Class<?> type) {
@@ -67,6 +69,7 @@ public final class Parameter {
 
 	/**
 	 * Create a new empty {@link Parameter} for {@code type}.
+	 *
 	 * @return the empty {@link Parameter} value for {@code type}
 	 */
 	public static Parameter empty(Class<?> type) {
@@ -77,6 +80,7 @@ public final class Parameter {
 
 	/**
 	 * Return the column value (can be {@code null}).
+	 *
 	 * @see #hasValue()
 	 */
 	@Nullable
@@ -93,6 +97,7 @@ public final class Parameter {
 
 	/**
 	 * Return whether this {@link Parameter} has a value.
+	 *
 	 * @return {@code false} if {@link #getValue()} is {@code null}
 	 */
 	public boolean hasValue() {
@@ -101,6 +106,7 @@ public final class Parameter {
 
 	/**
 	 * Return whether this {@link Parameter} has a empty.
+	 *
 	 * @return {@code true} if {@link #getValue()} is {@code null}
 	 */
 	public boolean isEmpty() {

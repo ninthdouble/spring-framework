@@ -16,14 +16,10 @@
 
 package org.springframework.mock.web;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 /**
  * Internal helper class that serves as a value holder for request headers.
@@ -35,14 +31,6 @@ import org.springframework.util.CollectionUtils;
 class HeaderValueHolder {
 
 	private final List<Object> values = new LinkedList<>();
-
-
-	void setValue(@Nullable Object value) {
-		this.values.clear();
-		if (value != null) {
-			this.values.add(value);
-		}
-	}
 
 	void addValue(Object value) {
 		this.values.add(value);
@@ -71,6 +59,13 @@ class HeaderValueHolder {
 	@Nullable
 	Object getValue() {
 		return (!this.values.isEmpty() ? this.values.get(0) : null);
+	}
+
+	void setValue(@Nullable Object value) {
+		this.values.clear();
+		if (value != null) {
+			this.values.add(value);
+		}
 	}
 
 	@Nullable

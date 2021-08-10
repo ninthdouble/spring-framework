@@ -16,13 +16,12 @@
 
 package org.springframework.beans.factory.support;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ReflectionUtils;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -80,9 +79,6 @@ public class AutowireUtilsTests {
 
 
 	public interface MyInterfaceType<T> {
-	}
-
-	public class MySimpleInterfaceType implements MyInterfaceType<String> {
 	}
 
 	public static class MyTypeWithMethods<T> {
@@ -175,6 +171,9 @@ public class AutowireUtilsTests {
 
 		public void readGenericArrayInputMessage(T[] message) {
 		}
+	}
+
+	public class MySimpleInterfaceType implements MyInterfaceType<String> {
 	}
 
 }

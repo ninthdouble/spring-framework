@@ -16,25 +16,23 @@
 
 package org.springframework.http.converter.xml;
 
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MockHttpInputMessage;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.stream.XMLInputFactory;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MockHttpInputMessage;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -61,10 +59,14 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 	@BeforeEach
 	public void setup() {
 		converter = new Jaxb2CollectionHttpMessageConverter<Collection<Object>>();
-		rootElementListType = new ParameterizedTypeReference<List<RootElement>>() {}.getType();
-		rootElementSetType = new ParameterizedTypeReference<Set<RootElement>>() {}.getType();
-		typeListType = new ParameterizedTypeReference<List<TestType>>() {}.getType();
-		typeSetType = new ParameterizedTypeReference<Set<TestType>>() {}.getType();
+		rootElementListType = new ParameterizedTypeReference<List<RootElement>>() {
+		}.getType();
+		rootElementSetType = new ParameterizedTypeReference<Set<RootElement>>() {
+		}.getType();
+		typeListType = new ParameterizedTypeReference<List<TestType>>() {
+		}.getType();
+		typeSetType = new ParameterizedTypeReference<Set<TestType>>() {
+		}.getType();
 	}
 
 
@@ -127,7 +129,7 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 	@SuppressWarnings("unchecked")
 	public void readXmlRootElementExternalEntityDisabled() throws Exception {
 		Resource external = new ClassPathResource("external.txt", getClass());
-		String content =  "<!DOCTYPE root [" +
+		String content = "<!DOCTYPE root [" +
 				"  <!ELEMENT external ANY >\n" +
 				"  <!ENTITY ext SYSTEM \"" + external.getURI() + "\" >]>" +
 				"  <list><rootElement><type s=\"1\"/><external>&ext;</external></rootElement></list>";
@@ -146,8 +148,7 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 			Collection<RootElement> result = converter.read(rootElementListType, null, inputMessage);
 			assertThat(result.size()).isEqualTo(1);
 			assertThat(result.iterator().next().external).isEqualTo("");
-		}
-		catch (HttpMessageNotReadableException ex) {
+		} catch (HttpMessageNotReadableException ex) {
 			// Some parsers raise an exception
 		}
 	}
@@ -156,7 +157,7 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 	@SuppressWarnings("unchecked")
 	public void readXmlRootElementExternalEntityEnabled() throws Exception {
 		Resource external = new ClassPathResource("external.txt", getClass());
-		String content =  "<!DOCTYPE root [" +
+		String content = "<!DOCTYPE root [" +
 				"  <!ELEMENT external ANY >\n" +
 				"  <!ENTITY ext SYSTEM \"" + external.getURI() + "\" >]>" +
 				"  <list><rootElement><type s=\"1\"/><external>&ext;</external></rootElement></list>";
@@ -198,12 +199,17 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 		MockHttpInputMessage inputMessage = new MockHttpInputMessage(content.getBytes("UTF-8"));
 		assertThatExceptionOfType(HttpMessageNotReadableException.class).isThrownBy(() ->
 				this.converter.read(this.rootElementListType, null, inputMessage))
-			.withMessageContaining("\"lol9\"");
+				.withMessageContaining("\"lol9\"");
 	}
 
 
 	@XmlRootElement
 	public static class RootElement {
+
+		@XmlElement
+		public TestType type = new TestType();
+		@XmlElement(required = false)
+		public String external;
 
 		public RootElement() {
 		}
@@ -211,12 +217,6 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 		public RootElement(String s) {
 			this.type = new TestType(s);
 		}
-
-		@XmlElement
-		public TestType type = new TestType();
-
-		@XmlElement(required=false)
-		public String external;
 
 		@Override
 		public boolean equals(Object o) {
@@ -240,15 +240,15 @@ public class Jaxb2CollectionHttpMessageConverterTests {
 	@XmlType
 	public static class TestType {
 
+		@XmlAttribute
+		public String s = "Hello World";
+
 		public TestType() {
 		}
 
 		public TestType(String s) {
 			this.s = s;
 		}
-
-		@XmlAttribute
-		public String s = "Hello World";
 
 		@Override
 		public boolean equals(Object o) {

@@ -16,24 +16,23 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Default {@link FetchSpec} implementation.
  *
+ * @param <T> the row result type
  * @author Mark Paluch
  * @since 5.3
- * @param <T> the row result type
  */
 class DefaultFetchSpec<T> implements FetchSpec<T> {
 
@@ -49,9 +48,9 @@ class DefaultFetchSpec<T> implements FetchSpec<T> {
 
 
 	DefaultFetchSpec(ConnectionAccessor connectionAccessor, String sql,
-			Function<Connection, Flux<Result>> resultFunction,
-			Function<Connection, Mono<Integer>> updatedRowsFunction,
-			BiFunction<Row, RowMetadata, T> mappingFunction) {
+					 Function<Connection, Flux<Result>> resultFunction,
+					 Function<Connection, Mono<Integer>> updatedRowsFunction,
+					 BiFunction<Row, RowMetadata, T> mappingFunction) {
 
 		this.sql = sql;
 		this.connectionAccessor = connectionAccessor;

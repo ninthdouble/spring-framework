@@ -16,20 +16,15 @@
 
 package org.springframework.web.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.Nullable;
+import org.springframework.util.FastByteArrayOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.lang.Nullable;
-import org.springframework.util.FastByteArrayOutputStream;
+import java.io.*;
 
 /**
  * {@link javax.servlet.http.HttpServletResponse} wrapper that caches all content written to
@@ -40,8 +35,8 @@ import org.springframework.util.FastByteArrayOutputStream;
  * Note: As of Spring Framework 5.0, this wrapper is built on the Servlet 3.1 API.
  *
  * @author Juergen Hoeller
- * @since 4.1.3
  * @see ContentCachingRequestWrapper
+ * @since 4.1.3
  */
 public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
@@ -59,6 +54,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Create a new ContentCachingResponseWrapper for the given servlet response.
+	 *
 	 * @param response the original servlet response
 	 */
 	public ContentCachingResponseWrapper(HttpServletResponse response) {
@@ -71,8 +67,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 		copyBodyToResponse(false);
 		try {
 			super.sendError(sc);
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			// Possibly on Tomcat when called too late: fall back to silent setStatus
 			super.setStatus(sc);
 		}
@@ -84,8 +79,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 		copyBodyToResponse(false);
 		try {
 			super.sendError(sc, msg);
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			// Possibly on Tomcat when called too late: fall back to silent setStatus
 			super.setStatus(sc, msg);
 		}
@@ -162,6 +156,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Return the status code as specified on the response.
+	 *
 	 * @deprecated as of 5.2 in favor of {@link HttpServletResponse#getStatus()}
 	 */
 	@Deprecated
@@ -178,6 +173,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Return an {@link InputStream} to the cached content.
+	 *
 	 * @since 4.2
 	 */
 	public InputStream getContentInputStream() {
@@ -186,6 +182,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Return the current size of the cached content.
+	 *
 	 * @since 4.2
 	 */
 	public int getContentSize() {
@@ -194,6 +191,7 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Copy the complete cached body content to the response.
+	 *
 	 * @since 4.2
 	 */
 	public void copyBodyToResponse() throws IOException {
@@ -202,8 +200,9 @@ public class ContentCachingResponseWrapper extends HttpServletResponseWrapper {
 
 	/**
 	 * Copy the cached body content to the response.
+	 *
 	 * @param complete whether to set a corresponding content length
-	 * for the complete cached body content
+	 *                 for the complete cached body content
 	 * @since 4.2
 	 */
 	protected void copyBodyToResponse(boolean complete) throws IOException {

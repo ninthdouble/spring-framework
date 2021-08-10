@@ -16,12 +16,7 @@
 
 package org.springframework.test.context.jdbc;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.TestMethodOrder;
-
+import org.junit.jupiter.api.*;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
@@ -61,17 +56,17 @@ class TransactionalAfterTestMethodSqlScriptsTests extends AbstractTransactionalT
 
 	@Test
 	@SqlGroup({
-		@Sql({ "schema.sql", "data.sql" }),
-		@Sql(scripts = "drop-schema.sql", executionPhase = AFTER_TEST_METHOD)
+			@Sql({"schema.sql", "data.sql"}),
+			@Sql(scripts = "drop-schema.sql", executionPhase = AFTER_TEST_METHOD)
 	})
-	// test## is required for @TestMethodOrder.
+		// test## is required for @TestMethodOrder.
 	void test01() {
 		assertNumUsers(1);
 	}
 
 	@Test
-	@Sql({ "schema.sql", "data.sql", "data-add-dogbert.sql" })
-	// test## is required for @TestMethodOrder.
+	@Sql({"schema.sql", "data.sql", "data-add-dogbert.sql"})
+		// test## is required for @TestMethodOrder.
 	void test02() {
 		assertNumUsers(2);
 	}

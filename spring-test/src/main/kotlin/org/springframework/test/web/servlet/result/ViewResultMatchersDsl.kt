@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.ResultActions
  * @author Sebastien Deleuze
  * @since 5.3
  */
-class ViewResultMatchersDsl internal constructor (private val actions: ResultActions) {
+class ViewResultMatchersDsl internal constructor(private val actions: ResultActions) {
 
 	private val matchers = MockMvcResultMatchers.view()
 

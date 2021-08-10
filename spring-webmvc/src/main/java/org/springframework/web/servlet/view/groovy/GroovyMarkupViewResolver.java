@@ -16,10 +16,10 @@
 
 package org.springframework.web.servlet.view.groovy;
 
-import java.util.Locale;
-
 import org.springframework.web.servlet.view.AbstractTemplateViewResolver;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
+
+import java.util.Locale;
 
 /**
  * Convenience subclass of {@link AbstractTemplateViewResolver} that supports
@@ -34,8 +34,8 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
  * {@code View} object if a template is actually found.
  *
  * @author Brian Clozel
- * @since 4.1
  * @see GroovyMarkupConfigurer
+ * @since 4.1
  */
 public class GroovyMarkupViewResolver extends AbstractTemplateViewResolver {
 
@@ -50,6 +50,7 @@ public class GroovyMarkupViewResolver extends AbstractTemplateViewResolver {
 	/**
 	 * A convenience constructor that allows for specifying the {@link #setPrefix prefix}
 	 * and {@link #setSuffix suffix} as constructor arguments.
+	 *
 	 * @param prefix the prefix that gets prepended to view names when building a URL
 	 * @param suffix the suffix that gets appended to view names when building a URL
 	 * @since 4.3

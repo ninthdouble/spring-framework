@@ -16,30 +16,21 @@
 
 package org.springframework.jdbc.core.simple;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import javax.sql.DataSource;
+import java.sql.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link SimpleJdbcCall}.
@@ -79,10 +70,9 @@ class SimpleJdbcCallTests {
 		SimpleJdbcCall sproc = new SimpleJdbcCall(dataSource).withProcedureName(NO_SUCH_PROC);
 		try {
 			assertThatExceptionOfType(BadSqlGrammarException.class)
-				.isThrownBy(() -> sproc.execute())
-				.withCause(sqlException);
-		}
-		finally {
+					.isThrownBy(() -> sproc.execute())
+					.withCause(sqlException);
+		} finally {
 			verify(callableStatement).close();
 			verify(connection, atLeastOnce()).close();
 		}
@@ -231,7 +221,8 @@ class SimpleJdbcCallTests {
 	 * missing metadata and consequently a failure while invoking the stored
 	 * procedure.
 	 */
-	@Test  // gh-26486
+	@Test
+	// gh-26486
 	void exceptionThrownWhileRetrievingColumnNamesFromMetadata() throws Exception {
 		ResultSet proceduresResultSet = mock(ResultSet.class);
 		ResultSet procedureColumnsResultSet = mock(ResultSet.class);
@@ -248,10 +239,10 @@ class SimpleJdbcCallTests {
 		given(procedureColumnsResultSet.next()).willReturn(true, true, true, false);
 		given(procedureColumnsResultSet.getString("COLUMN_NAME")).willReturn("amount", "custid", "newid");
 		given(procedureColumnsResultSet.getInt("DATA_TYPE"))
-			// Return a valid data type for the first 2 columns.
-			.willReturn(Types.INTEGER, Types.INTEGER)
-			// 3rd time, simulate an error while retrieving metadata.
-			.willThrow(new SQLException("error with DATA_TYPE for column 3"));
+				// Return a valid data type for the first 2 columns.
+				.willReturn(Types.INTEGER, Types.INTEGER)
+				// 3rd time, simulate an error while retrieving metadata.
+				.willThrow(new SQLException("error with DATA_TYPE for column 3"));
 
 		SimpleJdbcCall adder = new SimpleJdbcCall(dataSource).withNamedBinding().withProcedureName("add_invoice");
 		adder.compile();
@@ -277,12 +268,11 @@ class SimpleJdbcCallTests {
 		if (isFunction) {
 			given(callableStatement.getObject(1)).willReturn(4L);
 			given(connection.prepareCall("{? = call add_invoice(?, ?)}")
-					).willReturn(callableStatement);
-		}
-		else {
+			).willReturn(callableStatement);
+		} else {
 			given(callableStatement.getObject(3)).willReturn(4L);
 			given(connection.prepareCall("{call add_invoice(?, ?, ?)}")
-					).willReturn(callableStatement);
+			).willReturn(callableStatement);
 		}
 	}
 
@@ -291,8 +281,7 @@ class SimpleJdbcCallTests {
 			verify(callableStatement).registerOutParameter(1, 4);
 			verify(callableStatement).setObject(2, 1103, 4);
 			verify(callableStatement).setObject(3, 3, 4);
-		}
-		else {
+		} else {
 			verify(callableStatement).setObject(1, 1103, 4);
 			verify(callableStatement).setObject(2, 3, 4);
 			verify(callableStatement).registerOutParameter(3, 4);
@@ -315,12 +304,11 @@ class SimpleJdbcCallTests {
 		given(procedureColumnsResultSet.next()).willReturn(true, true, true, false);
 		given(procedureColumnsResultSet.getInt("DATA_TYPE")).willReturn(4);
 		if (isFunction) {
-			given(procedureColumnsResultSet.getString("COLUMN_NAME")).willReturn(null,"amount", "custid");
+			given(procedureColumnsResultSet.getString("COLUMN_NAME")).willReturn(null, "amount", "custid");
 			given(procedureColumnsResultSet.getInt("COLUMN_TYPE")).willReturn(5, 1, 1);
 			given(connection.prepareCall("{? = call ADD_INVOICE(?, ?)}")).willReturn(callableStatement);
 			given(callableStatement.getObject(1)).willReturn(4L);
-		}
-		else {
+		} else {
 			given(procedureColumnsResultSet.getString("COLUMN_NAME")).willReturn("amount", "custid", "newid");
 			given(procedureColumnsResultSet.getInt("COLUMN_TYPE")).willReturn(1, 1, 4);
 			given(connection.prepareCall("{call ADD_INVOICE(?, ?, ?)}")).willReturn(callableStatement);
@@ -336,8 +324,7 @@ class SimpleJdbcCallTests {
 			verify(callableStatement).registerOutParameter(1, 4);
 			verify(callableStatement).setObject(2, 1103, 4);
 			verify(callableStatement).setObject(3, 3, 4);
-		}
-		else {
+		} else {
 			verify(callableStatement).setObject(1, 1103, 4);
 			verify(callableStatement).setObject(2, 3, 4);
 			verify(callableStatement).registerOutParameter(3, 4);

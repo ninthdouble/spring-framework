@@ -87,7 +87,7 @@ suspend fun RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchange(): Clien
  * @author Sebastien Deleuze
  * @since 5.3
  */
-suspend fun <T: Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchange(responseHandler: suspend (ClientResponse) -> T): T =
+suspend fun <T : Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchange(responseHandler: suspend (ClientResponse) -> T): T =
 		exchangeToMono { mono(Dispatchers.Unconfined) { responseHandler.invoke(it) } }.awaitSingle()
 
 /**
@@ -96,7 +96,7 @@ suspend fun <T: Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchange
  * @since 5.3.8
  */
 @Suppress("DEPRECATION")
-suspend fun <T: Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchangeOrNull(responseHandler: suspend (ClientResponse) -> T?): T? =
+suspend fun <T : Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchangeOrNull(responseHandler: suspend (ClientResponse) -> T?): T? =
 		exchangeToMono { mono(Dispatchers.Unconfined) { responseHandler.invoke(it) } }.awaitSingleOrNull()
 
 /**
@@ -105,7 +105,7 @@ suspend fun <T: Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.awaitExchange
  * @author Sebastien Deleuze
  * @since 5.3
  */
-fun <T: Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.exchangeToFlow(responseHandler: (ClientResponse) -> Flow<T>): Flow<T> =
+fun <T : Any> RequestHeadersSpec<out RequestHeadersSpec<*>>.exchangeToFlow(responseHandler: (ClientResponse) -> Flow<T>): Flow<T> =
 		exchangeToFlux { responseHandler.invoke(it).asFlux() }.asFlow()
 
 /**
@@ -146,11 +146,11 @@ inline fun <reified T : Any> WebClient.ResponseSpec.bodyToFlow(): Flow<T> =
  * @author Sebastien Deleuze
  * @since 5.2
  */
-suspend inline fun <reified T : Any> WebClient.ResponseSpec.awaitBody() : T =
-	when (T::class) {
-		Unit::class -> awaitBodilessEntity().let { Unit as T }
-		else -> bodyToMono<T>().awaitSingle()
-	}
+suspend inline fun <reified T : Any> WebClient.ResponseSpec.awaitBody(): T =
+		when (T::class) {
+			Unit::class -> awaitBodilessEntity().let { Unit as T }
+			else -> bodyToMono<T>().awaitSingle()
+		}
 
 /**
  * Coroutines variant of [WebClient.ResponseSpec.bodyToMono].
@@ -159,17 +159,17 @@ suspend inline fun <reified T : Any> WebClient.ResponseSpec.awaitBody() : T =
  * @since 5.3.6
  */
 @Suppress("DEPRECATION")
-suspend inline fun <reified T : Any> WebClient.ResponseSpec.awaitBodyOrNull() : T? =
-	when (T::class) {
-		Unit::class -> awaitBodilessEntity().let { Unit as T? }
-		else -> bodyToMono<T>().awaitSingleOrNull()
-	}
+suspend inline fun <reified T : Any> WebClient.ResponseSpec.awaitBodyOrNull(): T? =
+		when (T::class) {
+			Unit::class -> awaitBodilessEntity().let { Unit as T? }
+			else -> bodyToMono<T>().awaitSingleOrNull()
+		}
 
 /**
  * Coroutines variant of [WebClient.ResponseSpec.toBodilessEntity].
  */
 suspend fun WebClient.ResponseSpec.awaitBodilessEntity() =
-	toBodilessEntity().awaitSingle()
+		toBodilessEntity().awaitSingle()
 
 /**
  * Extension for [WebClient.ResponseSpec.toEntity] providing a `toEntity<Foo>()` variant

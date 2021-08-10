@@ -16,20 +16,8 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.channels.ReadableByteChannel;
-import java.time.Duration;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.BaseSubscriber;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.core.io.ClassPathResource;
@@ -43,6 +31,17 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.testfixture.http.client.reactive.MockClientHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
+import reactor.core.publisher.BaseSubscriber;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.channels.ReadableByteChannel;
+import java.time.Duration;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
@@ -61,12 +60,10 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
  */
 public class SynchronossPartHttpMessageReaderTests extends AbstractLeakCheckingTests {
 
-	private final MultipartHttpMessageReader reader =
-			new MultipartHttpMessageReader(new SynchronossPartHttpMessageReader());
-
 	private static final ResolvableType PARTS_ELEMENT_TYPE =
 			forClassWithGenerics(MultiValueMap.class, String.class, Part.class);
-
+	private final MultipartHttpMessageReader reader =
+			new MultipartHttpMessageReader(new SynchronossPartHttpMessageReader());
 
 	@Test
 	void canRead() {
@@ -113,7 +110,8 @@ public class SynchronossPartHttpMessageReaderTests extends AbstractLeakCheckingT
 		assertThat(((FormFieldPart) part).value()).isEqualTo("sample-text");
 	}
 
-	@Test // SPR-16545
+	@Test
+		// SPR-16545
 	void transferTo() throws IOException {
 		ServerHttpRequest request = generateMultipartRequest();
 		MultiValueMap<String, Part> parts = this.reader.readMono(PARTS_ELEMENT_TYPE, request, emptyMap()).block();

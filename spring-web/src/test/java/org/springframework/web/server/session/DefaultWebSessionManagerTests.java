@@ -16,17 +16,11 @@
 
 package org.springframework.web.server.session;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
@@ -34,6 +28,11 @@ import org.springframework.web.server.adapter.DefaultServerWebExchange;
 import org.springframework.web.server.i18n.AcceptHeaderLocaleContextResolver;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
+import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +43,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for {@link DefaultWebSessionManager}.
+ *
  * @author Rossen Stoyanchev
  * @author Rob Winch
  */
@@ -83,7 +83,7 @@ class DefaultWebSessionManagerTests {
 		MockServerHttpRequest request = MockServerHttpRequest.get("/path").build();
 		MockServerHttpResponse response = new MockServerHttpResponse();
 		this.exchange = new DefaultServerWebExchange(request, response, this.sessionManager,
-			ServerCodecConfigurer.create(), new AcceptHeaderLocaleContextResolver());
+				ServerCodecConfigurer.create(), new AcceptHeaderLocaleContextResolver());
 	}
 
 	@Test

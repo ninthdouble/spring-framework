@@ -16,17 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -40,6 +31,14 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -98,7 +97,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 		assertThat(resolver.supportsParameter(paramNamedValueMap)).as("non-@RequestParam parameter supported").isFalse();
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.paramMono))
-			.withMessageStartingWith("RequestHeaderMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("RequestHeaderMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test
@@ -126,7 +125,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 		Object result = mono.block();
 		boolean condition = result instanceof String[];
 		assertThat(condition).isTrue();
-		assertThat((String[]) result).isEqualTo(new String[] {"foo", "bar"});
+		assertThat((String[]) result).isEqualTo(new String[]{"foo", "bar"});
 	}
 
 	@Test
@@ -153,8 +152,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 			boolean condition = result instanceof String;
 			assertThat(condition).isTrue();
 			assertThat(result).isEqualTo("bar");
-		}
-		finally {
+		} finally {
 			System.clearProperty("systemProperty");
 		}
 	}
@@ -174,8 +172,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 			boolean condition = result instanceof String;
 			assertThat(condition).isTrue();
 			assertThat(result).isEqualTo(expected);
-		}
-		finally {
+		} finally {
 			System.clearProperty("systemProperty");
 		}
 	}
@@ -195,8 +192,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 			boolean condition = result instanceof String;
 			assertThat(condition).isTrue();
 			assertThat(result).isEqualTo(expected);
-		}
-		finally {
+		} finally {
 			System.clearProperty("systemProperty");
 		}
 	}
@@ -247,7 +243,7 @@ public class RequestHeaderMethodArgumentResolverTests {
 	public void params(
 			@RequestHeader(name = "name", defaultValue = "bar") String param1,
 			@RequestHeader("name") String[] param2,
-			@RequestHeader(name = "name", defaultValue="#{systemProperties.systemProperty}") String param3,
+			@RequestHeader(name = "name", defaultValue = "#{systemProperties.systemProperty}") String param3,
 			@RequestHeader("#{systemProperties.systemProperty}") String param4,
 			@RequestHeader("${systemProperty}") String param5,
 			@RequestHeader("name") Map<?, ?> unsupported,

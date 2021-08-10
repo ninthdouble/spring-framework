@@ -16,24 +16,22 @@
 
 package org.springframework.http.codec.xml;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.testfixture.codec.AbstractEncoderTests;
 import org.springframework.core.testfixture.xml.XmlContent;
 import org.springframework.http.MediaType;
 import org.springframework.web.testfixture.xml.Pojo;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,7 +105,8 @@ public class Jaxb2XmlEncoderTests extends AbstractEncoderTests<Jaxb2XmlEncoder> 
 		};
 	}
 
-	public static class Model {}
+	public static class Model {
+	}
 
 	public static class Foo extends Model {
 
@@ -147,8 +146,8 @@ public class Jaxb2XmlEncoderTests extends AbstractEncoderTests<Jaxb2XmlEncoder> 
 	public static class Container {
 
 		@XmlElements({
-				@XmlElement(name="foo", type=Foo.class),
-				@XmlElement(name="bar", type=Bar.class)
+				@XmlElement(name = "foo", type = Foo.class),
+				@XmlElement(name = "bar", type = Bar.class)
 		})
 		public List<Model> getElements() {
 			return Arrays.asList(new Foo("name1"), new Bar("title1"));

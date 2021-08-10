@@ -16,15 +16,6 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapter;
@@ -43,6 +34,14 @@ import org.springframework.web.bind.support.WebExchangeDataBinder;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.result.method.HandlerMethodArgumentResolverSupport;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Resolve {@code @ModelAttribute} annotated method arguments.
@@ -70,13 +69,14 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 
 	/**
 	 * Class constructor with a default resolution mode flag.
-	 * @param adapterRegistry for adapting to other reactive types from and to Mono
+	 *
+	 * @param adapterRegistry      for adapting to other reactive types from and to Mono
 	 * @param useDefaultResolution if "true", non-simple method arguments and
-	 * return values are considered model attributes with or without a
-	 * {@code @ModelAttribute} annotation present.
+	 *                             return values are considered model attributes with or without a
+	 *                             {@code @ModelAttribute} annotation present.
 	 */
 	public ModelAttributeMethodArgumentResolver(ReactiveAdapterRegistry adapterRegistry,
-			boolean useDefaultResolution) {
+												boolean useDefaultResolution) {
 
 		super(adapterRegistry);
 		this.useDefaultResolution = useDefaultResolution;
@@ -87,8 +87,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 	public boolean supportsParameter(MethodParameter parameter) {
 		if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
 			return true;
-		}
-		else if (this.useDefaultResolution) {
+		} else if (this.useDefaultResolution) {
 			return checkParameterType(parameter, type -> !BeanUtils.isSimpleProperty(type));
 		}
 		return false;
@@ -133,8 +132,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 						if (adapter != null) {
 							return adapter.fromPublisher(errors.hasErrors() ?
 									Mono.error(new WebExchangeBindException(parameter, errors)) : valueMono);
-						}
-						else {
+						} else {
 							if (errors.hasErrors() && !hasErrorsArgument(parameter)) {
 								throw new WebExchangeBindException(parameter, errors);
 							}
@@ -147,6 +145,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 	/**
 	 * Determine if binding should be disabled for the supplied {@link MethodParameter},
 	 * based on the {@link ModelAttribute#binding} annotation attribute.
+	 *
 	 * @since 5.2.15
 	 */
 	private boolean bindingDisabled(MethodParameter parameter) {
@@ -156,7 +155,8 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 
 	/**
 	 * Extension point to bind the request to the target object.
-	 * @param binder the data binder instance to use for the binding
+	 *
+	 * @param binder   the data binder instance to use for the binding
 	 * @param exchange the current request
 	 * @since 5.2.6
 	 */
@@ -165,7 +165,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 	}
 
 	private Mono<?> prepareAttributeMono(String attributeName, ResolvableType attributeType,
-			BindingContext context, ServerWebExchange exchange) {
+										 BindingContext context, ServerWebExchange exchange) {
 
 		Object attribute = context.getModel().asMap().get(attributeName);
 
@@ -181,8 +181,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 		if (adapter != null) {
 			Assert.isTrue(!adapter.isMultiValue(), "Data binding only supports single-value async types");
 			return Mono.from(adapter.toPublisher(attribute));
-		}
-		else {
+		} else {
 			return Mono.justOrEmpty(attribute);
 		}
 	}
@@ -218,7 +217,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 	}
 
 	private Mono<?> constructAttribute(Constructor<?> ctor, String attributeName,
-			BindingContext context, ServerWebExchange exchange) {
+									   BindingContext context, ServerWebExchange exchange) {
 
 		if (ctor.getParameterCount() == 0) {
 			// A single default constructor -> clearly a standard JavaBeans arrangement.
@@ -251,8 +250,7 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 				MethodParameter methodParam = new MethodParameter(ctor, i);
 				if (value == null && methodParam.isOptional()) {
 					args[i] = (methodParam.getParameterType() == Optional.class ? Optional.empty() : null);
-				}
-				else {
+				} else {
 					args[i] = binder.convertIfNecessary(value, paramTypes[i], methodParam);
 				}
 			}
@@ -263,7 +261,8 @@ public class ModelAttributeMethodArgumentResolver extends HandlerMethodArgumentR
 	/**
 	 * Protected method to obtain the values for data binding. By default this
 	 * method delegates to {@link WebExchangeDataBinder#getValuesToBind}.
-	 * @param binder the data binder in use
+	 *
+	 * @param binder   the data binder in use
 	 * @param exchange the current exchange
 	 * @return a map of bind values
 	 * @since 5.3

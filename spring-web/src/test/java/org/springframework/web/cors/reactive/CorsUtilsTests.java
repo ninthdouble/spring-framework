@@ -16,15 +16,14 @@
 
 package org.springframework.web.cors.reactive;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.get;
@@ -32,6 +31,7 @@ import static org.springframework.web.testfixture.http.server.reactive.MockServe
 
 /**
  * Test case for reactive {@link CorsUtils}.
+ *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  */
@@ -101,7 +101,7 @@ public class CorsUtilsTests {
 
 	@SuppressWarnings("deprecation")
 	private void testWithXForwardedHeaders(String serverName, int port,
-			String forwardedProto, String forwardedHost, int forwardedPort, String originHeader) {
+										   String forwardedProto, String forwardedHost, int forwardedPort, String originHeader) {
 
 		String url = "http://" + serverName;
 		if (port != -1) {
@@ -125,7 +125,7 @@ public class CorsUtilsTests {
 
 	@SuppressWarnings("deprecation")
 	private void testWithForwardedHeader(String serverName, int port,
-			String forwardedHeader, String originHeader) {
+										 String forwardedHeader, String originHeader) {
 
 		String url = "http://" + serverName;
 		if (port != -1) {

@@ -16,20 +16,18 @@
 
 package org.springframework.web.filter;
 
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockHttpSession;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,7 +42,8 @@ class RequestLoggingFilterTests {
 
 	private final MockHttpServletRequest request = new MockHttpServletRequest("POST", "/hotels");
 	private final MockHttpServletResponse response = new MockHttpServletResponse();
-	private final FilterChain filterChain = (request, response) -> {};
+	private final FilterChain filterChain = (request, response) -> {
+	};
 	private final MyRequestLoggingFilter filter = new MyRequestLoggingFilter();
 
 
@@ -171,9 +170,9 @@ class RequestLoggingFilterTests {
 		applyFilter();
 
 		assertThat(filter.beforeRequestMessage)
-			.isEqualTo("Before request [POST /hotels, headers=[Content-Type:\"application/json\", token:\"masked\"]]");
+				.isEqualTo("Before request [POST /hotels, headers=[Content-Type:\"application/json\", token:\"masked\"]]");
 		assertThat(filter.afterRequestMessage)
-			.isEqualTo("After request [POST /hotels, headers=[Content-Type:\"application/json\", token:\"masked\"]]");
+				.isEqualTo("After request [POST /hotels, headers=[Content-Type:\"application/json\", token:\"masked\"]]");
 	}
 
 	@Test

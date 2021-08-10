@@ -16,15 +16,6 @@
 
 package org.springframework.web.reactive.handler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiPredicate;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.BeansException;
 import org.springframework.http.server.PathContainer;
 import org.springframework.lang.Nullable;
@@ -32,6 +23,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
+import reactor.core.publisher.Mono;
+
+import java.util.*;
+import java.util.function.BiPredicate;
 
 /**
  * Abstract base class for URL-mapped
@@ -54,13 +49,18 @@ import org.springframework.web.util.pattern.PathPattern;
  */
 public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
-	private boolean lazyInitHandlers = false;
-
 	private final Map<PathPattern, Object> handlerMap = new LinkedHashMap<>();
-
+	private boolean lazyInitHandlers = false;
 	@Nullable
 	private BiPredicate<Object, ServerWebExchange> handlerPredicate;
 
+	private static String prependLeadingSlash(String pattern) {
+		if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
+			return "/" + pattern;
+		} else {
+			return pattern;
+		}
+	}
 
 	/**
 	 * Set whether to lazily initialize handlers. Only applicable to
@@ -92,16 +92,16 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * "false", it result in a no-match, which allows another
 	 * {@link org.springframework.web.reactive.HandlerMapping} to match or
 	 * result in a 404 (NOT_FOUND) response.
+	 *
 	 * @param handlerPredicate a bi-predicate to match the candidate handler
-	 * against the current exchange.
-	 * @since 5.3.5
+	 *                         against the current exchange.
 	 * @see org.springframework.web.reactive.socket.server.support.WebSocketUpgradeHandlerPredicate
+	 * @since 5.3.5
 	 */
 	public void setHandlerPredicate(BiPredicate<Object, ServerWebExchange> handlerPredicate) {
 		this.handlerPredicate = (this.handlerPredicate != null ?
 				this.handlerPredicate.and(handlerPredicate) : handlerPredicate);
 	}
-
 
 	@Override
 	public Mono<Object> getHandlerInternal(ServerWebExchange exchange) {
@@ -109,8 +109,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 		Object handler;
 		try {
 			handler = lookupHandler(lookupPath, exchange);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			return Mono.error(ex);
 		}
 		return Mono.justOrEmpty(handler);
@@ -121,8 +120,9 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * <p>Supports direct matches, e.g. a registered "/test" matches "/test",
 	 * and various path pattern matches, e.g. a registered "/t*" matches
 	 * both "/test" and "/team". For details, see the PathPattern class.
+	 *
 	 * @param lookupPath the URL the handler is mapped to
-	 * @param exchange the current exchange
+	 * @param exchange   the current exchange
 	 * @return the associated handler instance, or {@code null} if not found
 	 * @see org.springframework.web.util.pattern.PathPattern
 	 */
@@ -176,7 +176,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 	 * Validate the given handler against the current request.
 	 * <p>The default implementation is empty. Can be overridden in subclasses,
 	 * for example to enforce specific preconditions expressed in URL mappings.
-	 * @param handler the handler object to validate
+	 *
+	 * @param handler  the handler object to validate
 	 * @param exchange current exchange
 	 */
 	@SuppressWarnings("UnusedParameters")
@@ -185,9 +186,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
 	/**
 	 * Register the specified handler for the given URL paths.
+	 *
 	 * @param urlPaths the URLs that the bean should be mapped to
 	 * @param beanName the name of the handler bean
-	 * @throws BeansException if the handler couldn't be registered
+	 * @throws BeansException        if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
 	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
@@ -199,10 +201,11 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
 	/**
 	 * Register the specified handler for the given URL path.
+	 *
 	 * @param urlPath the URL the bean should be mapped to
 	 * @param handler the handler instance or handler bean name String
-	 * (a bean name will automatically be resolved into the corresponding handler bean)
-	 * @throws BeansException if the handler couldn't be registered
+	 *                (a bean name will automatically be resolved into the corresponding handler bean)
+	 * @throws BeansException        if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
 	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
@@ -218,7 +221,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 			if (existingHandler != null && existingHandler != resolvedHandler) {
 				throw new IllegalStateException(
 						"Cannot map " + getHandlerDescription(handler) + " to [" + urlPath + "]: " +
-						"there is already " + getHandlerDescription(existingHandler) + " mapped.");
+								"there is already " + getHandlerDescription(existingHandler) + " mapped.");
 			}
 		}
 
@@ -239,16 +242,6 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping {
 
 	private String getHandlerDescription(Object handler) {
 		return (handler instanceof String ? "'" + handler + "'" : handler.toString());
-	}
-
-
-	private static String prependLeadingSlash(String pattern) {
-		if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
-			return "/" + pattern;
-		}
-		else {
-			return pattern;
-		}
 	}
 
 }

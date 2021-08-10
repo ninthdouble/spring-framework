@@ -77,15 +77,12 @@ final class QuartzCronField extends CronField {
 			TemporalAdjuster adjuster;
 			if (idx != 0) {
 				throw new IllegalArgumentException("Unrecognized characters before 'L' in '" + value + "'");
-			}
-			else if (value.length() == 2 && value.charAt(1) == 'W') { // "LW"
+			} else if (value.length() == 2 && value.charAt(1) == 'W') { // "LW"
 				adjuster = lastWeekdayOfMonth();
-			}
-			else {
+			} else {
 				if (value.length() == 1) { // "L"
 					adjuster = lastDayOfMonth();
-				}
-				else { // "L-[0-9]+"
+				} else { // "L-[0-9]+"
 					int offset = Integer.parseInt(value.substring(idx + 1));
 					if (offset >= 0) {
 						throw new IllegalArgumentException("Offset '" + offset + " should be < 0 '" + value + "'");
@@ -99,11 +96,9 @@ final class QuartzCronField extends CronField {
 		if (idx != -1) {
 			if (idx == 0) {
 				throw new IllegalArgumentException("No day-of-month before 'W' in '" + value + "'");
-			}
-			else if (idx != value.length() - 1) {
+			} else if (idx != value.length() - 1) {
 				throw new IllegalArgumentException("Unrecognized characters after 'W' in '" + value + "'");
-			}
-			else { // "[0-9]+W"
+			} else { // "[0-9]+W"
 				int dayOfMonth = Integer.parseInt(value.substring(0, idx));
 				dayOfMonth = Type.DAY_OF_MONTH.checkValidValue(dayOfMonth);
 				TemporalAdjuster adjuster = weekdayNearestTo(dayOfMonth);
@@ -129,13 +124,11 @@ final class QuartzCronField extends CronField {
 		if (idx != -1) {
 			if (idx != value.length() - 1) {
 				throw new IllegalArgumentException("Unrecognized characters after 'L' in '" + value + "'");
-			}
-			else {
+			} else {
 				TemporalAdjuster adjuster;
 				if (idx == 0) {
 					throw new IllegalArgumentException("No day-of-week before 'L' in '" + value + "'");
-				}
-				else { // "[0-7]L"
+				} else { // "[0-7]L"
 					DayOfWeek dayOfWeek = parseDayOfWeek(value.substring(0, idx));
 					adjuster = lastInMonth(dayOfWeek);
 				}
@@ -146,8 +139,7 @@ final class QuartzCronField extends CronField {
 		if (idx != -1) {
 			if (idx == 0) {
 				throw new IllegalArgumentException("No day-of-week before '#' in '" + value + "'");
-			}
-			else if (idx == value.length() - 1) {
+			} else if (idx == value.length() - 1) {
 				throw new IllegalArgumentException("No ordinal after '#' in '" + value + "'");
 			}
 			// "[0-7]#[0-9]+"
@@ -171,8 +163,7 @@ final class QuartzCronField extends CronField {
 		}
 		try {
 			return DayOfWeek.of(dayOfWeek);
-		}
-		catch (DateTimeException ex) {
+		} catch (DateTimeException ex) {
 			String msg = ex.getMessage() + " '" + value + "'";
 			throw new IllegalArgumentException(msg, ex);
 		}
@@ -185,8 +176,7 @@ final class QuartzCronField extends CronField {
 		return temporal -> {
 			if (temporal.isSupported(ChronoField.NANO_OF_DAY)) {
 				return temporal.with(ChronoField.NANO_OF_DAY, 0);
-			}
-			else {
+			} else {
 				return temporal;
 			}
 		};
@@ -215,11 +205,9 @@ final class QuartzCronField extends CronField {
 			int dow = lastDom.get(ChronoField.DAY_OF_WEEK);
 			if (dow == 6) { // Saturday
 				result = lastDom.minus(1, ChronoUnit.DAYS);
-			}
-			else if (dow == 7) { // Sunday
+			} else if (dow == 7) { // Sunday
 				result = lastDom.minus(2, ChronoUnit.DAYS);
-			}
-			else {
+			} else {
 				result = lastDom;
 			}
 			return rollbackToMidnight(temporal, result);
@@ -228,6 +216,7 @@ final class QuartzCronField extends CronField {
 
 	/**
 	 * Return a temporal adjuster that finds the nth-to-last day of the month.
+	 *
 	 * @param offset the negative offset, i.e. -3 means third-to-last
 	 * @return a nth-to-last day-of-month adjuster
 	 */
@@ -245,6 +234,7 @@ final class QuartzCronField extends CronField {
 	 * day-of-month. If {@code dayOfMonth} falls on a Saturday, the date is
 	 * moved back to Friday; if it falls on a Sunday (or if {@code dayOfMonth}
 	 * is 1 and it falls on a Saturday), it is moved forward to Monday.
+	 *
 	 * @param dayOfMonth the goal day-of-month
 	 * @return the weekday-nearest-to adjuster
 	 */
@@ -270,16 +260,13 @@ final class QuartzCronField extends CronField {
 					if (dayOfWeek == 6) { // Saturday
 						if (dayOfMonth != 1) {
 							return temporal.minus(1, ChronoUnit.DAYS);
-						}
-						else {
+						} else {
 							// exception for "1W" fields: execute on nearest Monday
 							return temporal.plus(2, ChronoUnit.DAYS);
 						}
-					}
-					else if (dayOfWeek == 7) { // Sunday
+					} else if (dayOfWeek == 7) { // Sunday
 						return temporal.plus(1, ChronoUnit.DAYS);
-					}
-					else {
+					} else {
 						return temporal;
 					}
 				}
@@ -320,8 +307,7 @@ final class QuartzCronField extends CronField {
 	private static Temporal rollbackToMidnight(Temporal current, Temporal result) {
 		if (result.get(ChronoField.DAY_OF_MONTH) == current.get(ChronoField.DAY_OF_MONTH)) {
 			return current;
-		}
-		else {
+		} else {
 			return atMidnight().adjustInto(result);
 		}
 	}

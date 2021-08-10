@@ -16,15 +16,14 @@
 
 package org.springframework.http.server;
 
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.server.PathContainer.Element;
 import org.springframework.http.server.PathContainer.Options;
 import org.springframework.http.server.PathContainer.PathSegment;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -36,6 +35,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  * @author Sam Brannen
  */
 class DefaultPathContainerTests {
+
+	private static LinkedMultiValueMap<String, String> emptyMap() {
+		return new LinkedMultiValueMap<>();
+	}
 
 	@Test
 	void pathSegment() {
@@ -97,7 +100,7 @@ class DefaultPathContainerTests {
 		MultiValueMap<String, String> segmentParams = segment.parameters();
 		assertThat(segmentParams).isEqualTo(params);
 		assertThatExceptionOfType(UnsupportedOperationException.class)
-			.isThrownBy(() -> segmentParams.add("enigma", "boom"));
+				.isThrownBy(() -> segmentParams.add("enigma", "boom"));
 	}
 
 	private void testPathSegment(String rawValue, String valueToMatch, MultiValueMap<String, String> params) {
@@ -162,7 +165,8 @@ class DefaultPathContainerTests {
 		assertThat(path.subPath(2).value()).isEqualTo("/b/");
 	}
 
-	@Test // gh-23310
+	@Test
+		// gh-23310
 	void pathWithCustomSeparator() {
 		PathContainer path = PathContainer.parsePath("a.b%2Eb.c", Options.MESSAGE_ROUTE);
 
@@ -172,10 +176,6 @@ class DefaultPathContainerTests {
 				.map(PathSegment::valueToMatch);
 
 		assertThat(decodedSegments).containsExactly("a", "b.b", "c");
-	}
-
-	private static LinkedMultiValueMap<String, String> emptyMap() {
-		return new LinkedMultiValueMap<>();
 	}
 
 }

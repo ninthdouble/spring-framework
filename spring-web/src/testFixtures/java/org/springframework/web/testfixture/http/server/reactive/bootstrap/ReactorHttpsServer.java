@@ -16,14 +16,13 @@
 
 package org.springframework.web.testfixture.http.server.reactive.bootstrap;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicReference;
-
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.Http11SslContextSpec;
 
-import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
+import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Stephane Maldini
@@ -44,9 +43,9 @@ public class ReactorHttpsServer extends AbstractHttpServer {
 
 		this.reactorHandler = createHttpHandlerAdapter();
 		this.reactorServer = reactor.netty.http.server.HttpServer.create()
-			.host(getHost())
-			.port(getPort())
-			.secure(sslContextSpec -> sslContextSpec.sslContext(http11SslContextSpec));
+				.host(getHost())
+				.port(getPort())
+				.secure(sslContextSpec -> sslContextSpec.sslContext(http11SslContextSpec));
 	}
 
 	private ReactorHttpHandlerAdapter createHttpHandlerAdapter() {

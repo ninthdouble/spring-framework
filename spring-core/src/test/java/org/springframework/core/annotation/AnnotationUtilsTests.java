@@ -16,52 +16,24 @@
 
 package org.springframework.core.annotation;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.subpackage.NonPublicAnnotatedClass;
 import org.springframework.core.testfixture.stereotype.Component;
 import org.springframework.lang.NonNullApi;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
+import java.util.*;
+
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static org.springframework.core.annotation.AnnotationUtils.VALUE;
-import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
-import static org.springframework.core.annotation.AnnotationUtils.findAnnotationDeclaringClass;
-import static org.springframework.core.annotation.AnnotationUtils.findAnnotationDeclaringClassForTypes;
-import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
-import static org.springframework.core.annotation.AnnotationUtils.getAnnotationAttributes;
-import static org.springframework.core.annotation.AnnotationUtils.getDeclaredRepeatableAnnotations;
-import static org.springframework.core.annotation.AnnotationUtils.getDefaultValue;
-import static org.springframework.core.annotation.AnnotationUtils.getRepeatableAnnotations;
-import static org.springframework.core.annotation.AnnotationUtils.getValue;
-import static org.springframework.core.annotation.AnnotationUtils.isAnnotationDeclaredLocally;
-import static org.springframework.core.annotation.AnnotationUtils.isAnnotationInherited;
-import static org.springframework.core.annotation.AnnotationUtils.isAnnotationMetaPresent;
-import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnnotation;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.core.annotation.AnnotationUtils.*;
 
 /**
  * Unit tests for {@link AnnotationUtils}.
@@ -76,11 +48,15 @@ import static org.springframework.core.annotation.AnnotationUtils.synthesizeAnno
 @SuppressWarnings("deprecation")
 class AnnotationUtilsTests {
 
+	@SafeVarargs
+	static <T> T[] asArray(T... arr) {
+		return arr;
+	}
+
 	@BeforeEach
 	void clearCacheBeforeTests() {
 		AnnotationUtils.clearCache();
 	}
-
 
 	@Test
 	void findMethodAnnotationOnLeaf() throws Exception {
@@ -199,14 +175,16 @@ class AnnotationUtilsTests {
 		assertThat(order).isNotNull();
 	}
 
-	@Test  // SPR-16060
+	@Test
+		// SPR-16060
 	void findMethodAnnotationFromGenericInterface() throws Exception {
 		Method method = ImplementsInterfaceWithGenericAnnotatedMethod.class.getMethod("foo", String.class);
 		Order order = findAnnotation(method, Order.class);
 		assertThat(order).isNotNull();
 	}
 
-	@Test  // SPR-17146
+	@Test
+		// SPR-17146
 	void findMethodAnnotationFromGenericSuperclass() throws Exception {
 		Method method = ExtendsBaseClassWithGenericAnnotatedMethod.class.getMethod("foo", String.class);
 		Order order = findAnnotation(method, Order.class);
@@ -491,8 +469,8 @@ class AnnotationUtilsTests {
 		WebMapping webMapping = method.getAnnotation(WebMapping.class);
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				getAnnotationAttributes(webMapping))
-			.withMessageContaining("attribute 'path' and its alias 'value'")
-			.withMessageContaining("values of [{/test}] and [{/enigma}]");
+				.withMessageContaining("attribute 'path' and its alias 'value'")
+				.withMessageContaining("values of [{/test}] and [{/enigma}]");
 	}
 
 	@Test
@@ -729,10 +707,10 @@ class AnnotationUtilsTests {
 
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				synthesizeAnnotation(config, clazz))
-			.withMessageStartingWith("Misconfigured aliases:")
-			.withMessageContaining("attribute 'location1' in annotation [" + annotationType.getName() + "]")
-			.withMessageContaining("attribute 'location2' in annotation [" + annotationType.getName() + "]")
-			.withMessageContaining("default values");
+				.withMessageStartingWith("Misconfigured aliases:")
+				.withMessageContaining("attribute 'location1' in annotation [" + annotationType.getName() + "]")
+				.withMessageContaining("attribute 'location2' in annotation [" + annotationType.getName() + "]")
+				.withMessageContaining("default values");
 	}
 
 	@Test
@@ -744,10 +722,10 @@ class AnnotationUtilsTests {
 		assertThat(config).isNotNull();
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				synthesizeAnnotation(config, clazz))
-			.withMessageStartingWith("Misconfigured aliases:")
-			.withMessageContaining("attribute 'location1' in annotation [" + annotationType.getName() + "]")
-			.withMessageContaining("attribute 'location2' in annotation [" + annotationType.getName() + "]")
-			.withMessageContaining("same default value");
+				.withMessageStartingWith("Misconfigured aliases:")
+				.withMessageContaining("attribute 'location1' in annotation [" + annotationType.getName() + "]")
+				.withMessageContaining("attribute 'location2' in annotation [" + annotationType.getName() + "]")
+				.withMessageContaining("same default value");
 	}
 
 	@Test
@@ -760,12 +738,12 @@ class AnnotationUtilsTests {
 
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				synthesizeAnnotation(config, clazz).location1())
-			.withMessageStartingWith("Different @AliasFor mirror values")
-			.withMessageContaining(annotationType.getName())
-			.withMessageContaining("declared on class")
-			.withMessageContaining(clazz.getName())
-			.withMessageContaining("attribute 'location1' and its alias 'location2'")
-			.withMessageContaining("with values of [1] and [2]");
+				.withMessageStartingWith("Different @AliasFor mirror values")
+				.withMessageContaining(annotationType.getName())
+				.withMessageContaining("declared on class")
+				.withMessageContaining(clazz.getName())
+				.withMessageContaining("attribute 'location1' and its alias 'location2'")
+				.withMessageContaining("with values of [1] and [2]");
 	}
 
 	@Test
@@ -848,7 +826,7 @@ class AnnotationUtilsTests {
 		assertThat(annotationWithDefaults).isNotNull();
 		assertThat(annotationWithDefaults.text()).as("text: ").isEqualTo("enigma");
 		assertThat(annotationWithDefaults.predicate()).as("predicate: ").isTrue();
-		assertThat(annotationWithDefaults.characters()).as("characters: ").isEqualTo(new char[] { 'a', 'b', 'c' });
+		assertThat(annotationWithDefaults.characters()).as("characters: ").isEqualTo(new char[]{'a', 'b', 'c'});
 	}
 
 	@Test
@@ -920,7 +898,7 @@ class AnnotationUtilsTests {
 	private void assertMissingTextAttribute(Map<String, Object> attributes) {
 		assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() ->
 				synthesizeAnnotation(attributes, AnnotationWithoutDefaults.class, null).text())
-			.withMessageContaining("No value found for attribute named 'text' in merged annotation");
+				.withMessageContaining("No value found for attribute named 'text' in merged annotation");
 	}
 
 	@Test
@@ -928,8 +906,8 @@ class AnnotationUtilsTests {
 		Map<String, Object> map = Collections.singletonMap(VALUE, 42L);
 		assertThatIllegalStateException().isThrownBy(() ->
 				synthesizeAnnotation(map, Component.class, null).value())
-			.withMessageContaining("Attribute 'value' in annotation org.springframework.core.testfixture.stereotype.Component "
-					+ "should be compatible with java.lang.String but a java.lang.Long value was returned");
+				.withMessageContaining("Attribute 'value' in annotation org.springframework.core.testfixture.stereotype.Component "
+						+ "should be compatible with java.lang.String but a java.lang.Long value was returned");
 	}
 
 	@Test
@@ -953,15 +931,17 @@ class AnnotationUtilsTests {
 		assertThat(synthesizedComponent.value()).as("value from synthesized component: ").isEqualTo("webController");
 	}
 
-	@Test  // gh-22702
+	@Test
+		// gh-22702
 	void findAnnotationWithRepeatablesElements() throws Exception {
 		assertThat(AnnotationUtils.findAnnotation(TestRepeatablesClass.class,
 				TestRepeatable.class)).isNull();
 		assertThat(AnnotationUtils.findAnnotation(TestRepeatablesClass.class,
-		TestRepeatableContainer.class)).isNotNull();
+				TestRepeatableContainer.class)).isNotNull();
 	}
 
-	@Test  // gh-23856
+	@Test
+		// gh-23856
 	void findAnnotationFindsRepeatableContainerOnComposedAnnotationMetaAnnotatedWithRepeatableAnnotations() throws Exception {
 		MyRepeatableContainer annotation = AnnotationUtils.findAnnotation(MyRepeatableMeta1And2.class, MyRepeatableContainer.class);
 
@@ -969,7 +949,8 @@ class AnnotationUtilsTests {
 		assertThat(annotation.value()).extracting(MyRepeatable::value).containsExactly("meta1", "meta2");
 	}
 
-	@Test  // gh-23856
+	@Test
+		// gh-23856
 	void findAnnotationFindsRepeatableContainerOnComposedAnnotationMetaAnnotatedWithRepeatableAnnotationsOnMethod() throws Exception {
 		Method method = getClass().getDeclaredMethod("methodWithComposedAnnotationMetaAnnotatedWithRepeatableAnnotations");
 		MyRepeatableContainer annotation = AnnotationUtils.findAnnotation(method, MyRepeatableContainer.class);
@@ -978,7 +959,8 @@ class AnnotationUtilsTests {
 		assertThat(annotation.value()).extracting(MyRepeatable::value).containsExactly("meta1", "meta2");
 	}
 
-	@Test  // gh-23929
+	@Test
+		// gh-23929
 	void findDeprecatedAnnotation() throws Exception {
 		assertThat(getAnnotation(DeprecatedClass.class, Deprecated.class)).isNotNull();
 		assertThat(getAnnotation(SubclassOfDeprecatedClass.class, Deprecated.class)).isNull();
@@ -986,12 +968,13 @@ class AnnotationUtilsTests {
 		assertThat(findAnnotation(SubclassOfDeprecatedClass.class, Deprecated.class)).isNotNull();
 	}
 
-
-	@SafeVarargs
-	static <T> T[] asArray(T... arr) {
-		return arr;
+	@MyRepeatableMeta1And2
+	void methodWithComposedAnnotationMetaAnnotatedWithRepeatableAnnotations() {
 	}
 
+	enum RequestMethod {
+		GET, POST
+	}
 
 	@Component("meta1")
 	@Order
@@ -1035,6 +1018,432 @@ class AnnotationUtilsTests {
 	interface InterfaceWithMetaAnnotation {
 	}
 
+	public interface AnnotatedInterface {
+
+		@Order(0)
+		void fromInterfaceImplementedByRoot();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@interface Transactional {
+
+		boolean readOnly() default false;
+	}
+
+	@Transactional
+	public interface InheritedAnnotationInterface {
+	}
+
+	public interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
+	}
+
+	public interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
+	}
+
+	@Order
+	public interface NonInheritedAnnotationInterface {
+	}
+
+	public interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
+	}
+
+	public interface SubSubNonInheritedAnnotationInterface extends SubNonInheritedAnnotationInterface {
+	}
+
+	public interface NonAnnotatedInterface {
+	}
+
+	public interface InterfaceWithAnnotatedMethod {
+
+		@Order
+		void foo();
+	}
+
+	public interface InterfaceWithGenericAnnotatedMethod<T> {
+
+		@Order
+		void foo(T t);
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@interface MyRepeatableContainer {
+
+		MyRepeatable[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@Repeatable(MyRepeatableContainer.class)
+	@interface MyRepeatable {
+
+		String value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@MyRepeatable("meta1")
+	@interface MyRepeatableMeta1 {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@MyRepeatable("meta2")
+	@interface MyRepeatableMeta2 {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@MyRepeatable("meta1")
+	@MyRepeatable("meta2")
+	@interface MyRepeatableMeta1And2 {
+	}
+
+	interface InterfaceWithRepeated {
+
+		@MyRepeatable("A")
+		@MyRepeatableContainer({@MyRepeatable("B"), @MyRepeatable("C")})
+		@MyRepeatableMeta1
+		void foo();
+	}
+
+	/**
+	 * Mock of {@code org.springframework.web.bind.annotation.RequestMapping}.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface WebMapping {
+
+		String name();
+
+		@AliasFor("path")
+		String[] value() default "";
+
+		@AliasFor(attribute = "value")
+		String[] path() default "";
+
+		RequestMethod[] method() default {};
+	}
+
+	/**
+	 * Mock of {@code org.springframework.web.bind.annotation.GetMapping}, except
+	 * that the String arrays are overridden with single String elements.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@WebMapping(method = RequestMethod.GET, name = "")
+	@interface Get {
+
+		@AliasFor(annotation = WebMapping.class)
+		String value() default "";
+
+		@AliasFor(annotation = WebMapping.class)
+		String path() default "";
+	}
+
+	/**
+	 * Mock of {@code org.springframework.web.bind.annotation.PostMapping}, except
+	 * that the path is overridden by convention with single String element.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@WebMapping(method = RequestMethod.POST, name = "")
+	@interface Post {
+
+		String path() default "";
+	}
+
+	/**
+	 * Mock of {@code org.springframework.test.context.ContextConfiguration}.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ContextConfig {
+
+		@AliasFor("location")
+		String value() default "";
+
+		@AliasFor("value")
+		String location() default "";
+
+		Class<?> klass() default Object.class;
+	}
+
+	/**
+	 * Mock of {@code org.springframework.test.context.ContextHierarchy}.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface Hierarchy {
+		ContextConfig[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface CharsContainer {
+
+		@AliasFor(attribute = "chars")
+		char[] value() default {};
+
+		@AliasFor(attribute = "value")
+		char[] chars() default {};
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForWithMissingAttributeDeclaration {
+
+		@AliasFor
+		String foo() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForWithDuplicateAttributeDeclaration {
+
+		@AliasFor(value = "bar", attribute = "baz")
+		String foo() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForNonexistentAttribute {
+
+		@AliasFor("bar")
+		String foo() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForWithoutMirroredAliasFor {
+
+		@AliasFor("bar")
+		String foo() default "";
+
+		String bar() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForWithMirroredAliasForWrongAttribute {
+
+		@AliasFor(attribute = "bar")
+		String[] foo() default "";
+
+		@AliasFor(attribute = "quux")
+		String[] bar() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForAttributeOfDifferentType {
+
+		@AliasFor("bar")
+		String[] foo() default "";
+
+		@AliasFor("foo")
+		boolean bar() default true;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForWithMissingDefaultValues {
+
+		@AliasFor(attribute = "bar")
+		String foo();
+
+		@AliasFor(attribute = "foo")
+		String bar();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasForAttributeWithDifferentDefaultValue {
+
+		@AliasFor("bar")
+		String foo() default "X";
+
+		@AliasFor("foo")
+		String bar() default "Z";
+	}
+
+	// @ContextConfig --> Intentionally NOT meta-present
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasedComposedContextConfigNotMetaPresent {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String xmlConfigFile();
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AliasedComposedContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String xmlConfigFile();
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface ImplicitAliasesContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String xmlFile() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String groovyScript() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String value() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location1() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location2() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location3() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "klass")
+		Class<?> configClass() default Object.class;
+
+		String nonAliasedAttribute() default "";
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig {
+
+		// intentionally omitted: attribute = "value"
+		@AliasFor(annotation = ContextConfig.class)
+		String value() default "";
+
+		// intentionally omitted: attribute = "locations"
+		@AliasFor(annotation = ContextConfig.class)
+		String location() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String xmlFile() default "";
+	}
+
+	@ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface TransitiveImplicitAliasesWithImpliedAliasNamesOmittedContextConfig {
+
+		@AliasFor(annotation = ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig.class, attribute = "xmlFile")
+		String xml() default "";
+
+		@AliasFor(annotation = ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig.class, attribute = "location")
+		String groovy() default "";
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ImplicitAliasesWithMissingDefaultValuesContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location1();
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location2();
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ImplicitAliasesWithDifferentDefaultValuesContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location1() default "foo";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location2() default "bar";
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ImplicitAliasesWithDuplicateValuesContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location1() default "";
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String location2() default "";
+	}
+
+	@ContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ImplicitAliasesForAliasPairContextConfig {
+
+		@AliasFor(annotation = ContextConfig.class, attribute = "location")
+		String xmlFile() default "";
+
+		@AliasFor(annotation = ContextConfig.class, value = "value")
+		String groovyScript() default "";
+	}
+
+	@ImplicitAliasesContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface TransitiveImplicitAliasesContextConfig {
+
+		@AliasFor(annotation = ImplicitAliasesContextConfig.class, attribute = "xmlFile")
+		String xml() default "";
+
+		@AliasFor(annotation = ImplicitAliasesContextConfig.class, attribute = "groovyScript")
+		String groovy() default "";
+	}
+
+	@ImplicitAliasesForAliasPairContextConfig
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface TransitiveImplicitAliasesForAliasPairContextConfig {
+
+		@AliasFor(annotation = ImplicitAliasesForAliasPairContextConfig.class, attribute = "xmlFile")
+		String xml() default "";
+
+		@AliasFor(annotation = ImplicitAliasesForAliasPairContextConfig.class, attribute = "groovyScript")
+		String groovy() default "";
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({})
+	@interface Filter {
+		String pattern();
+	}
+
+	/**
+	 * Mock of {@code org.springframework.context.annotation.ComponentScan}.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ComponentScan {
+		Filter[] excludeFilters() default {};
+	}
+
+	/**
+	 * Mock of {@code org.springframework.context.annotation.ComponentScan}.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface ComponentScanSingleFilter {
+		Filter value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AnnotationWithDefaults {
+		String text() default "enigma";
+
+		boolean predicate() default true;
+
+		char[] characters() default {'a', 'b', 'c'};
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface AnnotationWithoutDefaults {
+		String text();
+	}
+
+	@ContextConfig(value = "foo", location = "bar")
+	interface ContextConfigMismatch {
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Repeatable(TestRepeatableContainer.class)
+	@interface TestRepeatable {
+
+		String value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface TestRepeatableContainer {
+
+		TestRepeatable[] value();
+	}
+
 	@Meta2
 	static class ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
 	}
@@ -1071,12 +1480,6 @@ class AnnotationUtilsTests {
 
 	@MetaCycle3
 	static class MetaCycleAnnotatedClass {
-	}
-
-	public interface AnnotatedInterface {
-
-		@Order(0)
-		void fromInterfaceImplementedByRoot();
 	}
 
 	public static class Root implements AnnotatedInterface {
@@ -1128,13 +1531,6 @@ class AnnotationUtilsTests {
 		}
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@interface Transactional {
-
-		boolean readOnly() default false;
-	}
-
 	public static abstract class Foo<T> {
 
 		@Order(1)
@@ -1149,30 +1545,7 @@ class AnnotationUtilsTests {
 		}
 	}
 
-	@Transactional
-	public interface InheritedAnnotationInterface {
-	}
-
-	public interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
-	}
-
-	public interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
-	}
-
-	@Order
-	public interface NonInheritedAnnotationInterface {
-	}
-
-	public interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
-	}
-
-	public interface SubSubNonInheritedAnnotationInterface extends SubNonInheritedAnnotationInterface {
-	}
-
 	public static class NonAnnotatedClass {
-	}
-
-	public interface NonAnnotatedInterface {
 	}
 
 	@Transactional
@@ -1198,12 +1571,6 @@ class AnnotationUtilsTests {
 	}
 
 	public static class SubTransactionalAndOrderedClass extends TransactionalAndOrderedClass {
-	}
-
-	public interface InterfaceWithAnnotatedMethod {
-
-		@Order
-		void foo();
 	}
 
 	public static class ImplementsInterfaceWithAnnotatedMethod implements InterfaceWithAnnotatedMethod {
@@ -1232,12 +1599,6 @@ class AnnotationUtilsTests {
 		}
 	}
 
-	public interface InterfaceWithGenericAnnotatedMethod<T> {
-
-		@Order
-		void foo(T t);
-	}
-
 	public static class ImplementsInterfaceWithGenericAnnotatedMethod implements InterfaceWithGenericAnnotatedMethod<String> {
 
 		@Override
@@ -1256,52 +1617,6 @@ class AnnotationUtilsTests {
 		@Override
 		public void foo(String t) {
 		}
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@interface MyRepeatableContainer {
-
-		MyRepeatable[] value();
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@Repeatable(MyRepeatableContainer.class)
-	@interface MyRepeatable {
-
-		String value();
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@MyRepeatable("meta1")
-	@interface MyRepeatableMeta1 {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@MyRepeatable("meta2")
-	@interface MyRepeatableMeta2 {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Inherited
-	@MyRepeatable("meta1")
-	@MyRepeatable("meta2")
-	@interface MyRepeatableMeta1And2 {
-	}
-
-	@MyRepeatableMeta1And2
-	void methodWithComposedAnnotationMetaAnnotatedWithRepeatableAnnotations() {
-	}
-
-	interface InterfaceWithRepeated {
-
-		@MyRepeatable("A")
-		@MyRepeatableContainer({@MyRepeatable("B"), @MyRepeatable("C")})
-		@MyRepeatableMeta1
-		void foo();
 	}
 
 	@MyRepeatable("A")
@@ -1323,53 +1638,6 @@ class AnnotationUtilsTests {
 			SubMyRepeatableWithAdditionalLocalDeclarationsClass {
 	}
 
-	enum RequestMethod {
-		GET, POST
-	}
-
-	/**
-	 * Mock of {@code org.springframework.web.bind.annotation.RequestMapping}.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface WebMapping {
-
-		String name();
-
-		@AliasFor("path")
-		String[] value() default "";
-
-		@AliasFor(attribute = "value")
-		String[] path() default "";
-
-		RequestMethod[] method() default {};
-	}
-
-	/**
-	 * Mock of {@code org.springframework.web.bind.annotation.GetMapping}, except
-	 * that the String arrays are overridden with single String elements.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@WebMapping(method = RequestMethod.GET, name = "")
-	@interface Get {
-
-		@AliasFor(annotation = WebMapping.class)
-		String value() default "";
-
-		@AliasFor(annotation = WebMapping.class)
-		String path() default "";
-	}
-
-	/**
-	 * Mock of {@code org.springframework.web.bind.annotation.PostMapping}, except
-	 * that the path is overridden by convention with single String element.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@WebMapping(method = RequestMethod.POST, name = "")
-	@interface Post {
-
-		String path() default "";
-	}
-
 	@Component("webController")
 	static class WebController {
 
@@ -1377,7 +1645,7 @@ class AnnotationUtilsTests {
 		public void handleMappedWithValueAttribute() {
 		}
 
-		@WebMapping(path = "/test", name = "bar", method = { RequestMethod.GET, RequestMethod.POST })
+		@WebMapping(path = "/test", name = "bar", method = {RequestMethod.GET, RequestMethod.POST})
 		public void handleMappedWithPathAttribute() {
 		}
 
@@ -1396,36 +1664,13 @@ class AnnotationUtilsTests {
 		/**
 		 * mapping is logically "equal" to handleMappedWithPathAttribute().
 		 */
-		@WebMapping(value = "/test", path = "/test", name = "bar", method = { RequestMethod.GET, RequestMethod.POST })
+		@WebMapping(value = "/test", path = "/test", name = "bar", method = {RequestMethod.GET, RequestMethod.POST})
 		public void handleMappedWithSamePathAndValueAttributes() {
 		}
 
 		@WebMapping(value = "/enigma", path = "/test", name = "baz")
 		public void handleMappedWithDifferentPathAndValueAttributes() {
 		}
-	}
-
-	/**
-	 * Mock of {@code org.springframework.test.context.ContextConfiguration}.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ContextConfig {
-
-		@AliasFor("location")
-		String value() default "";
-
-		@AliasFor("value")
-		String location() default "";
-
-		Class<?> klass() default Object.class;
-	}
-
-	/**
-	 * Mock of {@code org.springframework.test.context.ContextHierarchy}.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface Hierarchy {
-		ContextConfig[] value();
 	}
 
 	@Hierarchy({@ContextConfig("A"), @ContextConfig(location = "B")})
@@ -1436,168 +1681,44 @@ class AnnotationUtilsTests {
 	static class SimpleConfigTestCase {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface CharsContainer {
-
-		@AliasFor(attribute = "chars")
-		char[] value() default {};
-
-		@AliasFor(attribute = "value")
-		char[] chars() default {};
-	}
-
-	@CharsContainer(chars = { 'x', 'y', 'z' })
+	@CharsContainer(chars = {'x', 'y', 'z'})
 	static class GroupOfCharsClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForWithMissingAttributeDeclaration {
-
-		@AliasFor
-		String foo() default "";
 	}
 
 	@AliasForWithMissingAttributeDeclaration
 	static class AliasForWithMissingAttributeDeclarationClass {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForWithDuplicateAttributeDeclaration {
-
-		@AliasFor(value = "bar", attribute = "baz")
-		String foo() default "";
-	}
-
 	@AliasForWithDuplicateAttributeDeclaration
 	static class AliasForWithDuplicateAttributeDeclarationClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForNonexistentAttribute {
-
-		@AliasFor("bar")
-		String foo() default "";
 	}
 
 	@AliasForNonexistentAttribute
 	static class AliasForNonexistentAttributeClass {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForWithoutMirroredAliasFor {
-
-		@AliasFor("bar")
-		String foo() default "";
-
-		String bar() default "";
-	}
-
 	@AliasForWithoutMirroredAliasFor
 	static class AliasForWithoutMirroredAliasForClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForWithMirroredAliasForWrongAttribute {
-
-		@AliasFor(attribute = "bar")
-		String[] foo() default "";
-
-		@AliasFor(attribute = "quux")
-		String[] bar() default "";
 	}
 
 	@AliasForWithMirroredAliasForWrongAttribute
 	static class AliasForWithMirroredAliasForWrongAttributeClass {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForAttributeOfDifferentType {
-
-		@AliasFor("bar")
-		String[] foo() default "";
-
-		@AliasFor("foo")
-		boolean bar() default true;
-	}
-
 	@AliasForAttributeOfDifferentType
 	static class AliasForAttributeOfDifferentTypeClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForWithMissingDefaultValues {
-
-		@AliasFor(attribute = "bar")
-		String foo();
-
-		@AliasFor(attribute = "foo")
-		String bar();
 	}
 
 	@AliasForWithMissingDefaultValues(foo = "foo", bar = "bar")
 	static class AliasForWithMissingDefaultValuesClass {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasForAttributeWithDifferentDefaultValue {
-
-		@AliasFor("bar")
-		String foo() default "X";
-
-		@AliasFor("foo")
-		String bar() default "Z";
-	}
-
 	@AliasForAttributeWithDifferentDefaultValue
 	static class AliasForAttributeWithDifferentDefaultValueClass {
 	}
 
-	// @ContextConfig --> Intentionally NOT meta-present
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasedComposedContextConfigNotMetaPresent {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String xmlConfigFile();
-	}
-
 	@AliasedComposedContextConfigNotMetaPresent(xmlConfigFile = "test.xml")
 	static class AliasedComposedContextConfigNotMetaPresentClass {
-	}
-
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AliasedComposedContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String xmlConfigFile();
-	}
-
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface ImplicitAliasesContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String xmlFile() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String groovyScript() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String value() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location1() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location2() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location3() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "klass")
-		Class<?> configClass() default Object.class;
-
-		String nonAliasedAttribute() default "";
 	}
 
 	// Attribute value intentionally matches attribute name:
@@ -1630,33 +1751,6 @@ class AnnotationUtilsTests {
 	static class Location3ImplicitAliasesContextConfigClass {
 	}
 
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig {
-
-		// intentionally omitted: attribute = "value"
-		@AliasFor(annotation = ContextConfig.class)
-		String value() default "";
-
-		// intentionally omitted: attribute = "locations"
-		@AliasFor(annotation = ContextConfig.class)
-		String location() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String xmlFile() default "";
-	}
-
-	@ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface TransitiveImplicitAliasesWithImpliedAliasNamesOmittedContextConfig {
-
-		@AliasFor(annotation = ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig.class, attribute = "xmlFile")
-		String xml() default "";
-
-		@AliasFor(annotation = ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig.class, attribute = "location")
-		String groovy() default "";
-	}
-
 	// Attribute value intentionally matches attribute name:
 	@ImplicitAliasesWithImpliedAliasNamesOmittedContextConfig("value")
 	static class ValueImplicitAliasesWithImpliedAliasNamesOmittedContextConfigClass {
@@ -1672,153 +1766,36 @@ class AnnotationUtilsTests {
 	static class XmlFilesImplicitAliasesWithImpliedAliasNamesOmittedContextConfigClass {
 	}
 
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ImplicitAliasesWithMissingDefaultValuesContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location1();
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location2();
-	}
-
 	@ImplicitAliasesWithMissingDefaultValuesContextConfig(location1 = "1", location2 = "2")
 	static class ImplicitAliasesWithMissingDefaultValuesContextConfigClass {
-	}
-
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ImplicitAliasesWithDifferentDefaultValuesContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location1() default "foo";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location2() default "bar";
 	}
 
 	@ImplicitAliasesWithDifferentDefaultValuesContextConfig(location1 = "1", location2 = "2")
 	static class ImplicitAliasesWithDifferentDefaultValuesContextConfigClass {
 	}
 
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ImplicitAliasesWithDuplicateValuesContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location1() default "";
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String location2() default "";
-	}
-
 	@ImplicitAliasesWithDuplicateValuesContextConfig(location1 = "1", location2 = "2")
 	static class ImplicitAliasesWithDuplicateValuesContextConfigClass {
-	}
-
-	@ContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ImplicitAliasesForAliasPairContextConfig {
-
-		@AliasFor(annotation = ContextConfig.class, attribute = "location")
-		String xmlFile() default "";
-
-		@AliasFor(annotation = ContextConfig.class, value = "value")
-		String groovyScript() default "";
 	}
 
 	@ImplicitAliasesForAliasPairContextConfig(xmlFile = "test.xml")
 	static class ImplicitAliasesForAliasPairContextConfigClass {
 	}
 
-	@ImplicitAliasesContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface TransitiveImplicitAliasesContextConfig {
-
-		@AliasFor(annotation = ImplicitAliasesContextConfig.class, attribute = "xmlFile")
-		String xml() default "";
-
-		@AliasFor(annotation = ImplicitAliasesContextConfig.class, attribute = "groovyScript")
-		String groovy() default "";
-	}
-
 	@TransitiveImplicitAliasesContextConfig(xml = "test.xml")
 	static class TransitiveImplicitAliasesContextConfigClass {
-	}
-
-	@ImplicitAliasesForAliasPairContextConfig
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface TransitiveImplicitAliasesForAliasPairContextConfig {
-
-		@AliasFor(annotation = ImplicitAliasesForAliasPairContextConfig.class, attribute = "xmlFile")
-		String xml() default "";
-
-		@AliasFor(annotation = ImplicitAliasesForAliasPairContextConfig.class, attribute = "groovyScript")
-		String groovy() default "";
 	}
 
 	@TransitiveImplicitAliasesForAliasPairContextConfig(xml = "test.xml")
 	static class TransitiveImplicitAliasesForAliasPairContextConfigClass {
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({})
-	@interface Filter {
-		String pattern();
-	}
-
-	/**
-	 * Mock of {@code org.springframework.context.annotation.ComponentScan}.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ComponentScan {
-		Filter[] excludeFilters() default {};
-	}
-
 	@ComponentScan(excludeFilters = {@Filter(pattern = "*Foo"), @Filter(pattern = "*Bar")})
 	static class ComponentScanClass {
 	}
 
-	/**
-	 * Mock of {@code org.springframework.context.annotation.ComponentScan}.
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface ComponentScanSingleFilter {
-		Filter value();
-	}
-
 	@ComponentScanSingleFilter(@Filter(pattern = "*Foo"))
 	static class ComponentScanSingleFilterClass {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AnnotationWithDefaults {
-		String text() default "enigma";
-		boolean predicate() default true;
-		char[] characters() default {'a', 'b', 'c'};
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface AnnotationWithoutDefaults {
-		String text();
-	}
-
-	@ContextConfig(value = "foo", location = "bar")
-	interface ContextConfigMismatch {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Repeatable(TestRepeatableContainer.class)
-	@interface TestRepeatable {
-
-		String value();
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface TestRepeatableContainer {
-
-		TestRepeatable[] value();
 	}
 
 	@TestRepeatable("a")

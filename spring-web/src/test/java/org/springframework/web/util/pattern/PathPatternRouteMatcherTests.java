@@ -16,12 +16,11 @@
 
 package org.springframework.web.util.pattern;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.server.PathContainer;
 import org.springframework.util.RouteMatcher;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

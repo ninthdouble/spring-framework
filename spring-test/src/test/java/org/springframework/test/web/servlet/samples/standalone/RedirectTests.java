@@ -16,11 +16,8 @@
 
 package org.springframework.test.web.servlet.samples.standalone;
 
-import javax.validation.Valid;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.Person;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,13 +28,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 /**
@@ -60,12 +55,12 @@ public class RedirectTests {
 	@Test
 	public void save() throws Exception {
 		this.mockMvc.perform(post("/persons").param("name", "Andy"))
-			.andExpect(status().isFound())
-			.andExpect(redirectedUrl("/persons/Joe"))
-			.andExpect(model().size(1))
-			.andExpect(model().attributeExists("name"))
-			.andExpect(flash().attributeCount(1))
-			.andExpect(flash().attribute("message", "success!"));
+				.andExpect(status().isFound())
+				.andExpect(redirectedUrl("/persons/Joe"))
+				.andExpect(model().size(1))
+				.andExpect(model().attributeExists("name"))
+				.andExpect(flash().attributeCount(1))
+				.andExpect(flash().attribute("message", "success!"));
 	}
 
 	@Test
@@ -82,11 +77,11 @@ public class RedirectTests {
 	@Test
 	public void saveWithErrors() throws Exception {
 		this.mockMvc.perform(post("/persons"))
-			.andExpect(status().isOk())
-			.andExpect(forwardedUrl("persons/add"))
-			.andExpect(model().size(1))
-			.andExpect(model().attributeExists("person"))
-			.andExpect(flash().attributeCount(0));
+				.andExpect(status().isOk())
+				.andExpect(forwardedUrl("persons/add"))
+				.andExpect(model().size(1))
+				.andExpect(model().attributeExists("person"))
+				.andExpect(flash().attributeCount(0));
 	}
 
 	@Test
@@ -102,12 +97,12 @@ public class RedirectTests {
 	@Test
 	public void getPerson() throws Exception {
 		this.mockMvc.perform(get("/persons/Joe").flashAttr("message", "success!"))
-			.andExpect(status().isOk())
-			.andExpect(forwardedUrl("persons/index"))
-			.andExpect(model().size(2))
-			.andExpect(model().attribute("person", new Person("Joe")))
-			.andExpect(model().attribute("message", "success!"))
-			.andExpect(flash().attributeCount(0));
+				.andExpect(status().isOk())
+				.andExpect(forwardedUrl("persons/index"))
+				.andExpect(model().size(2))
+				.andExpect(model().attribute("person", new Person("Joe")))
+				.andExpect(model().attribute("message", "success!"))
+				.andExpect(flash().attributeCount(0));
 	}
 
 

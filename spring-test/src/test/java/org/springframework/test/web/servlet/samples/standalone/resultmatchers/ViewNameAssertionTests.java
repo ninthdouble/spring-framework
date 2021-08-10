@@ -18,7 +18,6 @@ package org.springframework.test.web.servlet.samples.standalone.resultmatchers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,8 +48,8 @@ public class ViewNameAssertionTests {
 	@Test
 	public void testEqualTo() throws Exception {
 		this.mockMvc.perform(get("/"))
-			.andExpect(view().name("mySpecialView"))
-			.andExpect(view().name(equalTo("mySpecialView")));
+				.andExpect(view().name("mySpecialView"))
+				.andExpect(view().name(equalTo("mySpecialView")));
 	}
 
 	@Test

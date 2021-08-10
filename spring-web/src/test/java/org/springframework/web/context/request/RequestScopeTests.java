@@ -19,7 +19,6 @@ package org.springframework.web.context.request;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanCurrentlyInCreationException;
 import org.springframework.beans.factory.FactoryBean;
@@ -120,7 +119,7 @@ public class RequestScopeTests {
 		assertThat(request.getAttribute(name)).isNull();
 		assertThatExceptionOfType(BeanCreationException.class).isThrownBy(() ->
 				this.beanFactory.getBean(name))
-			.matches(ex -> ex.contains(BeanCurrentlyInCreationException.class));
+				.matches(ex -> ex.contains(BeanCurrentlyInCreationException.class));
 	}
 
 	@Test

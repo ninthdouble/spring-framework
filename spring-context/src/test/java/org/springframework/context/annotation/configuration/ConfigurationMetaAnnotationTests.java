@@ -48,6 +48,12 @@ public class ConfigurationMetaAnnotationTests {
 	}
 
 
+	@Configuration
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface TestConfiguration {
+		String value() default "";
+	}
+
 	@TestConfiguration("customName")
 	static class Config {
 		@Bean
@@ -61,12 +67,5 @@ public class ConfigurationMetaAnnotationTests {
 		public TestBean b() {
 			return new TestBean();
 		}
-	}
-
-
-	@Configuration
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface TestConfiguration {
-		String value() default "";
 	}
 }

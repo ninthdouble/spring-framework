@@ -16,11 +16,10 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.io.Reader;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.ClassUtils;
+
+import java.io.Reader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -53,8 +52,7 @@ public class ReaderEditorTests {
 			assertThat(condition).isTrue();
 			reader = (Reader) value;
 			assertThat(reader.ready()).isTrue();
-		}
-		finally {
+		} finally {
 			if (reader != null) {
 				reader.close();
 			}

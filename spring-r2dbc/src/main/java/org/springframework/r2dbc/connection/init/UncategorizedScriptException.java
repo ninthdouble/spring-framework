@@ -30,6 +30,7 @@ public class UncategorizedScriptException extends ScriptException {
 
 	/**
 	 * Create a new {@code UncategorizedScriptException}.
+	 *
 	 * @param message detailed message
 	 */
 	public UncategorizedScriptException(String message) {
@@ -38,8 +39,9 @@ public class UncategorizedScriptException extends ScriptException {
 
 	/**
 	 * Create a new {@code UncategorizedScriptException}.
+	 *
 	 * @param message detailed message
-	 * @param cause the root cause
+	 * @param cause   the root cause
 	 */
 	public UncategorizedScriptException(String message, Throwable cause) {
 		super(message, cause);

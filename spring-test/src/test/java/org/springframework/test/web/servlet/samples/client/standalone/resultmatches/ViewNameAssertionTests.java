@@ -17,7 +17,6 @@
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -46,8 +45,8 @@ public class ViewNameAssertionTests {
 	@Test
 	public void testEqualTo() throws Exception {
 		MockMvcWebTestClient.resultActionsFor(performRequest())
-			.andExpect(view().name("mySpecialView"))
-			.andExpect(view().name(equalTo("mySpecialView")));
+				.andExpect(view().name("mySpecialView"))
+				.andExpect(view().name(equalTo("mySpecialView")));
 	}
 
 	@Test

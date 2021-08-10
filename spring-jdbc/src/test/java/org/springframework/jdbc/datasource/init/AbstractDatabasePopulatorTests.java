@@ -16,14 +16,13 @@
 
 package org.springframework.jdbc.datasource.init;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -149,7 +148,7 @@ abstract class AbstractDatabasePopulatorTests extends AbstractDatabaseInitializa
 	@Test
 	void constructorWithMultipleScriptResources() throws Exception {
 		final ResourceDatabasePopulator populator = new ResourceDatabasePopulator(usersSchema(),
-			resource("users-data-with-comments.sql"));
+				resource("users-data-with-comments.sql"));
 		DatabasePopulatorUtils.execute(populator, db);
 		assertUsersDatabaseCreated("Brannen", "Hoeller");
 	}

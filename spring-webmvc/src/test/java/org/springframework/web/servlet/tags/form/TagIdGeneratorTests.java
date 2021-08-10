@@ -16,13 +16,11 @@
 
 package org.springframework.web.servlet.tags.form;
 
-import java.util.stream.IntStream;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.testfixture.servlet.MockPageContext;
 
 import javax.servlet.jsp.PageContext;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.web.testfixture.servlet.MockPageContext;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

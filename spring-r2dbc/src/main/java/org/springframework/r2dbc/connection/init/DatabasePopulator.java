@@ -18,11 +18,10 @@ package org.springframework.r2dbc.connection.init;
 
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
-import reactor.core.publisher.Mono;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.r2dbc.connection.ConnectionFactoryUtils;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Mono;
 
 /**
  * Strategy used to populate, initialize, or clean up a database.
@@ -30,9 +29,9 @@ import org.springframework.util.Assert;
  * @author Mark Paluch
  * @author Keith Donald
  * @author Sam Brannen
- * @since 5.3
  * @see ResourceDatabasePopulator
  * @see ConnectionFactoryInitializer
+ * @since 5.3
  */
 @FunctionalInterface
 public interface DatabasePopulator {
@@ -40,8 +39,9 @@ public interface DatabasePopulator {
 	/**
 	 * Populate, initialize, or clean up the database using the
 	 * provided R2DBC {@link Connection}.
+	 *
 	 * @param connection the R2DBC connection to use to populate the db;
-	 * already configured and ready to use, must not be {@code null}
+	 *                   already configured and ready to use, must not be {@code null}
 	 * @return {@link Mono} that initiates script execution and is
 	 * notified upon completion
 	 * @throws ScriptException in all other error cases
@@ -50,6 +50,7 @@ public interface DatabasePopulator {
 
 	/**
 	 * Execute the given {@link DatabasePopulator} against the given {@link ConnectionFactory}.
+	 *
 	 * @param connectionFactory the {@link ConnectionFactory} to execute against
 	 * @return {@link Mono} that initiates {@link DatabasePopulator#populate(Connection)}
 	 * and is notified upon completion

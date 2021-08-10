@@ -16,6 +16,18 @@
 
 package org.springframework.test.web.reactive.server;
 
+import org.reactivestreams.Publisher;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.reactive.*;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import reactor.core.Scannable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
 import java.net.URI;
 import java.time.Duration;
 import java.util.Map;
@@ -23,31 +35,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import org.reactivestreams.Publisher;
-import reactor.core.Scannable;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ClientHttpRequest;
-import org.springframework.http.client.reactive.ClientHttpRequestDecorator;
-import org.springframework.http.client.reactive.ClientHttpResponse;
-import org.springframework.http.client.reactive.ClientHttpResponseDecorator;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-
 /**
  * Decorate another {@link ClientHttpConnector} with the purpose of
  * intercepting, capturing, and exposing actual request and response data
  * transmitted to and received from the server.
  *
  * @author Rossen Stoyanchev
- * @since 5.0
  * @see HttpHandlerConnector
+ * @since 5.0
  */
 class WiretapConnector implements ClientHttpConnector {
 
@@ -63,7 +58,7 @@ class WiretapConnector implements ClientHttpConnector {
 
 	@Override
 	public Mono<ClientHttpResponse> connect(HttpMethod method, URI uri,
-			Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
+											Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
 
 		AtomicReference<WiretapClientHttpRequest> requestRef = new AtomicReference<>();
 
@@ -73,7 +68,7 @@ class WiretapConnector implements ClientHttpConnector {
 					requestRef.set(wrapped);
 					return requestCallback.apply(wrapped);
 				})
-				.map(response ->  {
+				.map(response -> {
 					WiretapClientHttpRequest wrappedRequest = requestRef.get();
 					String header = WebTestClient.WEBTESTCLIENT_REQUEST_ID;
 					String requestId = wrappedRequest.getHeaders().getFirst(header);
@@ -145,7 +140,7 @@ class WiretapConnector implements ClientHttpConnector {
 
 
 		public WiretapRecorder(@Nullable Publisher<? extends DataBuffer> publisher,
-				@Nullable Publisher<? extends Publisher<? extends DataBuffer>> publisherNested) {
+							   @Nullable Publisher<? extends Publisher<? extends DataBuffer>> publisherNested) {
 
 			if (publisher != null && publisherNested != null) {
 				throw new IllegalArgumentException("At most one publisher expected");

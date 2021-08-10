@@ -210,14 +210,17 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 			public ClassFilter getClassFilter() {
 				return ClassFilter.TRUE;
 			}
+
 			@Override
 			public MethodMatcher getMethodMatcher() {
 				return MethodMatcher.TRUE;
 			}
+
 			@Override
 			public boolean equals(Object obj) {
 				return true;
 			}
+
 			@Override
 			public int hashCode() {
 				return 0;
@@ -265,7 +268,7 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 		AdvisedSupport pc = new AdvisedSupport();
 		pc.setTargetSource(mockTargetSource);
 		CglibAopProxy aop = new CglibAopProxy(pc);
-		aop.setConstructorArguments(new Object[] {"Rob Harrop", 22}, new Class<?>[] {String.class, int.class});
+		aop.setConstructorArguments(new Object[]{"Rob Harrop", 22}, new Class<?>[]{String.class, int.class});
 
 		NoArgCtorTestBean proxy = (NoArgCtorTestBean) aop.getProxy();
 		assertThat(proxy).isNotNull();
@@ -329,8 +332,7 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 
 		try {
 			proxy.doTest();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			assertThat(ex instanceof ApplicationContextException).as("Invalid exception class").isTrue();
 		}
 
@@ -395,6 +397,21 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 	}
 
 
+	public enum MyEnum implements MyInterface {
+
+		A, B;
+	}
+
+
+	public enum MyOtherEnum implements MyInterface {
+
+		C, D;
+	}
+
+
+	public interface MyInterface {
+	}
+
 	public static class MyBean {
 
 		private String name;
@@ -417,23 +434,6 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 		}
 	}
 
-
-	public interface MyInterface {
-	}
-
-
-	public enum MyEnum implements MyInterface {
-
-		A, B;
-	}
-
-
-	public enum MyOtherEnum implements MyInterface {
-
-		C, D;
-	}
-
-
 	public static class ExceptionThrower {
 
 		private boolean catchInvoked;
@@ -451,12 +451,10 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 		public void doTest() throws Exception {
 			try {
 				throw new ApplicationContextException("foo");
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				catchInvoked = true;
 				throw ex;
-			}
-			finally {
+			} finally {
 				finallyInvoked = true;
 			}
 		}
@@ -509,12 +507,12 @@ public class CglibProxyTests extends AbstractAopProxyTests implements Serializab
 			setName("Some Default");
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
-
 		public String getName() {
 			return this.name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		@Override
@@ -533,12 +531,12 @@ class CglibTestBean {
 		setName("Some Default");
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getName() {
 		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

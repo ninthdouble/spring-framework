@@ -16,13 +16,7 @@
 
 package org.springframework.http.client;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
 import org.reactivestreams.Publisher;
-
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
@@ -36,6 +30,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Prepare the body of a multipart request, resulting in a
@@ -83,8 +82,8 @@ import org.springframework.util.MultiValueMap;
  *
  * @author Arjen Poutsma
  * @author Rossen Stoyanchev
- * @since 5.0.2
  * @see <a href="https://tools.ietf.org/html/rfc7578">RFC 7578</a>
+ * @since 5.0.2
  */
 public final class MultipartBodyBuilder {
 
@@ -108,6 +107,7 @@ public final class MultipartBodyBuilder {
 	 * easier to add headers through the returned builder
 	 * <li>{@link Part} -- a part from a server request
 	 * </ul>
+	 *
 	 * @param name the name of the part to add
 	 * @param part the part data
 	 * @return builder that allows for further customization of part headers
@@ -118,8 +118,9 @@ public final class MultipartBodyBuilder {
 
 	/**
 	 * Variant of {@link #part(String, Object)} that also accepts a MediaType.
-	 * @param name the name of the part to add
-	 * @param part the part data
+	 *
+	 * @param name        the name of the part to add
+	 * @param part        the part data
 	 * @param contentType the media type to help with encoding the part
 	 * @return builder that allows for further customization of part headers
 	 */
@@ -144,7 +145,7 @@ public final class MultipartBodyBuilder {
 			return builder;
 		}
 
-		if (part instanceof PublisherEntity<?,?>) {
+		if (part instanceof PublisherEntity<?, ?>) {
 			PublisherPartBuilder<?, ?> builder = new PublisherPartBuilder<>(name, (PublisherEntity<?, ?>) part);
 			if (contentType != null) {
 				builder.contentType(contentType);
@@ -159,8 +160,7 @@ public final class MultipartBodyBuilder {
 			partBody = ((HttpEntity<?>) part).getBody();
 			partHeaders = new HttpHeaders();
 			partHeaders.putAll(((HttpEntity<?>) part).getHeaders());
-		}
-		else {
+		} else {
 			partBody = part;
 		}
 
@@ -181,8 +181,9 @@ public final class MultipartBodyBuilder {
 
 	/**
 	 * Add a part from {@link Publisher} content.
-	 * @param name the name of the part to add
-	 * @param publisher a Publisher of content for the part
+	 *
+	 * @param name         the name of the part to add
+	 * @param publisher    a Publisher of content for the part
 	 * @param elementClass the type of elements contained in the publisher
 	 * @return builder that allows for further customization of part headers
 	 */
@@ -199,8 +200,9 @@ public final class MultipartBodyBuilder {
 	/**
 	 * Variant of {@link #asyncPart(String, Publisher, Class)} with a
 	 * {@link ParameterizedTypeReference} for the element type information.
-	 * @param name the name of the part to add
-	 * @param publisher the part contents
+	 *
+	 * @param name          the name of the part to add
+	 * @param publisher     the part contents
 	 * @param typeReference the type of elements contained in the publisher
 	 * @return builder that allows for further customization of part headers
 	 */
@@ -238,9 +240,10 @@ public final class MultipartBodyBuilder {
 
 		/**
 		 * Set the {@linkplain MediaType media type} of the part.
+		 *
 		 * @param contentType the content type
-		 * @since 5.2
 		 * @see HttpHeaders#setContentType(MediaType)
+		 * @since 5.2
 		 */
 		PartBuilder contentType(MediaType contentType);
 
@@ -249,6 +252,7 @@ public final class MultipartBodyBuilder {
 		 * necessary with {@link org.springframework.core.io.Resource Resource}
 		 * based parts that expose a filename but may be useful for
 		 * {@link Publisher} parts.
+		 *
 		 * @param filename the filename to set on the Content-Disposition
 		 * @since 5.2
 		 */
@@ -256,7 +260,8 @@ public final class MultipartBodyBuilder {
 
 		/**
 		 * Add part header values.
-		 * @param headerName the part header name
+		 *
+		 * @param headerName   the part header name
 		 * @param headerValues the part header value(s)
 		 * @return this builder
 		 * @see HttpHeaders#addAll(String, List)
@@ -265,6 +270,7 @@ public final class MultipartBodyBuilder {
 
 		/**
 		 * Manipulate the part headers through the given consumer.
+		 *
 		 * @param headersConsumer consumer to manipulate the part headers with
 		 * @return this builder
 		 */
@@ -274,13 +280,11 @@ public final class MultipartBodyBuilder {
 
 	private static class DefaultPartBuilder implements PartBuilder {
 
-		private final String name;
-
-		@Nullable
-		protected HttpHeaders headers;
-
 		@Nullable
 		protected final Object body;
+		private final String name;
+		@Nullable
+		protected HttpHeaders headers;
 
 		public DefaultPartBuilder(String name, @Nullable HttpHeaders headers, @Nullable Object body) {
 			this.name = name;
@@ -335,7 +339,7 @@ public final class MultipartBodyBuilder {
 		}
 
 		public PublisherPartBuilder(String name, @Nullable HttpHeaders headers, P body,
-				ParameterizedTypeReference<S> typeRef) {
+									ParameterizedTypeReference<S> typeRef) {
 
 			super(name, headers, body);
 			this.resolvableType = ResolvableType.forType(typeRef);
@@ -360,11 +364,12 @@ public final class MultipartBodyBuilder {
 	 * Specialization of {@link HttpEntity} for use with a
 	 * {@link Publisher}-based body, for which we also need to keep track of
 	 * the element type.
+	 *
 	 * @param <T> the type contained in the publisher
 	 * @param <P> the publisher
 	 */
 	static final class PublisherEntity<T, P extends Publisher<T>> extends HttpEntity<P>
-			implements ResolvableTypeProvider  {
+			implements ResolvableTypeProvider {
 
 		private final ResolvableType resolvableType;
 

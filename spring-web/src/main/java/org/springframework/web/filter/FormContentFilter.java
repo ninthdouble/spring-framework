@@ -16,25 +16,6 @@
 
 package org.springframework.web.filter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -45,6 +26,16 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * {@code Filter} that parses form data for HTTP PUT, PATCH, and DELETE requests
@@ -88,8 +79,7 @@ public class FormContentFilter extends OncePerRequestFilter {
 		MultiValueMap<String, String> params = parseIfNecessary(request);
 		if (!CollectionUtils.isEmpty(params)) {
 			filterChain.doFilter(new FormContentRequestWrapper(request, params), response);
-		}
-		else {
+		} else {
 			filterChain.doFilter(request, response);
 		}
 	}
@@ -116,8 +106,7 @@ public class FormContentFilter extends OncePerRequestFilter {
 			try {
 				MediaType mediaType = MediaType.parseMediaType(contentType);
 				return MediaType.APPLICATION_FORM_URLENCODED.includes(mediaType);
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 			}
 		}
 		return false;
@@ -170,8 +159,7 @@ public class FormContentFilter extends OncePerRequestFilter {
 			}
 			if (parameterValues == null || getQueryString() == null) {
 				return StringUtils.toStringArray(formParam);
-			}
-			else {
+			} else {
 				List<String> result = new ArrayList<>(parameterValues.length + formParam.size());
 				result.addAll(Arrays.asList(parameterValues));
 				result.addAll(formParam);

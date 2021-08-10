@@ -16,14 +16,9 @@
 
 package org.springframework.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,7 +64,7 @@ class LinkedMultiValueMapTests {
 		map.add("key", "value1");
 		map.addAll("key", Arrays.asList("value2", "value3"));
 		assertThat(map).hasSize(1);
-		assertThat(map.get("key")).containsExactly("value1","value2","value3");
+		assertThat(map.get("key")).containsExactly("value1", "value2", "value3");
 	}
 
 	@Test

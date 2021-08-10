@@ -16,17 +16,7 @@
 
 package org.springframework.test.web.servlet.samples.client.standalone.resultmatches;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -35,6 +25,10 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.xml.bind.annotation.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,8 +78,9 @@ public class XmlContentAssertionTests {
 	@Controller
 	private static class MusicController {
 
-		@RequestMapping(value="/music/people")
-		public @ResponseBody PeopleWrapper getPeople() {
+		@RequestMapping(value = "/music/people")
+		public @ResponseBody
+		PeopleWrapper getPeople() {
 
 			List<Person> composers = Arrays.asList(
 					new Person("Johann Sebastian Bach").setSomeDouble(21),
@@ -98,12 +93,12 @@ public class XmlContentAssertionTests {
 	}
 
 	@SuppressWarnings("unused")
-	@XmlRootElement(name="people")
+	@XmlRootElement(name = "people")
 	@XmlAccessorType(XmlAccessType.FIELD)
 	private static class PeopleWrapper {
 
-		@XmlElementWrapper(name="composers")
-		@XmlElement(name="composer")
+		@XmlElementWrapper(name = "composers")
+		@XmlElement(name = "composer")
 		private List<Person> composers;
 
 		public PeopleWrapper() {

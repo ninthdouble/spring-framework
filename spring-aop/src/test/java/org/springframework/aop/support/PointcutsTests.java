@@ -16,14 +16,13 @@
 
 package org.springframework.aop.support;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.Pointcut;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.lang.Nullable;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,19 +36,6 @@ public class PointcutsTests {
 	public static Method TEST_BEAN_GET_AGE;
 	public static Method TEST_BEAN_GET_NAME;
 	public static Method TEST_BEAN_ABSQUATULATE;
-
-	static {
-		try {
-			TEST_BEAN_SET_AGE = TestBean.class.getMethod("setAge", int.class);
-			TEST_BEAN_GET_AGE = TestBean.class.getMethod("getAge");
-			TEST_BEAN_GET_NAME = TestBean.class.getMethod("getName");
-			TEST_BEAN_ABSQUATULATE = TestBean.class.getMethod("absquatulate");
-		}
-		catch (Exception ex) {
-			throw new RuntimeException("Shouldn't happen: error in test suite");
-		}
-	}
-
 	/**
 	 * Matches only TestBean class, not subclasses
 	 */
@@ -64,13 +50,7 @@ public class PointcutsTests {
 			return true;
 		}
 	};
-
 	public static Pointcut allClassSetterPointcut = Pointcuts.SETTERS;
-
-	// Subclass used for matching
-	public static class MyTestBean extends TestBean {
-	}
-
 	public static Pointcut myTestBeanSetterPointcut = new StaticMethodMatcherPointcut() {
 		@Override
 		public ClassFilter getClassFilter() {
@@ -82,7 +62,6 @@ public class PointcutsTests {
 			return m.getName().startsWith("set");
 		}
 	};
-
 	// Will match MyTestBeanSubclass
 	public static Pointcut myTestBeanGetterPointcut = new StaticMethodMatcherPointcut() {
 		@Override
@@ -95,11 +74,6 @@ public class PointcutsTests {
 			return m.getName().startsWith("get");
 		}
 	};
-
-	// Still more specific class
-	public static class MyTestBeanSubclass extends MyTestBean {
-	}
-
 	public static Pointcut myTestBeanSubclassGetterPointcut = new StaticMethodMatcherPointcut() {
 		@Override
 		public ClassFilter getClassFilter() {
@@ -111,13 +85,20 @@ public class PointcutsTests {
 			return m.getName().startsWith("get");
 		}
 	};
-
 	public static Pointcut allClassGetterPointcut = Pointcuts.GETTERS;
-
 	public static Pointcut allClassGetAgePointcut = new NameMatchMethodPointcut().addMethodName("getAge");
-
 	public static Pointcut allClassGetNamePointcut = new NameMatchMethodPointcut().addMethodName("getName");
 
+	static {
+		try {
+			TEST_BEAN_SET_AGE = TestBean.class.getMethod("setAge", int.class);
+			TEST_BEAN_GET_AGE = TestBean.class.getMethod("getAge");
+			TEST_BEAN_GET_NAME = TestBean.class.getMethod("getName");
+			TEST_BEAN_ABSQUATULATE = TestBean.class.getMethod("absquatulate");
+		} catch (Exception ex) {
+			throw new RuntimeException("Shouldn't happen: error in test suite");
+		}
+	}
 
 	@Test
 	public void testTrue() {
@@ -234,7 +215,6 @@ public class PointcutsTests {
 		assertThat(Pointcuts.matches(union, TEST_BEAN_ABSQUATULATE, MyTestBean.class)).isFalse();
 	}
 
-
 	/**
 	 * The intersection of these two pointcuts leaves nothing.
 	 */
@@ -244,6 +224,14 @@ public class PointcutsTests {
 		assertThat(Pointcuts.matches(intersection, TEST_BEAN_SET_AGE, TestBean.class, 6)).isFalse();
 		assertThat(Pointcuts.matches(intersection, TEST_BEAN_GET_AGE, TestBean.class)).isFalse();
 		assertThat(Pointcuts.matches(intersection, TEST_BEAN_ABSQUATULATE, TestBean.class)).isFalse();
+	}
+
+	// Subclass used for matching
+	public static class MyTestBean extends TestBean {
+	}
+
+	// Still more specific class
+	public static class MyTestBeanSubclass extends MyTestBean {
 	}
 
 }

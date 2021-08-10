@@ -126,8 +126,7 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 
 		if (eventType != null) {
 			smc.multicastEvent(event, eventType);
-		}
-		else {
+		} else {
 			smc.multicastEvent(event);
 		}
 		int invocation = match ? 1 : 0;
@@ -167,7 +166,7 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 		willThrow(thrown).given(listener).onApplicationEvent(evt);
 		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() ->
 				smc.multicastEvent(evt))
-			.satisfies(ex -> assertThat(ex).isSameAs(thrown));
+				.satisfies(ex -> assertThat(ex).isSameAs(thrown));
 	}
 
 	@Test
@@ -497,7 +496,9 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 	public void lambdaAsListenerWithJava8StyleClassCastMessage() {
 		StaticApplicationContext context = new StaticApplicationContext();
 		ApplicationListener<ApplicationEvent> listener =
-				event -> { throw new ClassCastException(event.getClass().getName()); };
+				event -> {
+					throw new ClassCastException(event.getClass().getName());
+				};
 		context.addApplicationListener(listener);
 		context.refresh();
 
@@ -509,7 +510,9 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 	public void lambdaAsListenerWithJava9StyleClassCastMessage() {
 		StaticApplicationContext context = new StaticApplicationContext();
 		ApplicationListener<ApplicationEvent> listener =
-				event -> { throw new ClassCastException("spring.context/" + event.getClass().getName()); };
+				event -> {
+					throw new ClassCastException("spring.context/" + event.getClass().getName());
+				};
 		context.addApplicationListener(listener);
 		context.refresh();
 
@@ -563,6 +566,9 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 	}
 
 
+	public interface MyOrderedListenerIfc<E extends ApplicationEvent> extends ApplicationListener<E>, Ordered {
+	}
+
 	@SuppressWarnings("serial")
 	public static class MyEvent extends ApplicationEvent {
 
@@ -571,7 +577,6 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 		}
 	}
 
-
 	@SuppressWarnings("serial")
 	public static class MyOtherEvent extends ApplicationEvent {
 
@@ -579,7 +584,6 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 			super(source);
 		}
 	}
-
 
 	public static class MyOrderedListener1 implements ApplicationListener<ApplicationEvent>, Ordered {
 
@@ -595,11 +599,6 @@ public class ApplicationContextEventTests extends AbstractApplicationEventListen
 			return 0;
 		}
 	}
-
-
-	public interface MyOrderedListenerIfc<E extends ApplicationEvent> extends ApplicationListener<E>, Ordered {
-	}
-
 
 	public static abstract class MyOrderedListenerBase implements MyOrderedListenerIfc<MyEvent> {
 

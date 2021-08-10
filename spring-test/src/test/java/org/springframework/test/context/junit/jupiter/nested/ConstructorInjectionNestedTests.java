@@ -19,7 +19,6 @@ package org.springframework.test.context.junit.jupiter.nested;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,9 +43,9 @@ import static org.springframework.test.context.NestedTestConfiguration.Enclosing
  * Platform, simply run {@link SpringJUnitJupiterTestSuite} as a JUnit 4 test.
  *
  * @author Sam Brannen
- * @since 5.0.5
  * @see ContextConfigurationNestedTests
  * @see org.springframework.test.context.junit4.nested.NestedTestsWithSpringRulesTests
+ * @since 5.0.5
  */
 @SpringJUnitConfig(TopLevelConfig.class)
 @NestedTestConfiguration(OVERRIDE) // since INHERIT is now the global default
@@ -61,6 +60,24 @@ class ConstructorInjectionNestedTests {
 	@Test
 	void topLevelTest() {
 		assertThat(foo).isEqualTo("foo");
+	}
+
+	@Configuration
+	static class TopLevelConfig {
+
+		@Bean
+		String foo() {
+			return "foo";
+		}
+	}
+
+	@Configuration
+	static class NestedConfig {
+
+		@Bean
+		String bar() {
+			return "bar";
+		}
 	}
 
 	@Nested
@@ -98,6 +115,8 @@ class ConstructorInjectionNestedTests {
 		}
 	}
 
+	// -------------------------------------------------------------------------
+
 	@Nested
 	@SpringJUnitConfig(NestedConfig.class)
 	class QualifiedConstructorParameterTests {
@@ -132,26 +151,6 @@ class ConstructorInjectionNestedTests {
 			assertThat(foo).isEqualTo("foo");
 			assertThat(bar).isEqualTo("bar");
 			assertThat(answer).isEqualTo(42);
-		}
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class TopLevelConfig {
-
-		@Bean
-		String foo() {
-			return "foo";
-		}
-	}
-
-	@Configuration
-	static class NestedConfig {
-
-		@Bean
-		String bar() {
-			return "bar";
 		}
 	}
 

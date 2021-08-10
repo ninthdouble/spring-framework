@@ -16,8 +16,6 @@
 
 package org.springframework.test.context.junit.jupiter.parallel;
 
-import java.lang.reflect.Parameter;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -26,11 +24,12 @@ import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import java.lang.reflect.Parameter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
@@ -64,7 +63,7 @@ class ParallelExecutionSpringExtensionTests {
 		launcher.execute(request);
 
 		assertThat(listener.getSummary().getTestsSucceededCount()).as(
-			"number of tests executed successfully").isEqualTo(NUM_TESTS);
+				"number of tests executed successfully").isEqualTo(NUM_TESTS);
 	}
 
 	@SpringJUnitConfig

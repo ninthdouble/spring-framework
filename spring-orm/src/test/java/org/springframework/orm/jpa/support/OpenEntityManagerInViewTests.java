@@ -16,21 +16,9 @@
 
 package org.springframework.orm.jpa.support;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
-import javax.servlet.FilterChain;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.WebApplicationContext;
@@ -40,20 +28,22 @@ import org.springframework.web.context.request.async.StandardServletAsyncWebRequ
 import org.springframework.web.context.request.async.WebAsyncManager;
 import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.context.support.StaticWebApplicationContext;
-import org.springframework.web.testfixture.servlet.MockAsyncContext;
-import org.springframework.web.testfixture.servlet.MockFilterConfig;
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
-import org.springframework.web.testfixture.servlet.MockServletContext;
-import org.springframework.web.testfixture.servlet.PassThroughFilterChain;
+import org.springframework.web.testfixture.servlet.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+import javax.servlet.FilterChain;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Costin Leau
@@ -63,18 +53,12 @@ import static org.mockito.Mockito.verify;
  */
 public class OpenEntityManagerInViewTests {
 
-	private EntityManager manager;
-
-	private EntityManagerFactory factory;
-
-	private MockHttpServletRequest request;
-
-	private MockHttpServletResponse response;
-
-	private ServletWebRequest webRequest;
-
 	private final TestTaskExecutor taskExecutor = new TestTaskExecutor();
-
+	private EntityManager manager;
+	private EntityManagerFactory factory;
+	private MockHttpServletRequest request;
+	private MockHttpServletResponse response;
+	private ServletWebRequest webRequest;
 
 	@BeforeEach
 	public void setUp() {
@@ -423,8 +407,7 @@ public class OpenEntityManagerInViewTests {
 			Runnable decoratedTask = () -> {
 				try {
 					task.run();
-				}
-				finally {
+				} finally {
 					latch.countDown();
 				}
 			};

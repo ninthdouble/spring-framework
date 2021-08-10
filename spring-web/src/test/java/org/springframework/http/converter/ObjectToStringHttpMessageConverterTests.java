@@ -16,15 +16,8 @@
 
 package org.springframework.http.converter;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
@@ -33,6 +26,12 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -152,7 +151,7 @@ public class ObjectToStringHttpMessageConverterTests {
 		assertThat(this.servletResponse.getCharacterEncoding()).isEqualTo("ISO-8859-1");
 		assertThat(this.servletResponse.getContentType().startsWith(MediaType.TEXT_PLAIN_VALUE)).isTrue();
 		assertThat(this.servletResponse.getContentLength()).isEqualTo(2);
-		assertThat(this.servletResponse.getContentAsByteArray()).isEqualTo(new byte[] { '-', '8' });
+		assertThat(this.servletResponse.getContentAsByteArray()).isEqualTo(new byte[]{'-', '8'});
 	}
 
 	@Test
@@ -164,7 +163,7 @@ public class ObjectToStringHttpMessageConverterTests {
 		assertThat(this.servletResponse.getContentType().startsWith(MediaType.TEXT_PLAIN_VALUE)).isTrue();
 		assertThat(this.servletResponse.getContentLength()).isEqualTo(8);
 		// First two bytes: byte order mark
-		assertThat(this.servletResponse.getContentAsByteArray()).isEqualTo(new byte[] { -2, -1, 0, '9', 0, '5', 0, '8' });
+		assertThat(this.servletResponse.getContentAsByteArray()).isEqualTo(new byte[]{-2, -1, 0, '9', 0, '5', 0, '8'});
 	}
 
 	@Test

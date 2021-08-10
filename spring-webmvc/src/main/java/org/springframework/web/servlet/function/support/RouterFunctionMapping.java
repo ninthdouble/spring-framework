@@ -16,13 +16,6 @@
 
 package org.springframework.web.servlet.function.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +34,12 @@ import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@code HandlerMapping} implementation that supports {@link RouterFunction RouterFunctions}.
@@ -84,18 +83,10 @@ public class RouterFunctionMapping extends AbstractHandlerMapping implements Ini
 	/**
 	 * Create a {@code RouterFunctionMapping} with the given {@link RouterFunction}.
 	 * <p>If this constructor is used, no application context detection will occur.
+	 *
 	 * @param routerFunction the router function to use for mapping
 	 */
 	public RouterFunctionMapping(RouterFunction<?> routerFunction) {
-		this.routerFunction = routerFunction;
-	}
-
-
-	/**
-	 * Set the router function to map to.
-	 * <p>If this property is used, no application context detection will occur.
-	 */
-	public void setRouterFunction(@Nullable RouterFunction<?> routerFunction) {
 		this.routerFunction = routerFunction;
 	}
 
@@ -104,11 +95,20 @@ public class RouterFunctionMapping extends AbstractHandlerMapping implements Ini
 	 * <p><strong>Note:</strong> When router functions are detected from the
 	 * ApplicationContext, this method may return {@code null} if invoked
 	 * prior to {@link #afterPropertiesSet()}.
+	 *
 	 * @return the router function or {@code null}
 	 */
 	@Nullable
 	public RouterFunction<?> getRouterFunction() {
 		return this.routerFunction;
+	}
+
+	/**
+	 * Set the router function to map to.
+	 * <p>If this property is used, no application context detection will occur.
+	 */
+	public void setRouterFunction(@Nullable RouterFunction<?> routerFunction) {
+		this.routerFunction = routerFunction;
 	}
 
 	/**
@@ -170,19 +170,16 @@ public class RouterFunctionMapping extends AbstractHandlerMapping implements Ini
 	private void logRouterFunctions(List<RouterFunction> routerFunctions) {
 		if (mappingsLogger.isDebugEnabled()) {
 			routerFunctions.forEach(function -> mappingsLogger.debug("Mapped " + function));
-		}
-		else if (logger.isDebugEnabled()) {
+		} else if (logger.isDebugEnabled()) {
 			int total = routerFunctions.size();
 			String message = total + " RouterFunction(s) in " + formatMappingName();
 			if (logger.isTraceEnabled()) {
 				if (total > 0) {
 					routerFunctions.forEach(function -> logger.trace("Mapped " + function));
-				}
-				else {
+				} else {
 					logger.trace(message);
 				}
-			}
-			else if (total > 0) {
+			} else if (total > 0) {
 				logger.debug(message);
 			}
 		}
@@ -199,8 +196,7 @@ public class RouterFunctionMapping extends AbstractHandlerMapping implements Ini
 		if (!shouldIgnoreXml) {
 			try {
 				messageConverters.add(new SourceHttpMessageConverter<>());
-			}
-			catch (Error err) {
+			} catch (Error err) {
 				// Ignore when no TransformerFactory implementation is available
 			}
 		}
@@ -218,14 +214,13 @@ public class RouterFunctionMapping extends AbstractHandlerMapping implements Ini
 			HandlerFunction<?> handlerFunction = this.routerFunction.route(request).orElse(null);
 			setAttributes(servletRequest, request, handlerFunction);
 			return handlerFunction;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
 
 	private void setAttributes(HttpServletRequest servletRequest, ServerRequest request,
-			@Nullable HandlerFunction<?> handlerFunction) {
+							   @Nullable HandlerFunction<?> handlerFunction) {
 
 		PathPattern matchingPattern =
 				(PathPattern) servletRequest.getAttribute(RouterFunctions.MATCHING_PATTERN_ATTRIBUTE);

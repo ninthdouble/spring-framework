@@ -16,15 +16,14 @@
 
 package org.springframework.test.context.jdbc;
 
-import java.lang.annotation.Repeatable;
-
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.lang.annotation.Repeatable;
 
 /**
  * This is a copy of {@link TransactionalSqlScriptsTests} that verifies proper

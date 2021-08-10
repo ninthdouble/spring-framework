@@ -16,19 +16,17 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Date;
-
-import javax.inject.Provider;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
+
+import javax.inject.Provider;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -126,7 +124,7 @@ public class ObjectFactoryCreatingFactoryBeanTests {
 	public void testWhenTargetBeanNameIsNull() throws Exception {
 		assertThatIllegalArgumentException().as(
 				"'targetBeanName' property not set").isThrownBy(
-						new ObjectFactoryCreatingFactoryBean()::afterPropertiesSet);
+				new ObjectFactoryCreatingFactoryBean()::afterPropertiesSet);
 	}
 
 	@Test
@@ -135,7 +133,7 @@ public class ObjectFactoryCreatingFactoryBeanTests {
 		factory.setTargetBeanName("");
 		assertThatIllegalArgumentException().as(
 				"'targetBeanName' property set to (invalid) empty string").isThrownBy(
-						factory::afterPropertiesSet);
+				factory::afterPropertiesSet);
 	}
 
 	@Test
@@ -144,7 +142,7 @@ public class ObjectFactoryCreatingFactoryBeanTests {
 		factory.setTargetBeanName("  \t");
 		assertThatIllegalArgumentException().as(
 				"'targetBeanName' property set to (invalid) only-whitespace string").isThrownBy(
-						factory::afterPropertiesSet);
+				factory::afterPropertiesSet);
 	}
 
 	@Test

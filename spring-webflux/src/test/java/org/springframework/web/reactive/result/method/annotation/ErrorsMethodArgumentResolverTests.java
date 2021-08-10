@@ -16,11 +16,7 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.ResolvableType;
@@ -32,6 +28,9 @@ import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -104,20 +103,30 @@ class ErrorsMethodArgumentResolverTests {
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.resolveArgument(parameter, this.bindingContext, this.exchange)
 						.block(Duration.ofMillis(5000)))
-			.withMessageContaining("An @ModelAttribute and an Errors/BindingResult argument " +
-					"cannot both be declared with an async type wrapper.");
+				.withMessageContaining("An @ModelAttribute and an Errors/BindingResult argument " +
+						"cannot both be declared with an async type wrapper.");
 	}
 
-	@Test  // SPR-16187
+	@Test
+		// SPR-16187
 	void resolveWithBindingResultNotFound() {
 		MethodParameter parameter = this.testMethod.arg(Errors.class);
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.resolveArgument(parameter, this.bindingContext, this.exchange)
 						.block(Duration.ofMillis(5000)))
-			.withMessageContaining("An Errors/BindingResult argument is expected " +
-					"immediately after the @ModelAttribute argument");
+				.withMessageContaining("An Errors/BindingResult argument is expected " +
+						"immediately after the @ModelAttribute argument");
 	}
 
+	@SuppressWarnings("unused")
+	void handle(
+			@ModelAttribute Foo foo,
+			Errors errors,
+			@ModelAttribute Mono<Foo> fooMono,
+			BindingResult bindingResult,
+			Mono<Errors> errorsMono,
+			String string) {
+	}
 
 	@SuppressWarnings("unused")
 	private static class Foo {
@@ -138,16 +147,6 @@ class ErrorsMethodArgumentResolverTests {
 		public void setName(String name) {
 			this.name = name;
 		}
-	}
-
-	@SuppressWarnings("unused")
-	void handle(
-			@ModelAttribute Foo foo,
-			Errors errors,
-			@ModelAttribute Mono<Foo> fooMono,
-			BindingResult bindingResult,
-			Mono<Errors> errorsMono,
-			String string) {
 	}
 
 }

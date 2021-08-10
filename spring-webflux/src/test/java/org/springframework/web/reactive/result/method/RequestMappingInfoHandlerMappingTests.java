@@ -16,22 +16,8 @@
 
 package org.springframework.web.reactive.result.method;
 
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpHeaders;
@@ -41,36 +27,30 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.result.method.RequestMappingInfo.BuilderConfiguration;
-import org.springframework.web.server.MethodNotAllowedException;
-import org.springframework.web.server.NotAcceptableStatusException;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.ServerWebInputException;
-import org.springframework.web.server.UnsupportedMediaTypeStatusException;
+import org.springframework.web.server.*;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
 import org.springframework.web.util.pattern.PathPattern;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
-import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 import static org.springframework.web.reactive.HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE;
 import static org.springframework.web.reactive.result.method.RequestMappingInfo.paths;
-import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.get;
-import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.method;
-import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.post;
-import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.put;
+import static org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest.*;
 import static org.springframework.web.testfixture.method.MvcAnnotationPredicates.getMapping;
 import static org.springframework.web.testfixture.method.MvcAnnotationPredicates.requestMapping;
 import static org.springframework.web.testfixture.method.ResolvableMethod.on;
@@ -170,7 +150,7 @@ public class RequestMappingInfoHandlerMappingTests {
 
 		assertError(mono, UnsupportedMediaTypeStatusException.class,
 				ex -> assertThat(ex.getMessage()).isEqualTo(("415 UNSUPPORTED_MEDIA_TYPE " +
-										"\"Invalid mime type \"bogus\": does not contain '/'\"")));
+						"\"Invalid mime type \"bogus\": does not contain '/'\"")));
 	}
 
 	@Test  // SPR-8462
@@ -198,7 +178,7 @@ public class RequestMappingInfoHandlerMappingTests {
 		testHttpOptions("/person/1", EnumSet.of(HttpMethod.PUT, HttpMethod.OPTIONS), null);
 		testHttpOptions("/persons", EnumSet.copyOf(allMethodExceptTrace), null);
 		testHttpOptions("/something", EnumSet.of(HttpMethod.PUT, HttpMethod.POST), null);
-		testHttpOptions("/qux", EnumSet.of(HttpMethod.PATCH,HttpMethod.GET,HttpMethod.HEAD,HttpMethod.OPTIONS),
+		testHttpOptions("/qux", EnumSet.of(HttpMethod.PATCH, HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS),
 				new MediaType("foo", "bar"));
 	}
 
@@ -374,7 +354,7 @@ public class RequestMappingInfoHandlerMappingTests {
 		HttpHeaders headers = (HttpHeaders) value;
 		assertThat(headers.getAllow()).hasSameElementsAs(allowedMethods);
 
-		if (acceptPatch != null && headers.getAllow().contains(HttpMethod.PATCH) ) {
+		if (acceptPatch != null && headers.getAllow().contains(HttpMethod.PATCH)) {
 			assertThat(headers.getAcceptPatch()).containsExactly(acceptPatch);
 		}
 	}
@@ -470,7 +450,8 @@ public class RequestMappingInfoHandlerMappingTests {
 		}
 
 
-		public void dummy() { }
+		public void dummy() {
+		}
 	}
 
 
@@ -509,8 +490,7 @@ public class RequestMappingInfoHandlerMappingTests {
 						.params(annot.params()).headers(annot.headers())
 						.consumes(annot.consumes()).produces(annot.produces())
 						.options(options).build();
-			}
-			else {
+			} else {
 				return null;
 			}
 		}

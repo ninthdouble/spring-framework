@@ -28,8 +28,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-
-
 /**
  * @author Phillip Webb
  * @author Juergen Hoeller
@@ -38,7 +36,7 @@ public class BeanMethodMetadataTests {
 
 	@Test
 	public void providesBeanMethodBeanDefinition() throws Exception {
-		AnnotationConfigApplicationContext context= new AnnotationConfigApplicationContext(Conf.class);
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Conf.class);
 		BeanDefinition beanDefinition = context.getBeanDefinition("myBean");
 		assertThat(beanDefinition).as("should provide AnnotatedBeanDefinition").isInstanceOf(AnnotatedBeanDefinition.class);
 		Map<String, Object> annotationAttributes =
@@ -47,6 +45,12 @@ public class BeanMethodMetadataTests {
 		context.close();
 	}
 
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface MyAnnotation {
+
+		String value();
+	}
 
 	@Configuration
 	static class Conf {
@@ -58,15 +62,7 @@ public class BeanMethodMetadataTests {
 		}
 	}
 
-
 	static class MyBean {
-	}
-
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface MyAnnotation {
-
-		String value();
 	}
 
 }

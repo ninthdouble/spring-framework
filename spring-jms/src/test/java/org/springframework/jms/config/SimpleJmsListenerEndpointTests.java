@@ -16,12 +16,11 @@
 
 package org.springframework.jms.config;
 
-import javax.jms.MessageListener;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.listener.adapter.MessageListenerAdapter;
+
+import javax.jms.MessageListener;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,12 +16,12 @@
 
 package org.springframework.test.context.junit4;
 
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -42,22 +42,18 @@ import static org.junit.Assume.assumeTrue;
  * </p>
  *
  * @author Sam Brannen
- * @since 2.5
  * @see StandardJUnit4FeaturesSpringRunnerTests
+ * @since 2.5
  */
 public class StandardJUnit4FeaturesTests {
 
 	private static int staticBeforeCounter = 0;
-
+	private int beforeCounter = 0;
 
 	@BeforeClass
 	public static void incrementStaticBeforeCounter() {
 		StandardJUnit4FeaturesTests.staticBeforeCounter++;
 	}
-
-
-	private int beforeCounter = 0;
-
 
 	@Test
 	@Ignore

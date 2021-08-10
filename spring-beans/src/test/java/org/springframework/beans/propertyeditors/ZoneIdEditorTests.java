@@ -16,9 +16,9 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.time.ZoneId;
-
 import org.junit.jupiter.api.Test;
+
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -16,18 +16,9 @@
 
 package org.springframework.r2dbc.connection;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.IsolationLevel;
-import io.r2dbc.spi.R2dbcBadGrammarException;
-import io.r2dbc.spi.Statement;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.IllegalTransactionStateException;
 import org.springframework.transaction.TransactionDefinition;
@@ -35,18 +26,15 @@ import org.springframework.transaction.reactive.TransactionSynchronization;
 import org.springframework.transaction.reactive.TransactionSynchronizationManager;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.never;
-import static org.mockito.BDDMockito.reset;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.verifyNoMoreInteractions;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for {@link R2dbcTransactionManager}.
@@ -62,7 +50,7 @@ class R2dbcTransactionManagerUnitTests {
 	private R2dbcTransactionManager tm;
 
 	@BeforeEach
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	void before() {
 		when(connectionFactoryMock.create()).thenReturn((Mono) Mono.just(connectionMock));
 		when(connectionMock.beginTransaction()).thenReturn(Mono.empty());
@@ -82,8 +70,8 @@ class R2dbcTransactionManagerUnitTests {
 
 		ConnectionFactoryUtils.getConnection(connectionFactoryMock)
 				.flatMap(connection -> TransactionSynchronizationManager.forCurrentTransaction()
-				.doOnNext(synchronizationManager -> synchronizationManager.registerSynchronization(
-						sync)))
+						.doOnNext(synchronizationManager -> synchronizationManager.registerSynchronization(
+								sync)))
 				.as(operator::transactional)
 				.as(StepVerifier::create)
 				.expectNextCount(1)
@@ -120,7 +108,7 @@ class R2dbcTransactionManagerUnitTests {
 				.as(StepVerifier::create)
 				.expectErrorSatisfies(actual -> assertThat(actual).isInstanceOf(
 						CannotCreateTransactionException.class).hasCauseInstanceOf(
-								R2dbcBadGrammarException.class))
+						R2dbcBadGrammarException.class))
 				.verify();
 	}
 
@@ -280,8 +268,8 @@ class R2dbcTransactionManagerUnitTests {
 
 		ConnectionFactoryUtils.getConnection(connectionFactoryMock)
 				.doOnNext(connection -> {
-			throw new IllegalStateException();
-		}).as(operator::transactional)
+					throw new IllegalStateException();
+				}).as(operator::transactional)
 				.as(StepVerifier::create)
 				.verifyError(IllegalStateException.class);
 
@@ -410,15 +398,11 @@ class R2dbcTransactionManagerUnitTests {
 	private static class TestTransactionSynchronization
 			implements TransactionSynchronization {
 
-		private int status;
-
 		public boolean beforeCommitCalled;
-
 		public boolean beforeCompletionCalled;
-
 		public boolean afterCommitCalled;
-
 		public boolean afterCompletionCalled;
+		private int status;
 
 		TestTransactionSynchronization(int status) {
 			this.status = status;
@@ -468,8 +452,7 @@ class R2dbcTransactionManagerUnitTests {
 		public Mono<Void> afterCompletion(int status) {
 			try {
 				return Mono.fromRunnable(() -> doAfterCompletion(status));
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				// ignore
 			}
 

@@ -17,7 +17,6 @@
 package org.springframework.beans.factory.xml;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
@@ -34,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class NestedBeansElementTests {
 	private final Resource XML =
-		new ClassPathResource("NestedBeansElementTests-context.xml", this.getClass());
+			new ClassPathResource("NestedBeansElementTests-context.xml", this.getClass());
 
 	@Test
 	public void getBean_withoutActiveProfile() {

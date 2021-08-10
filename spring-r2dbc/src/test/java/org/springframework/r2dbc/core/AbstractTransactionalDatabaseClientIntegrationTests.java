@@ -22,10 +22,6 @@ import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +31,9 @@ import org.springframework.r2dbc.connection.R2dbcTransactionManager;
 import org.springframework.transaction.ReactiveTransactionManager;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,15 +43,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Mark Paluch
  * @author Christoph Strobl
  */
-public abstract class AbstractTransactionalDatabaseClientIntegrationTests  {
-
-	private ConnectionFactory connectionFactory;
+public abstract class AbstractTransactionalDatabaseClientIntegrationTests {
 
 	AnnotationConfigApplicationContext context;
-
 	DatabaseClient databaseClient;
 	R2dbcTransactionManager transactionManager;
 	TransactionalOperator rxtx;
+	private ConnectionFactory connectionFactory;
 
 	@BeforeEach
 	public void before() {
@@ -84,6 +81,7 @@ public abstract class AbstractTransactionalDatabaseClientIntegrationTests  {
 
 	/**
 	 * Create a {@link ConnectionFactory} to be used in this test.
+	 *
 	 * @return the {@link ConnectionFactory} to be used in this test.
 	 */
 	protected abstract ConnectionFactory createConnectionFactory();
@@ -191,7 +189,8 @@ public abstract class AbstractTransactionalDatabaseClientIntegrationTests  {
 	@Configuration(proxyBeanMethods = false)
 	static class Config {
 
-		@Autowired GenericApplicationContext context;
+		@Autowired
+		GenericApplicationContext context;
 
 		@Bean
 		ReactiveTransactionManager txMgr(ConnectionFactory connectionFactory) {

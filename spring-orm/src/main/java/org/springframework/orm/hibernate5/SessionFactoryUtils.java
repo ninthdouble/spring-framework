@@ -16,56 +16,27 @@
 
 package org.springframework.orm.hibernate5;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import javax.persistence.PersistenceException;
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
-import org.hibernate.NonUniqueObjectException;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.ObjectDeletedException;
-import org.hibernate.PersistentObjectException;
-import org.hibernate.PessimisticLockException;
-import org.hibernate.PropertyValueException;
-import org.hibernate.QueryException;
 import org.hibernate.QueryTimeoutException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.StaleObjectStateException;
-import org.hibernate.StaleStateException;
-import org.hibernate.TransientObjectException;
-import org.hibernate.UnresolvableObjectException;
-import org.hibernate.WrongClassException;
+import org.hibernate.*;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.hibernate.dialect.lock.PessimisticEntityLockException;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.exception.DataException;
-import org.hibernate.exception.JDBCConnectionException;
-import org.hibernate.exception.LockAcquisitionException;
-import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.exception.*;
 import org.hibernate.service.UnknownServiceException;
-
-import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
-import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.dao.*;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
+
+import javax.persistence.PersistenceException;
+import javax.sql.DataSource;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Helper class featuring methods for Hibernate Session handling.
@@ -75,9 +46,9 @@ import org.springframework.util.ReflectionUtils;
  * Can also be used directly in application code.
  *
  * @author Juergen Hoeller
- * @since 4.2
  * @see HibernateExceptionTranslator
  * @see HibernateTransactionManager
+ * @since 4.2
  */
 public abstract class SessionFactoryUtils {
 
@@ -85,6 +56,7 @@ public abstract class SessionFactoryUtils {
 	 * Order value for TransactionSynchronization objects that clean up Hibernate Sessions.
 	 * Returns {@code DataSourceUtils.CONNECTION_SYNCHRONIZATION_ORDER - 100}
 	 * to execute Session cleanup before JDBC Connection cleanup, if any.
+	 *
 	 * @see DataSourceUtils#CONNECTION_SYNCHRONIZATION_ORDER
 	 */
 	public static final int SESSION_SYNCHRONIZATION_ORDER =
@@ -97,25 +69,23 @@ public abstract class SessionFactoryUtils {
 	 * Trigger a flush on the given Hibernate Session, converting regular
 	 * {@link HibernateException} instances as well as Hibernate 5.2's
 	 * {@link PersistenceException} wrappers accordingly.
+	 *
 	 * @param session the Hibernate Session to flush
-	 * @param synch whether this flush is triggered by transaction synchronization
+	 * @param synch   whether this flush is triggered by transaction synchronization
 	 * @throws DataAccessException in case of flush failures
 	 * @since 4.3.2
 	 */
 	static void flush(Session session, boolean synch) throws DataAccessException {
 		if (synch) {
 			logger.debug("Flushing Hibernate Session on transaction synchronization");
-		}
-		else {
+		} else {
 			logger.debug("Flushing Hibernate Session on explicit request");
 		}
 		try {
 			session.flush();
-		}
-		catch (HibernateException ex) {
+		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
-		}
-		catch (PersistenceException ex) {
+		} catch (PersistenceException ex) {
 			if (ex.getCause() instanceof HibernateException) {
 				throw convertHibernateAccessException((HibernateException) ex.getCause());
 			}
@@ -127,6 +97,7 @@ public abstract class SessionFactoryUtils {
 	/**
 	 * Perform actual closing of the Hibernate Session,
 	 * catching and logging any cleanup exceptions thrown.
+	 *
 	 * @param session the Hibernate Session to close (may be {@code null})
 	 * @see Session#close()
 	 */
@@ -134,8 +105,7 @@ public abstract class SessionFactoryUtils {
 		if (session != null) {
 			try {
 				session.close();
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				logger.error("Failed to release Hibernate Session", ex);
 			}
 		}
@@ -143,6 +113,7 @@ public abstract class SessionFactoryUtils {
 
 	/**
 	 * Determine the DataSource of the given SessionFactory.
+	 *
 	 * @param sessionFactory the SessionFactory to check
 	 * @return the DataSource, or {@code null} if none found
 	 * @see ConnectionProvider
@@ -166,8 +137,7 @@ public abstract class SessionFactoryUtils {
 				if (cp != null) {
 					return cp.unwrap(DataSource.class);
 				}
-			}
-			catch (UnknownServiceException ex) {
+			} catch (UnknownServiceException ex) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("No ConnectionProvider found - cannot determine DataSource for SessionFactory: " + ex);
 				}
@@ -179,6 +149,7 @@ public abstract class SessionFactoryUtils {
 	/**
 	 * Convert the given HibernateException to an appropriate exception
 	 * from the {@code org.springframework.dao} hierarchy.
+	 *
 	 * @param ex the HibernateException that occurred
 	 * @return the corresponding DataAccessException instance
 	 * @see HibernateExceptionTranslator#convertHibernateAccessException
@@ -206,7 +177,7 @@ public abstract class SessionFactoryUtils {
 		}
 		if (ex instanceof ConstraintViolationException) {
 			ConstraintViolationException jdbcEx = (ConstraintViolationException) ex;
-			return new DataIntegrityViolationException(ex.getMessage()  + "; SQL [" + jdbcEx.getSQL() +
+			return new DataIntegrityViolationException(ex.getMessage() + "; SQL [" + jdbcEx.getSQL() +
 					"]; constraint [" + jdbcEx.getConstraintName() + "]", ex);
 		}
 		if (ex instanceof DataException) {

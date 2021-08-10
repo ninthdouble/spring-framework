@@ -16,12 +16,12 @@
 
 package org.springframework.util;
 
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.Locale;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -403,7 +403,7 @@ class NumberUtilsTests {
 		String msg = "overflow: from=" + number + ", toClass=" + targetClass;
 		assertThatIllegalArgumentException().as(msg).isThrownBy(() ->
 				NumberUtils.convertNumberToTargetClass(number, targetClass))
-			.withMessageEndingWith("overflow");
+				.withMessageEndingWith("overflow");
 	}
 
 }

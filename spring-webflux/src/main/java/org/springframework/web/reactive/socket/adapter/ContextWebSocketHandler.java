@@ -15,13 +15,12 @@
  */
 package org.springframework.web.reactive.socket.adapter;
 
-import java.util.List;
-
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Mono;
 import reactor.util.context.ContextView;
 
-import org.springframework.web.reactive.socket.WebSocketHandler;
-import org.springframework.web.reactive.socket.WebSocketSession;
+import java.util.List;
 
 /**
  * {@link WebSocketHandler} decorator that enriches the context of the target handler.
@@ -41,6 +40,13 @@ public final class ContextWebSocketHandler implements WebSocketHandler {
 		this.contextView = contextView;
 	}
 
+	/**
+	 * Return the given handler, decorated to insert the given context, or the
+	 * same handler instance when the context is empty.
+	 */
+	public static WebSocketHandler decorate(WebSocketHandler handler, ContextView contextView) {
+		return (!contextView.isEmpty() ? new ContextWebSocketHandler(handler, contextView) : handler);
+	}
 
 	@Override
 	public List<String> getSubProtocols() {
@@ -50,15 +56,6 @@ public final class ContextWebSocketHandler implements WebSocketHandler {
 	@Override
 	public Mono<Void> handle(WebSocketSession session) {
 		return this.delegate.handle(session).contextWrite(this.contextView);
-	}
-
-
-	/**
-	 * Return the given handler, decorated to insert the given context, or the
-	 * same handler instance when the context is empty.
-	 */
-	public static WebSocketHandler decorate(WebSocketHandler handler, ContextView contextView) {
-		return (!contextView.isEmpty() ? new ContextWebSocketHandler(handler, contextView) : handler);
 	}
 
 }

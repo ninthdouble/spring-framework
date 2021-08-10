@@ -16,10 +16,10 @@
 
 package org.springframework.test.context.support;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.function.Supplier;
-
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,10 +33,10 @@ class DynamicValuesPropertySourceTests {
 
 	@SuppressWarnings("serial")
 	private final DynamicValuesPropertySource source = new DynamicValuesPropertySource("test",
-		new HashMap<String, Supplier<Object>>() {{
-			put("a", () -> "A");
-			put("b", () -> "B");
-		}});
+			new HashMap<String, Supplier<Object>>() {{
+				put("a", () -> "A");
+				put("b", () -> "B");
+			}});
 
 
 	@Test

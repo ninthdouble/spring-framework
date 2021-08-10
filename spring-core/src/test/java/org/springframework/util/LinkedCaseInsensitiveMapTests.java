@@ -16,9 +16,9 @@
 
 package org.springframework.util;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

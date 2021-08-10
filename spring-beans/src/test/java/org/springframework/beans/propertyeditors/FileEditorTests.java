@@ -16,12 +16,11 @@
 
 package org.springframework.beans.propertyeditors;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ClassUtils;
+
 import java.beans.PropertyEditor;
 import java.io.File;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.ClassUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

@@ -16,13 +16,7 @@
 
 package org.springframework.test.context.support;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -31,9 +25,12 @@ import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -44,18 +41,28 @@ import static org.mockito.Mockito.mock;
  */
 class DynamicPropertiesContextCustomizerTests {
 
+	private static DynamicPropertiesContextCustomizer customizerFor(String... methods) {
+		return new DynamicPropertiesContextCustomizer(findMethods(methods));
+	}
+
+	private static Set<Method> findMethods(String... names) {
+		Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(DynamicPropertySourceTestCase.class,
+				method -> ObjectUtils.containsElement(names, method.getName()));
+		return new LinkedHashSet<>(Arrays.asList(methods));
+	}
+
 	@Test
 	void createWhenNonStaticDynamicPropertiesMethodThrowsException() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> customizerFor("nonStatic"))
-			.withMessage("@DynamicPropertySource method 'nonStatic' must be static");
+				.isThrownBy(() -> customizerFor("nonStatic"))
+				.withMessage("@DynamicPropertySource method 'nonStatic' must be static");
 	}
 
 	@Test
 	void createWhenBadDynamicPropertiesSignatureThrowsException() {
 		assertThatIllegalStateException()
-			.isThrownBy(() -> customizerFor("badArgs"))
-			.withMessage("@DynamicPropertySource method 'badArgs' must accept a single DynamicPropertyRegistry argument");
+				.isThrownBy(() -> customizerFor("badArgs"))
+				.withMessage("@DynamicPropertySource method 'badArgs' must accept a single DynamicPropertyRegistry argument");
 	}
 
 	@Test
@@ -63,8 +70,8 @@ class DynamicPropertiesContextCustomizerTests {
 		DynamicPropertiesContextCustomizer customizer = customizerFor("nullName");
 		ConfigurableApplicationContext context = new StaticApplicationContext();
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
-			.withMessage("'name' must not be null or blank");
+				.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
+				.withMessage("'name' must not be null or blank");
 	}
 
 	@Test
@@ -72,8 +79,8 @@ class DynamicPropertiesContextCustomizerTests {
 		DynamicPropertiesContextCustomizer customizer = customizerFor("emptyName");
 		ConfigurableApplicationContext context = new StaticApplicationContext();
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
-			.withMessage("'name' must not be null or blank");
+				.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
+				.withMessage("'name' must not be null or blank");
 	}
 
 	@Test
@@ -81,8 +88,8 @@ class DynamicPropertiesContextCustomizerTests {
 		DynamicPropertiesContextCustomizer customizer = customizerFor("nullValueSupplier");
 		ConfigurableApplicationContext context = new StaticApplicationContext();
 		assertThatIllegalArgumentException()
-			.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
-			.withMessage("'valueSupplier' must not be null");
+				.isThrownBy(() -> customizer.customizeContext(context, mock(MergedContextConfiguration.class)))
+				.withMessage("'valueSupplier' must not be null");
 	}
 
 	@Test
@@ -106,22 +113,7 @@ class DynamicPropertiesContextCustomizerTests {
 		assertThat(c1).isEqualTo(c1).isEqualTo(c2).isNotEqualTo(c3);
 	}
 
-
-	private static DynamicPropertiesContextCustomizer customizerFor(String...methods) {
-		return new DynamicPropertiesContextCustomizer(findMethods(methods));
-	}
-
-	private static Set<Method> findMethods(String... names) {
-		Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(DynamicPropertySourceTestCase.class,
-				method -> ObjectUtils.containsElement(names, method.getName()));
-		return new LinkedHashSet<>(Arrays.asList(methods));
-	}
-
-
 	static class DynamicPropertySourceTestCase {
-
-		void nonStatic(DynamicPropertyRegistry registry) {
-		}
 
 		static void badArgs(String bad) {
 		}
@@ -146,6 +138,9 @@ class DynamicPropertiesContextCustomizerTests {
 		static void valid2(DynamicPropertyRegistry registry) {
 			registry.add("p2a", () -> "v2a");
 			registry.add("p2b", () -> "v2b");
+		}
+
+		void nonStatic(DynamicPropertyRegistry registry) {
 		}
 
 	}

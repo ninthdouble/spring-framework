@@ -16,23 +16,17 @@
 
 package org.springframework.mock.web;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,7 +53,7 @@ class MockMultipartHttpServletRequestTests {
 		MockMultipartHttpServletRequest request = new MockMultipartHttpServletRequest();
 		request.addFile(new MockMultipartFile("file1", new ByteArrayInputStream("myContent1".getBytes())));
 		request.addFile(new MockMultipartFile("file2", "myOrigFilename", "text/plain", new ByteArrayInputStream(
-			"myContent2".getBytes())));
+				"myContent2".getBytes())));
 		doTestMultipartHttpServletRequest(request);
 	}
 
@@ -103,13 +97,13 @@ class MockMultipartHttpServletRequestTests {
 		assertThat(file1.getContentType()).isNull();
 		assertThat(ObjectUtils.nullSafeEquals("myContent1".getBytes(), file1.getBytes())).isTrue();
 		assertThat(ObjectUtils.nullSafeEquals("myContent1".getBytes(),
-			FileCopyUtils.copyToByteArray(file1.getInputStream()))).isTrue();
+				FileCopyUtils.copyToByteArray(file1.getInputStream()))).isTrue();
 		assertThat(file2.getName()).isEqualTo("file2");
 		assertThat(file2.getOriginalFilename()).isEqualTo("myOrigFilename");
 		assertThat(file2.getContentType()).isEqualTo("text/plain");
 		assertThat(ObjectUtils.nullSafeEquals("myContent2".getBytes(), file2.getBytes())).isTrue();
 		assertThat(ObjectUtils.nullSafeEquals("myContent2".getBytes(),
-			FileCopyUtils.copyToByteArray(file2.getInputStream()))).isTrue();
+				FileCopyUtils.copyToByteArray(file2.getInputStream()))).isTrue();
 	}
 
 }

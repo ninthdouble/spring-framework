@@ -16,16 +16,15 @@
 
 package org.springframework.test.web.reactive.server;
 
-import java.net.URI;
-import java.time.Duration;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.client.reactive.MockClientHttpRequest;
 import org.springframework.mock.http.client.reactive.MockClientHttpResponse;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.equalTo;
@@ -56,7 +55,8 @@ class StatusAssertionTests {
 				assertions.isEqualTo(408));
 	}
 
-	@Test  // gh-23630
+	@Test
+		// gh-23630
 	void isEqualToWithCustomStatus() {
 		statusAssertions(600).isEqualTo(600);
 	}
@@ -146,7 +146,8 @@ class StatusAssertionTests {
 				assertions.value(equalTo(200)));
 	}
 
-	@Test  // gh-26658
+	@Test
+		// gh-26658
 	void matchesCustomStatusValue() {
 		statusAssertions(600).value(equalTo(600));
 	}

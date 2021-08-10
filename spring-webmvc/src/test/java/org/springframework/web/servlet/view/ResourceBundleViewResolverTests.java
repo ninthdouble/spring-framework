@@ -16,22 +16,20 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanIsAbstractException;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -45,7 +43,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @SuppressWarnings("deprecation")
 public class ResourceBundleViewResolverTests {
 
-	/** Comes from this package */
+	/**
+	 * Comes from this package
+	 */
 	private static String PROPS_FILE = "org.springframework.web.servlet.view.testviews";
 
 	private final ResourceBundleViewResolver rb = new ResourceBundleViewResolver();
@@ -113,7 +113,7 @@ public class ResourceBundleViewResolverTests {
 		rb.setBasename(PROPS_FILE);
 		rb.setCache(getCache());
 		rb.setDefaultParentView("testParent");
-		rb.setLocalesToInitialize(new Locale[] {Locale.ENGLISH, Locale.FRENCH});
+		rb.setLocalesToInitialize(new Locale[]{Locale.ENGLISH, Locale.FRENCH});
 		rb.setApplicationContext(wac);
 
 		View v = rb.resolveViewName("debugView", Locale.FRENCH);
@@ -166,7 +166,7 @@ public class ResourceBundleViewResolverTests {
 
 		@Override
 		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
-				HttpServletResponse response) {
+											   HttpServletResponse response) {
 		}
 
 		@Override

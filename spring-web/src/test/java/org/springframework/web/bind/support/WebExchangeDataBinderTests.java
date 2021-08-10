@@ -16,16 +16,8 @@
 
 package org.springframework.web.bind.support;
 
-import java.beans.PropertyEditorSupport;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.testfixture.beans.ITestBean;
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.io.ClassPathResource;
@@ -40,6 +32,13 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.client.reactive.MockClientHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.beans.PropertyEditorSupport;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.ResolvableType.forClass;
@@ -212,13 +211,12 @@ public class WebExchangeDataBinderTests {
 
 		assertThat(bean.getName()).isEqualTo("bar");
 		assertThat(bean.getSomeList()).isEqualTo(Arrays.asList("123", "abc"));
-		assertThat(bean.getSomeArray()).isEqualTo(new String[] {"dec", "456"});
+		assertThat(bean.getSomeArray()).isEqualTo(new String[]{"dec", "456"});
 		assertThat(bean.getPart().filename()).isEqualTo("foo.txt");
 		assertThat(bean.getSomePartList().size()).isEqualTo(2);
 		assertThat(bean.getSomePartList().get(0).filename()).isEqualTo("foo.txt");
 		assertThat(bean.getSomePartList().get(1).filename()).isEqualTo("spring.png");
 	}
-
 
 
 	private ServerWebExchange exchange(MultiValueMap<String, String> formData) {

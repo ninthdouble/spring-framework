@@ -16,14 +16,8 @@
 
 package org.springframework.web.method.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
@@ -42,16 +36,16 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -302,6 +296,22 @@ public class ModelAttributeMethodProcessorTests {
 		verify(factory).createBinder(this.request, target, expectedAttrName);
 	}
 
+	@ModelAttribute("modelAttrName")
+	@SuppressWarnings("unused")
+	private String annotatedReturnValue() {
+		return null;
+	}
+
+	@SuppressWarnings("unused")
+	private TestBean notAnnotatedReturnValue() {
+		return null;
+	}
+
+
+	@Target({METHOD, FIELD, CONSTRUCTOR, PARAMETER})
+	@Retention(RUNTIME)
+	public @interface Valid {
+	}
 
 	private static class StubRequestDataBinder extends WebRequestDataBinder {
 
@@ -338,14 +348,7 @@ public class ModelAttributeMethodProcessorTests {
 		}
 	}
 
-
-	@Target({METHOD, FIELD, CONSTRUCTOR, PARAMETER})
-	@Retention(RUNTIME)
-	public @interface Valid {
-	}
-
-
-	@SessionAttributes(types=TestBean.class)
+	@SessionAttributes(types = TestBean.class)
 	private static class ModelAttributeHandler {
 
 		@SuppressWarnings("unused")
@@ -354,7 +357,7 @@ public class ModelAttributeMethodProcessorTests {
 				Errors errors,
 				int intArg,
 				@ModelAttribute TestBean defaultNameAttr,
-				@ModelAttribute(name="noBindAttr", binding=false) @Valid TestBean noBindAttr,
+				@ModelAttribute(name = "noBindAttr", binding = false) @Valid TestBean noBindAttr,
 				TestBean notAnnotatedAttr,
 				TestBeanWithConstructorArgs beanWithConstructorArgs) {
 		}
@@ -368,17 +371,6 @@ public class ModelAttributeMethodProcessorTests {
 			this.listOfStrings = listOfStrings;
 		}
 
-	}
-
-	@ModelAttribute("modelAttrName") @SuppressWarnings("unused")
-	private String annotatedReturnValue() {
-		return null;
-	}
-
-
-	@SuppressWarnings("unused")
-	private TestBean notAnnotatedReturnValue() {
-		return null;
 	}
 
 }

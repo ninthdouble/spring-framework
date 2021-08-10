@@ -216,10 +216,10 @@ public class AsyncAnnotationBeanPostProcessorTests {
 	}
 
 	private void assertFutureWithException(Future<Object> result,
-			TestableAsyncUncaughtExceptionHandler exceptionHandler) {
+										   TestableAsyncUncaughtExceptionHandler exceptionHandler) {
 		assertThatExceptionOfType(ExecutionException.class).isThrownBy(
 				result::get)
-			.withCauseExactlyInstanceOf(UnsupportedOperationException.class);
+				.withCauseExactlyInstanceOf(UnsupportedOperationException.class);
 		assertThat(exceptionHandler.isCalled()).as("handler should never be called with Future return type").isFalse();
 	}
 
@@ -286,9 +286,8 @@ public class AsyncAnnotationBeanPostProcessorTests {
 
 	public static class TestBean implements ITestBean {
 
-		private Thread thread;
-
 		private final CountDownLatch latch = new CountDownLatch(1);
+		private Thread thread;
 
 		@Override
 		public Thread getThread() {
@@ -324,8 +323,7 @@ public class AsyncAnnotationBeanPostProcessorTests {
 		public void await(long timeout) {
 			try {
 				this.latch.await(timeout, TimeUnit.MILLISECONDS);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				Thread.currentThread().interrupt();
 			}
 		}

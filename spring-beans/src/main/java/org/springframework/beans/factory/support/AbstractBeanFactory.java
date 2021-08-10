@@ -75,99 +75,82 @@ import java.util.function.UnaryOperator;
 public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
 	/**
-	 * Parent bean factory, for bean inheritance support.
-	 */
-	@Nullable
-	private BeanFactory parentBeanFactory;
-
-	/**
-	 * ClassLoader to resolve bean class names with, if necessary.
-	 */
-	@Nullable
-	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
-
-	/**
-	 * ClassLoader to temporarily resolve bean class names with, if necessary.
-	 */
-	@Nullable
-	private ClassLoader tempClassLoader;
-
-	/**
-	 * Whether to cache bean metadata or rather reobtain it for every access.
-	 */
-	private boolean cacheBeanMetadata = true;
-
-	/**
-	 * Resolution strategy for expressions in bean definition values.
-	 */
-	@Nullable
-	private BeanExpressionResolver beanExpressionResolver;
-
-	/**
-	 * Spring ConversionService to use instead of PropertyEditors.
-	 */
-	@Nullable
-	private ConversionService conversionService;
-
-	/**
 	 * Custom PropertyEditorRegistrars to apply to the beans of this factory.
 	 */
 	private final Set<PropertyEditorRegistrar> propertyEditorRegistrars = new LinkedHashSet<>(4);
-
 	/**
 	 * Custom PropertyEditors to apply to the beans of this factory.
 	 */
 	private final Map<Class<?>, Class<? extends PropertyEditor>> customEditors = new HashMap<>(4);
-
-	/**
-	 * A custom TypeConverter to use, overriding the default PropertyEditor mechanism.
-	 */
-	@Nullable
-	private TypeConverter typeConverter;
-
 	/**
 	 * String resolvers to apply e.g. to annotation attribute values.
 	 */
 	private final List<StringValueResolver> embeddedValueResolvers = new CopyOnWriteArrayList<>();
-
 	/**
 	 * BeanPostProcessors to apply.
 	 */
 	private final List<BeanPostProcessor> beanPostProcessors = new BeanPostProcessorCacheAwareList();
-
-	/**
-	 * Cache of pre-filtered post-processors.
-	 */
-	@Nullable
-	private volatile BeanPostProcessorCache beanPostProcessorCache;
-
 	/**
 	 * Map from scope identifier String to corresponding Scope.
 	 */
 	private final Map<String, Scope> scopes = new LinkedHashMap<>(8);
-
-	/**
-	 * Security context used when running with a SecurityManager.
-	 */
-	@Nullable
-	private SecurityContextProvider securityContextProvider;
-
 	/**
 	 * Map from bean name to merged RootBeanDefinition.
 	 */
 	private final Map<String, RootBeanDefinition> mergedBeanDefinitions = new ConcurrentHashMap<>(256);
-
 	/**
 	 * Names of beans that have already been created at least once.
 	 */
 	private final Set<String> alreadyCreated = Collections.newSetFromMap(new ConcurrentHashMap<>(256));
-
 	/**
 	 * Names of beans that are currently in creation.
 	 */
 	private final ThreadLocal<Object> prototypesCurrentlyInCreation =
 			new NamedThreadLocal<>("Prototype beans currently in creation");
-
+	/**
+	 * Parent bean factory, for bean inheritance support.
+	 */
+	@Nullable
+	private BeanFactory parentBeanFactory;
+	/**
+	 * ClassLoader to resolve bean class names with, if necessary.
+	 */
+	@Nullable
+	private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
+	/**
+	 * ClassLoader to temporarily resolve bean class names with, if necessary.
+	 */
+	@Nullable
+	private ClassLoader tempClassLoader;
+	/**
+	 * Whether to cache bean metadata or rather reobtain it for every access.
+	 */
+	private boolean cacheBeanMetadata = true;
+	/**
+	 * Resolution strategy for expressions in bean definition values.
+	 */
+	@Nullable
+	private BeanExpressionResolver beanExpressionResolver;
+	/**
+	 * Spring ConversionService to use instead of PropertyEditors.
+	 */
+	@Nullable
+	private ConversionService conversionService;
+	/**
+	 * A custom TypeConverter to use, overriding the default PropertyEditor mechanism.
+	 */
+	@Nullable
+	private TypeConverter typeConverter;
+	/**
+	 * Cache of pre-filtered post-processors.
+	 */
+	@Nullable
+	private volatile BeanPostProcessorCache beanPostProcessorCache;
+	/**
+	 * Security context used when running with a SecurityManager.
+	 */
+	@Nullable
+	private SecurityContextProvider securityContextProvider;
 	/**
 	 * Application startup metrics.
 	 **/
@@ -747,18 +730,6 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public boolean containsLocalBean(String name) {
-		String beanName = transformedBeanName(name);
-		return ((containsSingleton(beanName) || containsBeanDefinition(beanName)) &&
-				(!BeanFactoryUtils.isFactoryDereference(name) || isFactoryBean(beanName)));
-	}
-
-
-	//---------------------------------------------------------------------
-	// Implementation of ConfigurableBeanFactory interface
-	//---------------------------------------------------------------------
-
-	@Override
 	public void setParentBeanFactory(@Nullable BeanFactory parentBeanFactory) {
 		if (this.parentBeanFactory != null && this.parentBeanFactory != parentBeanFactory) {
 			throw new IllegalStateException("Already associated with parent BeanFactory: " + this.parentBeanFactory);
@@ -769,9 +740,16 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		this.parentBeanFactory = parentBeanFactory;
 	}
 
+
+	//---------------------------------------------------------------------
+	// Implementation of ConfigurableBeanFactory interface
+	//---------------------------------------------------------------------
+
 	@Override
-	public void setBeanClassLoader(@Nullable ClassLoader beanClassLoader) {
-		this.beanClassLoader = (beanClassLoader != null ? beanClassLoader : ClassUtils.getDefaultClassLoader());
+	public boolean containsLocalBean(String name) {
+		String beanName = transformedBeanName(name);
+		return ((containsSingleton(beanName) || containsBeanDefinition(beanName)) &&
+				(!BeanFactoryUtils.isFactoryDereference(name) || isFactoryBean(beanName)));
 	}
 
 	@Override
@@ -781,8 +759,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void setTempClassLoader(@Nullable ClassLoader tempClassLoader) {
-		this.tempClassLoader = tempClassLoader;
+	public void setBeanClassLoader(@Nullable ClassLoader beanClassLoader) {
+		this.beanClassLoader = (beanClassLoader != null ? beanClassLoader : ClassUtils.getDefaultClassLoader());
 	}
 
 	@Override
@@ -792,8 +770,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void setCacheBeanMetadata(boolean cacheBeanMetadata) {
-		this.cacheBeanMetadata = cacheBeanMetadata;
+	public void setTempClassLoader(@Nullable ClassLoader tempClassLoader) {
+		this.tempClassLoader = tempClassLoader;
 	}
 
 	@Override
@@ -802,8 +780,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver) {
-		this.beanExpressionResolver = resolver;
+	public void setCacheBeanMetadata(boolean cacheBeanMetadata) {
+		this.cacheBeanMetadata = cacheBeanMetadata;
 	}
 
 	@Override
@@ -813,14 +791,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void setConversionService(@Nullable ConversionService conversionService) {
-		this.conversionService = conversionService;
+	public void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver) {
+		this.beanExpressionResolver = resolver;
 	}
 
 	@Override
 	@Nullable
 	public ConversionService getConversionService() {
 		return this.conversionService;
+	}
+
+	@Override
+	public void setConversionService(@Nullable ConversionService conversionService) {
+		this.conversionService = conversionService;
 	}
 
 	@Override
@@ -855,11 +838,6 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		return this.customEditors;
 	}
 
-	@Override
-	public void setTypeConverter(TypeConverter typeConverter) {
-		this.typeConverter = typeConverter;
-	}
-
 	/**
 	 * Return the custom TypeConverter to use, if any.
 	 *
@@ -882,6 +860,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			registerCustomEditors(typeConverter);
 			return typeConverter;
 		}
+	}
+
+	@Override
+	public void setTypeConverter(TypeConverter typeConverter) {
+		this.typeConverter = typeConverter;
 	}
 
 	@Override
@@ -1037,14 +1020,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void setApplicationStartup(ApplicationStartup applicationStartup) {
-		Assert.notNull(applicationStartup, "applicationStartup should not be null");
-		this.applicationStartup = applicationStartup;
+	public ApplicationStartup getApplicationStartup() {
+		return this.applicationStartup;
 	}
 
 	@Override
-	public ApplicationStartup getApplicationStartup() {
-		return this.applicationStartup;
+	public void setApplicationStartup(ApplicationStartup applicationStartup) {
+		Assert.notNull(applicationStartup, "applicationStartup should not be null");
+		this.applicationStartup = applicationStartup;
 	}
 
 	/**
@@ -1987,6 +1970,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected abstract Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
 			throws BeanCreationException;
 
+	/**
+	 * Internal cache of pre-filtered post-processors.
+	 *
+	 * @since 5.3
+	 */
+	static class BeanPostProcessorCache {
+
+		final List<InstantiationAwareBeanPostProcessor> instantiationAware = new ArrayList<>();
+
+		final List<SmartInstantiationAwareBeanPostProcessor> smartInstantiationAware = new ArrayList<>();
+
+		final List<DestructionAwareBeanPostProcessor> destructionAware = new ArrayList<>();
+
+		final List<MergedBeanDefinitionPostProcessor> mergedDefinition = new ArrayList<>();
+	}
 
 	/**
 	 * CopyOnWriteArrayList which resets the beanPostProcessorCache field on modification.
@@ -2081,23 +2079,6 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			super.replaceAll(operator);
 			beanPostProcessorCache = null;
 		}
-	}
-
-
-	/**
-	 * Internal cache of pre-filtered post-processors.
-	 *
-	 * @since 5.3
-	 */
-	static class BeanPostProcessorCache {
-
-		final List<InstantiationAwareBeanPostProcessor> instantiationAware = new ArrayList<>();
-
-		final List<SmartInstantiationAwareBeanPostProcessor> smartInstantiationAware = new ArrayList<>();
-
-		final List<DestructionAwareBeanPostProcessor> destructionAware = new ArrayList<>();
-
-		final List<MergedBeanDefinitionPostProcessor> mergedDefinition = new ArrayList<>();
 	}
 
 }

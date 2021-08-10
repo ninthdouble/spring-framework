@@ -17,7 +17,6 @@
 package org.springframework.test.web.client.samples;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
@@ -56,7 +55,7 @@ public class SampleAsyncTests {
 		String responseBody = "{\"name\" : \"Ludwig van Beethoven\", \"someDouble\" : \"1.6035\"}";
 
 		this.mockServer.expect(requestTo("/composers/42")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+				.andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
 		@SuppressWarnings("unused")
 		ListenableFuture<ResponseEntity<Person>> ludwig =
@@ -99,7 +98,7 @@ public class SampleAsyncTests {
 		Resource responseBody = new ClassPathResource("ludwig.json", this.getClass());
 
 		this.mockServer.expect(requestTo("/composers/42")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
+				.andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
 		@SuppressWarnings("unused")
 		ListenableFuture<ResponseEntity<Person>> ludwig =
@@ -115,16 +114,16 @@ public class SampleAsyncTests {
 	public void verify() {
 
 		this.mockServer.expect(requestTo("/number")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess("1", MediaType.TEXT_PLAIN));
+				.andRespond(withSuccess("1", MediaType.TEXT_PLAIN));
 
 		this.mockServer.expect(requestTo("/number")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess("2", MediaType.TEXT_PLAIN));
+				.andRespond(withSuccess("2", MediaType.TEXT_PLAIN));
 
 		this.mockServer.expect(requestTo("/number")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess("4", MediaType.TEXT_PLAIN));
+				.andRespond(withSuccess("4", MediaType.TEXT_PLAIN));
 
 		this.mockServer.expect(requestTo("/number")).andExpect(method(HttpMethod.GET))
-			.andRespond(withSuccess("8", MediaType.TEXT_PLAIN));
+				.andRespond(withSuccess("8", MediaType.TEXT_PLAIN));
 
 		@SuppressWarnings("unused")
 		ListenableFuture<ResponseEntity<String>> result = this.restTemplate.getForEntity("/number", String.class);
@@ -135,8 +134,7 @@ public class SampleAsyncTests {
 
 		try {
 			this.mockServer.verify();
-		}
-		catch (AssertionError error) {
+		} catch (AssertionError error) {
 			assertThat(error.getMessage().contains("2 unsatisfied expectation(s)")).as(error.getMessage()).isTrue();
 		}
 	}

@@ -16,20 +16,18 @@
 
 package org.springframework.web.servlet.tags;
 
-import java.util.Arrays;
-import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.web.servlet.support.RequestContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.Tag;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.context.MessageSourceResolvable;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.web.servlet.support.RequestContext;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,7 +68,7 @@ public class ThemeTagTests extends AbstractTagTests {
 		assertThat(rc.getThemeMessage("themetestArgs", Arrays.asList(new String[]{"arg1"}))).isEqualTo("theme test message arg1");
 		assertThat(rc.getThemeMessage("themetesta", "default")).isEqualTo("default");
 		assertThat(rc.getThemeMessage("themetesta", (List) null, "default")).isEqualTo("default");
-		MessageSourceResolvable resolvable = new DefaultMessageSourceResolvable(new String[] {"themetest"});
+		MessageSourceResolvable resolvable = new DefaultMessageSourceResolvable(new String[]{"themetest"});
 		assertThat(rc.getThemeMessage(resolvable)).isEqualTo("theme test message");
 	}
 

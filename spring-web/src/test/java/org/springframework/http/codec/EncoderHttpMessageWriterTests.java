@@ -16,23 +16,11 @@
 
 package org.springframework.http.codec;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.codec.CharSequenceEncoder;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -41,6 +29,17 @@ import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -48,9 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.core.ResolvableType.forClass;
-import static org.springframework.http.MediaType.TEXT_HTML;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.http.MediaType.TEXT_XML;
+import static org.springframework.http.MediaType.*;
 
 /**
  * Unit tests for {@link EncoderHttpMessageWriter}.
@@ -64,15 +61,10 @@ class EncoderHttpMessageWriterTests {
 	private static final Map<String, Object> NO_HINTS = Collections.emptyMap();
 
 	private static final MediaType TEXT_PLAIN_UTF_8 = new MediaType("text", "plain", UTF_8);
-
-
+	private final ArgumentCaptor<MediaType> mediaTypeCaptor = ArgumentCaptor.forClass(MediaType.class);
+	private final MockServerHttpResponse response = new MockServerHttpResponse();
 	@Mock
 	private HttpMessageEncoder<String> encoder;
-
-	private final ArgumentCaptor<MediaType> mediaTypeCaptor = ArgumentCaptor.forClass(MediaType.class);
-
-	private final MockServerHttpResponse response = new MockServerHttpResponse();
-
 
 	@Test
 	void getWritableMediaTypes() {
@@ -164,7 +156,8 @@ class EncoderHttpMessageWriterTests {
 		assertThat(this.response.getHeaders().getContentLength()).isEqualTo(4);
 	}
 
-	@Test // gh-22952
+	@Test
+		// gh-22952
 	void monoBodyDoesNotCancelEncodedFlux() {
 		Mono<String> inputStream = Mono.just("body")
 				.doOnCancel(() -> {
@@ -175,7 +168,8 @@ class EncoderHttpMessageWriterTests {
 				.block();
 	}
 
-	@Test // SPR-17220
+	@Test
+		// SPR-17220
 	void emptyBodyWritten() {
 		configureEncoder(MimeTypeUtils.TEXT_PLAIN);
 		HttpMessageWriter<String> writer = new EncoderHttpMessageWriter<>(this.encoder);
@@ -184,7 +178,8 @@ class EncoderHttpMessageWriterTests {
 		assertThat(this.response.getHeaders().getContentLength()).isEqualTo(0);
 	}
 
-	@Test  // gh-22936
+	@Test
+		// gh-22936
 	void isStreamingMediaType() throws InvocationTargetException, IllegalAccessException {
 		configureEncoder(TEXT_HTML);
 		MediaType streamingMediaType = new MediaType(TEXT_PLAIN, Collections.singletonMap("streaming", "true"));

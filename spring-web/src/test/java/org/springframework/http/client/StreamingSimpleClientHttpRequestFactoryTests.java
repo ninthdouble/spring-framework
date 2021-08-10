@@ -16,17 +16,16 @@
 
 package org.springframework.http.client;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Random;
-
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,8 +59,7 @@ public class StreamingSimpleClientHttpRequestFactoryTests extends AbstractHttpRe
 			assertThat(response.getStatusCode()).as("Invalid response status").isEqualTo(HttpStatus.OK);
 			HttpHeaders responseHeaders = response.getHeaders();
 			assertThat(responseHeaders.getFirst(headerName)).as("Custom header invalid").isEqualTo(headerValue);
-		}
-		finally {
+		} finally {
 			if (response != null) {
 				response.close();
 			}
@@ -87,8 +85,7 @@ public class StreamingSimpleClientHttpRequestFactoryTests extends AbstractHttpRe
 			}
 			response = request.execute();
 			assertThat(response.getStatusCode()).as("Invalid response status").isEqualTo(HttpStatus.OK);
-		}
-		finally {
+		} finally {
 			if (response != null) {
 				response.close();
 			}

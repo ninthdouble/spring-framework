@@ -46,24 +46,25 @@ import org.springframework.ui.context.ThemeSource;
 public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanClassLoaderAware {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-
+	/**
+	 * Map from theme name to Theme instance.
+	 */
+	private final Map<String, Theme> themeCache = new ConcurrentHashMap<>();
 	@Nullable
 	private ThemeSource parentThemeSource;
-
 	private String basenamePrefix = "";
-
 	@Nullable
 	private String defaultEncoding;
-
 	@Nullable
 	private Boolean fallbackToSystemLocale;
-
 	@Nullable
 	private ClassLoader beanClassLoader;
 
-	/** Map from theme name to Theme instance. */
-	private final Map<String, Theme> themeCache = new ConcurrentHashMap<>();
-
+	@Override
+	@Nullable
+	public ThemeSource getParentThemeSource() {
+		return this.parentThemeSource;
+	}
 
 	@Override
 	public void setParentThemeSource(@Nullable ThemeSource parent) {
@@ -78,12 +79,6 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 		}
 	}
 
-	@Override
-	@Nullable
-	public ThemeSource getParentThemeSource() {
-		return this.parentThemeSource;
-	}
-
 	/**
 	 * Set the prefix that gets applied to the ResourceBundle basenames,
 	 * i.e. the theme names.
@@ -92,6 +87,7 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	 * consequence, the JDK's standard ResourceBundle treats dots as package separators.
 	 * This means that "test.theme" is effectively equivalent to "test/theme",
 	 * just like it is for programmatic {@code java.util.ResourceBundle} usage.
+	 *
 	 * @see java.util.ResourceBundle#getBundle(String)
 	 */
 	public void setBasenamePrefix(@Nullable String basenamePrefix) {
@@ -102,8 +98,9 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	 * Set the default charset to use for parsing resource bundle files.
 	 * <p>{@link ResourceBundleMessageSource}'s default is the
 	 * {@code java.util.ResourceBundle} default encoding: ISO-8859-1.
-	 * @since 4.2
+	 *
 	 * @see ResourceBundleMessageSource#setDefaultEncoding
+	 * @since 4.2
 	 */
 	public void setDefaultEncoding(@Nullable String defaultEncoding) {
 		this.defaultEncoding = defaultEncoding;
@@ -113,8 +110,9 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	 * Set whether to fall back to the system Locale if no files for a
 	 * specific Locale have been found.
 	 * <p>{@link ResourceBundleMessageSource}'s default is "true".
-	 * @since 4.2
+	 *
 	 * @see ResourceBundleMessageSource#setFallbackToSystemLocale
+	 * @since 4.2
 	 */
 	public void setFallbackToSystemLocale(boolean fallbackToSystemLocale) {
 		this.fallbackToSystemLocale = fallbackToSystemLocale;
@@ -132,6 +130,7 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	 * the given theme name (prefixed by the configured "basenamePrefix").
 	 * <p>SimpleTheme instances are cached per theme name. Use a reloadable
 	 * MessageSource if themes should reflect changes to the underlying files.
+	 *
 	 * @see #setBasenamePrefix
 	 * @see #createMessageSource
 	 */
@@ -163,6 +162,7 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	 * <p>Default implementation creates a ResourceBundleMessageSource.
 	 * for the given basename. A subclass could create a specifically
 	 * configured ReloadableResourceBundleMessageSource, for example.
+	 *
 	 * @param basename the basename to create a MessageSource for
 	 * @return the MessageSource
 	 * @see org.springframework.context.support.ResourceBundleMessageSource
@@ -186,6 +186,7 @@ public class ResourceBundleThemeSource implements HierarchicalThemeSource, BeanC
 	/**
 	 * Initialize the MessageSource of the given theme with the
 	 * one from the corresponding parent of this ThemeSource.
+	 *
 	 * @param theme the Theme to (re-)initialize
 	 */
 	protected void initParent(Theme theme) {

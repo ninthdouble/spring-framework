@@ -16,11 +16,8 @@
 
 package org.springframework.test.context.junit.jupiter.nested;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +28,8 @@ import org.springframework.test.context.NestedTestConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit.jupiter.nested.ActiveProfilesNestedTests.Config1;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.NestedTestConfiguration.EnclosingConfiguration.INHERIT;
@@ -58,6 +57,57 @@ class ActiveProfilesNestedTests {
 		assertThat(this.strings).containsExactlyInAnyOrder("X", "A1");
 	}
 
+
+	@ActiveProfiles("2")
+	interface TestInterface {
+	}
+
+	@Configuration
+	static class Config1 {
+
+		@Bean
+		String x() {
+			return "X";
+		}
+
+		@Bean
+		@Profile("1")
+		String a1() {
+			return "A1";
+		}
+	}
+
+	@Configuration
+	static class Config2 {
+
+		@Bean
+		String y() {
+			return "Y";
+		}
+
+		@Bean
+		@Profile("2")
+		String a2() {
+			return "A2";
+		}
+	}
+
+	// -------------------------------------------------------------------------
+
+	@Configuration
+	static class Config3 {
+
+		@Bean
+		String z() {
+			return "Z";
+		}
+
+		@Bean
+		@Profile("3")
+		String a3() {
+			return "A3";
+		}
+	}
 
 	@Nested
 	@NestedTestConfiguration(INHERIT)
@@ -109,7 +159,7 @@ class ActiveProfilesNestedTests {
 
 		@Nested
 		@NestedTestConfiguration(OVERRIDE)
-		@SpringJUnitConfig({ Config1.class, Config2.class, Config3.class })
+		@SpringJUnitConfig({Config1.class, Config2.class, Config3.class})
 		@ActiveProfiles("3")
 		class DoubleNestedWithOverriddenConfigTests {
 
@@ -156,57 +206,6 @@ class ActiveProfilesNestedTests {
 			}
 		}
 
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Configuration
-	static class Config1 {
-
-		@Bean
-		String x() {
-			return "X";
-		}
-
-		@Bean
-		@Profile("1")
-		String a1() {
-			return "A1";
-		}
-	}
-
-	@Configuration
-	static class Config2 {
-
-		@Bean
-		String y() {
-			return "Y";
-		}
-
-		@Bean
-		@Profile("2")
-		String a2() {
-			return "A2";
-		}
-	}
-
-	@Configuration
-	static class Config3 {
-
-		@Bean
-		String z() {
-			return "Z";
-		}
-
-		@Bean
-		@Profile("3")
-		String a3() {
-			return "A3";
-		}
-	}
-
-	@ActiveProfiles("2")
-	interface TestInterface {
 	}
 
 }

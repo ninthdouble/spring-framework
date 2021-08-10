@@ -16,26 +16,25 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.BaseSubscriber;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
-
 import org.springframework.core.codec.DecodingException;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
+import reactor.core.publisher.BaseSubscriber;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Subscribes to a buffer stream and produces a flux of {@link Token} instances.
@@ -82,14 +81,15 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 
 	/**
 	 * Parses the given stream of {@link DataBuffer} objects into a stream of {@link Token} objects.
-	 * @param buffers the input buffers
-	 * @param boundary the multipart boundary, as found in the {@code Content-Type} header
+	 *
+	 * @param buffers        the input buffers
+	 * @param boundary       the multipart boundary, as found in the {@code Content-Type} header
 	 * @param maxHeadersSize the maximum buffered header size
 	 * @param headersCharset the charset to use for decoding headers
 	 * @return a stream of parsed tokens
 	 */
 	public static Flux<Token> parse(Flux<DataBuffer> buffers, byte[] boundary, int maxHeadersSize,
-			Charset headersCharset) {
+									Charset headersCharset) {
 		return Flux.create(sink -> {
 			MultipartParser parser = new MultipartParser(sink, boundary, maxHeadersSize, headersCharset);
 			sink.onCancel(parser::onSinkCancel);
@@ -136,15 +136,13 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 			if (remainder != null) {
 				if (remainder.readableByteCount() > 0) {
 					newState.onNext(remainder);
-				}
-				else {
+				} else {
 					DataBufferUtils.release(remainder);
 					requestBuffer();
 				}
 			}
 			return true;
-		}
-		else {
+		} else {
 			DataBufferUtils.release(remainder);
 			return false;
 		}
@@ -185,63 +183,6 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 
 
 	/**
-	 * Represents the output of {@link #parse(Flux, byte[], int, Charset)}.
-	 */
-	public abstract static class Token {
-
-		public abstract HttpHeaders headers();
-
-		public abstract DataBuffer buffer();
-	}
-
-
-	/**
-	 * Represents a token that contains {@link HttpHeaders}.
-	 */
-	public final static class HeadersToken extends Token {
-
-		private final HttpHeaders headers;
-
-		public HeadersToken(HttpHeaders headers) {
-			this.headers = headers;
-		}
-
-		@Override
-		public HttpHeaders headers() {
-			return this.headers;
-		}
-
-		@Override
-		public DataBuffer buffer() {
-			throw new IllegalStateException();
-		}
-	}
-
-
-	/**
-	 * Represents a token that contains {@link DataBuffer}.
-	 */
-	public final static class BodyToken extends Token {
-
-		private final DataBuffer buffer;
-
-		public BodyToken(DataBuffer buffer) {
-			this.buffer = buffer;
-		}
-
-		@Override
-		public HttpHeaders headers() {
-			throw new IllegalStateException();
-		}
-
-		@Override
-		public DataBuffer buffer() {
-			return this.buffer;
-		}
-	}
-
-
-	/**
 	 * Represents the internal state of the {@link MultipartParser}.
 	 * The flow for well-formed multipart messages is shown below:
 	 * <p><pre>
@@ -266,6 +207,85 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 		}
 	}
 
+	/**
+	 * Represents the output of {@link #parse(Flux, byte[], int, Charset)}.
+	 */
+	public abstract static class Token {
+
+		public abstract HttpHeaders headers();
+
+		public abstract DataBuffer buffer();
+	}
+
+	/**
+	 * Represents a token that contains {@link HttpHeaders}.
+	 */
+	public final static class HeadersToken extends Token {
+
+		private final HttpHeaders headers;
+
+		public HeadersToken(HttpHeaders headers) {
+			this.headers = headers;
+		}
+
+		@Override
+		public HttpHeaders headers() {
+			return this.headers;
+		}
+
+		@Override
+		public DataBuffer buffer() {
+			throw new IllegalStateException();
+		}
+	}
+
+	/**
+	 * Represents a token that contains {@link DataBuffer}.
+	 */
+	public final static class BodyToken extends Token {
+
+		private final DataBuffer buffer;
+
+		public BodyToken(DataBuffer buffer) {
+			this.buffer = buffer;
+		}
+
+		@Override
+		public HttpHeaders headers() {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public DataBuffer buffer() {
+			return this.buffer;
+		}
+	}
+
+	/**
+	 * The state of the parser when finished, either due to seeing the final
+	 * boundary or to a malformed message. Releases all incoming buffers.
+	 */
+	private static final class DisposedState implements State {
+
+		public static final DisposedState INSTANCE = new DisposedState();
+
+		private DisposedState() {
+		}
+
+		@Override
+		public void onNext(DataBuffer buf) {
+			DataBufferUtils.release(buf);
+		}
+
+		@Override
+		public void onComplete() {
+		}
+
+		@Override
+		public String toString() {
+			return "DISPOSED";
+		}
+	}
 
 	/**
 	 * The initial state of the parser. Looks for the first boundary of the
@@ -298,8 +318,7 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 				DataBufferUtils.release(buf);
 
 				changeState(this, new HeadersState(), headersBuf);
-			}
-			else {
+			} else {
 				DataBufferUtils.release(buf);
 				requestBuffer();
 			}
@@ -318,7 +337,6 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 		}
 
 	}
-
 
 	/**
 	 * The state of the parser dealing with part headers. Parses header
@@ -358,8 +376,7 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 					}
 					return;
 				}
-			}
-			else if (count > MultipartParser.this.maxHeadersSize) {
+			} else if (count > MultipartParser.this.maxHeadersSize) {
 				if (changeState(this, DisposedState.INSTANCE, buf)) {
 					emitError(new DataBufferLimitException("Part headers exceeded the memory usage limit of " +
 							MultipartParser.this.maxHeadersSize + " bytes"));
@@ -378,8 +395,7 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 
 				emitHeaders(parseHeaders());
 				changeState(this, new BodyState(), bodyBuf);
-			}
-			else {
+			} else {
 				this.buffers.add(buf);
 				requestBuffer();
 			}
@@ -450,7 +466,6 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 
 	}
 
-
 	/**
 	 * The state of the parser dealing with multipart bodies. Relays
 	 * data buffers as {@link BodyToken} until the boundary is found (or
@@ -488,8 +503,7 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 					DataBuffer body = buffer.retainedSlice(buffer.readPosition(), len);
 					enqueue(body);
 					enqueue(null);
-				}
-				else if (len < 0) {
+				} else if (len < 0) {
 					// buffer starts with the end of the delimiter, let's slice the previous buffer and flush it
 					DataBuffer previous = this.previous.get();
 					int prevLen = previous.readableByteCount() + len;
@@ -498,13 +512,11 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 						DataBufferUtils.release(previous);
 						this.previous.set(body);
 						enqueue(null);
-					}
-					else {
+					} else {
 						DataBufferUtils.release(previous);
 						this.previous.set(null);
 					}
-				}
-				else /* if (sliceLength == 0) */ {
+				} else /* if (sliceLength == 0) */ {
 					// buffer starts with complete delimiter, flush out the previous buffer
 					enqueue(null);
 				}
@@ -513,8 +525,7 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 				DataBufferUtils.release(buffer);
 
 				changeState(this, new HeadersState(), remainder);
-			}
-			else {
+			} else {
 				enqueue(buffer);
 				requestBuffer();
 			}
@@ -548,33 +559,6 @@ final class MultipartParser extends BaseSubscriber<DataBuffer> {
 		@Override
 		public String toString() {
 			return "BODY";
-		}
-	}
-
-
-	/**
-	 * The state of the parser when finished, either due to seeing the final
-	 * boundary or to a malformed message. Releases all incoming buffers.
-	 */
-	private static final class DisposedState implements State {
-
-		public static final DisposedState INSTANCE = new DisposedState();
-
-		private DisposedState() {
-		}
-
-		@Override
-		public void onNext(DataBuffer buf) {
-			DataBufferUtils.release(buf);
-		}
-
-		@Override
-		public void onComplete() {
-		}
-
-		@Override
-		public String toString() {
-			return "DISPOSED";
 		}
 	}
 

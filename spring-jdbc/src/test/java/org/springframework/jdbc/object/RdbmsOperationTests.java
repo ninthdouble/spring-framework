@@ -16,20 +16,18 @@
 
 package org.springframework.jdbc.object;
 
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlInOutParameter;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import javax.sql.DataSource;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -56,7 +54,7 @@ public class RdbmsOperationTests {
 		operation.setSql("select * from mytable");
 		operation.compile();
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(() ->
-				operation.setTypes(new int[] { Types.INTEGER }));
+				operation.setTypes(new int[]{Types.INTEGER}));
 	}
 
 	@Test
@@ -71,7 +69,7 @@ public class RdbmsOperationTests {
 	@Test
 	public void tooFewParameters() {
 		operation.setSql("select * from mytable");
-		operation.setTypes(new int[] { Types.INTEGER });
+		operation.setTypes(new int[]{Types.INTEGER});
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(() ->
 				operation.validateParameters((Object[]) null));
 	}
@@ -79,7 +77,7 @@ public class RdbmsOperationTests {
 	@Test
 	public void tooFewMapParameters() {
 		operation.setSql("select * from mytable");
-		operation.setTypes(new int[] { Types.INTEGER });
+		operation.setTypes(new int[]{Types.INTEGER});
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(() ->
 				operation.validateNamedParameters((Map<String, String>) null));
 	}
@@ -89,14 +87,14 @@ public class RdbmsOperationTests {
 		operation.setSql("foo");
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(() ->
 				operation.compile())
-			.withMessageContaining("ataSource");
+				.withMessageContaining("ataSource");
 	}
 
 	@Test
 	public void tooManyParameters() {
 		operation.setSql("select * from mytable");
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(() ->
-				operation.validateParameters(new Object[] { 1, 2 }));
+				operation.validateParameters(new Object[]{1, 2}));
 	}
 
 	@Test
@@ -119,7 +117,8 @@ public class RdbmsOperationTests {
 
 	@Test
 	public void emptyDataSource() {
-		SqlOperation operation = new SqlOperation() {};
+		SqlOperation operation = new SqlOperation() {
+		};
 		operation.setSql("select * from mytable");
 		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(
 				operation::compile);
@@ -127,7 +126,8 @@ public class RdbmsOperationTests {
 
 	@Test
 	public void parameterPropagation() {
-		SqlOperation operation = new SqlOperation() {};
+		SqlOperation operation = new SqlOperation() {
+		};
 		DataSource ds = new DriverManagerDataSource();
 		operation.setDataSource(ds);
 		operation.setFetchSize(10);
@@ -144,7 +144,7 @@ public class RdbmsOperationTests {
 		operation.setSql("DUMMY_PROC");
 		operation.declareParameter(new SqlOutParameter("DUMMY_OUT_PARAM", Types.VARCHAR));
 		operation.declareParameter(new SqlInOutParameter("DUMMY_IN_OUT_PARAM", Types.VARCHAR));
-		operation.validateParameters(new Object[] {"DUMMY_VALUE1", "DUMMY_VALUE2"});
+		operation.validateParameters(new Object[]{"DUMMY_VALUE1", "DUMMY_VALUE2"});
 	}
 
 	@Test
@@ -152,11 +152,11 @@ public class RdbmsOperationTests {
 		DataSource ds = new DriverManagerDataSource();
 		operation.setDataSource(ds);
 		operation.setSql("select * from mytable where one = ? and two = ?");
-		operation.setParameters(new SqlParameter[] {
+		operation.setParameters(new SqlParameter[]{
 				new SqlParameter("one", Types.NUMERIC),
 				new SqlParameter("two", Types.NUMERIC)});
 		operation.afterPropertiesSet();
-		operation.validateParameters(new Object[] { 1, "2" });
+		operation.validateParameters(new Object[]{1, "2"});
 		assertThat(operation.getDeclaredParameters().size()).isEqualTo(2);
 	}
 

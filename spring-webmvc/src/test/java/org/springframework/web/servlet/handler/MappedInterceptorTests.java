@@ -15,21 +15,19 @@
  */
 package org.springframework.web.servlet.handler;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +36,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * Test fixture for {@link MappedInterceptor} tests.
+ *
  * @author Rossen Stoyanchev
  */
 class MappedInterceptorTests {
@@ -59,7 +58,7 @@ class MappedInterceptorTests {
 
 	@PathPatternsParameterizedTest
 	void includePattern(Function<String, MockHttpServletRequest> requestFactory) {
-		MappedInterceptor interceptor = new MappedInterceptor(new String[] { "/foo/*" }, null, delegate);
+		MappedInterceptor interceptor = new MappedInterceptor(new String[]{"/foo/*"}, null, delegate);
 
 		assertThat(interceptor.matches(requestFactory.apply("/foo/bar"))).isTrue();
 		assertThat(interceptor.matches(requestFactory.apply("/bar/foo"))).isFalse();
@@ -67,13 +66,13 @@ class MappedInterceptorTests {
 
 	@PathPatternsParameterizedTest
 	void includePatternWithMatrixVariables(Function<String, MockHttpServletRequest> requestFactory) {
-		MappedInterceptor interceptor = new MappedInterceptor(new String[] { "/foo*/*" }, null, delegate);
+		MappedInterceptor interceptor = new MappedInterceptor(new String[]{"/foo*/*"}, null, delegate);
 		assertThat(interceptor.matches(requestFactory.apply("/foo;q=1/bar;s=2"))).isTrue();
 	}
 
 	@PathPatternsParameterizedTest
 	void excludePattern(Function<String, MockHttpServletRequest> requestFactory) {
-		MappedInterceptor interceptor = new MappedInterceptor(null, new String[] { "/admin/**" }, delegate);
+		MappedInterceptor interceptor = new MappedInterceptor(null, new String[]{"/admin/**"}, delegate);
 
 		assertThat(interceptor.matches(requestFactory.apply("/foo"))).isTrue();
 		assertThat(interceptor.matches(requestFactory.apply("/admin/foo"))).isFalse();
@@ -82,15 +81,16 @@ class MappedInterceptorTests {
 	@PathPatternsParameterizedTest
 	void includeAndExcludePatterns(Function<String, MockHttpServletRequest> requestFactory) {
 		MappedInterceptor interceptor =
-				new MappedInterceptor(new String[] { "/**" }, new String[] { "/admin/**" }, delegate);
+				new MappedInterceptor(new String[]{"/**"}, new String[]{"/admin/**"}, delegate);
 
 		assertThat(interceptor.matches(requestFactory.apply("/foo"))).isTrue();
 		assertThat(interceptor.matches(requestFactory.apply("/admin/foo"))).isFalse();
 	}
 
-	@PathPatternsParameterizedTest // gh-26690
+	@PathPatternsParameterizedTest
+		// gh-26690
 	void includePatternWithFallbackOnPathMatcher(Function<String, MockHttpServletRequest> requestFactory) {
-		MappedInterceptor interceptor = new MappedInterceptor(new String[] { "/path1/**/path2" }, null, delegate);
+		MappedInterceptor interceptor = new MappedInterceptor(new String[]{"/path1/**/path2"}, null, delegate);
 
 		assertThat(interceptor.matches(requestFactory.apply("/path1/foo/bar/path2"))).isTrue();
 		assertThat(interceptor.matches(requestFactory.apply("/path1/foo/bar/path3"))).isFalse();
@@ -99,7 +99,7 @@ class MappedInterceptorTests {
 
 	@PathPatternsParameterizedTest
 	void customPathMatcher(Function<String, MockHttpServletRequest> requestFactory) {
-		MappedInterceptor interceptor = new MappedInterceptor(new String[] { "/foo/[0-9]*" }, null, delegate);
+		MappedInterceptor interceptor = new MappedInterceptor(new String[]{"/foo/[0-9]*"}, null, delegate);
 		interceptor.setPathMatcher(new TestPathMatcher());
 
 		assertThat(interceptor.matches(requestFactory.apply("/foo/123"))).isTrue();

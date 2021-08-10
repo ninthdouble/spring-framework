@@ -16,15 +16,14 @@
 
 package org.springframework.core.type;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import example.type.AnnotatedComponent;
 import example.type.EnclosingAnnotation;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.util.MultiValueMap;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -76,13 +75,13 @@ public abstract class AbstractMethodMetadataTests {
 	@Test
 	public void verifyToString() throws Exception {
 		assertThat(getTagged(WithMethod.class).toString())
-			.endsWith(WithMethod.class.getName() + ".test()");
+				.endsWith(WithMethod.class.getName() + ".test()");
 
 		assertThat(getTagged(WithMethodWithOneArgument.class).toString())
-			.endsWith(WithMethodWithOneArgument.class.getName() + ".test(java.lang.String)");
+				.endsWith(WithMethodWithOneArgument.class.getName() + ".test(java.lang.String)");
 
 		assertThat(getTagged(WithMethodWithTwoArguments.class).toString())
-			.endsWith(WithMethodWithTwoArguments.class.getName() + ".test(java.lang.String,java.lang.Integer)");
+				.endsWith(WithMethodWithTwoArguments.class.getName() + ".test(java.lang.String,java.lang.Integer)");
 	}
 
 	@Test
@@ -149,9 +148,9 @@ public abstract class AbstractMethodMetadataTests {
 		MethodMetadata metadata = getTagged(WithDirectAnnotation.class);
 		assertThat(metadata.getAnnotations().stream().filter(
 				MergedAnnotation::isDirectlyPresent).map(
-						a -> a.getType().getName())).containsExactlyInAnyOrder(
-								Tag.class.getName(),
-								DirectAnnotation.class.getName());
+				a -> a.getType().getName())).containsExactlyInAnyOrder(
+				Tag.class.getName(),
+				DirectAnnotation.class.getName());
 	}
 
 	@Test
@@ -176,14 +175,14 @@ public abstract class AbstractMethodMetadataTests {
 	public void getAnnotationAttributesReturnsAttributes() {
 		assertThat(getTagged(WithAnnotationAttributes.class).getAnnotationAttributes(
 				AnnotationAttributes.class.getName())).containsOnly(entry("name", "test"),
-						entry("size", 1));
+				entry("size", 1));
 	}
 
 	@Test
 	public void getAllAnnotationAttributesReturnsAllAttributes() {
 		MultiValueMap<String, Object> attributes = getTagged(
 				WithMetaAnnotationAttributes.class).getAllAnnotationAttributes(
-						AnnotationAttributes.class.getName());
+				AnnotationAttributes.class.getName());
 		assertThat(attributes).containsOnlyKeys("name", "size");
 		assertThat(attributes.get("name")).containsExactlyInAnyOrder("m1", "m2");
 		assertThat(attributes.get("size")).containsExactlyInAnyOrder(1, 2);
@@ -207,6 +206,38 @@ public abstract class AbstractMethodMetadataTests {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	public static @interface Tag {
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface DirectAnnotation {
+
+	}
+
+	@DirectAnnotation
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface MetaAnnotation {
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@AnnotationAttributes(name = "m1", size = 1)
+	public static @interface MetaAnnotationAttributes1 {
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@AnnotationAttributes(name = "m2", size = 2)
+	public static @interface MetaAnnotationAttributes2 {
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public static @interface AnnotationAttributes {
+
+		String name();
+
+		int size();
 
 	}
 
@@ -287,17 +318,6 @@ public abstract class AbstractMethodMetadataTests {
 
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface DirectAnnotation {
-
-	}
-
-	@DirectAnnotation
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface MetaAnnotation {
-
-	}
-
 	public static abstract class WithAnnotationAttributes {
 
 		@Tag
@@ -312,27 +332,6 @@ public abstract class AbstractMethodMetadataTests {
 		@MetaAnnotationAttributes1
 		@MetaAnnotationAttributes2
 		public abstract String test();
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@AnnotationAttributes(name = "m1", size = 1)
-	public static @interface MetaAnnotationAttributes1 {
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@AnnotationAttributes(name = "m2", size = 2)
-	public static @interface MetaAnnotationAttributes2 {
-
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface AnnotationAttributes {
-
-		String name();
-
-		int size();
 
 	}
 

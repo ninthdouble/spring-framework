@@ -17,7 +17,6 @@
 package org.springframework.beans.testfixture.factory.xml;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -31,7 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public abstract class AbstractListableBeanFactoryTests extends AbstractBeanFactoryTests {
 
-	/** Subclasses must initialize this */
+	/**
+	 * Subclasses must initialize this
+	 */
 	protected ListableBeanFactory getListableBeanFactory() {
 		BeanFactory bf = getBeanFactory();
 		if (!(bf instanceof ListableBeanFactory)) {

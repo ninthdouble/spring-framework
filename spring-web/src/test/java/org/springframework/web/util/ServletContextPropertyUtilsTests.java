@@ -17,7 +17,6 @@
 package org.springframework.web.util;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockServletContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,8 +42,7 @@ public class ServletContextPropertyUtilsTests {
 		try {
 			String resolved = ServletContextPropertyUtils.resolvePlaceholders("${test.prop:foo}", servletContext);
 			assertThat(resolved).isEqualTo("bar");
-		}
-		finally {
+		} finally {
 			System.clearProperty("test.prop");
 		}
 	}

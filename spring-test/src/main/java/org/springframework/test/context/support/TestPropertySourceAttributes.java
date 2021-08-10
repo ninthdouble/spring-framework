@@ -16,24 +16,19 @@
 
 package org.springframework.test.context.support;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.log.LogMessage;
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * {@code TestPropertySourceAttributes} encapsulates attributes declared
@@ -44,9 +39,9 @@ import org.springframework.util.StringUtils;
  *
  * @author Sam Brannen
  * @author Phillip Webb
- * @since 4.1
  * @see TestPropertySource
  * @see MergedTestPropertySources
+ * @since 4.1
  */
 class TestPropertySourceAttributes {
 
@@ -74,6 +69,12 @@ class TestPropertySourceAttributes {
 		addPropertiesAndLocationsFrom(annotation);
 	}
 
+	private static Class<?> declaringClass(MergedAnnotation<?> mergedAnnotation) {
+		Object source = mergedAnnotation.getSource();
+		Assert.state(source instanceof Class, "No source class available");
+		return (Class<?>) source;
+	}
+
 	/**
 	 * Merge this {@code TestPropertySourceAttributes} instance with the
 	 * supplied {@code TestPropertySourceAttributes}, asserting that the two sets
@@ -81,6 +82,7 @@ class TestPropertySourceAttributes {
 	 * {@link TestPropertySource#inheritLocations} and
 	 * {@link TestPropertySource#inheritProperties} flags and that the two
 	 * underlying annotations were declared on the same class.
+	 *
 	 * @since 5.2
 	 */
 	void mergeWith(TestPropertySourceAttributes attributes) {
@@ -98,14 +100,14 @@ class TestPropertySourceAttributes {
 	}
 
 	private void assertSameBooleanAttribute(boolean expected, boolean actual,
-			String attributeName, TestPropertySourceAttributes that) {
+											String attributeName, TestPropertySourceAttributes that) {
 
 		Assert.isTrue(expected == actual, () -> String.format(
 				"@%s on %s and @%s on %s must declare the same value for '%s' as other " +
-				"directly present or meta-present @TestPropertySource annotations",
-			this.rootAnnotation.getType().getSimpleName(), this.declaringClass.getSimpleName(),
-			that.rootAnnotation.getType().getSimpleName(), that.declaringClass.getSimpleName(),
-			attributeName));
+						"directly present or meta-present @TestPropertySource annotations",
+				this.rootAnnotation.getType().getSimpleName(), this.declaringClass.getSimpleName(),
+				that.rootAnnotation.getType().getSimpleName(), that.declaringClass.getSimpleName(),
+				attributeName));
 	}
 
 	private void addPropertiesAndLocationsFrom(MergedAnnotation<TestPropertySource> mergedAnnotation) {
@@ -120,12 +122,11 @@ class TestPropertySourceAttributes {
 	}
 
 	private void addPropertiesAndLocations(String[] locations, String[] properties,
-			Class<?> declaringClass, boolean prepend) {
+										   Class<?> declaringClass, boolean prepend) {
 
 		if (ObjectUtils.isEmpty(locations) && ObjectUtils.isEmpty(properties)) {
 			addAll(prepend, this.locations, detectDefaultPropertiesFile(declaringClass));
-		}
-		else {
+		} else {
 			addAll(prepend, this.locations, locations);
 			addAll(prepend, this.properties, properties);
 		}
@@ -136,8 +137,9 @@ class TestPropertySourceAttributes {
 	 * {@code prepend} flag.
 	 * <p>If the {@code prepend} flag is {@code false}, the elements will appended
 	 * to the list.
-	 * @param prepend whether the elements should be prepended to the list
-	 * @param list the list to which to add the elements
+	 *
+	 * @param prepend  whether the elements should be prepended to the list
+	 * @param list     the list to which to add the elements
 	 * @param elements the elements to add to the list
 	 */
 	private void addAll(boolean prepend, List<String> list, String... elements) {
@@ -166,6 +168,7 @@ class TestPropertySourceAttributes {
 
 	/**
 	 * Get the {@linkplain Class class} that declared {@code @TestPropertySource}.
+	 *
 	 * @return the declaring class; never {@code null}
 	 */
 	Class<?> getDeclaringClass() {
@@ -177,6 +180,7 @@ class TestPropertySourceAttributes {
 	 * <p>Note: The returned value may represent a <em>detected default</em>
 	 * or merged locations that do not match the original value declared via a
 	 * single {@code @TestPropertySource} annotation.
+	 *
 	 * @return the resource locations; potentially <em>empty</em>
 	 * @see TestPropertySource#value
 	 * @see TestPropertySource#locations
@@ -187,6 +191,7 @@ class TestPropertySourceAttributes {
 
 	/**
 	 * Get the {@code inheritLocations} flag that was declared via {@code @TestPropertySource}.
+	 *
 	 * @return the {@code inheritLocations} flag
 	 * @see TestPropertySource#inheritLocations
 	 */
@@ -199,6 +204,7 @@ class TestPropertySourceAttributes {
 	 * <p>Note: The returned value may represent merged properties that do not
 	 * match the original value declared via a single {@code @TestPropertySource}
 	 * annotation.
+	 *
 	 * @return the inlined properties; potentially <em>empty</em>
 	 * @see TestPropertySource#properties
 	 */
@@ -208,6 +214,7 @@ class TestPropertySourceAttributes {
 
 	/**
 	 * Get the {@code inheritProperties} flag that was declared via {@code @TestPropertySource}.
+	 *
 	 * @return the {@code inheritProperties} flag
 	 * @see TestPropertySource#inheritProperties
 	 */
@@ -267,12 +274,6 @@ class TestPropertySourceAttributes {
 				.append("properties", this.properties)
 				.append("inheritProperties", this.inheritProperties)
 				.toString();
-	}
-
-	private static Class<?> declaringClass(MergedAnnotation<?> mergedAnnotation) {
-		Object source = mergedAnnotation.getSource();
-		Assert.state(source instanceof Class, "No source class available");
-		return (Class<?>) source;
 	}
 
 }

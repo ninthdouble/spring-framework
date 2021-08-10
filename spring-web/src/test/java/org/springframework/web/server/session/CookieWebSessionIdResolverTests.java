@@ -16,7 +16,6 @@
 package org.springframework.web.server.session;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.ResponseCookie;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
@@ -26,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link CookieWebSessionIdResolver}.
+ *
  * @author Rossen Stoyanchev
  */
 public class CookieWebSessionIdResolverTests {

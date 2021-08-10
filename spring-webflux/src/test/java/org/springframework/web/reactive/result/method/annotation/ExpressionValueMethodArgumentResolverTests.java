@@ -16,12 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.MethodParameter;
@@ -30,6 +26,9 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -41,10 +40,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
  */
 public class ExpressionValueMethodArgumentResolverTests {
 
-	private ExpressionValueMethodArgumentResolver resolver;
-
 	private final MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/"));
-
+	private ExpressionValueMethodArgumentResolver resolver;
 	private MethodParameter paramSystemProperty;
 	private MethodParameter paramNotSupported;
 	private MethodParameter paramAlsoNotSupported;
@@ -75,7 +72,7 @@ public class ExpressionValueMethodArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(this.paramNotSupported)).isFalse();
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.paramAlsoNotSupported))
-			.withMessageStartingWith("ExpressionValueMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("ExpressionValueMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test
@@ -83,12 +80,11 @@ public class ExpressionValueMethodArgumentResolverTests {
 		System.setProperty("systemProperty", "22");
 		try {
 			Mono<Object> mono = this.resolver.resolveArgument(
-					this.paramSystemProperty,  new BindingContext(), this.exchange);
+					this.paramSystemProperty, new BindingContext(), this.exchange);
 
 			Object value = mono.block();
 			assertThat(value).isEqualTo(22);
-		}
-		finally {
+		} finally {
 			System.clearProperty("systemProperty");
 		}
 

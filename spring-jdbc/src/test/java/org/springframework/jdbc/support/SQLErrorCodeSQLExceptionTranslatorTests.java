@@ -16,27 +16,15 @@
 
 package org.springframework.jdbc.support;
 
-import java.sql.BatchUpdateException;
-import java.sql.Connection;
-import java.sql.DataTruncation;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.dao.CannotSerializeTransactionException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DeadlockLoserDataAccessException;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.*;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.InvalidResultSetAccessException;
 import org.springframework.lang.Nullable;
+
+import javax.sql.DataSource;
+import java.sql.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -52,6 +40,7 @@ import static org.mockito.Mockito.verify;
 public class SQLErrorCodeSQLExceptionTranslatorTests {
 
 	private static SQLErrorCodes ERROR_CODES = new SQLErrorCodes();
+
 	static {
 		ERROR_CODES.setBadSqlGrammarCodes("1", "2");
 		ERROR_CODES.setInvalidResultSetAccessCodes("3", "4");
@@ -131,7 +120,8 @@ public class SQLErrorCodeSQLExceptionTranslatorTests {
 	public void customTranslateMethodTranslation() {
 		final String TASK = "TASK";
 		final String SQL = "SQL SELECT *";
-		final DataAccessException customDex = new DataAccessException("") {};
+		final DataAccessException customDex = new DataAccessException("") {
+		};
 
 		final SQLException badSqlEx = new SQLException("", "", 1);
 		SQLException intVioEx = new SQLException("", "", 6);

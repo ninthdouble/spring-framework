@@ -16,13 +16,9 @@
 
 package org.springframework.test.context.transaction;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.annotation.Commit;
@@ -33,6 +29,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.SimpleTransactionStatus;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -67,7 +66,8 @@ class TransactionalTestExecutionListenerTests {
 	}
 
 
-	@Test  // SPR-13895
+	@Test
+		// SPR-13895
 	void transactionalTestWithoutTransactionManager() throws Exception {
 		TransactionalTestExecutionListener listener = new TransactionalTestExecutionListener() {
 			@Override
@@ -77,7 +77,7 @@ class TransactionalTestExecutionListenerTests {
 		};
 
 		Class<? extends Invocable> clazz = TransactionalDeclaredOnClassLocallyTestCase.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		Invocable instance = BeanUtils.instantiateClass(clazz);
 		given(testContext.getTestInstance()).willReturn(instance);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("transactionalTest"));
@@ -87,7 +87,7 @@ class TransactionalTestExecutionListenerTests {
 
 		assertThatIllegalStateException().isThrownBy(() ->
 				listener.beforeTestMethod(testContext))
-			.withMessageStartingWith("Failed to retrieve PlatformTransactionManager for @Transactional test");
+				.withMessageStartingWith("Failed to retrieve PlatformTransactionManager for @Transactional test");
 	}
 
 	@Test
@@ -215,7 +215,7 @@ class TransactionalTestExecutionListenerTests {
 	private void assertBeforeTestMethodWithTransactionalTestMethod(Class<? extends Invocable> clazz, boolean invokedInTx)
 			throws Exception {
 
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		Invocable instance = BeanUtils.instantiateClass(clazz);
 		given(testContext.getTestInstance()).willReturn(instance);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("transactionalTest"));
@@ -227,7 +227,7 @@ class TransactionalTestExecutionListenerTests {
 	}
 
 	private void assertBeforeTestMethodWithNonTransactionalTestMethod(Class<? extends Invocable> clazz) throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		Invocable instance = BeanUtils.instantiateClass(clazz);
 		given(testContext.getTestInstance()).willReturn(instance);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("nonTransactionalTest"));
@@ -244,7 +244,7 @@ class TransactionalTestExecutionListenerTests {
 	}
 
 	private void assertAfterTestMethodWithTransactionalTestMethod(Class<? extends Invocable> clazz) throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		Invocable instance = BeanUtils.instantiateClass(clazz);
 		given(testContext.getTestInstance()).willReturn(instance);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("transactionalTest"));
@@ -259,7 +259,7 @@ class TransactionalTestExecutionListenerTests {
 	}
 
 	private void assertAfterTestMethodWithNonTransactionalTestMethod(Class<? extends Invocable> clazz) throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		Invocable instance = BeanUtils.instantiateClass(clazz);
 		given(testContext.getTestInstance()).willReturn(instance);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("nonTransactionalTest"));
@@ -272,7 +272,7 @@ class TransactionalTestExecutionListenerTests {
 	}
 
 	private void assertIsRollback(Class<?> clazz, boolean rollback) throws Exception {
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("test"));
 		assertThat(listener.isRollback(testContext)).isEqualTo(rollback);
 	}
@@ -308,6 +308,30 @@ class TransactionalTestExecutionListenerTests {
 		void invoked(boolean invoked);
 
 		boolean invoked();
+	}
+
+	interface BeforeTransactionInterface extends Invocable {
+
+		@BeforeTransaction
+		default void beforeTransaction() {
+			invoked(true);
+		}
+	}
+
+	interface AfterTransactionInterface extends Invocable {
+
+		@AfterTransaction
+		default void afterTransaction() {
+			invoked(true);
+		}
+	}
+
+	@Rollback(false)
+	interface RollbackFalseTestInterface {
+	}
+
+	@Commit
+	interface RollbackFalseViaMetaAnnotationTestInterface {
 	}
 
 	private static class AbstractInvocable implements Invocable {
@@ -467,22 +491,6 @@ class TransactionalTestExecutionListenerTests {
 		}
 	}
 
-	interface BeforeTransactionInterface extends Invocable {
-
-		@BeforeTransaction
-		default void beforeTransaction() {
-			invoked(true);
-		}
-	}
-
-	interface AfterTransactionInterface extends Invocable {
-
-		@AfterTransaction
-		default void afterTransaction() {
-			invoked(true);
-		}
-	}
-
 	static class BeforeTransactionDeclaredAsInterfaceDefaultMethodTestCase extends AbstractInvocable
 			implements BeforeTransactionInterface {
 
@@ -553,18 +561,10 @@ class TransactionalTestExecutionListenerTests {
 		}
 	}
 
-	@Rollback(false)
-	interface RollbackFalseTestInterface {
-	}
-
 	static class ClassLevelRollbackWithExplicitValueOnTestInterfaceTestCase implements RollbackFalseTestInterface {
 
 		public void test() {
 		}
-	}
-
-	@Commit
-	interface RollbackFalseViaMetaAnnotationTestInterface {
 	}
 
 	static class ClassLevelRollbackViaMetaAnnotationOnTestInterfaceTestCase

@@ -16,13 +16,6 @@
 
 package org.springframework.web.multipart.support;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
@@ -31,6 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A common delegate for {@code HandlerMethodArgumentResolver} implementations
@@ -106,8 +105,7 @@ public final class MultipartResolutionDelegate {
 				multipartRequest = new StandardMultipartHttpServletRequest(request);
 			}
 			return multipartRequest.getFile(name);
-		}
-		else if (isMultipartFileCollection(parameter)) {
+		} else if (isMultipartFileCollection(parameter)) {
 			if (!isMultipart) {
 				return null;
 			}
@@ -116,8 +114,7 @@ public final class MultipartResolutionDelegate {
 			}
 			List<MultipartFile> files = multipartRequest.getFiles(name);
 			return (!files.isEmpty() ? files : null);
-		}
-		else if (isMultipartFileArray(parameter)) {
+		} else if (isMultipartFileArray(parameter)) {
 			if (!isMultipart) {
 				return null;
 			}
@@ -126,28 +123,24 @@ public final class MultipartResolutionDelegate {
 			}
 			List<MultipartFile> files = multipartRequest.getFiles(name);
 			return (!files.isEmpty() ? files.toArray(new MultipartFile[0]) : null);
-		}
-		else if (Part.class == parameter.getNestedParameterType()) {
+		} else if (Part.class == parameter.getNestedParameterType()) {
 			if (!isMultipart) {
 				return null;
 			}
 			return request.getPart(name);
-		}
-		else if (isPartCollection(parameter)) {
+		} else if (isPartCollection(parameter)) {
 			if (!isMultipart) {
 				return null;
 			}
 			List<Part> parts = resolvePartList(request, name);
 			return (!parts.isEmpty() ? parts : null);
-		}
-		else if (isPartArray(parameter)) {
+		} else if (isPartArray(parameter)) {
 			if (!isMultipart) {
 				return null;
 			}
 			List<Part> parts = resolvePartList(request, name);
 			return (!parts.isEmpty() ? parts.toArray(new Part[0]) : null);
-		}
-		else {
+		} else {
 			return UNRESOLVABLE;
 		}
 	}
@@ -171,7 +164,7 @@ public final class MultipartResolutionDelegate {
 	@Nullable
 	private static Class<?> getCollectionParameterType(MethodParameter methodParam) {
 		Class<?> paramType = methodParam.getNestedParameterType();
-		if (Collection.class == paramType || List.class.isAssignableFrom(paramType)){
+		if (Collection.class == paramType || List.class.isAssignableFrom(paramType)) {
 			Class<?> valueType = ResolvableType.forMethodParameter(methodParam).asCollection().resolveGeneric();
 			if (valueType != null) {
 				return valueType;

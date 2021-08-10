@@ -16,11 +16,11 @@
 
 package org.springframework.core.testfixture.env;
 
+import org.springframework.core.env.StandardEnvironment;
+
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
-
-import org.springframework.core.env.StandardEnvironment;
 
 /**
  * Test utilities for {@link StandardEnvironment}.
@@ -44,8 +44,7 @@ public class EnvironmentTestUtils {
 					if (obj != null && obj.getClass().getName().equals("java.lang.ProcessEnvironment$StringEnvironment")) {
 						return (Map<String, String>) obj;
 					}
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
 			}
@@ -55,8 +54,7 @@ public class EnvironmentTestUtils {
 		Class<?> processEnvironmentClass;
 		try {
 			processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
 		}
 
@@ -65,11 +63,9 @@ public class EnvironmentTestUtils {
 			theCaseInsensitiveEnvironmentField.setAccessible(true);
 			Object obj = theCaseInsensitiveEnvironmentField.get(null);
 			return (Map<String, String>) obj;
-		}
-		catch (NoSuchFieldException ex) {
+		} catch (NoSuchFieldException ex) {
 			// do nothing
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
 		}
 
@@ -78,11 +74,9 @@ public class EnvironmentTestUtils {
 			theEnvironmentField.setAccessible(true);
 			Object obj = theEnvironmentField.get(null);
 			return (Map<String, String>) obj;
-		}
-		catch (NoSuchFieldException ex) {
+		} catch (NoSuchFieldException ex) {
 			// do nothing
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
 		}
 

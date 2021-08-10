@@ -41,17 +41,16 @@ public class DuplicatePostProcessingTests {
 	}
 
 
-
 	static class Config {
-
-		@Bean
-		public ExampleFactoryBean exampleFactory() {
-			return new ExampleFactoryBean();
-		}
 
 		@Bean
 		public static ExampleBeanPostProcessor exampleBeanPostProcessor() {
 			return new ExampleBeanPostProcessor();
+		}
+
+		@Bean
+		public ExampleFactoryBean exampleFactory() {
+			return new ExampleFactoryBean();
 		}
 
 		@Bean

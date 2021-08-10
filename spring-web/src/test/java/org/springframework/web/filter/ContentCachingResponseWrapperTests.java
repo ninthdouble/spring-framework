@@ -15,21 +15,20 @@
  */
 package org.springframework.web.filter;
 
-import java.nio.charset.StandardCharsets;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ContentCachingResponseWrapper}.
+ *
  * @author Rossen Stoyanchev
  */
 public class ContentCachingResponseWrapperTests {

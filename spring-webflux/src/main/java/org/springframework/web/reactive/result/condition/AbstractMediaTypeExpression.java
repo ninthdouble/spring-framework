@@ -41,8 +41,7 @@ abstract class AbstractMediaTypeExpression implements Comparable<AbstractMediaTy
 		if (expression.startsWith("!")) {
 			this.isNegated = true;
 			expression = expression.substring(1);
-		}
-		else {
+		} else {
 			this.isNegated = false;
 		}
 		this.mediaType = MediaType.parseMediaType(expression);
@@ -69,8 +68,7 @@ abstract class AbstractMediaTypeExpression implements Comparable<AbstractMediaTy
 		try {
 			boolean match = matchMediaType(exchange);
 			return (!this.isNegated == match);
-		}
-		catch (NotAcceptableStatusException | UnsupportedMediaTypeStatusException ex) {
+		} catch (NotAcceptableStatusException | UnsupportedMediaTypeStatusException ex) {
 			return false;
 		}
 	}

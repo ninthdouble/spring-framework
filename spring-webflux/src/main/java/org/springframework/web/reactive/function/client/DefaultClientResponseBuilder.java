@@ -16,13 +16,6 @@
 
 package org.springframework.web.reactive.function.client;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import reactor.core.publisher.Flux;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
@@ -36,6 +29,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import reactor.core.publisher.Flux;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Default implementation of {@link ClientResponse.Builder}.
@@ -98,8 +97,7 @@ final class DefaultClientResponseBuilder implements ClientResponse.Builder {
 		this.statusCode = other.rawStatusCode();
 		if (mutate) {
 			this.body = other.bodyToFlux(DataBuffer.class);
-		}
-		else {
+		} else {
 			this.headers = new HttpHeaders();
 			this.headers.addAll(other.headers().asHttpHeaders());
 		}
@@ -232,8 +230,8 @@ final class DefaultClientResponseBuilder implements ClientResponse.Builder {
 
 
 		BuiltClientHttpResponse(int statusCode, @Nullable HttpHeaders headers,
-				@Nullable MultiValueMap<String, ResponseCookie> cookies, Flux<DataBuffer> body,
-				@Nullable ClientResponse originalResponse) {
+								@Nullable MultiValueMap<String, ResponseCookie> cookies, Flux<DataBuffer> body,
+								@Nullable ClientResponse originalResponse) {
 
 			Assert.isTrue(headers != null || originalResponse != null,
 					"Expected either headers or an original response with headers.");

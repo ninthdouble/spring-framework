@@ -16,21 +16,21 @@
 
 package org.springframework.web.server.adapter;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link ForwardedHeaderTransformer}.
+ *
  * @author Rossen Stoyanchev
  */
 public class ForwardedHeaderTransformerTests {
@@ -90,7 +90,8 @@ public class ForwardedHeaderTransformerTests {
 		assertForwardedHeadersRemoved(request);
 	}
 
-	@Test // gh-23305
+	@Test
+		// gh-23305
 	void xForwardedPrefixShouldNotLeadToDecodedPath() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("X-Forwarded-Prefix", "/prefix");
@@ -117,7 +118,8 @@ public class ForwardedHeaderTransformerTests {
 		assertForwardedHeadersRemoved(request);
 	}
 
-	@Test // SPR-17525
+	@Test
+		// SPR-17525
 	void shouldNotDoubleEncode() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Forwarded", "host=84.198.58.199;proto=https");

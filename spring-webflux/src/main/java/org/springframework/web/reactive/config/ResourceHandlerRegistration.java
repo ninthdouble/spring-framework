@@ -16,12 +16,6 @@
 
 package org.springframework.web.reactive.config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.cache.Cache;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -31,6 +25,8 @@ import org.springframework.http.MediaTypeFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.resource.ResourceWebHandler;
+
+import java.util.*;
 
 /**
  * Assist with creating and configuring a static resources handler.
@@ -58,12 +54,12 @@ public class ResourceHandlerRegistration {
 	private Map<String, MediaType> mediaTypes;
 
 
-
 	/**
 	 * Create a {@link ResourceHandlerRegistration} instance.
+	 *
 	 * @param resourceLoader a resource loader for turning a String location
-	 * into a {@link Resource}
-	 * @param pathPatterns one or more resource URL path patterns
+	 *                       into a {@link Resource}
+	 * @param pathPatterns   one or more resource URL path patterns
 	 */
 	public ResourceHandlerRegistration(ResourceLoader resourceLoader, String... pathPatterns) {
 		Assert.notNull(resourceLoader, "ResourceLoader is required");
@@ -84,6 +80,7 @@ public class ResourceHandlerRegistration {
 	 * be served both from the web application root and from any JAR on the
 	 * classpath that contains a {@code /META-INF/public-web-resources/} directory,
 	 * with resources in the web application root taking precedence.
+	 *
 	 * @return the same {@link ResourceHandlerRegistration} instance, for
 	 * chained method invocation
 	 */
@@ -95,6 +92,7 @@ public class ResourceHandlerRegistration {
 	/**
 	 * Specify the {@link CacheControl} which should be used
 	 * by the resource handler.
+	 *
 	 * @param cacheControl the CacheControl configuration to use
 	 * @return the same {@link ResourceHandlerRegistration} instance, for
 	 * chained method invocation
@@ -107,6 +105,7 @@ public class ResourceHandlerRegistration {
 	/**
 	 * Set whether the {@link Resource#lastModified()} information should be used to drive HTTP responses.
 	 * <p>This configuration is set to {@code true} by default.
+	 *
 	 * @param useLastModified whether the "last modified" resource information should be used.
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 * @since 5.3
@@ -122,9 +121,10 @@ public class ResourceHandlerRegistration {
 	 * <p>If this method is not invoked, by default only a simple
 	 * {@code PathResourceResolver} is used in order to match URL paths to
 	 * resources under the configured locations.
+	 *
 	 * @param cacheResources whether to cache the result of resource resolution;
-	 * setting this to "true" is recommended for production (and "false" for
-	 * development, especially when applying a version strategy)
+	 *                       setting this to "true" is recommended for production (and "false" for
+	 *                       development, especially when applying a version strategy)
 	 * @return the same {@link ResourceHandlerRegistration} instance, for
 	 * chained method invocation
 	 */
@@ -139,14 +139,15 @@ public class ResourceHandlerRegistration {
 	 * <p>If this method is not invoked, by default only a simple
 	 * {@code PathResourceResolver} is used in order to match URL paths to
 	 * resources under the configured locations.
+	 *
 	 * @param cacheResources whether to cache the result of resource resolution;
-	 * setting this to "true" is recommended for production (and "false" for
-	 * development, especially when applying a version strategy
-	 * @param cache the cache to use for storing resolved and transformed resources;
-	 * by default a {@link org.springframework.cache.concurrent.ConcurrentMapCache}
-	 * is used. Since Resources aren't serializable and can be dependent on the
-	 * application host, one should not use a distributed cache but rather an
-	 * in-memory cache.
+	 *                       setting this to "true" is recommended for production (and "false" for
+	 *                       development, especially when applying a version strategy
+	 * @param cache          the cache to use for storing resolved and transformed resources;
+	 *                       by default a {@link org.springframework.cache.concurrent.ConcurrentMapCache}
+	 *                       is used. Since Resources aren't serializable and can be dependent on the
+	 *                       application host, one should not use a distributed cache but rather an
+	 *                       in-memory cache.
 	 * @return the same {@link ResourceHandlerRegistration} instance, for chained method invocation
 	 */
 	public ResourceChainRegistration resourceChain(boolean cacheResources, Cache cache) {
@@ -159,6 +160,7 @@ public class ResourceHandlerRegistration {
 	 * {@link Resource}s and the media types to use for the response.
 	 * <p>Use of this method is typically not necessary since mappings can be
 	 * also determined via {@link MediaTypeFactory#getMediaType(Resource)}.
+	 *
 	 * @param mediaTypes media type mappings
 	 * @since 5.3.2
 	 */

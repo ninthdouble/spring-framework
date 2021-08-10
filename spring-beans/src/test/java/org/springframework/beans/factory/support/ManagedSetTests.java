@@ -16,20 +16,18 @@
 
 package org.springframework.beans.factory.support;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rick Evans
  * @author Juergen Hoeller
  * @author Sam Brannen
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ManagedSetTests {
 
 	@Test

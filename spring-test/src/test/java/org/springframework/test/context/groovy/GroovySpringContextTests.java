@@ -16,11 +16,8 @@
 
 package org.springframework.test.context.groovy;
 
-import javax.annotation.Resource;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,8 @@ import org.springframework.beans.testfixture.beans.Pet;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.annotation.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,19 +42,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration("context.groovy")
 class GroovySpringContextTests implements BeanNameAware, InitializingBean {
 
-	private Employee employee;
-
-	@Autowired
-	private Pet pet;
-
 	@Autowired(required = false)
 	protected Long nonrequiredLong;
-
 	@Resource
 	protected String foo;
-
 	protected String bar;
-
+	private Employee employee;
+	@Autowired
+	private Pet pet;
 	@Autowired
 	private ApplicationContext applicationContext;
 

@@ -16,19 +16,6 @@
 
 package org.springframework.http.codec.multipart;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.core.io.buffer.DataBufferLimitException;
@@ -39,6 +26,18 @@ import org.springframework.http.codec.HttpMessageReader;
 import org.springframework.http.codec.LoggingCodecSupport;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Default {@code HttpMessageReader} for parsing {@code "multipart/form-data"}
@@ -81,6 +80,7 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 	/**
 	 * Configure the maximum amount of memory that is allowed per headers section of each part.
 	 * When the limit
+	 *
 	 * @param byteCount the maximum amount of memory for headers
 	 */
 	public void setMaxHeadersSize(int byteCount) {
@@ -104,8 +104,9 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 	 * <p>By default this is set to 256K.
 	 * <p>Note that this property is ignored when
 	 * {@linkplain #setStreaming(boolean) streaming} is enabled.
+	 *
 	 * @param maxInMemorySize the in-memory limit in bytes; if set to -1 the entire
-	 * contents will be stored in memory
+	 *                        contents will be stored in memory
 	 */
 	public void setMaxInMemorySize(int maxInMemorySize) {
 		this.maxInMemorySize = maxInMemorySize;
@@ -138,12 +139,17 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 	 * <p>Note that this property is ignored when
 	 * {@linkplain #setStreaming(boolean) streaming} is enabled, or when
 	 * {@link #setMaxInMemorySize(int) maxInMemorySize} is set to -1.
+	 *
 	 * @throws IOException if an I/O error occurs, or the parent directory
-	 * does not exist
+	 *                     does not exist
 	 */
 	public void setFileStorageDirectory(Path fileStorageDirectory) throws IOException {
 		Assert.notNull(fileStorageDirectory, "FileStorageDirectory must not be null");
 		this.fileStorage = FileStorage.fromPath(fileStorageDirectory);
+	}
+
+	private Scheduler getBlockingOperationScheduler() {
+		return this.blockingOperationScheduler;
 	}
 
 	/**
@@ -154,15 +160,12 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 	 * <p>Note that this property is ignored when
 	 * {@linkplain #setStreaming(boolean) streaming} is enabled, or when
 	 * {@link #setMaxInMemorySize(int) maxInMemorySize} is set to -1.
+	 *
 	 * @see Schedulers#newBoundedElastic
 	 */
 	public void setBlockingOperationScheduler(Scheduler blockingOperationScheduler) {
 		Assert.notNull(blockingOperationScheduler, "FileCreationScheduler must not be null");
 		this.blockingOperationScheduler = blockingOperationScheduler;
-	}
-
-	private Scheduler getBlockingOperationScheduler() {
-		return this.blockingOperationScheduler;
 	}
 
 	/**
@@ -189,9 +192,10 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 	/**
 	 * Set the character set used to decode headers.
 	 * Defaults to UTF-8 as per RFC 7578.
+	 *
 	 * @param headersCharset the charset to use for decoding headers
-	 * @since 5.3.6
 	 * @see <a href="https://tools.ietf.org/html/rfc7578#section-5.1">RFC-7578 Section 5.2</a>
+	 * @since 5.3.6
 	 */
 	public void setHeadersCharset(Charset headersCharset) {
 		Assert.notNull(headersCharset, "HeadersCharset must not be null");
@@ -211,7 +215,7 @@ public class DefaultPartHttpMessageReader extends LoggingCodecSupport implements
 
 	@Override
 	public Mono<Part> readMono(ResolvableType elementType, ReactiveHttpInputMessage message,
-			Map<String, Object> hints) {
+							   Map<String, Object> hints) {
 		return Mono.error(new UnsupportedOperationException("Cannot read multipart request body into single Part"));
 	}
 

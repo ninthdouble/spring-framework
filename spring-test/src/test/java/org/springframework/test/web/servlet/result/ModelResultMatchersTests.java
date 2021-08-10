@@ -16,16 +16,15 @@
 
 package org.springframework.test.web.servlet.result;
 
-import java.util.Date;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.StubMvcResult;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.is;
@@ -120,8 +119,8 @@ class ModelResultMatchersTests {
 	@Test
 	void attributeErrorCount_withWrongErrorCount() throws Exception {
 		assertThatExceptionOfType(AssertionError.class)
-			.isThrownBy(() -> this.matchers.attributeErrorCount("date", 2).match(this.mvcResultWithError))
-			.withMessage("Binding/validation error count for attribute 'date', expected:<2> but was:<1>");
+				.isThrownBy(() -> this.matchers.attributeErrorCount("date", 2).match(this.mvcResultWithError))
+				.withMessage("Binding/validation error count for attribute 'date', expected:<2> but was:<1>");
 	}
 
 	@Test

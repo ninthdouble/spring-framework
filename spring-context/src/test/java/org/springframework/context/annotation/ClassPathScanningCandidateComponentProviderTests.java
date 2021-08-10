@@ -514,10 +514,20 @@ public class ClassPathScanningCandidateComponentProviderTests {
 
 	private void assertBeanDefinitionType(Set<BeanDefinition> candidates) {
 		candidates.forEach(c ->
-			assertThat(c).isInstanceOf(ScannedGenericBeanDefinition.class)
+				assertThat(c).isInstanceOf(ScannedGenericBeanDefinition.class)
 		);
 	}
 
+
+	@Profile(TEST_DEFAULT_PROFILE_NAME)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface DefaultProfile {
+	}
+
+	@Profile("dev")
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface DevProfile {
+	}
 
 	@Profile(TEST_DEFAULT_PROFILE_NAME)
 	@Component(DefaultProfileAnnotatedComponent.BEAN_NAME)
@@ -531,20 +541,11 @@ public class ClassPathScanningCandidateComponentProviderTests {
 		static final String BEAN_NAME = "defaultAndDevProfileAnnotatedComponent";
 	}
 
-	@DefaultProfile @DevProfile
+	@DefaultProfile
+	@DevProfile
 	@Component(MetaProfileAnnotatedComponent.BEAN_NAME)
 	private static class MetaProfileAnnotatedComponent {
 		static final String BEAN_NAME = "metaProfileAnnotatedComponent";
-	}
-
-	@Profile(TEST_DEFAULT_PROFILE_NAME)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DefaultProfile {
-	}
-
-	@Profile("dev")
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DevProfile {
 	}
 
 }

@@ -16,16 +16,6 @@
 
 package org.springframework.r2dbc.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.lang.Nullable;
 import org.springframework.r2dbc.core.binding.BindMarker;
@@ -33,6 +23,8 @@ import org.springframework.r2dbc.core.binding.BindMarkers;
 import org.springframework.r2dbc.core.binding.BindMarkersFactory;
 import org.springframework.r2dbc.core.binding.BindTarget;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * Helper methods for named parameter parsing.
@@ -55,12 +47,12 @@ abstract class NamedParameterUtils {
 	/**
 	 * Set of characters that qualify as comment or quotes starting characters.
 	 */
-	private static final String[] START_SKIP = new String[] {"'", "\"", "--", "/*"};
+	private static final String[] START_SKIP = new String[]{"'", "\"", "--", "/*"};
 
 	/**
 	 * Set of characters that at are the corresponding comment or quotes ending characters.
 	 */
-	private static final String[] STOP_SKIP = new String[] {"'", "\"", "\n", "*/"};
+	private static final String[] STOP_SKIP = new String[]{"'", "\"", "\n", "*/"};
 
 	/**
 	 * Set of characters that qualify as parameter separators,
@@ -88,6 +80,7 @@ abstract class NamedParameterUtils {
 	/**
 	 * Parse the SQL statement and locate any placeholders or named parameters.
 	 * Named parameters are substituted for a R2DBC placeholder.
+	 *
 	 * @param sql the SQL statement
 	 * @return the parsed statement, represented as {@link ParsedSql} instance
 	 */
@@ -111,8 +104,7 @@ abstract class NamedParameterUtils {
 				skipToPosition = skipCommentsAndQuotes(statement, i);
 				if (i == skipToPosition) {
 					break;
-				}
-				else {
+				} else {
 					i = skipToPosition;
 				}
 			}
@@ -135,12 +127,12 @@ abstract class NamedParameterUtils {
 						if (j >= statement.length) {
 							throw new InvalidDataAccessApiUsageException(
 									"Non-terminated named parameter declaration at position " + i +
-									" in statement: " + sql);
+											" in statement: " + sql);
 						}
 						if (statement[j] == ':' || statement[j] == '{') {
 							throw new InvalidDataAccessApiUsageException(
 									"Parameter name contains invalid character '" + statement[j] +
-									"' at position " + i + " in statement: " + sql);
+											"' at position " + i + " in statement: " + sql);
 						}
 					}
 					if (j - i > 2) {
@@ -151,8 +143,7 @@ abstract class NamedParameterUtils {
 								parameterList, totalParameterCount, escapes, i, j + 1, parameter);
 					}
 					j++;
-				}
-				else {
+				} else {
 					while (j < statement.length && !isParameterSeparator(statement[j])) {
 						j++;
 					}
@@ -165,8 +156,7 @@ abstract class NamedParameterUtils {
 					}
 				}
 				i = j - 1;
-			}
-			else {
+			} else {
 				if (c == '\\') {
 					int j = i + 1;
 					if (j < statement.length && statement[j] == ':') {
@@ -191,7 +181,7 @@ abstract class NamedParameterUtils {
 	}
 
 	private static int addNamedParameter(List<ParameterHolder> parameterList,
-			int totalParameterCount, int escapes, int i, int j, String parameter) {
+										 int totalParameterCount, int escapes, int i, int j, String parameter) {
 
 		parameterList.add(new ParameterHolder(parameter, i - escapes, j - escapes));
 		totalParameterCount++;
@@ -208,8 +198,9 @@ abstract class NamedParameterUtils {
 
 	/**
 	 * Skip over comments and quoted names present in an SQL statement.
+	 *
 	 * @param statement character array containing SQL statement
-	 * @param position current position of statement
+	 * @param position  current position of statement
 	 * @return next position to process after any comments or quotes are skipped
 	 */
 	private static int skipCommentsAndQuotes(char[] statement, int position) {
@@ -264,15 +255,16 @@ abstract class NamedParameterUtils {
 	 * be used for a select list. Select lists should be limited to 100 or fewer elements.
 	 * A larger number of elements is not guaranteed to be supported by the database and
 	 * is strictly vendor-dependent.
-	 * @param parsedSql the parsed representation of the SQL statement
+	 *
+	 * @param parsedSql          the parsed representation of the SQL statement
 	 * @param bindMarkersFactory the bind marker factory.
-	 * @param paramSource the source for named parameters
+	 * @param paramSource        the source for named parameters
 	 * @return the expanded query that accepts bind parameters and allows for execution
 	 * without further translation
 	 * @see #parseSqlStatement
 	 */
 	public static PreparedOperation<String> substituteNamedParameters(ParsedSql parsedSql,
-			BindMarkersFactory bindMarkersFactory, BindParameterSource paramSource) {
+																	  BindMarkersFactory bindMarkersFactory, BindParameterSource paramSource) {
 
 		NamedParameters markerHolder = new NamedParameters(bindMarkersFactory);
 		String originalSql = parsedSql.getOriginalSql();
@@ -314,18 +306,15 @@ abstract class NamedParameterUtils {
 								counter++;
 							}
 							actualSql.append(')');
-						}
-						else {
+						} else {
 							actualSql.append(marker.getPlaceholder(counter));
 							counter++;
 						}
 					}
-				}
-				else {
+				} else {
 					actualSql.append(marker.getPlaceholder());
 				}
-			}
-			else {
+			} else {
 				actualSql.append(marker.getPlaceholder());
 			}
 			lastIndex = endIndex;
@@ -352,14 +341,15 @@ abstract class NamedParameterUtils {
 	 * Parse the SQL statement and locate any placeholders or named parameters.
 	 * Named parameters are substituted for a native placeholder and any
 	 * select list is expanded to the required number of placeholders.
-	 * @param sql the SQL statement
+	 *
+	 * @param sql                the SQL statement
 	 * @param bindMarkersFactory the bind marker factory
-	 * @param paramSource the source for named parameters
+	 * @param paramSource        the source for named parameters
 	 * @return the expanded query that accepts bind parameters and allows for execution
 	 * without further translation
 	 */
 	public static PreparedOperation<String> substituteNamedParameters(String sql,
-			BindMarkersFactory bindMarkersFactory, BindParameterSource paramSource) {
+																	  BindMarkersFactory bindMarkersFactory, BindParameterSource paramSource) {
 
 		ParsedSql parsedSql = parseSqlStatement(sql);
 		return substituteNamedParameters(parsedSql, bindMarkersFactory, paramSource);
@@ -431,6 +421,7 @@ abstract class NamedParameterUtils {
 		/**
 		 * Get the {@link NamedParameter} identified by {@code namedParameter}.
 		 * Parameter objects get created if they do not yet exist.
+		 *
 		 * @param namedParameter the parameter name
 		 * @return the named parameter
 		 */
@@ -469,6 +460,7 @@ abstract class NamedParameterUtils {
 			/**
 			 * Create a placeholder to translate a single value into a bindable parameter.
 			 * <p>Can be called multiple times to create placeholders for array/collections.
+			 *
 			 * @return the placeholder to be used in the SQL statement
 			 */
 			String addPlaceholder() {
@@ -527,13 +519,11 @@ abstract class NamedParameterUtils {
 						for (Object object : objects) {
 							bind(target, markers, object);
 						}
-					}
-					else {
+					} else {
 						bind(target, markers, valueToBind);
 					}
 				}
-			}
-			else {
+			} else {
 				for (BindMarker bindMarker : bindMarkers) {
 					bindMarker.bind(target, value);
 				}
@@ -582,8 +572,7 @@ abstract class NamedParameterUtils {
 				Object value = this.parameterSource.getValue(namedParameter);
 				if (value == null) {
 					bindNull(target, namedParameter, this.parameterSource.getType(namedParameter));
-				}
-				else {
+				} else {
 					bind(target, namedParameter, value);
 				}
 			}

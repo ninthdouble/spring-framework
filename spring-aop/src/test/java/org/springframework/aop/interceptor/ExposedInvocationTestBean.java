@@ -17,7 +17,6 @@
 package org.springframework.aop.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 
 abstract class ExposedInvocationTestBean extends TestBean {

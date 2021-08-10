@@ -16,12 +16,12 @@
 
 package org.springframework.web.servlet.view;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.springframework.web.servlet.handler.PathPatternsParameterizedTest;
 import org.springframework.web.servlet.handler.PathPatternsTestUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

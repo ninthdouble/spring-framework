@@ -16,17 +16,16 @@
 
 package org.springframework.r2dbc.core.binding;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryMetadata;
-
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedCaseInsensitiveMap;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Resolves a {@link BindMarkersFactory} from a {@link ConnectionFactory} using
@@ -34,9 +33,9 @@ import org.springframework.util.LinkedCaseInsensitiveMap;
  * {@link SpringFactoriesLoader spring.factories} to determine available extensions.
  *
  * @author Mark Paluch
- * @since 5.3
  * @see BindMarkersFactory
  * @see SpringFactoriesLoader
+ * @since 5.3
  */
 public final class BindMarkersFactoryResolver {
 
@@ -44,9 +43,13 @@ public final class BindMarkersFactoryResolver {
 			BindMarkerFactoryProvider.class, BindMarkersFactoryResolver.class.getClassLoader());
 
 
+	private BindMarkersFactoryResolver() {
+	}
+
 	/**
 	 * Retrieve a {@link BindMarkersFactory} by inspecting {@link ConnectionFactory}
 	 * and its metadata.
+	 *
 	 * @param connectionFactory the connection factory to inspect
 	 * @return the resolved {@link BindMarkersFactory}
 	 * @throws NoBindMarkersFactoryException if no {@link BindMarkersFactory} can be resolved
@@ -64,14 +67,11 @@ public final class BindMarkersFactoryResolver {
 	}
 
 
-	private BindMarkersFactoryResolver() {
-	}
-
-
 	/**
 	 * SPI to extend Spring's default R2DBC BindMarkersFactory discovery mechanism.
 	 * Implementations of this interface are discovered through Spring's
 	 * {@link SpringFactoriesLoader} mechanism.
+	 *
 	 * @see SpringFactoriesLoader
 	 */
 	@FunctionalInterface
@@ -79,6 +79,7 @@ public final class BindMarkersFactoryResolver {
 
 		/**
 		 * Return a {@link BindMarkersFactory} for a {@link ConnectionFactory}.
+		 *
 		 * @param connectionFactory the connection factory to be used with the {@link BindMarkersFactory}
 		 * @return the {@link BindMarkersFactory} if the {@link BindMarkerFactoryProvider}
 		 * can provide a bind marker factory object, otherwise {@code null}
@@ -97,6 +98,7 @@ public final class BindMarkersFactoryResolver {
 
 		/**
 		 * Constructor for NoBindMarkersFactoryException.
+		 *
 		 * @param msg the detail message
 		 */
 		public NoBindMarkersFactoryException(String msg) {
@@ -108,6 +110,7 @@ public final class BindMarkersFactoryResolver {
 	/**
 	 * Built-in bind maker factories. Used typically as last {@link BindMarkerFactoryProvider}
 	 * when other providers register with a higher precedence.
+	 *
 	 * @see org.springframework.core.Ordered
 	 * @see org.springframework.core.annotation.AnnotationAwareOrderComparator
 	 */
@@ -127,6 +130,20 @@ public final class BindMarkersFactoryResolver {
 			BUILTIN.put("PostgreSQL", BindMarkersFactory.indexed("$", 1));
 		}
 
+		private static String filterBindMarker(CharSequence input) {
+			StringBuilder builder = new StringBuilder(input.length());
+			for (int i = 0; i < input.length(); i++) {
+				char ch = input.charAt(i);
+				// ascii letter or digit
+				if (Character.isLetterOrDigit(ch) && ch < 127) {
+					builder.append(ch);
+				}
+			}
+			if (builder.length() == 0) {
+				return "";
+			}
+			return "_" + builder.toString();
+		}
 
 		@Override
 		public BindMarkersFactory getBindMarkers(ConnectionFactory connectionFactory) {
@@ -141,21 +158,6 @@ public final class BindMarkersFactoryResolver {
 				}
 			}
 			return null;
-		}
-
-		private static String filterBindMarker(CharSequence input) {
-			StringBuilder builder = new StringBuilder(input.length());
-			for (int i = 0; i < input.length(); i++) {
-				char ch = input.charAt(i);
-				// ascii letter or digit
-				if (Character.isLetterOrDigit(ch) && ch < 127) {
-					builder.append(ch);
-				}
-			}
-			if (builder.length() == 0) {
-				return "";
-			}
-			return "_" + builder.toString();
 		}
 	}
 

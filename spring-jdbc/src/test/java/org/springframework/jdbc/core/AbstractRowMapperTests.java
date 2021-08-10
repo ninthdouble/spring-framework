@@ -16,29 +16,18 @@
 
 package org.springframework.jdbc.core;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Date;
-
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.jdbc.core.test.ConcretePerson;
-import org.springframework.jdbc.core.test.ConstructorPerson;
-import org.springframework.jdbc.core.test.DatePerson;
-import org.springframework.jdbc.core.test.Person;
-import org.springframework.jdbc.core.test.SpacePerson;
+import org.springframework.jdbc.core.test.*;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.jdbc.support.SQLStateSQLExceptionTranslator;
 
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.Date;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -98,7 +87,9 @@ public abstract class AbstractRowMapperTests {
 	}
 
 
-	protected enum MockType {ONE, TWO, THREE};
+	protected enum MockType {ONE, TWO, THREE}
+
+	;
 
 
 	protected static class Mock {

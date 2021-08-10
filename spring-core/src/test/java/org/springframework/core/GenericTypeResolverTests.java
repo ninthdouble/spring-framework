@@ -16,6 +16,8 @@
 
 package org.springframework.core;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -25,13 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.core.GenericTypeResolver.getTypeVariableMap;
-import static org.springframework.core.GenericTypeResolver.resolveReturnTypeArgument;
-import static org.springframework.core.GenericTypeResolver.resolveType;
-import static org.springframework.core.GenericTypeResolver.resolveTypeArgument;
+import static org.springframework.core.GenericTypeResolver.*;
 import static org.springframework.util.ReflectionUtils.findMethod;
 
 /**
@@ -127,8 +124,7 @@ class GenericTypeResolverTests {
 		for (Map.Entry<TypeVariable, Type> entry : map.entrySet()) {
 			if (entry.getKey().toString().equals("T")) {
 				t = entry.getValue();
-			}
-			else {
+			} else {
 				x = entry.getValue();
 			}
 		}
@@ -136,13 +132,15 @@ class GenericTypeResolverTests {
 		assertThat(x).isEqualTo(Long.class);
 	}
 
-	@Test  // SPR-11030
+	@Test
+		// SPR-11030
 	void getGenericsCannotBeResolved() throws Exception {
 		Class<?>[] resolved = GenericTypeResolver.resolveTypeArguments(List.class, Iterable.class);
 		assertThat((Object) resolved).isNull();
 	}
 
-	@Test  // SPR-11052
+	@Test
+		// SPR-11052
 	void getRawMapTypeCannotBeResolved() throws Exception {
 		Class<?>[] resolved = GenericTypeResolver.resolveTypeArguments(Map.class, Map.class);
 		assertThat((Object) resolved).isNull();
@@ -157,14 +155,16 @@ class GenericTypeResolverTests {
 		assertThat(resolved).isEqualTo(Object[].class);
 	}
 
-	@Test  // SPR-11044
+	@Test
+		// SPR-11044
 	void getGenericsOnArrayFromReturnCannotBeResolved() throws Exception {
 		Class<?> resolved = GenericTypeResolver.resolveReturnType(
 				WithArrayBase.class.getDeclaredMethod("array", Object[].class), WithArray.class);
 		assertThat(resolved).isEqualTo(Object[].class);
 	}
 
-	@Test  // SPR-11763
+	@Test
+		// SPR-11763
 	void resolveIncompleteTypeVariables() {
 		Class<?>[] resolved = GenericTypeResolver.resolveTypeArguments(IdFixingRepository.class, Repository.class);
 		assertThat(resolved).isNotNull();
@@ -177,46 +177,13 @@ class GenericTypeResolverTests {
 	public interface MyInterfaceType<T> {
 	}
 
-	public class MySimpleInterfaceType implements MyInterfaceType<String> {
+	interface Repository<T, ID extends Serializable> {
 	}
 
-	public class MyCollectionInterfaceType implements MyInterfaceType<Collection<String>> {
-	}
-
-	public abstract class MySuperclassType<T> {
-	}
-
-	public class MySimpleSuperclassType extends MySuperclassType<String> {
-	}
-
-	public class MyCollectionSuperclassType extends MySuperclassType<Collection<String>> {
+	interface IdFixingRepository<T> extends Repository<T, Long> {
 	}
 
 	public static class MyTypeWithMethods<T> {
-
-		public MyInterfaceType<Integer> integer() {
-			return null;
-		}
-
-		public MySimpleInterfaceType string() {
-			return null;
-		}
-
-		public Object object() {
-			return null;
-		}
-
-		public MyInterfaceType raw() {
-			return null;
-		}
-
-		public String notParameterized() {
-			return null;
-		}
-
-		public String notParameterizedWithArguments(Integer x, Boolean b) {
-			return null;
-		}
 
 		/**
 		 * Simulates a factory method that wraps the supplied object in a proxy of the
@@ -273,6 +240,30 @@ class GenericTypeResolverTests {
 			return null;
 		}
 
+		public MyInterfaceType<Integer> integer() {
+			return null;
+		}
+
+		public MySimpleInterfaceType string() {
+			return null;
+		}
+
+		public Object object() {
+			return null;
+		}
+
+		public MyInterfaceType raw() {
+			return null;
+		}
+
+		public String notParameterized() {
+			return null;
+		}
+
+		public String notParameterizedWithArguments(Integer x, Boolean b) {
+			return null;
+		}
+
 		public void readIntegerInputMessage(MyInterfaceType<Integer> message) {
 		}
 
@@ -287,15 +278,6 @@ class GenericTypeResolverTests {
 	}
 
 	static class GenericClass<T> {
-	}
-
-	class A{}
-
-	class B<T>{}
-
-	class TestIfc<T>{}
-
-	class TestImpl<I extends A, T extends B<I>> extends TestIfc<T>{
 	}
 
 	static class TopLevelClass<T> {
@@ -316,10 +298,31 @@ class GenericTypeResolverTests {
 	static abstract class WithArray<T> extends WithArrayBase<T> {
 	}
 
-	interface Repository<T, ID extends Serializable> {
+	public class MySimpleInterfaceType implements MyInterfaceType<String> {
 	}
 
-	interface IdFixingRepository<T> extends Repository<T, Long> {
+	public class MyCollectionInterfaceType implements MyInterfaceType<Collection<String>> {
+	}
+
+	public abstract class MySuperclassType<T> {
+	}
+
+	public class MySimpleSuperclassType extends MySuperclassType<String> {
+	}
+
+	public class MyCollectionSuperclassType extends MySuperclassType<Collection<String>> {
+	}
+
+	class A {
+	}
+
+	class B<T> {
+	}
+
+	class TestIfc<T> {
+	}
+
+	class TestImpl<I extends A, T extends B<I>> extends TestIfc<T> {
 	}
 
 }

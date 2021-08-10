@@ -16,15 +16,14 @@
 
 package org.springframework.web.reactive.function.client;
 
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.reactivestreams.Publisher;
+import org.springframework.core.codec.CodecException;
+import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import org.springframework.core.codec.CodecException;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Internal methods shared between {@link DefaultWebClient} and
@@ -35,14 +34,12 @@ import org.springframework.http.ResponseEntity;
  */
 abstract class WebClientUtils {
 
-	private static final String VALUE_NONE = "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
-
 	/**
 	 * Predicate that returns true if an exception should be wrapped.
 	 */
 	public final static Predicate<? super Throwable> WRAP_EXCEPTION_PREDICATE =
 			t -> !(t instanceof WebClientException) && !(t instanceof CodecException);
-
+	private static final String VALUE_NONE = "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
 
 	/**
 	 * Map the given response to a single value {@code ResponseEntity<T>}.

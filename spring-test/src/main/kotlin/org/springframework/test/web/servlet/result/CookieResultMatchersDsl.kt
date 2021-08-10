@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.ResultActions
  * @author Sebastien Deleuze
  * @since 5.3
  */
-class CookieResultMatchersDsl internal constructor (private val actions: ResultActions) {
+class CookieResultMatchersDsl internal constructor(private val actions: ResultActions) {
 
 	private val matchers = MockMvcResultMatchers.cookie()
 

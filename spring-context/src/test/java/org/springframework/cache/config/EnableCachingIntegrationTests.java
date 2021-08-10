@@ -123,6 +123,13 @@ public class EnableCachingIntegrationTests {
 	}
 
 
+	interface FooService {
+
+		Object getSimple(Object key);
+
+		Object getWithCondition(Object key);
+	}
+
 	@Configuration
 	static class SharedConfig extends CachingConfigurerSupport {
 
@@ -132,7 +139,6 @@ public class EnableCachingIntegrationTests {
 			return CacheTestUtils.createSimpleCacheManager("testCache");
 		}
 	}
-
 
 	@Configuration
 	@Import(SharedConfig.class)
@@ -145,7 +151,6 @@ public class EnableCachingIntegrationTests {
 		}
 	}
 
-
 	@Configuration
 	@Import(SharedConfig.class)
 	@EnableCaching(proxyTargetClass = true)
@@ -156,15 +161,6 @@ public class EnableCachingIntegrationTests {
 			return new FooServiceImpl();
 		}
 	}
-
-
-	interface FooService {
-
-		Object getSimple(Object key);
-
-		Object getWithCondition(Object key);
-	}
-
 
 	@CacheConfig(cacheNames = "testCache")
 	static class FooServiceImpl implements FooService {
@@ -201,9 +197,8 @@ public class EnableCachingIntegrationTests {
 
 		static class Bar {
 
-			public int count;
-
 			private final boolean enabled;
+			public int count;
 
 			public Bar(boolean enabled) {
 				this.enabled = enabled;

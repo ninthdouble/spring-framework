@@ -16,16 +16,9 @@
 
 package org.springframework.web.reactive.result.view.freemarker;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Locale;
-
 import freemarker.template.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -39,10 +32,14 @@ import org.springframework.web.server.i18n.AcceptHeaderLocaleContextResolver;
 import org.springframework.web.server.session.DefaultWebSessionManager;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.test.StepVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Locale;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Rossen Stoyanchev
@@ -61,6 +58,12 @@ public class FreeMarkerViewTests {
 
 	private Configuration freeMarkerConfig;
 
+	private static String asString(DataBuffer dataBuffer) {
+		ByteBuffer byteBuffer = dataBuffer.asByteBuffer();
+		final byte[] bytes = new byte[byteBuffer.remaining()];
+		byteBuffer.get(bytes);
+		return new String(bytes, StandardCharsets.UTF_8);
+	}
 
 	@BeforeEach
 	public void setup() throws Exception {
@@ -73,7 +76,6 @@ public class FreeMarkerViewTests {
 		this.freeMarkerConfig = configurer.createConfiguration();
 	}
 
-
 	@Test
 	public void noFreeMarkerConfig() throws Exception {
 		FreeMarkerView view = new FreeMarkerView();
@@ -81,7 +83,7 @@ public class FreeMarkerViewTests {
 		view.setUrl("anythingButNull");
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(
 				view::afterPropertiesSet)
-			.withMessageContaining("Must define a single FreeMarkerConfig bean");
+				.withMessageContaining("Must define a single FreeMarkerConfig bean");
 	}
 
 	@Test
@@ -89,7 +91,7 @@ public class FreeMarkerViewTests {
 		FreeMarkerView freeMarkerView = new FreeMarkerView();
 		assertThatIllegalArgumentException().isThrownBy(
 				freeMarkerView::afterPropertiesSet)
-			.withMessageContaining("Property 'url' is required");
+				.withMessageContaining("Property 'url' is required");
 	}
 
 	@Test
@@ -138,15 +140,6 @@ public class FreeMarkerViewTests {
 		response.cancelWrite();
 		response.checkForLeaks();
 	}
-
-
-	private static String asString(DataBuffer dataBuffer) {
-		ByteBuffer byteBuffer = dataBuffer.asByteBuffer();
-		final byte[] bytes = new byte[byteBuffer.remaining()];
-		byteBuffer.get(bytes);
-		return new String(bytes, StandardCharsets.UTF_8);
-	}
-
 
 	@SuppressWarnings("unused")
 	private String handle() {

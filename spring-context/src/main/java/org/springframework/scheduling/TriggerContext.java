@@ -32,9 +32,10 @@ public interface TriggerContext {
 
 	/**
 	 * Return the clock to use for trigger calculation.
-	 * @since 5.3
+	 *
 	 * @see TaskScheduler#getClock()
 	 * @see Clock#systemDefaultZone()
+	 * @since 5.3
 	 */
 	default Clock getClock() {
 		return Clock.systemDefaultZone();

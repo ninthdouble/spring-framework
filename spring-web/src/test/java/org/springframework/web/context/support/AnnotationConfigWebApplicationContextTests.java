@@ -17,7 +17,6 @@
 package org.springframework.web.context.support;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.AnnotationBeanNameGenerator;
@@ -72,7 +71,7 @@ public class AnnotationConfigWebApplicationContextTests {
 		ctx.setBeanNameGenerator(new AnnotationBeanNameGenerator() {
 			@Override
 			public String generateBeanName(BeanDefinition definition,
-					BeanDefinitionRegistry registry) {
+										   BeanDefinitionRegistry registry) {
 				return "custom-" + super.generateBeanName(definition, registry);
 			}
 		});

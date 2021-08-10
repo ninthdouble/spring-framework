@@ -16,22 +16,8 @@
 
 package org.springframework.web.reactive.result.view;
 
-import java.nio.ByteBuffer;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
-
 import io.reactivex.rxjava3.core.Completable;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
@@ -53,6 +39,13 @@ import org.springframework.web.server.NotAcceptableStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpResponse;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,8 +108,7 @@ public class ViewResolutionResultHandlerTests {
 		HandlerResult handlerResult = new HandlerResult(new Object(), null, returnType, this.bindingContext);
 		if (supports) {
 			assertThat(resultHandler.supports(handlerResult)).as("return type [" + returnType + "] should be supported").isTrue();
-		}
-		else {
+		} else {
 			assertThat(resultHandler.supports(handlerResult)).as("return type [" + returnType + "] should not be supported").isFalse();
 		}
 	}
@@ -315,7 +307,7 @@ public class ViewResolutionResultHandlerTests {
 	}
 
 	private ServerWebExchange testHandle(String path, MethodParameter returnType, Object returnValue,
-			String responseBody, ViewResolver... resolvers) {
+										 String responseBody, ViewResolver... resolvers) {
 
 		Model model = this.bindingContext.getModel();
 		model.asMap().clear();
@@ -345,13 +337,13 @@ public class ViewResolutionResultHandlerTests {
 			Arrays.stream(viewNames).forEach(name -> this.views.put(name, new TestView(name)));
 		}
 
-		void setOrder(int order) {
-			this.order = order;
-		}
-
 		@Override
 		public int getOrder() {
 			return this.order;
+		}
+
+		void setOrder(int order) {
+			this.order = order;
 		}
 
 		@Override
@@ -427,31 +419,75 @@ public class ViewResolutionResultHandlerTests {
 	@SuppressWarnings("unused")
 	private static class Handler {
 
-		String string() { return null; }
-		Mono<String> monoString() { return null; }
-		@ModelAttribute("myString") String stringWithAnnotation() { return null; }
+		String string() {
+			return null;
+		}
 
-		Rendering rendering() { return null; }
-		Mono<Rendering> monoRendering() { return null; }
+		Mono<String> monoString() {
+			return null;
+		}
 
-		View view() { return null; }
-		Mono<View> monoView() { return null; }
+		@ModelAttribute("myString")
+		String stringWithAnnotation() {
+			return null;
+		}
 
-		void voidMethod() { }
-		Mono<Void> monoVoid() { return null; }
-		Completable completable() { return null; }
+		Rendering rendering() {
+			return null;
+		}
 
-		Model model() { return null; }
+		Mono<Rendering> monoRendering() {
+			return null;
+		}
 
-		Map<?,?> map() { return null; }
-		@ModelAttribute("myMap") Map<?,?> mapWithAnnotation() { return null; }
+		View view() {
+			return null;
+		}
 
-		TestBean testBean() { return null; }
+		Mono<View> monoView() {
+			return null;
+		}
 
-		Long longValue() { return null; }
-		@ModelAttribute("myLong") Long longModelAttribute() { return null; }
+		void voidMethod() {
+		}
 
-		Mono<?> monoWildcard() { return null; }
+		Mono<Void> monoVoid() {
+			return null;
+		}
+
+		Completable completable() {
+			return null;
+		}
+
+		Model model() {
+			return null;
+		}
+
+		Map<?, ?> map() {
+			return null;
+		}
+
+		@ModelAttribute("myMap")
+		Map<?, ?> mapWithAnnotation() {
+			return null;
+		}
+
+		TestBean testBean() {
+			return null;
+		}
+
+		Long longValue() {
+			return null;
+		}
+
+		@ModelAttribute("myLong")
+		Long longModelAttribute() {
+			return null;
+		}
+
+		Mono<?> monoWildcard() {
+			return null;
+		}
 	}
 
 }

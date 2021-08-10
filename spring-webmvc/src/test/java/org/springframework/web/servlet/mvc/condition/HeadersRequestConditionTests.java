@@ -16,12 +16,11 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import java.util.Collection;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.servlet.mvc.condition.HeadersRequestCondition.HeaderExpression;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -179,7 +178,6 @@ public class HeadersRequestConditionTests {
 		result = condition.getMatchingCondition(request);
 		assertThat(result).isNull();
 	}
-
 
 
 }

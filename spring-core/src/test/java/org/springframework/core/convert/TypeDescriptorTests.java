@@ -16,31 +16,18 @@
 
 package org.springframework.core.convert;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.core.MethodParameter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -56,6 +43,32 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 @SuppressWarnings("rawtypes")
 class TypeDescriptorTests {
+
+	public Integer fieldScalar;
+	public List<String> listOfString;
+	public List<List<String>> listOfListOfString = new ArrayList<>();
+	public List<List> listOfListOfUnknown = new ArrayList<>();
+	public int[] intArray;
+	public List<String>[] arrayOfListOfString;
+	public List<Integer> listField = new ArrayList<>();
+	public Map<String, Integer> mapField = new HashMap<>();
+	public Map<String, List<Integer>> nestedMapField = new HashMap<>();
+	public Map<List<Integer>, List<Long>> fieldMap;
+	public List<Map<Integer, String>> test4;
+	@FieldAnnotation
+	public List<String> fieldAnnotated;
+	@FieldAnnotation
+	public List<List<Integer>> listPreserveContext;
+	@FieldAnnotation
+	public Map<List<Integer>, List<Integer>> mapPreserveContext;
+	public List notGenericList;
+	public List<Number> isAssignableElementTypes;
+	public Map notGenericMap;
+	public Map<CharSequence, Number> isAssignableMapKeyValueTypes;
+	public MultiValueMap<String, Integer> multiValueMap = new LinkedMultiValueMap<>();
+	public PassDownGeneric<Integer> passDownGeneric = new PassDownGeneric<>();
+	@MethodAnnotation3
+	private Map<List<Integer>, List<Long>> property;
 
 	@Test
 	void parameterPrimitive() throws Exception {
@@ -547,6 +560,9 @@ class TypeDescriptorTests {
 		assertThat(desc.getAnnotation(FieldAnnotation.class)).isNotNull();
 	}
 
+
+	// Methods designed for test introspection
+
 	@Test
 	void mapKeyType() {
 		TypeDescriptor desc = TypeDescriptor.valueOf(Map.class);
@@ -678,7 +694,7 @@ class TypeDescriptorTests {
 		TypeDescriptor typeDescriptor = new TypeDescriptor(property);
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				typeDescriptor.upcast(Collection.class))
-			.withMessage("interface java.util.Map is not assignable to interface java.util.Collection");
+				.withMessage("interface java.util.Map is not assignable to interface java.util.Collection");
 	}
 
 	@Test
@@ -757,14 +773,14 @@ class TypeDescriptorTests {
 		assertThat(TypeDescriptor.valueOf(Integer.class).getSource()).isEqualTo(Integer.class);
 	}
 
-
-	// Methods designed for test introspection
-
 	public void testParameterPrimitive(int primitive) {
 	}
 
 	public void testParameterScalar(String value) {
 	}
+
+
+	// Fields designed for test introspection
 
 	public void testParameterList(List<List<Map<Integer, Enum<?>>>> list) {
 	}
@@ -807,6 +823,9 @@ class TypeDescriptorTests {
 		return null;
 	}
 
+	public void setComplexProperty(Map<String, List<List<Integer>>> complexProperty) {
+	}
+
 	@MethodAnnotation1
 	public Map<List<Integer>, List<Long>> getProperty() {
 		return property;
@@ -829,9 +848,6 @@ class TypeDescriptorTests {
 	public void methodWithComposedComposedAnnotation() {
 	}
 
-	public void setComplexProperty(Map<String, List<List<Integer>>> complexProperty) {
-	}
-
 	public void testAnnotatedMethod(@ParameterAnnotation(123) String parameter) {
 	}
 
@@ -839,84 +855,7 @@ class TypeDescriptorTests {
 	}
 
 
-	// Fields designed for test introspection
-
-	public Integer fieldScalar;
-
-	public List<String> listOfString;
-
-	public List<List<String>> listOfListOfString = new ArrayList<>();
-
-	public List<List> listOfListOfUnknown = new ArrayList<>();
-
-	public int[] intArray;
-
-	public List<String>[] arrayOfListOfString;
-
-	public List<Integer> listField = new ArrayList<>();
-
-	public Map<String, Integer> mapField = new HashMap<>();
-
-	public Map<String, List<Integer>> nestedMapField = new HashMap<>();
-
-	public Map<List<Integer>, List<Long>> fieldMap;
-
-	public List<Map<Integer, String>> test4;
-
-	@FieldAnnotation
-	public List<String> fieldAnnotated;
-
-	@FieldAnnotation
-	public List<List<Integer>> listPreserveContext;
-
-	@FieldAnnotation
-	public Map<List<Integer>, List<Integer>> mapPreserveContext;
-
-	@MethodAnnotation3
-	private Map<List<Integer>, List<Long>> property;
-
-	public List notGenericList;
-
-	public List<Number> isAssignableElementTypes;
-
-	public Map notGenericMap;
-
-	public Map<CharSequence, Number> isAssignableMapKeyValueTypes;
-
-	public MultiValueMap<String, Integer> multiValueMap = new LinkedMultiValueMap<>();
-
-	public PassDownGeneric<Integer> passDownGeneric = new PassDownGeneric<>();
-
-
 	// Classes designed for test introspection
-
-	@SuppressWarnings("serial")
-	public static class PassDownGeneric<T> extends ArrayList<List<Set<T>>> {
-	}
-
-
-	public static class GenericClass<T> {
-
-		public T getProperty() {
-			return null;
-		}
-
-		public void setProperty(T t) {
-		}
-
-		@MethodAnnotation1
-		public List<T> getListProperty() {
-			return null;
-		}
-
-		public void setListProperty(List<T> t) {
-		}
-	}
-
-
-	public static class IntegerClass extends GenericClass<Integer> {
-	}
-
 
 	public interface GenericType<T> {
 
@@ -929,52 +868,6 @@ class TypeDescriptorTests {
 		void setListProperty(List<T> t);
 	}
 
-
-	public class IntegerType implements GenericType<Integer> {
-
-		@Override
-		public Integer getProperty() {
-			return null;
-		}
-
-		@Override
-		public void setProperty(Integer t) {
-		}
-
-		@Override
-		public List<Integer> getListProperty() {
-			return null;
-		}
-
-		@Override
-		public void setListProperty(List<Integer> t) {
-		}
-	}
-
-
-	public class NumberType implements GenericType<Number> {
-
-		@Override
-		public Integer getProperty() {
-			return null;
-		}
-
-		@Override
-		public void setProperty(Number t) {
-		}
-
-		@Override
-		public List<Number> getListProperty() {
-			return null;
-		}
-
-		@Override
-		public void setListProperty(List<Number> t) {
-		}
-	}
-
-
-	// Annotations used on tested elements
 
 	@Target({ElementType.PARAMETER})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -1008,6 +901,8 @@ class TypeDescriptorTests {
 	}
 
 
+	// Annotations used on tested elements
+
 	@MethodAnnotation1
 	@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -1019,6 +914,73 @@ class TypeDescriptorTests {
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface ComposedComposedMethodAnnotation1 {
+	}
+
+	@SuppressWarnings("serial")
+	public static class PassDownGeneric<T> extends ArrayList<List<Set<T>>> {
+	}
+
+	public static class GenericClass<T> {
+
+		public T getProperty() {
+			return null;
+		}
+
+		public void setProperty(T t) {
+		}
+
+		@MethodAnnotation1
+		public List<T> getListProperty() {
+			return null;
+		}
+
+		public void setListProperty(List<T> t) {
+		}
+	}
+
+	public static class IntegerClass extends GenericClass<Integer> {
+	}
+
+	public class IntegerType implements GenericType<Integer> {
+
+		@Override
+		public Integer getProperty() {
+			return null;
+		}
+
+		@Override
+		public void setProperty(Integer t) {
+		}
+
+		@Override
+		public List<Integer> getListProperty() {
+			return null;
+		}
+
+		@Override
+		public void setListProperty(List<Integer> t) {
+		}
+	}
+
+	public class NumberType implements GenericType<Number> {
+
+		@Override
+		public Integer getProperty() {
+			return null;
+		}
+
+		@Override
+		public void setProperty(Number t) {
+		}
+
+		@Override
+		public List<Number> getListProperty() {
+			return null;
+		}
+
+		@Override
+		public void setListProperty(List<Number> t) {
+		}
 	}
 
 }

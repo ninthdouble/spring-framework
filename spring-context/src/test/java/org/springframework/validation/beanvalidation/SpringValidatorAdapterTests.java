@@ -229,6 +229,53 @@ public class SpringValidatorAdapterTests {
 	}
 
 
+	@Documented
+	@Constraint(validatedBy = {SameValidator.class})
+	@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+	@Retention(RetentionPolicy.RUNTIME)
+	@Repeatable(SameGroup.class)
+	@interface Same {
+
+		String message() default "{org.springframework.validation.beanvalidation.Same.message}";
+
+		Class<?>[] groups() default {};
+
+		Class<? extends Payload>[] payload() default {};
+
+		String field();
+
+		String comparingField();
+
+		@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+		@Retention(RetentionPolicy.RUNTIME)
+		@Documented
+		@interface List {
+			Same[] value();
+		}
+	}
+
+
+	@Documented
+	@Inherited
+	@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface SameGroup {
+
+		Same[] value();
+	}
+
+
+	@Constraint(validatedBy = AnythingValidator.class)
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface AnythingValid {
+
+		String message() default "{AnythingValid.message}";
+
+		Class<?>[] groups() default {};
+
+		Class<? extends Payload>[] payload() default {};
+	}
+
 	@Same(field = "password", comparingField = "confirmPassword")
 	@Same(field = "email", comparingField = "confirmEmail")
 	static class TestBean {
@@ -277,43 +324,6 @@ public class SpringValidatorAdapterTests {
 		}
 	}
 
-
-	@Documented
-	@Constraint(validatedBy = {SameValidator.class})
-	@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-	@Retention(RetentionPolicy.RUNTIME)
-	@Repeatable(SameGroup.class)
-	@interface Same {
-
-		String message() default "{org.springframework.validation.beanvalidation.Same.message}";
-
-		Class<?>[] groups() default {};
-
-		Class<? extends Payload>[] payload() default {};
-
-		String field();
-
-		String comparingField();
-
-		@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-		@Retention(RetentionPolicy.RUNTIME)
-		@Documented
-		@interface List {
-			Same[] value();
-		}
-	}
-
-
-	@Documented
-	@Inherited
-	@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface SameGroup {
-
-		Same[] value();
-	}
-
-
 	public static class SameValidator implements ConstraintValidator<Same, Object> {
 
 		private String field;
@@ -337,8 +347,7 @@ public class SpringValidatorAdapterTests {
 			boolean matched = ObjectUtils.nullSafeEquals(fieldValue, comparingFieldValue);
 			if (matched) {
 				return true;
-			}
-			else {
+			} else {
 				context.disableDefaultConstraintViolation();
 				context.buildConstraintViolationWithTemplate(message)
 						.addPropertyNode(field)
@@ -347,7 +356,6 @@ public class SpringValidatorAdapterTests {
 			}
 		}
 	}
-
 
 	public static class Parent {
 
@@ -394,7 +402,6 @@ public class SpringValidatorAdapterTests {
 			this.childList = childList;
 		}
 	}
-
 
 	@AnythingValid
 	public static class Child {
@@ -443,19 +450,6 @@ public class SpringValidatorAdapterTests {
 		}
 	}
 
-
-	@Constraint(validatedBy = AnythingValidator.class)
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface AnythingValid {
-
-		String message() default "{AnythingValid.message}";
-
-		Class<?>[] groups() default {};
-
-		Class<? extends Payload>[] payload() default {};
-	}
-
-
 	public static class AnythingValidator implements ConstraintValidator<AnythingValid, Object> {
 
 		private static final String ID = "id";
@@ -476,8 +470,7 @@ public class SpringValidatorAdapterTests {
 								.addPropertyNode(field.getName())
 								.addConstraintViolation();
 					}
-				}
-				catch (IllegalAccessException ex) {
+				} catch (IllegalAccessException ex) {
 					throw new IllegalStateException(ex);
 				}
 			});

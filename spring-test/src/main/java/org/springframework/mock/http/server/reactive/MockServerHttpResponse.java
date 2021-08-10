@@ -16,17 +16,7 @@
 
 package org.springframework.mock.http.server.reactive;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -36,6 +26,15 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.AbstractServerHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Mock extension of {@link AbstractServerHttpResponse} for use in tests without
@@ -66,7 +65,8 @@ public class MockServerHttpResponse extends AbstractServerHttpResponse {
 			// Avoid .then() that causes data buffers to be discarded and released
 			Sinks.Empty<Void> completion = Sinks.unsafe().empty();
 			this.body = body.cache();
-			this.body.subscribe(aVoid -> {}, completion::tryEmitError, completion::tryEmitEmpty); // Signals are serialized
+			this.body.subscribe(aVoid -> {
+			}, completion::tryEmitError, completion::tryEmitEmpty); // Signals are serialized
 			return completion.asMono();
 		};
 	}
@@ -77,8 +77,9 @@ public class MockServerHttpResponse extends AbstractServerHttpResponse {
 	 * <p>By default, response body content is consumed in full and cached for
 	 * subsequent access in tests. Use this option to take control over how the
 	 * response body is consumed.
+	 *
 	 * @param writeHandler the write handler to use returning {@code Mono<Void>}
-	 * when the body has been "written" (i.e. consumed).
+	 *                     when the body has been "written" (i.e. consumed).
 	 */
 	public void setWriteHandler(Function<Flux<DataBuffer>, Mono<Void>> writeHandler) {
 		Assert.notNull(writeHandler, "'writeHandler' is required");

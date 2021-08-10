@@ -16,24 +16,14 @@
 
 package org.springframework.http.client.reactive;
 
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
+
+import java.util.*;
 
 /**
  * {@code MultiValueMap} implementation for wrapping Apache HttpComponents

@@ -16,18 +16,18 @@
 
 package org.springframework.web.servlet.mvc.condition;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link PathPatternsRequestCondition}.
+ *
  * @author Rossen Stoyanchev
  */
 public class PathPatternsRequestConditionTests {
@@ -154,7 +154,8 @@ public class PathPatternsRequestConditionTests {
 		assertThat(match).isNull();
 	}
 
-	@Test // gh-22543
+	@Test
+		// gh-22543
 	void matchWithEmptyPatterns() {
 		PathPatternsRequestCondition condition = createCondition();
 		assertThat(condition.getMatchingCondition(createRequest(""))).isNotNull();

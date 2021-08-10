@@ -17,7 +17,6 @@
 package org.springframework.web.bind;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;

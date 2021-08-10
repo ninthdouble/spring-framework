@@ -16,14 +16,10 @@
 
 package org.springframework.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
+
+import java.io.*;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

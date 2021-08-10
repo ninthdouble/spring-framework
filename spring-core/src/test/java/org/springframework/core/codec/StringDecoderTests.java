@@ -16,23 +16,22 @@
 
 package org.springframework.core.codec;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.ResolvableType;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferLimitException;
 import org.springframework.core.testfixture.codec.AbstractDecoderTests;
 import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_16BE;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -137,7 +136,7 @@ class StringDecoderTests extends AbstractDecoderTests<StringDecoder> {
 	}
 
 	@Test
-	void decodeNewlinesAcrossBuffers()  {
+	void decodeNewlinesAcrossBuffers() {
 		Flux<DataBuffer> input = Flux.just(
 				stringBuffer("\r"),
 				stringBuffer("\n"),
@@ -178,7 +177,8 @@ class StringDecoderTests extends AbstractDecoderTests<StringDecoder> {
 				.verify());
 	}
 
-	@Test // gh-24339
+	@Test
+		// gh-24339
 	void maxInMemoryLimitReleaseUnprocessedLinesWhenUnlimited() {
 		Flux<DataBuffer> input = Flux.just(stringBuffer("Line 1\nLine 2\nLine 3\n"));
 

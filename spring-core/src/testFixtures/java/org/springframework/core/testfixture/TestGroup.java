@@ -16,22 +16,22 @@
 
 package org.springframework.core.testfixture;
 
+import org.springframework.util.StringUtils;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.springframework.util.StringUtils;
 
 import static java.lang.String.format;
 
 /**
  * A test group used to limit when certain tests are run.
  *
- * @see EnabledForTestGroups @EnabledForTestGroups
  * @author Phillip Webb
  * @author Chris Beams
  * @author Sam Brannen
+ * @see EnabledForTestGroups @EnabledForTestGroups
  */
 public enum TestGroup {
 
@@ -41,15 +41,6 @@ public enum TestGroup {
 	 * suite too slow to run during the normal development cycle.
 	 */
 	LONG_RUNNING;
-
-
-	/**
-	 * Determine if this {@link TestGroup} is active.
-	 * @since 5.2
-	 */
-	public boolean isActive() {
-		return loadTestGroups().contains(this);
-	}
 
 
 	private static final String TEST_GROUPS_SYSTEM_PROPERTY = "testGroups";
@@ -62,8 +53,7 @@ public enum TestGroup {
 	static Set<TestGroup> loadTestGroups() {
 		try {
 			return TestGroup.parse(System.getProperty(TEST_GROUPS_SYSTEM_PROPERTY));
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException("Failed to parse '" + TEST_GROUPS_SYSTEM_PROPERTY +
 					"' system property: " + ex.getMessage(), ex);
 		}
@@ -71,10 +61,11 @@ public enum TestGroup {
 
 	/**
 	 * Parse the specified comma separated string of groups.
+	 *
 	 * @param value the comma separated string of groups
 	 * @return a set of groups
 	 * @throws IllegalArgumentException if any specified group name is not a
-	 * valid {@link TestGroup}
+	 *                                  valid {@link TestGroup}
 	 */
 	static Set<TestGroup> parse(String value) throws IllegalArgumentException {
 		if (!StringUtils.hasText(value)) {
@@ -98,15 +89,23 @@ public enum TestGroup {
 		for (String group : value.split(",")) {
 			try {
 				groups.add(valueOf(group.trim().toUpperCase()));
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				throw new IllegalArgumentException(format(
 						"Unable to find test group '%s' when parsing testGroups value: '%s'. " +
-						"Available groups include: [%s]", group.trim(), originalValue,
+								"Available groups include: [%s]", group.trim(), originalValue,
 						StringUtils.arrayToCommaDelimitedString(TestGroup.values())));
 			}
 		}
 		return groups;
+	}
+
+	/**
+	 * Determine if this {@link TestGroup} is active.
+	 *
+	 * @since 5.2
+	 */
+	public boolean isActive() {
+		return loadTestGroups().contains(this);
 	}
 
 }

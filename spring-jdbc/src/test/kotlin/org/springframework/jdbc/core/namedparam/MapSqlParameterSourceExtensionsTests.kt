@@ -17,9 +17,8 @@
 package org.springframework.jdbc.core.namedparam
 
 import org.assertj.core.api.Assertions.assertThat
-import java.sql.JDBCType
-
 import org.junit.jupiter.api.Test
+import java.sql.JDBCType
 
 /**
  * Tests for [MapSqlParameterSource] Kotlin extensions.

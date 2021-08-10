@@ -24,6 +24,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface BaseInterface<T> {
+
+	void genericBaseInterfaceMethod(T t);
+}
+
+
+interface DerivedInterface<T> extends BaseInterface<T> {
+
+	public void genericDerivedInterfaceMethod(T t);
+}
+
 /**
  * Tests for AspectJ pointcut expression matching when working with bridge methods.
  *
@@ -33,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>This class focuses on JDK proxy, while a subclass, GenericBridgeMethodMatchingClassProxyTests,
  * focuses on class proxying.
- *
+ * <p>
  * See SPR-3556 for more details.
  *
  * @author Ramnivas Laddad
@@ -72,19 +83,6 @@ public class GenericBridgeMethodMatchingTests {
 	}
 
 }
-
-
-interface BaseInterface<T> {
-
-	void genericBaseInterfaceMethod(T t);
-}
-
-
-interface DerivedInterface<T> extends BaseInterface<T> {
-
-	public void genericDerivedInterfaceMethod(T t);
-}
-
 
 class DerivedStringParameterizedClass implements DerivedInterface<String> {
 

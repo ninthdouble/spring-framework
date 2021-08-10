@@ -18,7 +18,6 @@ package org.springframework.test.context.groovy;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.testfixture.beans.Employee;
 import org.springframework.beans.testfixture.beans.Pet;
@@ -36,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 4.1
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration({ "contextA.groovy", "contextB.xml" })
+@ContextConfiguration({"contextA.groovy", "contextB.xml"})
 class MixedXmlAndGroovySpringContextTests {
 
 	@Autowired

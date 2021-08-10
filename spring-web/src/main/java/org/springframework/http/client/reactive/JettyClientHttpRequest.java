@@ -16,20 +16,11 @@
 
 package org.springframework.http.client.reactive;
 
-import java.net.HttpCookie;
-import java.net.URI;
-import java.util.Collection;
-import java.util.function.Function;
-
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.reactive.client.ContentChunk;
 import org.eclipse.jetty.reactive.client.ReactiveRequest;
 import org.eclipse.jetty.util.Callback;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
-
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -37,13 +28,21 @@ import org.springframework.core.io.buffer.PooledDataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
+
+import java.net.HttpCookie;
+import java.net.URI;
+import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * {@link ClientHttpRequest} implementation for the Jetty ReactiveStreams HTTP client.
  *
  * @author Sebastien Deleuze
- * @since 5.1
  * @see <a href="https://github.com/jetty-project/jetty-reactive-httpclient">Jetty ReactiveStreams HttpClient</a>
+ * @since 5.1
  */
 class JettyClientHttpRequest extends AbstractClientHttpRequest {
 
@@ -52,7 +51,6 @@ class JettyClientHttpRequest extends AbstractClientHttpRequest {
 	private final DataBufferFactory bufferFactory;
 
 	private final ReactiveRequest.Builder builder;
-
 
 
 	public JettyClientHttpRequest(Request jettyRequest, DataBufferFactory bufferFactory) {
@@ -118,6 +116,7 @@ class JettyClientHttpRequest extends AbstractClientHttpRequest {
 			public void succeeded() {
 				DataBufferUtils.release(buffer);
 			}
+
 			@Override
 			public void failed(Throwable t) {
 				DataBufferUtils.release(buffer);

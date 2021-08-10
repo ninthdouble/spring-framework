@@ -16,12 +16,12 @@
 
 package org.springframework.test.context.event;
 
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.PayloadApplicationEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.PayloadApplicationEvent;
 
 /**
  * Default implementation of {@link ApplicationEvents}.

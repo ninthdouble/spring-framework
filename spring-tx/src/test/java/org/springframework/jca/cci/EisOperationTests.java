@@ -16,19 +16,13 @@
 
 package org.springframework.jca.cci;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.Interaction;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.Record;
-import javax.resource.cci.RecordFactory;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jca.cci.core.RecordCreator;
 import org.springframework.jca.cci.object.MappingRecordOperation;
 import org.springframework.jca.cci.object.SimpleRecordOperation;
+
+import javax.resource.ResourceException;
+import javax.resource.cci.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -183,6 +177,13 @@ public class EisOperationTests {
 	}
 
 
+	private interface QueryCallDetector {
+
+		Record callCreateInputRecord(RecordFactory recordFactory, Object inputObject);
+
+		Object callExtractOutputData(Record outputRecord);
+	}
+
 	private class MappingRecordOperationImpl extends MappingRecordOperation {
 
 		private QueryCallDetector callDetector;
@@ -204,14 +205,6 @@ public class EisOperationTests {
 		protected Object extractOutputData(Record outputRecord) throws ResourceException {
 			return this.callDetector.callExtractOutputData(outputRecord);
 		}
-	}
-
-
-	private interface QueryCallDetector {
-
-		Record callCreateInputRecord(RecordFactory recordFactory, Object inputObject);
-
-		Object callExtractOutputData(Record outputRecord);
 	}
 
 }

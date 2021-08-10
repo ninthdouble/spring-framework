@@ -28,7 +28,7 @@ import javax.xml.transform.Source
  * @author Sebastien Deleuze
  * @since 5.3
  */
-class ContentResultMatchersDsl internal constructor (private val actions: ResultActions) {
+class ContentResultMatchersDsl internal constructor(private val actions: ResultActions) {
 
 	private val matchers = MockMvcResultMatchers.content()
 

@@ -16,22 +16,11 @@
 
 package org.springframework.web.servlet.view.freemarker;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
@@ -45,9 +34,16 @@ import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 import org.springframework.web.testfixture.servlet.MockServletContext;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -70,7 +66,7 @@ public class FreeMarkerViewTests {
 
 		assertThatExceptionOfType(ApplicationContextException.class).isThrownBy(() ->
 				fv.setApplicationContext(wac))
-			.withMessageContaining("FreeMarkerConfig");
+				.withMessageContaining("FreeMarkerConfig");
 	}
 
 	@Test
@@ -79,7 +75,7 @@ public class FreeMarkerViewTests {
 
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				fv.afterPropertiesSet())
-			.withMessageContaining("url");
+				.withMessageContaining("url");
 	}
 
 	@Test
@@ -197,8 +193,7 @@ public class FreeMarkerViewTests {
 						assertThat(fmModel.get("myattr").toString()).isEqualTo("myvalue");
 					}
 				};
-			}
-			else {
+			} else {
 				throw new FileNotFoundException();
 			}
 		}

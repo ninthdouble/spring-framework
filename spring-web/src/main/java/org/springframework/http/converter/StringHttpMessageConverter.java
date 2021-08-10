@@ -16,12 +16,6 @@
 
 package org.springframework.http.converter;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -29,6 +23,12 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of {@link HttpMessageConverter} that can read and write strings.
@@ -43,14 +43,11 @@ import org.springframework.util.StreamUtils;
  */
 public class StringHttpMessageConverter extends AbstractHttpMessageConverter<String> {
 
-	private static final MediaType APPLICATION_PLUS_JSON = new MediaType("application", "*+json");
-
 	/**
 	 * The default charset used by the converter.
 	 */
 	public static final Charset DEFAULT_CHARSET = StandardCharsets.ISO_8859_1;
-
-
+	private static final MediaType APPLICATION_PLUS_JSON = new MediaType("application", "*+json");
 	@Nullable
 	private volatile List<Charset> availableCharsets;
 
@@ -59,6 +56,7 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
 
 	/**
 	 * A default constructor that uses {@code "ISO-8859-1"} as the default charset.
+	 *
 	 * @see #StringHttpMessageConverter(Charset)
 	 */
 	public StringHttpMessageConverter() {
@@ -105,10 +103,10 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
 
 	@Override
 	protected void addDefaultHeaders(HttpHeaders headers, String s, @Nullable MediaType type) throws IOException {
-		if (headers.getContentType() == null ) {
+		if (headers.getContentType() == null) {
 			if (type != null && type.isConcrete() &&
 					(type.isCompatibleWith(MediaType.APPLICATION_JSON) ||
-					type.isCompatibleWith(APPLICATION_PLUS_JSON))) {
+							type.isCompatibleWith(APPLICATION_PLUS_JSON))) {
 				// Prevent charset parameter for JSON..
 				headers.setContentType(type);
 			}
@@ -131,6 +129,7 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
 	 * Return the list of supported {@link Charset Charsets}.
 	 * <p>By default, returns {@link Charset#availableCharsets()}.
 	 * Can be overridden in subclasses.
+	 *
 	 * @return the list of accepted charsets
 	 */
 	protected List<Charset> getAcceptedCharsets() {
@@ -147,8 +146,7 @@ public class StringHttpMessageConverter extends AbstractHttpMessageConverter<Str
 			Charset charset = contentType.getCharset();
 			if (charset != null) {
 				return charset;
-			}
-			else if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) ||
+			} else if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON) ||
 					contentType.isCompatibleWith(APPLICATION_PLUS_JSON)) {
 				// Matching to AbstractJackson2HttpMessageConverter#DEFAULT_CHARSET
 				return StandardCharsets.UTF_8;

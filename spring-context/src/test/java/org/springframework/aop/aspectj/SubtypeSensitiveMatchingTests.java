@@ -26,6 +26,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+interface NonSerializableFoo {
+	void foo();
+}
+
+
+//strange looking interfaces are just to set up certain test conditions...
+
+interface SerializableFoo extends Serializable {
+	void foo();
+}
+
+
+interface Bar {
+	void bar(Object o);
+}
+
 /**
  * @author Adrian Colyer
  * @author Chris Beams
@@ -69,38 +85,27 @@ public class SubtypeSensitiveMatchingTests {
 
 }
 
-
-//strange looking interfaces are just to set up certain test conditions...
-
-interface NonSerializableFoo { void foo(); }
-
-
-interface SerializableFoo extends Serializable { void foo(); }
-
-
 class SubtypeMatchingTestClassA implements NonSerializableFoo {
 
 	@Override
-	public void foo() {}
+	public void foo() {
+	}
 
 }
-
 
 @SuppressWarnings("serial")
 class SubtypeMatchingTestClassB implements SerializableFoo {
 
 	@Override
-	public void foo() {}
+	public void foo() {
+	}
 
 }
-
-
-interface Bar { void bar(Object o); }
-
 
 class SubtypeMatchingTestClassC implements Bar {
 
 	@Override
-	public void bar(Object o) {}
+	public void bar(Object o) {
+	}
 
 }

@@ -16,19 +16,16 @@
 
 package org.springframework.r2dbc.connection.init;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import io.r2dbc.spi.Connection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.BDDMockito.mock;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.when;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.mockito.BDDMockito.*;
 
 /**
  * Unit tests for {@link CompositeDatabasePopulator}.

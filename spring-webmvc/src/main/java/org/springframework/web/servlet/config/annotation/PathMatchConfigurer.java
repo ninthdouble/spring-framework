@@ -16,10 +16,6 @@
 
 package org.springframework.web.servlet.config.annotation;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Predicate;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -28,6 +24,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Configure path matching options. The options are applied to the following:
@@ -72,22 +72,6 @@ public class PathMatchConfigurer {
 	@Nullable
 	private PathMatcher defaultPathMatcher;
 
-
-	/**
-	 * Enable use of parsed {@link PathPattern}s as described in
-	 * {@link AbstractHandlerMapping#setPatternParser(PathPatternParser)}.
-	 * <p><strong>Note:</strong> This is mutually exclusive with use of
-	 * {@link #setUrlPathHelper(UrlPathHelper)} and
-	 * {@link #setPathMatcher(PathMatcher)}.
-	 * <p>By default this is not enabled.
-	 * @param patternParser the parser to pre-parse patterns with
-	 * @since 5.3
-	 */
-	public PathMatchConfigurer setPatternParser(PathPatternParser patternParser) {
-		this.patternParser = patternParser;
-		return this;
-	}
-
 	/**
 	 * Whether to match to URLs irrespective of the presence of a trailing slash.
 	 * If enabled a method mapped to "/users" also matches to "/users/".
@@ -105,7 +89,8 @@ public class PathMatchConfigurer {
 	 * {@code Predicate}. The prefix for the first matching predicate is used.
 	 * <p>Consider using {@link org.springframework.web.method.HandlerTypePredicate
 	 * HandlerTypePredicate} to group controllers.
-	 * @param prefix the prefix to apply
+	 *
+	 * @param prefix    the prefix to apply
 	 * @param predicate a predicate for matching controller types
 	 * @since 5.1
 	 */
@@ -123,6 +108,7 @@ public class PathMatchConfigurer {
 	 * <p>By default this is set to {@code true}.
 	 * <p><strong>Note:</strong> This property is mutually exclusive with and
 	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
+	 *
 	 * @deprecated as of 5.2.4. See class-level note in
 	 * {@link RequestMappingHandlerMapping} on the deprecation of path extension
 	 * config options. As there is no replacement for this method, in 5.2.x it is
@@ -144,6 +130,7 @@ public class PathMatchConfigurer {
 	 * <p>By default this is set to "false".
 	 * <p><strong>Note:</strong> This property is mutually exclusive with and
 	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
+	 *
 	 * @deprecated as of 5.2.4. See class-level note in
 	 * {@link RequestMappingHandlerMapping} on the deprecation of path extension
 	 * config options.
@@ -155,34 +142,29 @@ public class PathMatchConfigurer {
 	}
 
 	/**
-	 * Set the UrlPathHelper to use to resolve the mapping path for the application.
-	 * <p><strong>Note:</strong> This property is mutually exclusive with and
-	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
-	 */
-	public PathMatchConfigurer setUrlPathHelper(UrlPathHelper urlPathHelper) {
-		this.urlPathHelper = urlPathHelper;
-		return this;
-	}
-
-	/**
-	 * Set the PathMatcher to use for String pattern matching.
-	 * <p>By default this is {@link AntPathMatcher}.
-	 * <p><strong>Note:</strong> This property is mutually exclusive with and
-	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
-	 */
-	public PathMatchConfigurer setPathMatcher(PathMatcher pathMatcher) {
-		this.pathMatcher = pathMatcher;
-		return this;
-	}
-
-
-	/**
 	 * Return the {@link PathPatternParser} to use, if configured.
+	 *
 	 * @since 5.3
 	 */
 	@Nullable
 	public PathPatternParser getPatternParser() {
 		return this.patternParser;
+	}
+
+	/**
+	 * Enable use of parsed {@link PathPattern}s as described in
+	 * {@link AbstractHandlerMapping#setPatternParser(PathPatternParser)}.
+	 * <p><strong>Note:</strong> This is mutually exclusive with use of
+	 * {@link #setUrlPathHelper(UrlPathHelper)} and
+	 * {@link #setPathMatcher(PathMatcher)}.
+	 * <p>By default this is not enabled.
+	 *
+	 * @param patternParser the parser to pre-parse patterns with
+	 * @since 5.3
+	 */
+	public PathMatchConfigurer setPatternParser(PathPatternParser patternParser) {
+		this.patternParser = patternParser;
+		return this;
 	}
 
 	@Nullable
@@ -198,6 +180,7 @@ public class PathMatchConfigurer {
 
 	/**
 	 * Whether to use registered suffixes for pattern matching.
+	 *
 	 * @deprecated as of 5.2.4, see deprecation note on
 	 * {@link #setUseRegisteredSuffixPatternMatch(Boolean)}.
 	 */
@@ -209,6 +192,7 @@ public class PathMatchConfigurer {
 
 	/**
 	 * Whether to use registered suffixes for pattern matching.
+	 *
 	 * @deprecated as of 5.2.4, see deprecation note on
 	 * {@link #setUseSuffixPatternMatch(Boolean)}.
 	 */
@@ -223,13 +207,35 @@ public class PathMatchConfigurer {
 		return this.urlPathHelper;
 	}
 
+	/**
+	 * Set the UrlPathHelper to use to resolve the mapping path for the application.
+	 * <p><strong>Note:</strong> This property is mutually exclusive with and
+	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
+	 */
+	public PathMatchConfigurer setUrlPathHelper(UrlPathHelper urlPathHelper) {
+		this.urlPathHelper = urlPathHelper;
+		return this;
+	}
+
 	@Nullable
 	public PathMatcher getPathMatcher() {
 		return this.pathMatcher;
 	}
 
 	/**
+	 * Set the PathMatcher to use for String pattern matching.
+	 * <p>By default this is {@link AntPathMatcher}.
+	 * <p><strong>Note:</strong> This property is mutually exclusive with and
+	 * ignored when {@link #setPatternParser(PathPatternParser)} is set.
+	 */
+	public PathMatchConfigurer setPathMatcher(PathMatcher pathMatcher) {
+		this.pathMatcher = pathMatcher;
+		return this;
+	}
+
+	/**
 	 * Return the configured UrlPathHelper or a default, shared instance otherwise.
+	 *
 	 * @since 5.3
 	 */
 	protected UrlPathHelper getUrlPathHelperOrDefault() {
@@ -244,6 +250,7 @@ public class PathMatchConfigurer {
 
 	/**
 	 * Return the configured PathMatcher or a default, shared instance otherwise.
+	 *
 	 * @since 5.3
 	 */
 	protected PathMatcher getPathMatcherOrDefault() {
@@ -258,6 +265,7 @@ public class PathMatchConfigurer {
 
 	/**
 	 * Return the configured PathPatternParser or a default, shared instance otherwise.
+	 *
 	 * @since 5.3.4
 	 */
 	public PathPatternParser getPatternParserOrDefault() {

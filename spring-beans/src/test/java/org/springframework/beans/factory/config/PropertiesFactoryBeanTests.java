@@ -16,11 +16,10 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.io.Resource;
+
+import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.core.testfixture.io.ResourceTestUtils.qualifiedResource;
@@ -98,7 +97,7 @@ public class PropertiesFactoryBeanTests {
 		props3.setProperty("spider", "man");
 		props3.setProperty("bat", "man");
 
-		pfb.setPropertiesArray(new Properties[] {props1, props2, props3});
+		pfb.setPropertiesArray(new Properties[]{props1, props2, props3});
 		pfb.afterPropertiesSet();
 
 		Properties props = pfb.getObject();

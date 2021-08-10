@@ -57,8 +57,7 @@ class CoroutinesAnnotationTransactionInterceptorTests {
 		runBlocking {
 			try {
 				proxy.suspendingNoValueFailure()
-			}
-			catch (ex: IllegalStateException) {
+			} catch (ex: IllegalStateException) {
 			}
 
 		}
@@ -87,8 +86,7 @@ class CoroutinesAnnotationTransactionInterceptorTests {
 			try {
 				proxy.suspendingValueFailure()
 				Assertions.fail("No exception thrown as expected")
-			}
-			catch (ex: IllegalStateException) {
+			} catch (ex: IllegalStateException) {
 			}
 		}
 		assertReactiveGetTransactionAndRollbackCount(1)

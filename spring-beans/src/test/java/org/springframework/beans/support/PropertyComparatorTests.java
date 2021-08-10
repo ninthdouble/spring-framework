@@ -16,9 +16,9 @@
 
 package org.springframework.beans.support;
 
-import java.util.Comparator;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Comparator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

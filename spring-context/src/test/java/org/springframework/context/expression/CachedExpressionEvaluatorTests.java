@@ -78,13 +78,13 @@ public class CachedExpressionEvaluatorTests {
 			super(mockSpelExpressionParser());
 		}
 
-		public Expression getTestExpression(String expression, Method method, Class<?> type) {
-			return getExpression(this.testCache, new AnnotatedElementKey(method, type), expression);
-		}
-
 		private static SpelExpressionParser mockSpelExpressionParser() {
 			SpelExpressionParser parser = new SpelExpressionParser();
 			return spy(parser);
+		}
+
+		public Expression getTestExpression(String expression, Method method, Class<?> type) {
+			return getExpression(this.testCache, new AnnotatedElementKey(method, type), expression);
 		}
 	}
 

@@ -18,7 +18,6 @@ package org.springframework.test.context.jdbc;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationConfigurationException;
@@ -48,7 +47,7 @@ class SqlScriptsTestExecutionListenerTests {
 	@Test
 	void missingValueAndScriptsAndStatementsAtClassLevel() throws Exception {
 		Class<?> clazz = MissingValueAndScriptsAndStatementsAtClassLevel.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("foo"));
 
 		assertExceptionContains(clazz.getSimpleName() + ".sql");
@@ -57,7 +56,7 @@ class SqlScriptsTestExecutionListenerTests {
 	@Test
 	void missingValueAndScriptsAndStatementsAtMethodLevel() throws Exception {
 		Class<?> clazz = MissingValueAndScriptsAndStatementsAtMethodLevel.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("foo"));
 
 		assertExceptionContains(clazz.getSimpleName() + ".foo" + ".sql");
@@ -66,14 +65,14 @@ class SqlScriptsTestExecutionListenerTests {
 	@Test
 	void valueAndScriptsDeclared() throws Exception {
 		Class<?> clazz = ValueAndScriptsDeclared.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("foo"));
 
 		assertThatExceptionOfType(AnnotationConfigurationException.class).isThrownBy(() ->
 				listener.beforeTestMethod(testContext))
-			.withMessageContaining("Different @AliasFor mirror values")
-			.withMessageContaining("attribute 'scripts' and its alias 'value'")
-			.withMessageContaining("values of [{bar}] and [{foo}]");
+				.withMessageContaining("Different @AliasFor mirror values")
+				.withMessageContaining("attribute 'scripts' and its alias 'value'")
+				.withMessageContaining("values of [{bar}] and [{foo}]");
 	}
 
 	@Test
@@ -83,7 +82,7 @@ class SqlScriptsTestExecutionListenerTests {
 		given(ctx.getAutowireCapableBeanFactory()).willReturn(mock(AutowireCapableBeanFactory.class));
 
 		Class<?> clazz = IsolatedWithoutTxMgr.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("foo"));
 		given(testContext.getApplicationContext()).willReturn(ctx);
 
@@ -97,7 +96,7 @@ class SqlScriptsTestExecutionListenerTests {
 		given(ctx.getAutowireCapableBeanFactory()).willReturn(mock(AutowireCapableBeanFactory.class));
 
 		Class<?> clazz = MissingDataSourceAndTxMgr.class;
-		BDDMockito.<Class<?>> given(testContext.getTestClass()).willReturn(clazz);
+		BDDMockito.<Class<?>>given(testContext.getTestClass()).willReturn(clazz);
 		given(testContext.getTestMethod()).willReturn(clazz.getDeclaredMethod("foo"));
 		given(testContext.getApplicationContext()).willReturn(ctx);
 
@@ -107,7 +106,7 @@ class SqlScriptsTestExecutionListenerTests {
 	private void assertExceptionContains(String msg) throws Exception {
 		assertThatIllegalStateException().isThrownBy(() ->
 				listener.beforeTestMethod(testContext))
-			.withMessageContaining(msg);
+				.withMessageContaining(msg);
 	}
 
 

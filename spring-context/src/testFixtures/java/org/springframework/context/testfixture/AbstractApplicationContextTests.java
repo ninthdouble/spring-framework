@@ -16,15 +16,8 @@
 
 package org.springframework.context.testfixture;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Locale;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.testfixture.beans.LifecycleBean;
 import org.springframework.beans.testfixture.beans.TestBean;
@@ -37,6 +30,12 @@ import org.springframework.context.testfixture.beans.ACATester;
 import org.springframework.context.testfixture.beans.BeanThatListens;
 import org.springframework.context.testfixture.beans.TestApplicationListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -47,12 +46,16 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
  */
 public abstract class AbstractApplicationContextTests extends AbstractListableBeanFactoryTests {
 
-	/** Must be supplied as XML */
+	/**
+	 * Must be supplied as XML
+	 */
 	public static final String TEST_NAMESPACE = "testNamespace";
 
 	protected ConfigurableApplicationContext applicationContext;
 
-	/** Subclass must register this */
+	/**
+	 * Subclass must register this
+	 */
 	protected TestApplicationListener listener = new TestApplicationListener();
 
 	protected TestApplicationListener parentListener = new TestApplicationListener();
@@ -170,7 +173,7 @@ public abstract class AbstractApplicationContextTests extends AbstractListableBe
 	}
 
 	protected void doTestEvents(TestApplicationListener listener, TestApplicationListener parentListener,
-			MyEvent event) {
+								MyEvent event) {
 		listener.zeroCounter();
 		parentListener.zeroCounter();
 		assertThat(listener.getEventCount() == 0).as("0 events before publication").isTrue();

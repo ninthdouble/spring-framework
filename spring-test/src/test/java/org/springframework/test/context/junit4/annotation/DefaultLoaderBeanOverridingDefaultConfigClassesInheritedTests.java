@@ -17,7 +17,6 @@
 package org.springframework.test.context.junit4.annotation;
 
 import org.junit.Test;
-
 import org.springframework.beans.testfixture.beans.Employee;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultLoaderBeanOverridingDefaultConfigClassesInheritedTests extends
 		DefaultLoaderDefaultConfigClassesBaseTests {
 
+	@Test
+	@Override
+	public void verifyEmployeeSetFromBaseContextConfig() {
+		assertThat(this.employee).as("The employee should have been autowired.").isNotNull();
+		assertThat(this.employee.getName()).as("The employee bean should have been overridden.").isEqualTo("Yoda");
+	}
+
 	@Configuration
 	static class Config {
 
@@ -49,14 +55,6 @@ public class DefaultLoaderBeanOverridingDefaultConfigClassesInheritedTests exten
 			employee.setCompany("The Force");
 			return employee;
 		}
-	}
-
-
-	@Test
-	@Override
-	public void verifyEmployeeSetFromBaseContextConfig() {
-		assertThat(this.employee).as("The employee should have been autowired.").isNotNull();
-		assertThat(this.employee.getName()).as("The employee bean should have been overridden.").isEqualTo("Yoda");
 	}
 
 }

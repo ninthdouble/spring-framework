@@ -17,7 +17,6 @@
 package org.springframework.r2dbc;
 
 import io.r2dbc.spi.R2dbcException;
-
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 
 
@@ -40,9 +39,10 @@ public class BadSqlGrammarException extends InvalidDataAccessResourceUsageExcept
 
 	/**
 	 * Constructor for BadSqlGrammarException.
+	 *
 	 * @param task name of current task
-	 * @param sql the offending SQL statement
-	 * @param ex the root cause
+	 * @param sql  the offending SQL statement
+	 * @param ex   the root cause
 	 */
 	public BadSqlGrammarException(String task, String sql, R2dbcException ex) {
 		super(task + "; bad SQL grammar [" + sql + "]", ex);

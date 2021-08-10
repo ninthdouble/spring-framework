@@ -16,13 +16,6 @@
 
 package org.springframework.http.server.reactive;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.http.HttpCookie;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseCookie;
@@ -30,6 +23,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.AbstractHttpHandlerIntegrationTests;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,7 +82,7 @@ public class CookieIntegrationTests extends AbstractHttpHandlerIntegrationTests 
 	// No client side HttpCookie support yet
 	private List<String> splitCookie(String value) {
 		List<String> list = new ArrayList<>();
-		for (String s : value.split(";")){
+		for (String s : value.split(";")) {
 			list.add(s.trim());
 		}
 		return list;

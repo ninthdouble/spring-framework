@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link DefaultRequestPath}.
+ *
  * @author Rossen Stoyanchev
  */
 class DefaultRequestPathTests {

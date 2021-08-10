@@ -16,10 +16,10 @@
 
 package org.springframework.core.io.buffer;
 
+import org.springframework.util.Assert;
+
 import java.nio.ByteBuffer;
 import java.util.List;
-
-import org.springframework.util.Assert;
 
 /**
  * Default implementation of the {@code DataBufferFactory} interface. Allows for
@@ -33,6 +33,7 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 
 	/**
 	 * The default capacity when none is specified.
+	 *
 	 * @see #DefaultDataBufferFactory()
 	 * @see #DefaultDataBufferFactory(boolean)
 	 */
@@ -40,6 +41,7 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 
 	/**
 	 * Shared instance based on the default constructor.
+	 *
 	 * @since 5.3
 	 */
 	public static final DefaultDataBufferFactory sharedInstance = new DefaultDataBufferFactory();
@@ -52,6 +54,7 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 
 	/**
 	 * Creates a new {@code DefaultDataBufferFactory} with default settings.
+	 *
 	 * @see #sharedInstance
 	 */
 	public DefaultDataBufferFactory() {
@@ -62,8 +65,9 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 	 * Creates a new {@code DefaultDataBufferFactory}, indicating whether direct
 	 * buffers should be created by {@link #allocateBuffer()} and
 	 * {@link #allocateBuffer(int)}.
+	 *
 	 * @param preferDirect {@code true} if direct buffers are to be preferred;
-	 * {@code false} otherwise
+	 *                     {@code false} otherwise
 	 */
 	public DefaultDataBufferFactory(boolean preferDirect) {
 		this(preferDirect, DEFAULT_INITIAL_CAPACITY);
@@ -74,8 +78,9 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
 	 * buffers should be created by {@link #allocateBuffer()} and
 	 * {@link #allocateBuffer(int)}, and what the capacity is to be used for
 	 * {@link #allocateBuffer()}.
+	 *
 	 * @param preferDirect {@code true} if direct buffers are to be preferred;
-	 * {@code false} otherwise
+	 *                     {@code false} otherwise
 	 */
 	public DefaultDataBufferFactory(boolean preferDirect, int defaultInitialCapacity) {
 		Assert.isTrue(defaultInitialCapacity > 0, "'defaultInitialCapacity' should be larger than 0");

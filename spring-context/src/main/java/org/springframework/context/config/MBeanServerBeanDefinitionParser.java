@@ -39,8 +39,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Mark Fisher
  * @author Juergen Hoeller
- * @since 2.5
  * @see org.springframework.jmx.export.annotation.AnnotationMBeanExporter
+ * @since 2.5
  */
 class MBeanServerBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
@@ -59,6 +59,18 @@ class MBeanServerBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		webspherePresent = ClassUtils.isPresent("com.ibm.websphere.management.AdminServiceFactory", classLoader);
 	}
 
+	@Nullable
+	static AbstractBeanDefinition findServerForSpecialEnvironment() {
+		if (weblogicPresent) {
+			RootBeanDefinition bd = new RootBeanDefinition(JndiObjectFactoryBean.class);
+			bd.getPropertyValues().add("jndiName", "java:comp/env/jmx/runtime");
+			return bd;
+		} else if (webspherePresent) {
+			return new RootBeanDefinition(WebSphereMBeanServerFactoryBean.class);
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
@@ -85,21 +97,6 @@ class MBeanServerBeanDefinitionParser extends AbstractBeanDefinitionParser {
 		bd.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 		bd.setSource(parserContext.extractSource(element));
 		return bd;
-	}
-
-	@Nullable
-	static AbstractBeanDefinition findServerForSpecialEnvironment() {
-		if (weblogicPresent) {
-			RootBeanDefinition bd = new RootBeanDefinition(JndiObjectFactoryBean.class);
-			bd.getPropertyValues().add("jndiName", "java:comp/env/jmx/runtime");
-			return bd;
-		}
-		else if (webspherePresent) {
-			return new RootBeanDefinition(WebSphereMBeanServerFactoryBean.class);
-		}
-		else {
-			return null;
-		}
 	}
 
 }

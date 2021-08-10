@@ -16,14 +16,14 @@
 
 package org.springframework.transaction.event;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * {@link TransactionalApplicationListener} adapter that delegates the processing of
@@ -35,43 +35,32 @@ import org.springframework.util.Assert;
  * consider the {@link TransactionalApplicationListener#forPayload} factory methods
  * as a convenient alternative to custom usage of this adapter class.
  *
- * @author Juergen Hoeller
- * @since 5.3
  * @param <E> the specific {@code ApplicationEvent} subclass to listen to
+ * @author Juergen Hoeller
  * @see TransactionalApplicationListener
  * @see TransactionalEventListener
  * @see TransactionalApplicationListenerMethodAdapter
+ * @since 5.3
  */
 public class TransactionalApplicationListenerAdapter<E extends ApplicationEvent>
 		implements TransactionalApplicationListener<E>, Ordered {
 
 	private final ApplicationListener<E> targetListener;
-
-	private int order = Ordered.LOWEST_PRECEDENCE;
-
-	private TransactionPhase transactionPhase = TransactionPhase.AFTER_COMMIT;
-
-	private String listenerId = "";
-
 	private final List<SynchronizationCallback> callbacks = new CopyOnWriteArrayList<>();
+	private int order = Ordered.LOWEST_PRECEDENCE;
+	private TransactionPhase transactionPhase = TransactionPhase.AFTER_COMMIT;
+	private String listenerId = "";
 
 
 	/**
 	 * Construct a new TransactionalApplicationListenerAdapter.
+	 *
 	 * @param targetListener the actual listener to invoke in the specified transaction phase
 	 * @see #setTransactionPhase
 	 * @see TransactionalApplicationListener#forPayload
 	 */
 	public TransactionalApplicationListenerAdapter(ApplicationListener<E> targetListener) {
 		this.targetListener = targetListener;
-	}
-
-
-	/**
-	 * Specify the synchronization order for the listener.
-	 */
-	public void setOrder(int order) {
-		this.order = order;
 	}
 
 	/**
@@ -83,11 +72,10 @@ public class TransactionalApplicationListenerAdapter<E extends ApplicationEvent>
 	}
 
 	/**
-	 * Specify the transaction phase to invoke the listener in.
-	 * <p>The default is {@link TransactionPhase#AFTER_COMMIT}.
+	 * Specify the synchronization order for the listener.
 	 */
-	public void setTransactionPhase(TransactionPhase transactionPhase) {
-		this.transactionPhase = transactionPhase;
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	/**
@@ -99,11 +87,11 @@ public class TransactionalApplicationListenerAdapter<E extends ApplicationEvent>
 	}
 
 	/**
-	 * Specify an id to identify the listener with.
-	 * <p>The default is an empty String.
+	 * Specify the transaction phase to invoke the listener in.
+	 * <p>The default is {@link TransactionPhase#AFTER_COMMIT}.
 	 */
-	public void setListenerId(String listenerId) {
-		this.listenerId = listenerId;
+	public void setTransactionPhase(TransactionPhase transactionPhase) {
+		this.transactionPhase = transactionPhase;
 	}
 
 	/**
@@ -112,6 +100,14 @@ public class TransactionalApplicationListenerAdapter<E extends ApplicationEvent>
 	@Override
 	public String getListenerId() {
 		return this.listenerId;
+	}
+
+	/**
+	 * Specify an id to identify the listener with.
+	 * <p>The default is an empty String.
+	 */
+	public void setListenerId(String listenerId) {
+		this.listenerId = listenerId;
 	}
 
 	@Override

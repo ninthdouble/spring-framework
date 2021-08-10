@@ -16,14 +16,13 @@
 
 package org.springframework.core.env;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.util.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.util.StringUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -38,32 +37,42 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  */
 class ProfilesTests {
 
+	private static void assertMalformed(Supplier<Profiles> supplier) {
+		assertThatIllegalArgumentException().isThrownBy(
+				supplier::get)
+				.withMessageContaining("Malformed");
+	}
+
+	private static Predicate<String> activeProfiles(String... profiles) {
+		return new MockActiveProfiles(profiles);
+	}
+
 	@Test
 	void ofWhenNullThrowsException() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				Profiles.of((String[]) null))
-			.withMessageContaining("Must specify at least one profile");
+				.withMessageContaining("Must specify at least one profile");
 	}
 
 	@Test
 	void ofWhenEmptyThrowsException() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				Profiles.of())
-			.withMessageContaining("Must specify at least one profile");
+				.withMessageContaining("Must specify at least one profile");
 	}
 
 	@Test
 	void ofNullElement() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				Profiles.of((String) null))
-			.withMessageContaining("must contain text");
+				.withMessageContaining("must contain text");
 	}
 
 	@Test
 	void ofEmptyElement() {
 		assertThatIllegalArgumentException().isThrownBy(() ->
 				Profiles.of("  "))
-			.withMessageContaining("must contain text");
+				.withMessageContaining("must contain text");
 	}
 
 	@Test
@@ -350,17 +359,6 @@ class ProfilesTests {
 		assertThat(profiles1).isNotEqualTo(profiles2);
 		assertThat(profiles2).isNotEqualTo(profiles1);
 		assertThat(profiles1.hashCode()).isNotEqualTo(profiles2.hashCode());
-	}
-
-
-	private static void assertMalformed(Supplier<Profiles> supplier) {
-		assertThatIllegalArgumentException().isThrownBy(
-				supplier::get)
-			.withMessageContaining("Malformed");
-	}
-
-	private static Predicate<String> activeProfiles(String... profiles) {
-		return new MockActiveProfiles(profiles);
 	}
 
 	private static class MockActiveProfiles implements Predicate<String> {

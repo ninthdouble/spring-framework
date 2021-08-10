@@ -16,42 +16,191 @@
 
 package org.springframework.test.context;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.*;
 import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.TestContextAnnotationUtils.AnnotationDescriptor;
-import org.springframework.test.context.TestContextAnnotationUtils.UntypedAnnotationDescriptor;
+import org.springframework.test.context.TestContextAnnotationUtils.*;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.annotation.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.NestedTestConfiguration.EnclosingConfiguration.OVERRIDE;
-import static org.springframework.test.context.TestContextAnnotationUtils.findAnnotationDescriptor;
-import static org.springframework.test.context.TestContextAnnotationUtils.findAnnotationDescriptorForTypes;
-import static org.springframework.test.context.TestContextAnnotationUtils.searchEnclosingClass;
+import static org.springframework.test.context.TestContextAnnotationUtils.*;
 
 /**
  * Unit tests for {@link TestContextAnnotationUtils}.
  *
  * @author Sam Brannen
+ * @see OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests
  * @since 5.3, though originally since 4.0 for the deprecated
  * {@link org.springframework.test.util.MetaAnnotationUtils} support
- * @see OverriddenMetaAnnotationAttributesTestContextAnnotationUtilsTests
  */
 class TestContextAnnotationUtilsTests {
+
+	@Component(value = "meta1")
+	@Order
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface Meta1 {
+	}
+
+	@Component(value = "meta2")
+	@Transactional
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface Meta2 {
+	}
+
+	@Meta2
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface MetaMeta {
+	}
+
+	// -------------------------------------------------------------------------
+
+	@MetaMeta
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface MetaMetaMeta {
+	}
+
+	@MetaCycle3
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.ANNOTATION_TYPE)
+	@interface MetaCycle1 {
+	}
+
+	@MetaCycle1
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.ANNOTATION_TYPE)
+	@interface MetaCycle2 {
+	}
+
+	@MetaCycle2
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface MetaCycle3 {
+	}
+
+	@ContextConfiguration
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@interface MetaConfig {
+
+		Class<?>[] classes() default {DevConfig.class, ProductionConfig.class};
+
+		class DevConfig {
+		}
+
+		class ProductionConfig {
+		}
+	}
+
+	@Meta1
+	interface InterfaceWithMetaAnnotation {
+	}
+
+	@Transactional
+	interface InheritedAnnotationInterface {
+	}
+
+	interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
+	}
+
+	// -------------------------------------------------------------------------
+
+	interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
+	}
+
+	@Order
+	interface NonInheritedAnnotationInterface {
+	}
+
+	interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
+	}
+
+	interface NonAnnotatedInterface {
+	}
+
+	@Meta1
+	static class HasMetaComponentAnnotation {
+	}
+
+	@Meta1
+	@Component(value = "local")
+	@Meta2
+	static class HasLocalAndMetaComponentAnnotation {
+	}
+
+	static class ClassWithMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
+	}
+
+	@Meta2
+	static class ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
+	}
+
+	static class SubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface extends
+			ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface {
+	}
+
+	@MetaMeta
+	static class MetaMetaAnnotatedClass {
+	}
+
+	@MetaMetaMeta
+	static class MetaMetaMetaAnnotatedClass {
+	}
+
+	// -------------------------------------------------------------------------
+
+	@MetaCycle3
+	static class MetaCycleAnnotatedClass {
+	}
+
+	@MetaConfig
+	static class MetaConfigWithDefaultAttributesTestCase {
+	}
+
+	@MetaConfig(classes = TestContextAnnotationUtilsTests.class)
+	static class MetaConfigWithOverriddenAttributesTestCase {
+	}
+
+	static class NonAnnotatedClass {
+	}
+
+	@Transactional
+	static class InheritedAnnotationClass {
+	}
+
+	static class SubInheritedAnnotationClass extends InheritedAnnotationClass {
+	}
+
+	@Order
+	static class NonInheritedAnnotationClass {
+	}
+
+	static class SubNonInheritedAnnotationClass extends NonInheritedAnnotationClass {
+	}
+
+	@ContextConfiguration(classes = Number.class)
+	static class AnnotatedContextConfigClass {
+	}
+
+	@MetaConfig(classes = String.class)
+	static class MetaAnnotatedAndSuperAnnotatedContextConfigClass extends AnnotatedContextConfigClass {
+	}
+
+	static class OuterTestCase {
+		class NestedTestCase {
+			class DoubleNestedTestCase {
+			}
+		}
+	}
 
 	@Nested
 	@DisplayName("searchEnclosingClass() tests")
@@ -164,7 +313,7 @@ class TestContextAnnotationUtilsTests {
 		void findAnnotationDescriptorWithLocalAndMetaComponentAnnotation() {
 			Class<Component> annotationType = Component.class;
 			AnnotationDescriptor<Component> descriptor = findAnnotationDescriptor(
-				HasLocalAndMetaComponentAnnotation.class, annotationType);
+					HasLocalAndMetaComponentAnnotation.class, annotationType);
 
 			assertThat(descriptor.getRootDeclaringClass()).isEqualTo(HasLocalAndMetaComponentAnnotation.class);
 			assertThat(descriptor.getAnnotationType()).isEqualTo(annotationType);
@@ -190,7 +339,7 @@ class TestContextAnnotationUtilsTests {
 		@Test
 		void findAnnotationDescriptorForClassWithLocalMetaAnnotationAndAnnotatedSuperclass() {
 			AnnotationDescriptor<ContextConfiguration> descriptor = findAnnotationDescriptor(
-				MetaAnnotatedAndSuperAnnotatedContextConfigClass.class, ContextConfiguration.class);
+					MetaAnnotatedAndSuperAnnotatedContextConfigClass.class, ContextConfiguration.class);
 
 			assertThat(descriptor).as("AnnotationDescriptor should not be null").isNotNull();
 			assertThat(descriptor.getRootDeclaringClass()).as("rootDeclaringClass").isEqualTo(MetaAnnotatedAndSuperAnnotatedContextConfigClass.class);
@@ -208,7 +357,7 @@ class TestContextAnnotationUtilsTests {
 		@Test
 		void findAnnotationDescriptorForSubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface() {
 			assertAtComponentOnComposedAnnotation(SubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface.class,
-				ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface.class, "meta2", Meta2.class);
+					ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface.class, "meta2", Meta2.class);
 		}
 
 		/**
@@ -236,7 +385,7 @@ class TestContextAnnotationUtilsTests {
 		void findAnnotationDescriptorOnAnnotatedClassWithMissingTargetMetaAnnotation() {
 			// InheritedAnnotationClass is NOT annotated or meta-annotated with @Component
 			AnnotationDescriptor<Component> descriptor = findAnnotationDescriptor(
-				InheritedAnnotationClass.class, Component.class);
+					InheritedAnnotationClass.class, Component.class);
 			assertThat(descriptor).as("Should not find @Component on InheritedAnnotationClass").isNull();
 		}
 
@@ -246,7 +395,7 @@ class TestContextAnnotationUtilsTests {
 		@Test
 		void findAnnotationDescriptorOnMetaCycleAnnotatedClassWithMissingTargetMetaAnnotation() {
 			AnnotationDescriptor<Component> descriptor = findAnnotationDescriptor(
-				MetaCycleAnnotatedClass.class, Component.class);
+					MetaCycleAnnotatedClass.class, Component.class);
 			assertThat(descriptor).as("Should not find @Component on MetaCycleAnnotatedClass").isNull();
 		}
 
@@ -263,7 +412,7 @@ class TestContextAnnotationUtilsTests {
 		}
 
 		private void assertAtComponentOnComposedAnnotation(Class<?> startClass, Class<?> rootDeclaringClass,
-				Class<?> declaringClass, String name) {
+														   Class<?> declaringClass, String name) {
 
 			AnnotationDescriptor<Component> descriptor = findAnnotationDescriptor(startClass, Component.class);
 			assertThat(descriptor).as("AnnotationDescriptor should not be null").isNotNull();
@@ -378,7 +527,7 @@ class TestContextAnnotationUtilsTests {
 			assertThat(descriptor.getAnnotationType()).isEqualTo(annotationType);
 			assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEmpty();
 			assertThat(((ContextConfiguration) descriptor.getAnnotation()).classes())
-				.containsExactly(MetaConfig.DevConfig.class, MetaConfig.ProductionConfig.class);
+					.containsExactly(MetaConfig.DevConfig.class, MetaConfig.ProductionConfig.class);
 		}
 
 		@Test
@@ -395,7 +544,7 @@ class TestContextAnnotationUtilsTests {
 			assertThat(descriptor.getAnnotationType()).isEqualTo(annotationType);
 			assertThat(((ContextConfiguration) descriptor.getAnnotation()).value()).isEmpty();
 			assertThat(((ContextConfiguration) descriptor.getAnnotation()).classes())
-				.containsExactly(TestContextAnnotationUtilsTests.class);
+					.containsExactly(TestContextAnnotationUtilsTests.class);
 		}
 
 		@Test
@@ -483,7 +632,7 @@ class TestContextAnnotationUtilsTests {
 		}
 
 		private void assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(Class<?> startClass,
-				Class<?> rootDeclaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
+																					Class<?> rootDeclaringClass, String name, Class<? extends Annotation> composedAnnotationType) {
 
 			assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(
 					startClass, rootDeclaringClass, composedAnnotationType, name);
@@ -491,7 +640,7 @@ class TestContextAnnotationUtilsTests {
 
 		@SuppressWarnings("unchecked")
 		private void assertAtComponentOnComposedAnnotationForMultipleCandidateTypes(Class<?> startClass,
-				Class<?> rootDeclaringClass, Class<?> declaringClass, String name) {
+																					Class<?> rootDeclaringClass, Class<?> declaringClass, String name) {
 
 			Class<Component> annotationType = Component.class;
 			UntypedAnnotationDescriptor descriptor = findAnnotationDescriptorForTypes(
@@ -504,168 +653,6 @@ class TestContextAnnotationUtilsTests {
 			assertThat(((Component) descriptor.getAnnotation()).value()).as("component name").isEqualTo(name);
 		}
 
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Component(value = "meta1")
-	@Order
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface Meta1 {
-	}
-
-	@Component(value = "meta2")
-	@Transactional
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface Meta2 {
-	}
-
-	@Meta2
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface MetaMeta {
-	}
-
-	@MetaMeta
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface MetaMetaMeta {
-	}
-
-	@MetaCycle3
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.ANNOTATION_TYPE)
-	@interface MetaCycle1 {
-	}
-
-	@MetaCycle1
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.ANNOTATION_TYPE)
-	@interface MetaCycle2 {
-	}
-
-	@MetaCycle2
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface MetaCycle3 {
-	}
-
-	@ContextConfiguration
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	@interface MetaConfig {
-
-		class DevConfig {
-		}
-
-		class ProductionConfig {
-		}
-
-
-		Class<?>[] classes() default { DevConfig.class, ProductionConfig.class };
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Meta1
-	static class HasMetaComponentAnnotation {
-	}
-
-	@Meta1
-	@Component(value = "local")
-	@Meta2
-	static class HasLocalAndMetaComponentAnnotation {
-	}
-
-	@Meta1
-	interface InterfaceWithMetaAnnotation {
-	}
-
-	static class ClassWithMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
-	}
-
-	@Meta2
-	static class ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface implements InterfaceWithMetaAnnotation {
-	}
-
-	static class SubClassWithLocalMetaAnnotationAndMetaAnnotatedInterface extends
-			ClassWithLocalMetaAnnotationAndMetaAnnotatedInterface {
-	}
-
-	@MetaMeta
-	static class MetaMetaAnnotatedClass {
-	}
-
-	@MetaMetaMeta
-	static class MetaMetaMetaAnnotatedClass {
-	}
-
-	@MetaCycle3
-	static class MetaCycleAnnotatedClass {
-	}
-
-	@MetaConfig
-	static class MetaConfigWithDefaultAttributesTestCase {
-	}
-
-	@MetaConfig(classes = TestContextAnnotationUtilsTests.class)
-	static class MetaConfigWithOverriddenAttributesTestCase {
-	}
-
-	// -------------------------------------------------------------------------
-
-	@Transactional
-	interface InheritedAnnotationInterface {
-	}
-
-	interface SubInheritedAnnotationInterface extends InheritedAnnotationInterface {
-	}
-
-	interface SubSubInheritedAnnotationInterface extends SubInheritedAnnotationInterface {
-	}
-
-	@Order
-	interface NonInheritedAnnotationInterface {
-	}
-
-	interface SubNonInheritedAnnotationInterface extends NonInheritedAnnotationInterface {
-	}
-
-	static class NonAnnotatedClass {
-	}
-
-	interface NonAnnotatedInterface {
-	}
-
-	@Transactional
-	static class InheritedAnnotationClass {
-	}
-
-	static class SubInheritedAnnotationClass extends InheritedAnnotationClass {
-	}
-
-	@Order
-	static class NonInheritedAnnotationClass {
-	}
-
-	static class SubNonInheritedAnnotationClass extends NonInheritedAnnotationClass {
-	}
-
-	@ContextConfiguration(classes = Number.class)
-	static class AnnotatedContextConfigClass {
-	}
-
-	@MetaConfig(classes = String.class)
-	static class MetaAnnotatedAndSuperAnnotatedContextConfigClass extends AnnotatedContextConfigClass {
-	}
-
-	static class OuterTestCase {
-		class NestedTestCase {
-			class DoubleNestedTestCase {
-			}
-		}
 	}
 
 }

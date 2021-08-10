@@ -16,20 +16,19 @@
 
 package org.springframework.http.server;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,7 +78,8 @@ public class ServletServerHttpRequestTests {
 		assertThat(request.getURI()).isEqualTo(uri);
 	}
 
-	@Test  // SPR-16414
+	@Test
+		// SPR-16414
 	void getUriWithQueryParam() throws URISyntaxException {
 		mockRequest.setScheme("https");
 		mockRequest.setServerPort(443);
@@ -89,7 +89,8 @@ public class ServletServerHttpRequestTests {
 		assertThat(request.getURI()).isEqualTo(new URI("https://example.com/path?query=foo"));
 	}
 
-	@Test  // SPR-16414
+	@Test
+		// SPR-16414
 	void getUriWithMalformedQueryParam() throws URISyntaxException {
 		mockRequest.setScheme("https");
 		mockRequest.setServerPort(443);
@@ -99,7 +100,8 @@ public class ServletServerHttpRequestTests {
 		assertThat(request.getURI()).isEqualTo(new URI("https://example.com/path"));
 	}
 
-	@Test  // SPR-13876
+	@Test
+		// SPR-13876
 	void getUriWithEncoding() throws URISyntaxException {
 		URI uri = new URI("https://example.com/%E4%B8%AD%E6%96%87" +
 				"?redirect=https%3A%2F%2Fgithub.com%2Fspring-projects%2Fspring-framework");

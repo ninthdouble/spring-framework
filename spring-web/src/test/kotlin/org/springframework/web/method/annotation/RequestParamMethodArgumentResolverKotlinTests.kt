@@ -25,10 +25,6 @@ import org.springframework.core.annotation.SynthesizingMethodParameter
 import org.springframework.core.convert.support.DefaultConversionService
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse
-import org.springframework.web.testfixture.servlet.MockMultipartFile
-import org.springframework.web.testfixture.servlet.MockMultipartHttpServletRequest
 import org.springframework.util.ReflectionUtils
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.RequestParam
@@ -39,6 +35,10 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.support.MissingServletRequestPartException
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest
+import org.springframework.web.testfixture.servlet.MockHttpServletResponse
+import org.springframework.web.testfixture.servlet.MockMultipartFile
+import org.springframework.web.testfixture.servlet.MockMultipartHttpServletRequest
 
 /**
  * Kotlin test fixture for [RequestParamMethodArgumentResolver].

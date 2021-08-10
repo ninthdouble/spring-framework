@@ -16,24 +16,8 @@
 
 package org.springframework.web.servlet.support;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration.Dynamic;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.WebApplicationContext;
@@ -43,6 +27,10 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.testfixture.servlet.MockServletConfig;
 import org.springframework.web.testfixture.servlet.MockServletContext;
+
+import javax.servlet.*;
+import javax.servlet.FilterRegistration.Dynamic;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -148,8 +136,9 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 		initializer = new MyAnnotationConfigDispatcherServletInitializer() {
 			@Override
 			protected Class<?>[] getRootConfigClasses() {
-				return new Class<?>[] {MyConfiguration.class};
+				return new Class<?>[]{MyConfiguration.class};
 			}
+
 			@Override
 			protected Class<?>[] getServletConfigClasses() {
 				return null;
@@ -183,6 +172,56 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 		assertThat(filterRegistrations.size()).isEqualTo(0);
 	}
 
+	private static class MyAnnotationConfigDispatcherServletInitializer
+			extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+		@Override
+		protected String getServletName() {
+			return SERVLET_NAME;
+		}
+
+		@Override
+		protected Class<?>[] getServletConfigClasses() {
+			return new Class<?>[]{MyConfiguration.class};
+		}
+
+		@Override
+		protected String[] getServletMappings() {
+			return new String[]{"/myservlet"};
+		}
+
+		@Override
+		protected Filter[] getServletFilters() {
+			return new Filter[]{
+					new HiddenHttpMethodFilter(),
+					new DelegatingFilterProxy("a"),
+					new DelegatingFilterProxy("b"),
+					new DelegatingFilterProxy("c")
+			};
+		}
+
+		@Override
+		protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+			registration.setRunAsRole("role");
+		}
+
+		@Override
+		protected Class<?>[] getRootConfigClasses() {
+			return null;
+		}
+	}
+
+	public static class MyBean {
+	}
+
+	@Configuration
+	public static class MyConfiguration {
+
+		@Bean
+		public MyBean bean() {
+			return new MyBean();
+		}
+	}
 
 	private class MyMockServletContext extends MockServletContext {
 
@@ -213,60 +252,6 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 			MockFilterRegistration registration = new MockFilterRegistration();
 			filterRegistrations.put(filterName, registration);
 			return registration;
-		}
-	}
-
-
-	private static class MyAnnotationConfigDispatcherServletInitializer
-			extends AbstractAnnotationConfigDispatcherServletInitializer {
-
-		@Override
-		protected String getServletName() {
-			return SERVLET_NAME;
-		}
-
-		@Override
-		protected Class<?>[] getServletConfigClasses() {
-			return new Class<?>[] {MyConfiguration.class};
-		}
-
-		@Override
-		protected String[] getServletMappings() {
-			return new String[]{"/myservlet"};
-		}
-
-		@Override
-		protected Filter[] getServletFilters() {
-			return new Filter[] {
-					new HiddenHttpMethodFilter(),
-					new DelegatingFilterProxy("a"),
-					new DelegatingFilterProxy("b"),
-					new DelegatingFilterProxy("c")
-			};
-		}
-
-		@Override
-		protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-			registration.setRunAsRole("role");
-		}
-
-		@Override
-		protected Class<?>[] getRootConfigClasses() {
-			return null;
-		}
-	}
-
-
-	public static class MyBean {
-	}
-
-
-	@Configuration
-	public static class MyConfiguration {
-
-		@Bean
-		public MyBean bean() {
-			return new MyBean();
 		}
 	}
 

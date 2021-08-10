@@ -16,29 +16,28 @@
 
 package org.springframework.jms.support;
 
-import java.util.Map;
-
-import javax.jms.Destination;
-import javax.jms.JMSException;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.jms.StubTextMessage;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- *
  * @author Stephane Nicoll
  */
 public class JmsMessageHeaderAccessorTests {
 
 	@Test
 	public void validateJmsHeaders() throws JMSException {
-		Destination destination = new Destination() {};
-		Destination replyTo = new Destination() {};
+		Destination destination = new Destination() {
+		};
+		Destination replyTo = new Destination() {
+		};
 
 		StubTextMessage jmsMessage = new StubTextMessage("test");
 

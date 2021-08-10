@@ -16,13 +16,8 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
@@ -34,6 +29,10 @@ import org.springframework.web.reactive.BindingContext;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
@@ -84,7 +83,7 @@ public class CookieValueMethodArgumentResolverTests {
 		assertThat(this.resolver.supportsParameter(this.stringParameter)).isFalse();
 		assertThatIllegalStateException().isThrownBy(() ->
 				this.resolver.supportsParameter(this.cookieMonoParameter))
-			.withMessageStartingWith("CookieValueMethodArgumentResolver does not support reactive type wrapper");
+				.withMessageStartingWith("CookieValueMethodArgumentResolver does not support reactive type wrapper");
 	}
 
 	@Test

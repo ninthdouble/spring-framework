@@ -17,7 +17,6 @@
 package org.springframework.aop.interceptor;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.NamedBean;
 import org.springframework.beans.testfixture.beans.ITestBean;
@@ -30,20 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Chris Beams
  */
 public class ExposeBeanNameAdvisorsTests {
-
-	private class RequiresBeanNameBoundTestBean extends TestBean {
-		private final String beanName;
-
-		public RequiresBeanNameBoundTestBean(String beanName) {
-			this.beanName = beanName;
-		}
-
-		@Override
-		public int getAge() {
-			assertThat(ExposeBeanNameAdvisors.getBeanName()).isEqualTo(beanName);
-			return super.getAge();
-		}
-	}
 
 	@Test
 	public void testNoIntroduction() {
@@ -76,6 +61,20 @@ public class ExposeBeanNameAdvisorsTests {
 
 		NamedBean nb = (NamedBean) proxy;
 		assertThat(nb.getBeanName()).as("Name returned correctly").isEqualTo(beanName);
+	}
+
+	private class RequiresBeanNameBoundTestBean extends TestBean {
+		private final String beanName;
+
+		public RequiresBeanNameBoundTestBean(String beanName) {
+			this.beanName = beanName;
+		}
+
+		@Override
+		public int getAge() {
+			assertThat(ExposeBeanNameAdvisors.getBeanName()).isEqualTo(beanName);
+			return super.getAge();
+		}
 	}
 
 }

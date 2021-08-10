@@ -16,19 +16,7 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.stream.Stream;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
-
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -39,11 +27,7 @@ import org.springframework.http.server.RequestPath;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.HandlerExecutionChain;
@@ -54,9 +38,17 @@ import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
 import org.springframework.web.util.ServletRequestPathUtils;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests for {@link CrossOrigin @CrossOrigin} annotated methods.
@@ -67,6 +59,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
  * @author Rossen Stoyanchev
  */
 class CrossOriginTests {
+
+	private final MockHttpServletRequest request = new MockHttpServletRequest();
 
 	@SuppressWarnings("unused")
 	static Stream<TestRequestMappingInfoHandlerMapping> pathPatternsArguments() {
@@ -88,10 +82,6 @@ class CrossOriginTests {
 
 		return Stream.of(mapping1, mapping2);
 	}
-
-
-	private final MockHttpServletRequest request = new MockHttpServletRequest();
-
 
 	@BeforeEach
 	void setup() {
@@ -130,7 +120,8 @@ class CrossOriginTests {
 		assertThat(chain.getHandler().getClass().getName()).endsWith("AbstractHandlerMapping$PreFlightHandler");
 	}
 
-	@PathPatternsParameterizedTest  // SPR-12931
+	@PathPatternsParameterizedTest
+		// SPR-12931
 	void noAnnotationWithOrigin(TestRequestMappingInfoHandlerMapping mapping) throws Exception {
 		mapping.registerHandler(new MethodLevelController());
 		this.request.setRequestURI("/no");
@@ -138,7 +129,8 @@ class CrossOriginTests {
 		assertThat(getCorsConfiguration(chain, false)).isNull();
 	}
 
-	@PathPatternsParameterizedTest  // SPR-12931
+	@PathPatternsParameterizedTest
+		// SPR-12931
 	void noAnnotationPostWithOrigin(TestRequestMappingInfoHandlerMapping mapping) throws Exception {
 		mapping.registerHandler(new MethodLevelController());
 		this.request.setMethod("POST");
@@ -275,7 +267,8 @@ class CrossOriginTests {
 		assertThat(config.getAllowCredentials()).isTrue();
 	}
 
-	@PathPatternsParameterizedTest // SPR-13468
+	@PathPatternsParameterizedTest
+		// SPR-13468
 	void classLevelComposedAnnotation(TestRequestMappingInfoHandlerMapping mapping) throws Exception {
 		mapping.registerHandler(new ClassLevelMappingWithComposedAnnotation());
 
@@ -288,7 +281,8 @@ class CrossOriginTests {
 		assertThat(config.getAllowCredentials()).isTrue();
 	}
 
-	@PathPatternsParameterizedTest // SPR-13468
+	@PathPatternsParameterizedTest
+		// SPR-13468
 	void methodLevelComposedAnnotation(TestRequestMappingInfoHandlerMapping mapping) throws Exception {
 		mapping.registerHandler(new MethodLevelMappingWithComposedAnnotation());
 
@@ -391,9 +385,8 @@ class CrossOriginTests {
 			Object handler = chain.getHandler();
 			assertThat(handler.getClass().getSimpleName().equals("PreFlightHandler")).isTrue();
 			DirectFieldAccessor accessor = new DirectFieldAccessor(handler);
-			return (CorsConfiguration)accessor.getPropertyValue("config");
-		}
-		else {
+			return (CorsConfiguration) accessor.getPropertyValue("config");
+		} else {
 			for (HandlerInterceptor interceptor : chain.getInterceptorList()) {
 				if (interceptor.getClass().getSimpleName().equals("CorsInterceptor")) {
 					DirectFieldAccessor accessor = new DirectFieldAccessor(interceptor);
@@ -404,6 +397,16 @@ class CrossOriginTests {
 		return null;
 	}
 
+
+	@Target({ElementType.METHOD, ElementType.TYPE})
+	@Retention(RetentionPolicy.RUNTIME)
+	@CrossOrigin
+	private @interface ComposedCrossOrigin {
+
+		String[] origins() default {};
+
+		String allowCredentials() default "";
+	}
 
 	@Controller
 	@SuppressWarnings("unused")
@@ -449,13 +452,13 @@ class CrossOriginTests {
 			return "{}";
 		}
 
-		@CrossOrigin(origins = { "https://site1.com", "https://site2.com" },
-				allowedHeaders = { "header1", "header2" },
-				exposedHeaders = { "header3", "header4" },
+		@CrossOrigin(origins = {"https://site1.com", "https://site2.com"},
+				allowedHeaders = {"header1", "header2"},
+				exposedHeaders = {"header3", "header4"},
 				methods = RequestMethod.DELETE,
 				maxAge = 123,
 				allowCredentials = "false")
-		@RequestMapping(path = "/customized", method = { RequestMethod.GET, RequestMethod.POST })
+		@RequestMapping(path = "/customized", method = {RequestMethod.GET, RequestMethod.POST})
 		public void customized() {
 		}
 
@@ -480,7 +483,6 @@ class CrossOriginTests {
 		}
 	}
 
-
 	@Controller
 	@SuppressWarnings("unused")
 	private static class MethodLevelControllerWithBogusAllowCredentialsValue {
@@ -490,7 +492,6 @@ class CrossOriginTests {
 		public void bogusAllowCredentialsValue() {
 		}
 	}
-
 
 	@Controller
 	@CrossOrigin(allowCredentials = "false")
@@ -535,7 +536,6 @@ class CrossOriginTests {
 		}
 	}
 
-
 	@Controller
 	@CrossOrigin(allowCredentials = "true")
 	private static class CredentialsWithWildcardOriginController {
@@ -545,18 +545,6 @@ class CrossOriginTests {
 		public void wildcardOrigin() {
 		}
 	}
-
-
-	@Target({ElementType.METHOD, ElementType.TYPE})
-	@Retention(RetentionPolicy.RUNTIME)
-	@CrossOrigin
-	private @interface ComposedCrossOrigin {
-
-		String[] origins() default {};
-
-		String allowCredentials() default "";
-	}
-
 
 	@Controller
 	@ComposedCrossOrigin(origins = "http://www.foo.example/", allowCredentials = "true")
@@ -607,8 +595,7 @@ class CrossOriginTests {
 						.produces(annotation.produces())
 						.options(options)
 						.build();
-			}
-			else {
+			} else {
 				return null;
 			}
 		}

@@ -26,8 +26,8 @@ import org.springframework.core.MethodParameter;
  * declared on the method parameter.
  *
  * @author Rossen Stoyanchev
- * @since 4.2
  * @see MissingMatrixVariableException
+ * @since 4.2
  */
 @SuppressWarnings("serial")
 public class MissingPathVariableException extends MissingRequestValueException {
@@ -39,8 +39,9 @@ public class MissingPathVariableException extends MissingRequestValueException {
 
 	/**
 	 * Constructor for MissingPathVariableException.
+	 *
 	 * @param variableName the name of the missing path variable
-	 * @param parameter the method parameter
+	 * @param parameter    the method parameter
 	 */
 	public MissingPathVariableException(String variableName, MethodParameter parameter) {
 		this(variableName, parameter, false);
@@ -48,8 +49,9 @@ public class MissingPathVariableException extends MissingRequestValueException {
 
 	/**
 	 * Constructor for use when a value was present but converted to {@code null}.
-	 * @param variableName the name of the missing path variable
-	 * @param parameter the method parameter
+	 *
+	 * @param variableName           the name of the missing path variable
+	 * @param parameter              the method parameter
 	 * @param missingAfterConversion whether the value became null after conversion
 	 * @since 5.3.6
 	 */

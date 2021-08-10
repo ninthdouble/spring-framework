@@ -16,9 +16,6 @@
 
 package org.springframework.web.bind;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -28,6 +25,9 @@ import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.multipart.support.StandardServletPartUtils;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Special {@link org.springframework.validation.DataBinder} to perform data binding
@@ -66,8 +66,9 @@ public class ServletRequestDataBinder extends WebDataBinder {
 
 	/**
 	 * Create a new ServletRequestDataBinder instance, with default object name.
+	 *
 	 * @param target the target object to bind onto (or {@code null}
-	 * if the binder is just used to convert a plain parameter value)
+	 *               if the binder is just used to convert a plain parameter value)
 	 * @see #DEFAULT_OBJECT_NAME
 	 */
 	public ServletRequestDataBinder(@Nullable Object target) {
@@ -76,8 +77,9 @@ public class ServletRequestDataBinder extends WebDataBinder {
 
 	/**
 	 * Create a new ServletRequestDataBinder instance.
-	 * @param target the target object to bind onto (or {@code null}
-	 * if the binder is just used to convert a plain parameter value)
+	 *
+	 * @param target     the target object to bind onto (or {@code null}
+	 *                   if the binder is just used to convert a plain parameter value)
 	 * @param objectName the name of the target object
 	 */
 	public ServletRequestDataBinder(@Nullable Object target, String objectName) {
@@ -97,6 +99,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 	 * <p>The type of the target property for a multipart file can be MultipartFile,
 	 * byte[], or String. The latter two receive the contents of the uploaded file;
 	 * all metadata like original file name, content type, etc are lost in those cases.
+	 *
 	 * @param request the request with parameters to bind (can be multipart)
 	 * @see org.springframework.web.multipart.MultipartHttpServletRequest
 	 * @see org.springframework.web.multipart.MultipartFile
@@ -107,8 +110,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 		MultipartRequest multipartRequest = WebUtils.getNativeRequest(request, MultipartRequest.class);
 		if (multipartRequest != null) {
 			bindMultipart(multipartRequest.getMultiFileMap(), mpvs);
-		}
-		else if (StringUtils.startsWithIgnoreCase(request.getContentType(), MediaType.MULTIPART_FORM_DATA_VALUE)) {
+		} else if (StringUtils.startsWithIgnoreCase(request.getContentType(), MediaType.MULTIPART_FORM_DATA_VALUE)) {
 			HttpServletRequest httpServletRequest = WebUtils.getNativeRequest(request, HttpServletRequest.class);
 			if (httpServletRequest != null && HttpMethod.POST.matches(httpServletRequest.getMethod())) {
 				StandardServletPartUtils.bindParts(httpServletRequest, mpvs, isBindEmptyMultipartFiles());
@@ -122,7 +124,8 @@ public class ServletRequestDataBinder extends WebDataBinder {
 	 * Extension point that subclasses can use to add extra bind values for a
 	 * request. Invoked before {@link #doBind(MutablePropertyValues)}.
 	 * The default implementation is empty.
-	 * @param mpvs the property values that will be used for data binding
+	 *
+	 * @param mpvs    the property values that will be used for data binding
 	 * @param request the current request
 	 */
 	protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
@@ -132,6 +135,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 	 * Treats errors as fatal.
 	 * <p>Use this method only if it's an error if the input isn't valid.
 	 * This might be appropriate if all input is from dropdowns, for example.
+	 *
 	 * @throws ServletRequestBindingException subclass of ServletException on any binding problem
 	 */
 	public void closeNoCatch() throws ServletRequestBindingException {

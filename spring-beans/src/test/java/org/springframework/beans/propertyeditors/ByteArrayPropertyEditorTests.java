@@ -16,9 +16,9 @@
 
 package org.springframework.beans.propertyeditors;
 
-import java.beans.PropertyEditor;
-
 import org.junit.jupiter.api.Test;
+
+import java.beans.PropertyEditor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

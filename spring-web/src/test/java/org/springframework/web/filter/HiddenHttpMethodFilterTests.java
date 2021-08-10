@@ -16,18 +16,16 @@
 
 package org.springframework.web.filter;
 
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
+import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import org.junit.jupiter.api.Test;
-
-import org.springframework.web.testfixture.servlet.MockHttpServletRequest;
-import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,7 +61,7 @@ public class HiddenHttpMethodFilterTests {
 	private void filterWithParameterForMethod(String methodParam, String expectedMethod)
 			throws IOException, ServletException {
 		MockHttpServletRequest request = new MockHttpServletRequest("POST", "/hotels");
-		if(methodParam != null) {
+		if (methodParam != null) {
 			request.addParameter("_method", methodParam);
 		}
 		MockHttpServletResponse response = new MockHttpServletResponse();
@@ -72,7 +70,7 @@ public class HiddenHttpMethodFilterTests {
 
 			@Override
 			public void doFilter(ServletRequest filterRequest,
-					ServletResponse filterResponse) throws IOException, ServletException {
+								 ServletResponse filterResponse) throws IOException, ServletException {
 				assertThat(((HttpServletRequest) filterRequest).getMethod()).as("Invalid method").isEqualTo(expectedMethod);
 			}
 		};

@@ -18,7 +18,6 @@ package org.springframework.test.context.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ActiveProfilesResolver;
 import org.springframework.test.context.TestContextAnnotationUtils.AnnotationDescriptor;
@@ -33,9 +32,9 @@ import static org.springframework.test.context.TestContextAnnotationUtils.findAn
  * {@link ActiveProfiles#value}.
  *
  * @author Sam Brannen
- * @since 4.1
  * @see ActiveProfiles
  * @see ActiveProfilesResolver
+ * @since 4.1
  */
 public class DefaultActiveProfilesResolver implements ActiveProfilesResolver {
 
@@ -48,8 +47,9 @@ public class DefaultActiveProfilesResolver implements ActiveProfilesResolver {
 	 * Resolve the <em>bean definition profiles</em> for the given {@linkplain
 	 * Class test class} based on profiles configured declaratively via
 	 * {@link ActiveProfiles#profiles} or {@link ActiveProfiles#value}.
+	 *
 	 * @param testClass the test class for which the profiles should be resolved;
-	 * never {@code null}
+	 *                  never {@code null}
 	 * @return the list of bean definition profiles to use when loading the
 	 * {@code ApplicationContext}; never {@code null}
 	 */
@@ -61,16 +61,15 @@ public class DefaultActiveProfilesResolver implements ActiveProfilesResolver {
 		if (descriptor == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(String.format(
-					"Could not find an 'annotation declaring class' for annotation type [%s] and class [%s]",
-					ActiveProfiles.class.getName(), testClass.getName()));
+						"Could not find an 'annotation declaring class' for annotation type [%s] and class [%s]",
+						ActiveProfiles.class.getName(), testClass.getName()));
 			}
 			return EMPTY_STRING_ARRAY;
-		}
-		else {
+		} else {
 			ActiveProfiles annotation = descriptor.getAnnotation();
 			if (logger.isTraceEnabled()) {
 				logger.trace(String.format("Retrieved @ActiveProfiles [%s] for declaring class [%s].", annotation,
-					descriptor.getDeclaringClass().getName()));
+						descriptor.getDeclaringClass().getName()));
 			}
 			return annotation.profiles();
 		}

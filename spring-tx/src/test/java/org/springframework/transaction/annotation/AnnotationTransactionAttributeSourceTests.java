@@ -16,29 +16,23 @@
 
 package org.springframework.transaction.annotation;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Method;
-
-import javax.ejb.TransactionAttributeType;
-
 import groovy.lang.GroovyObject;
 import groovy.lang.MetaClass;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.testfixture.io.SerializationTestUtils;
 import org.springframework.transaction.TransactionManager;
-import org.springframework.transaction.interceptor.NoRollbackRuleAttribute;
-import org.springframework.transaction.interceptor.RollbackRuleAttribute;
-import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
-import org.springframework.transaction.interceptor.TransactionAttribute;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
+import org.springframework.transaction.interceptor.*;
 import org.springframework.transaction.testfixture.CallCountingTransactionManager;
+
+import javax.ejb.TransactionAttributeType;
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -453,6 +447,61 @@ public class AnnotationTransactionAttributeSourceTests {
 	}
 
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Transactional(rollbackFor = Exception.class, noRollbackFor = IOException.class)
+	@interface Tx {
+	}
+
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Transactional(rollbackFor = Exception.class, noRollbackFor = IOException.class)
+	@interface TxWithAttribute {
+
+		boolean readOnly();
+	}
+
+
+	@TxWithAttribute(readOnly = true)
+	interface TestInterface9 {
+
+		int getAge();
+	}
+
+
+	interface TestInterface10 {
+
+		@TxWithAttribute(readOnly = true)
+		int getAge();
+	}
+
+
+	@javax.ejb.TransactionAttribute(TransactionAttributeType.SUPPORTS)
+	interface ITestEjb {
+
+		@javax.ejb.TransactionAttribute
+		int getAge();
+
+		void setAge(int age);
+
+		String getName();
+
+		void setName(String name);
+	}
+
+
+	@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+	interface ITestJta {
+
+		@javax.transaction.Transactional
+		int getAge();
+
+		void setAge(int age);
+
+		String getName();
+
+		void setName(String name);
+	}
+
 	static class Empty implements ITestBean1 {
 
 		private String name;
@@ -487,7 +536,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			this.age = age;
 		}
 	}
-
 
 	@SuppressWarnings("serial")
 	static class TestBean1 implements ITestBean1, Serializable {
@@ -526,7 +574,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
 	static class TestBean2 implements ITestBean2X {
 
 		private String name;
@@ -562,7 +609,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
 	static class TestBean3 implements ITestBean3 {
 
 		private String name;
@@ -588,21 +634,20 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 
 		@Override
-		@Transactional(propagation = Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ,
+		@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ,
 				timeout = 5, readOnly = true, rollbackFor = Exception.class, noRollbackFor = IOException.class)
 		public int getAge() {
 			return age;
 		}
 
 		@Override
-		@Transactional(propagation = Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ,
+		@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.REPEATABLE_READ,
 				timeoutString = "${myTimeout}", readOnly = true, rollbackFor = Exception.class,
 				noRollbackFor = IOException.class)
 		public void setAge(int age) {
 			this.age = age;
 		}
 	}
-
 
 	@Transactional(rollbackFor = Exception.class, noRollbackFor = IOException.class)
 	static class TestBean4 implements ITestBean3 {
@@ -640,13 +685,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Transactional(rollbackFor = Exception.class, noRollbackFor = IOException.class)
-	@interface Tx {
-	}
-
-
 	@Tx
 	static class TestBean5 {
 
@@ -654,7 +692,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			return 10;
 		}
 	}
-
 
 	static class TestBean6 {
 
@@ -664,15 +701,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Transactional(rollbackFor = Exception.class, noRollbackFor = IOException.class)
-	@interface TxWithAttribute {
-
-		boolean readOnly();
-	}
-
-
 	@TxWithAttribute(readOnly = true)
 	static class TestBean7 {
 
@@ -680,7 +708,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			return 10;
 		}
 	}
-
 
 	static class TestBean8 {
 
@@ -690,14 +717,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
-	@TxWithAttribute(readOnly = true)
-	interface TestInterface9 {
-
-		int getAge();
-	}
-
-
 	static class TestBean9 implements TestInterface9 {
 
 		@Override
@@ -705,14 +724,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			return 10;
 		}
 	}
-
-
-	interface TestInterface10 {
-
-		@TxWithAttribute(readOnly = true)
-		int getAge();
-	}
-
 
 	static class TestBean10 implements TestInterface10 {
 
@@ -727,16 +738,15 @@ public class AnnotationTransactionAttributeSourceTests {
 
 		private int age = 10;
 
+		public int getAge() {
+			return age;
+		}
+
 		@Transactional(label = "short-running")
 		public void setAge(int age) {
 			this.age = age;
 		}
-
-		public int getAge() {
-			return age;
-		}
 	}
-
 
 	static class Ejb3AnnotatedBean1 implements ITestBean1 {
 
@@ -767,7 +777,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
 	@javax.ejb.TransactionAttribute(TransactionAttributeType.SUPPORTS)
 	static class Ejb3AnnotatedBean2 implements ITestBean1 {
 
@@ -797,21 +806,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
-	@javax.ejb.TransactionAttribute(TransactionAttributeType.SUPPORTS)
-	interface ITestEjb {
-
-		@javax.ejb.TransactionAttribute
-		int getAge();
-
-		void setAge(int age);
-
-		String getName();
-
-		void setName(String name);
-	}
-
-
 	static class Ejb3AnnotatedBean3 implements ITestEjb {
 
 		private String name;
@@ -838,7 +832,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			this.age = age;
 		}
 	}
-
 
 	static class JtaAnnotatedBean1 implements ITestBean1 {
 
@@ -869,7 +862,6 @@ public class AnnotationTransactionAttributeSourceTests {
 		}
 	}
 
-
 	@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
 	static class JtaAnnotatedBean2 implements ITestBean1 {
 
@@ -898,21 +890,6 @@ public class AnnotationTransactionAttributeSourceTests {
 			this.age = age;
 		}
 	}
-
-
-	@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
-	interface ITestJta {
-
-		@javax.transaction.Transactional
-		int getAge();
-
-		void setAge(int age);
-
-		String getName();
-
-		void setName(String name);
-	}
-
 
 	static class JtaAnnotatedBean3 implements ITestEjb {
 

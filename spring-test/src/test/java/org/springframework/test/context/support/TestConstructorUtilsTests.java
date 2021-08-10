@@ -16,18 +16,17 @@
 
 package org.springframework.test.context.support;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.SpringProperties;
+import org.springframework.test.context.TestConstructor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.SpringProperties;
-import org.springframework.test.context.TestConstructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
@@ -117,6 +116,12 @@ class TestConstructorUtilsTests {
 	}
 
 
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@TestConstructor(autowireMode = ALL)
+	@interface AutowireConstructor {
+	}
+
 	static class NotAutowirableTestCase {
 	}
 
@@ -132,12 +137,6 @@ class TestConstructorUtilsTests {
 
 	@TestConstructor(autowireMode = ALL)
 	static class TestConstructorAnnotationTestCase {
-	}
-
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@TestConstructor(autowireMode = ALL)
-	@interface AutowireConstructor {
 	}
 
 	@AutowireConstructor

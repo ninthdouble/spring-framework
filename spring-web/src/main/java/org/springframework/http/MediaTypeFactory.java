@@ -16,6 +16,13 @@
 
 package org.springframework.http;
 
+import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
-import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 
 /**
  * A factory delegate for resolving {@link MediaType} objects
@@ -62,6 +62,7 @@ public final class MediaTypeFactory {
 	 * # this would map file.txt and file.text to<br>
 	 * # the mime type "text/plain"<br>
 	 * </code>
+	 *
 	 * @return a multi-value map, mapping media types to file extensions.
 	 */
 	private static MultiValueMap<String, MediaType> parseMimeTypes() {
@@ -82,14 +83,14 @@ public final class MediaTypeFactory {
 				}
 			}
 			return result;
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			throw new IllegalStateException("Could not read " + MIME_TYPES_FILE_NAME, ex);
 		}
 	}
 
 	/**
 	 * Determine a media type for the given resource, if possible.
+	 *
 	 * @param resource the resource to introspect
 	 * @return the corresponding media type, or {@code null} if none found
 	 */
@@ -101,6 +102,7 @@ public final class MediaTypeFactory {
 
 	/**
 	 * Determine a media type for the given file name, if possible.
+	 *
 	 * @param filename the file name plus extension
 	 * @return the corresponding media type, or {@code null} if none found
 	 */
@@ -110,6 +112,7 @@ public final class MediaTypeFactory {
 
 	/**
 	 * Determine the media types for the given file name, if possible.
+	 *
 	 * @param filename the file name plus extension
 	 * @return the corresponding media types, or an empty list if none found
 	 */

@@ -16,14 +16,13 @@
 
 package org.springframework.core.serializer;
 
-import java.io.NotSerializableException;
-import java.io.Serializable;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.core.serializer.support.DeserializingConverter;
 import org.springframework.core.serializer.support.SerializationFailedException;
 import org.springframework.core.serializer.support.SerializingConverter;
+
+import java.io.NotSerializableException;
+import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -48,7 +47,7 @@ class SerializationConverterTests {
 		SerializingConverter toBytes = new SerializingConverter();
 		assertThatExceptionOfType(SerializationFailedException.class).isThrownBy(() ->
 				toBytes.convert(new Object()))
-			.withCauseInstanceOf(IllegalArgumentException.class);
+				.withCauseInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
@@ -56,7 +55,7 @@ class SerializationConverterTests {
 		SerializingConverter toBytes = new SerializingConverter();
 		assertThatExceptionOfType(SerializationFailedException.class).isThrownBy(() ->
 				toBytes.convert(new UnSerializable()))
-			.withCauseInstanceOf(NotSerializableException.class);
+				.withCauseInstanceOf(NotSerializableException.class);
 	}
 
 	@Test

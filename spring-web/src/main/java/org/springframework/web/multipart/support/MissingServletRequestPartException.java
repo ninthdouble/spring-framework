@@ -16,9 +16,9 @@
 
 package org.springframework.web.multipart.support;
 
-import javax.servlet.ServletException;
-
 import org.springframework.web.multipart.MultipartResolver;
+
+import javax.servlet.ServletException;
 
 /**
  * Raised when the part of a "multipart/form-data" request identified by its
@@ -40,6 +40,7 @@ public class MissingServletRequestPartException extends ServletException {
 
 	/**
 	 * Constructor for MissingServletRequestPartException.
+	 *
 	 * @param requestPartName the name of the missing part of the multipart request
 	 */
 	public MissingServletRequestPartException(String requestPartName) {

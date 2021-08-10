@@ -16,19 +16,18 @@
 
 package org.springframework.transaction;
 
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.context.testfixture.jndi.ExpectedLookupTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.jta.UserTransactionAdapter;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.transaction.Status;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -68,8 +67,7 @@ public class JndiJtaTransactionManagerTests {
 		TransactionManager tm = mock(TransactionManager.class);
 		if (defaultUt) {
 			given(ut.getStatus()).willReturn(Status.STATUS_NO_TRANSACTION, Status.STATUS_ACTIVE, Status.STATUS_ACTIVE);
-		}
-		else {
+		} else {
 			given(tm.getStatus()).willReturn(Status.STATUS_NO_TRANSACTION, Status.STATUS_ACTIVE, Status.STATUS_ACTIVE);
 		}
 
@@ -84,15 +82,13 @@ public class JndiJtaTransactionManagerTests {
 
 		if (tmFound) {
 			assertThat(ptm.getTransactionManager()).isEqualTo(tm);
-		}
-		else {
+		} else {
 			assertThat(ptm.getTransactionManager()).isNull();
 		}
 
 		if (defaultUt) {
 			assertThat(ptm.getUserTransaction()).isEqualTo(ut);
-		}
-		else {
+		} else {
 			boolean condition = ptm.getUserTransaction() instanceof UserTransactionAdapter;
 			assertThat(condition).isTrue();
 			UserTransactionAdapter uta = (UserTransactionAdapter) ptm.getUserTransaction();
@@ -119,8 +115,7 @@ public class JndiJtaTransactionManagerTests {
 		if (defaultUt) {
 			verify(ut).begin();
 			verify(ut).commit();
-		}
-		else {
+		} else {
 			verify(tm).begin();
 			verify(tm).commit();
 		}

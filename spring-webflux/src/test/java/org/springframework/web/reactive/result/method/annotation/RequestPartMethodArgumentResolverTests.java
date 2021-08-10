@@ -16,19 +16,10 @@
 
 package org.springframework.web.reactive.result.method.annotation;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -51,6 +42,14 @@ import org.springframework.web.testfixture.http.client.reactive.MockClientHttpRe
 import org.springframework.web.testfixture.http.server.reactive.MockServerHttpRequest;
 import org.springframework.web.testfixture.method.ResolvableMethod;
 import org.springframework.web.testfixture.server.MockServerWebExchange;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,15 +58,14 @@ import static org.springframework.web.testfixture.method.MvcAnnotationPredicates
 
 /**
  * Unit tests for {@link RequestPartMethodArgumentResolver}.
+ *
  * @author Rossen Stoyanchev
  * @author Ilya Lukyanovich
  */
 class RequestPartMethodArgumentResolverTests {
 
-	private RequestPartMethodArgumentResolver resolver;
-
 	private final ResolvableMethod testMethod = ResolvableMethod.on(getClass()).named("handle").build();
-
+	private RequestPartMethodArgumentResolver resolver;
 	private MultipartHttpMessageWriter writer;
 
 
@@ -131,7 +129,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(actual.get(1).getName()).isEqualTo("James");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void listPersonNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(List.class, Person.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -150,7 +149,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(actual.block().getName()).isEqualTo("Jones");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void monoPersonNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(Mono.class, Person.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -172,7 +172,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(persons.get(1).getName()).isEqualTo("James");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void fluxPersonNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(Flux.class, Person.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -204,7 +205,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(partToUtf8String(actual.get(1))).isEqualTo("{\"name\":\"James\"}");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void listPartNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(List.class, Part.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -224,7 +226,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(partToUtf8String(part)).isEqualTo("{\"name\":\"Jones\"}");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void monoPartNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(Mono.class, Part.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -246,7 +249,8 @@ class RequestPartMethodArgumentResolverTests {
 		assertThat(partToUtf8String(parts.get(1))).isEqualTo("{\"name\":\"James\"}");
 	}
 
-	@Test // gh-23060
+	@Test
+		// gh-23060
 	void fluxPartNotRequired() {
 		MethodParameter param = this.testMethod.annot(requestPart().notRequired()).arg(Flux.class, Part.class);
 		MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
@@ -338,7 +342,8 @@ class RequestPartMethodArgumentResolverTests {
 			@RequestPart(name = "name", required = false) Mono<Part> anotherPartMono,
 			@RequestPart(name = "name", required = false) Flux<Part> anotherPartFlux,
 			@RequestPart(name = "name", required = false) List<Part> anotherPartList,
-			Person notAnnotated) {}
+			Person notAnnotated) {
+	}
 
 
 	private static class Person {

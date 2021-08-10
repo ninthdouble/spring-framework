@@ -172,13 +172,13 @@ public class ConfigurationClassWithPlaceholderConfigurerBeanTests {
 		private String name;
 
 		@Bean
-		public ITestBean testBean() {
-			return new TestBean(this.name);
+		public static PropertySourcesPlaceholderConfigurer ppc() {
+			return new PropertySourcesPlaceholderConfigurer();
 		}
 
 		@Bean
-		public static PropertySourcesPlaceholderConfigurer ppc() {
-			return new PropertySourcesPlaceholderConfigurer();
+		public ITestBean testBean() {
+			return new TestBean(this.name);
 		}
 	}
 

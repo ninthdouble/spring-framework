@@ -16,11 +16,6 @@
 
 package org.springframework.http.server.reactive;
 
-import java.io.File;
-import java.net.URI;
-
-import reactor.core.publisher.Mono;
-
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -32,6 +27,10 @@ import org.springframework.web.testfixture.http.server.reactive.bootstrap.Abstra
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.HttpServer;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.ReactorHttpServer;
 import org.springframework.web.testfixture.http.server.reactive.bootstrap.UndertowHttpServer;
+import reactor.core.publisher.Mono;
+
+import java.io.File;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -55,7 +54,7 @@ class ZeroCopyIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 	@ParameterizedHttpServerTest
 	void zeroCopy(HttpServer httpServer) throws Exception {
 		assumeTrue(httpServer instanceof ReactorHttpServer || httpServer instanceof UndertowHttpServer,
-			"Zero-copy does not support Servlet");
+				"Zero-copy does not support Servlet");
 
 		startServer(httpServer);
 
@@ -80,8 +79,7 @@ class ZeroCopyIntegrationTests extends AbstractHttpHandlerIntegrationTests {
 				zeroCopyResponse.getHeaders().setContentType(MediaType.IMAGE_PNG);
 				zeroCopyResponse.getHeaders().setContentLength(logoFile.length());
 				return zeroCopyResponse.writeWith(logoFile, 0, logoFile.length());
-			}
-			catch (Throwable ex) {
+			} catch (Throwable ex) {
 				return Mono.error(ex);
 			}
 		}

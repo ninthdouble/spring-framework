@@ -15,16 +15,16 @@
  */
 package org.springframework.web.servlet.support;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Test;
-
 import org.springframework.web.testfixture.servlet.MockHttpServletResponse;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for {@link WebContentGenerator}.
+ *
  * @author Rossen Stoyanchev
  */
 public class WebContentGeneratorTests {

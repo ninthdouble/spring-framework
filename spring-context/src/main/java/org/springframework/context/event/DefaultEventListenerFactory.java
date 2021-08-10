@@ -28,23 +28,21 @@ import org.springframework.core.Ordered;
  * <p>Used as "catch-all" implementation by default.
  *
  * @author Stephane Nicoll
- * @since 4.2
  * @see ApplicationListenerMethodAdapter
+ * @since 4.2
  */
 public class DefaultEventListenerFactory implements EventListenerFactory, Ordered {
 
 	private int order = LOWEST_PRECEDENCE;
-
-
-	public void setOrder(int order) {
-		this.order = order;
-	}
 
 	@Override
 	public int getOrder() {
 		return this.order;
 	}
 
+	public void setOrder(int order) {
+		this.order = order;
+	}
 
 	@Override
 	public boolean supportsMethod(Method method) {

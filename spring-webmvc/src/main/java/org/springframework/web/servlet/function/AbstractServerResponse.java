@@ -16,16 +16,6 @@
 
 package org.springframework.web.servlet.function;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -35,6 +25,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Abstract base class for {@link ServerResponse} implementations.
@@ -83,7 +82,7 @@ abstract class AbstractServerResponse extends ErrorHandlingServerResponse {
 
 	@Override
 	public ModelAndView writeTo(HttpServletRequest request, HttpServletResponse response,
-			Context context) throws ServletException, IOException {
+								Context context) throws ServletException, IOException {
 
 		try {
 			writeStatusAndHeaders(response);
@@ -94,12 +93,10 @@ abstract class AbstractServerResponse extends ErrorHandlingServerResponse {
 			if (SAFE_METHODS.contains(httpMethod) &&
 					servletWebRequest.checkNotModified(headers().getETag(), lastModified)) {
 				return null;
-			}
-			else {
+			} else {
 				return writeToInternal(request, response, context);
 			}
-		}
-		catch (Throwable throwable) {
+		} catch (Throwable throwable) {
 			return handleError(throwable, request, response, context);
 		}
 	}

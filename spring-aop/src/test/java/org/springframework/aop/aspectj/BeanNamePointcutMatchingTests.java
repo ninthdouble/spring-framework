@@ -17,7 +17,6 @@
 package org.springframework.aop.aspectj;
 
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.testfixture.beans.TestBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +28,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Chris Beams
  */
 public class BeanNamePointcutMatchingTests {
+
+	private static boolean matches(final String beanName, String pcExpression) {
+		@SuppressWarnings("serial")
+		AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut() {
+			@Override
+			protected String getCurrentProxiedBeanName() {
+				return beanName;
+			}
+		};
+		pointcut.setExpression(pcExpression);
+		return pointcut.matches(TestBean.class);
+	}
 
 	@Test
 	public void testMatchingPointcuts() {
@@ -77,25 +88,12 @@ public class BeanNamePointcutMatchingTests {
 		assertMisMatch("someName", "!bean(someName) || bean(someOtherName)");
 	}
 
-
 	private void assertMatch(String beanName, String pcExpression) {
 		assertThat(matches(beanName, pcExpression)).as("Unexpected mismatch for bean \"" + beanName + "\" for pcExpression \"" + pcExpression + "\"").isTrue();
 	}
 
 	private void assertMisMatch(String beanName, String pcExpression) {
 		assertThat(matches(beanName, pcExpression)).as("Unexpected match for bean \"" + beanName + "\" for pcExpression \"" + pcExpression + "\"").isFalse();
-	}
-
-	private static boolean matches(final String beanName, String pcExpression) {
-		@SuppressWarnings("serial")
-		AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut() {
-			@Override
-			protected String getCurrentProxiedBeanName() {
-				return beanName;
-			}
-		};
-		pointcut.setExpression(pcExpression);
-		return pointcut.matches(TestBean.class);
 	}
 
 }

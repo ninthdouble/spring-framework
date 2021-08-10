@@ -16,10 +16,10 @@
 
 package org.springframework.r2dbc.core;
 
+import org.springframework.util.Assert;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.springframework.util.Assert;
 
 /**
  * {@link BindParameterSource} implementation that holds a given {@link Map} of parameters
@@ -45,6 +45,7 @@ class MapBindParameterSource implements BindParameterSource {
 
 	/**
 	 * Creates a new {@link MapBindParameterSource} given {@link Map} of {@link Parameter}.
+	 *
 	 * @param values the parameter mapping
 	 */
 	MapBindParameterSource(Map<String, Parameter> values) {
@@ -55,8 +56,9 @@ class MapBindParameterSource implements BindParameterSource {
 
 	/**
 	 * Add a key-value pair to the {@link MapBindParameterSource}.
+	 *
 	 * @param paramName the name of the parameter
-	 * @param value the parameter value to add (must not be {@code null})
+	 * @param value     the parameter value to add (must not be {@code null})
 	 */
 	MapBindParameterSource addValue(String paramName, Object value) {
 		Assert.notNull(paramName, "Parameter name must not be null");
